@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+	<metadata>
+		<id>JWT</id>
+		<version>1.0</version>
+		<authors>John Sheehan</authors>
+		<description>JWT (JSON Web Token) Implementation for .NET (Public Domain)</description>
+		<language>en-US</language>
+		<projectUrl>http://github.com/johnsheehan/jwt</projectUrl>
+		<tags>jwt json</tags>
+		<dependencies>
+			<dependency id="JSON.NET" />
+		</dependencies>
+	</metadata>
+</package>
