@@ -95,7 +95,7 @@ namespace JWT
 		}
 
 		// from JWT spec
-		public static string Base64UrlEncode(string input)
+		private static string Base64UrlEncode(string input)
 		{
 			var inputBytes = Encoding.UTF8.GetBytes(input);
 			var output = Convert.ToBase64String(inputBytes);
@@ -106,7 +106,7 @@ namespace JWT
 		}
 
 		// from JWT spec
-		public static byte[] Base64UrlDecode(string input)
+		private static byte[] Base64UrlDecode(string input)
 		{
 			var output = input;
 			output = output.Replace('-', '+'); // 62nd char of encoding
