@@ -14,11 +14,11 @@ namespace JWT
 		HS512
 	}
 
-	public class JWT
+	public class JsonWebToken
 	{
 		private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
 
-		static JWT()
+		static JsonWebToken()
 		{
 			HashAlgorithms = new Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>>
 			{
@@ -55,14 +55,14 @@ namespace JWT
 		public static string Decode(string token, string key, bool verify)
 		{
 			var parts = token.Split('.');
-			var header = Encoding.UTF8.GetString(Base64UrlDecode(parts[0]));
-			var payload = Encoding.UTF8.GetString(Base64UrlDecode(parts[1]));
+			var header = parts[0];
+			var payload = parts[1];
 			var crypto = Base64UrlDecode(parts[2]);
 
 			var json = new JsonSerializer();
 
-			var headerData = JObject.Parse(header);
-			var payloadData = JObject.Parse(payload);
+			var headerData = JObject.Parse(Encoding.UTF8.GetString(Base64UrlDecode(header)));
+			var payloadData = JObject.Parse(Encoding.UTF8.GetString(Base64UrlDecode(payload)));
 
 			if (verify)
 			{
@@ -71,8 +71,10 @@ namespace JWT
 				var algorithm = (string)headerData["alg"];
 
 				var signature = HashAlgorithms[GetHashAlgorithm(algorithm)](keyBytes, bytesToSign);
+				var decodedCrypto = Encoding.UTF8.GetString(crypto);
+				var decodedSignature = Encoding.UTF8.GetString(signature);
 
-				if (crypto != signature)
+				if (decodedCrypto != decodedSignature)
 				{
 					throw new ApplicationException("Invalid signature");
 				}
