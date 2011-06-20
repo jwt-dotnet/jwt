@@ -4,8 +4,9 @@ See [the spec][0]
 
 ## Usage (coming soon)
 
-    JWT.Encode()
-	JWT.Decode()
+    using JWT;
+    JsonWebToken.Encode()
+    JsonWebToken.Decode()
 
 
  [0]: http://self-issued.info/docs/draft-jones-json-web-token-01.html
