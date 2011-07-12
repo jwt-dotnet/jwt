@@ -1,11 +1,10 @@
-if not exist download mkdir download
-if not exist download\package mkdir download\package
-if not exist download\package\lib mkdir download\package\lib
-if not exist download\package\lib\3.5 mkdir download\package\lib\3.5
+tools\nuget.exe update -self
 
-copy JWT\bin\Release\*.dll download
-copy LICENSE.txt download
+if not exist package mkdir package
+if not exist package mkdir package
+if not exist package\lib mkdir package\lib
+if not exist package\lib\3.5 mkdir package\lib\3.5
 
-copy JWT\bin\Release\JWT.dll download\package\lib\3.5\
+copy JWT\bin\Release\JWT.dll package\lib\3.5\
 
-tools\nuget.exe pack JWT.nuspec -b download\package -o download
+tools\nuget.exe pack JWT.nuspec -BasePath package

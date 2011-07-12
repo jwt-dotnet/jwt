@@ -33,16 +33,19 @@ namespace JWT
 			var segments = new List<string>();
 			var header = new { typ = "JWT", alg = algorithm.ToString() };
 
-			segments.Add(Base64UrlEncode(JsonConvert.SerializeObject(header, Formatting.Indented)));
-			segments.Add(Base64UrlEncode(JsonConvert.SerializeObject(payload, Formatting.Indented)));
+			byte[] headerBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header, Formatting.None));
+			byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload, Formatting.None));
+
+			segments.Add(Base64UrlEncode(headerBytes));
+			segments.Add(Base64UrlEncode(payloadBytes));
 
 			var stringToSign = string.Join(".", segments.ToArray());
 
 			var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 			var keyBytes = Encoding.UTF8.GetBytes(key);
 
-			var signature = HashAlgorithms[algorithm](keyBytes, bytesToSign);
-			segments.Add(Base64UrlEncode(Encoding.UTF8.GetString(signature)));
+			byte[] signature = HashAlgorithms[algorithm](keyBytes, bytesToSign);
+			segments.Add(Base64UrlEncode(signature));
 
 			return string.Join(".", segments.ToArray());
 		}
@@ -57,12 +60,12 @@ namespace JWT
 			var parts = token.Split('.');
 			var header = parts[0];
 			var payload = parts[1];
-			var crypto = Base64UrlDecode(parts[2]);
+			byte[] crypto = Base64UrlDecode(parts[2]);
 
-			var json = new JsonSerializer();
-
-			var headerData = JObject.Parse(Encoding.UTF8.GetString(Base64UrlDecode(header)));
-			var payloadData = JObject.Parse(Encoding.UTF8.GetString(Base64UrlDecode(payload)));
+			var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
+			var headerData = JObject.Parse(headerJson);
+			var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
+			var payloadData = JObject.Parse(payloadJson);
 
 			if (verify)
 			{
@@ -71,12 +74,12 @@ namespace JWT
 				var algorithm = (string)headerData["alg"];
 
 				var signature = HashAlgorithms[GetHashAlgorithm(algorithm)](keyBytes, bytesToSign);
-				var decodedCrypto = Encoding.UTF8.GetString(crypto);
-				var decodedSignature = Encoding.UTF8.GetString(signature);
+				var decodedCrypto = Convert.ToBase64String(crypto);
+				var decodedSignature = Convert.ToBase64String(signature);
 
 				if (decodedCrypto != decodedSignature)
 				{
-					throw new ApplicationException("Invalid signature");
+					throw new ApplicationException(string.Format("Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
 				}
 			}
 
@@ -95,10 +98,9 @@ namespace JWT
 		}
 
 		// from JWT spec
-		private static string Base64UrlEncode(string input)
+		private static string Base64UrlEncode(byte[] input)
 		{
-			var inputBytes = Encoding.UTF8.GetBytes(input);
-			var output = Convert.ToBase64String(inputBytes);
+			var output = Convert.ToBase64String(input);
 			output = output.Split('=')[0]; // Remove any trailing '='s
 			output = output.Replace('+', '-'); // 62nd char of encoding
 			output = output.Replace('/', '_'); // 63rd char of encoding
@@ -118,7 +120,8 @@ namespace JWT
 				case 3: output += "="; break; // One pad char
 				default: throw new System.Exception("Illegal base64url string!");
 			}
-			return Convert.FromBase64String(output); // Standard base64 decoder
+			var converted = Convert.FromBase64String(output); // Standard base64 decoder
+			return converted;
 		}
 	}
 
