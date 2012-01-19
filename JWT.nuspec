@@ -2,14 +2,14 @@
 <package>
 	<metadata>
 		<id>JWT</id>
-		<version>1.0</version>
+		<version>1.1.1</version>
 		<authors>John Sheehan</authors>
 		<description>JWT (JSON Web Token) Implementation for .NET (Public Domain)</description>
 		<language>en-US</language>
 		<projectUrl>http://github.com/johnsheehan/jwt</projectUrl>
 		<tags>jwt json</tags>
 		<dependencies>
-			<dependency id="JSON.NET" />
+			<dependency id="Newtonsoft.Json" />
 		</dependencies>
 	</metadata>
 </package>
