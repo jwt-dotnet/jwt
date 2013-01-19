@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Web.Script.Serialization;
 
 namespace JWT
 {
@@ -14,9 +13,13 @@ namespace JWT
 		HS512
 	}
 
-	public class JsonWebToken
+	/// <summary>
+	/// Provides methods for encoding and decoding JSON Web Tokens.
+	/// </summary>
+	public static class JsonWebToken
 	{
 		private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
+		private static JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
 
 		static JsonWebToken()
 		{
@@ -28,13 +31,20 @@ namespace JWT
 			};
 		}
 
+		/// <summary>
+		/// Creates a JWT given a payload, the signing key, and the algorithm to use.
+		/// </summary>
+		/// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+		/// <param name="key">The key used to sign the token.</param>
+		/// <param name="algorithm">The hash algorithm to use.</param>
+		/// <returns>The generated JWT.</returns>
 		public static string Encode(object payload, string key, JwtHashAlgorithm algorithm)
 		{
 			var segments = new List<string>();
 			var header = new { typ = "JWT", alg = algorithm.ToString() };
 
-			byte[] headerBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header, Formatting.None));
-			byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload, Formatting.None));
+			byte[] headerBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(header));
+			byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(payload));
 
 			segments.Add(Base64UrlEncode(headerBytes));
 			segments.Add(Base64UrlEncode(payloadBytes));
@@ -50,12 +60,15 @@ namespace JWT
 			return string.Join(".", segments.ToArray());
 		}
 
-		public static string Decode(string token, string key)
-		{
-			return Decode(token, key, true);
-		}
-
-		public static string Decode(string token, string key, bool verify)
+		/// <summary>
+		/// Given a JWT, decode it and return the JSON payload.
+		/// </summary>
+		/// <param name="token">The JWT.</param>
+		/// <param name="key">The key that was used to sign the JWT.</param>
+		/// <param name="verify">Whether to verify the signature (default is true).</param>
+		/// <returns>A string containing the JSON payload.</returns>
+		/// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+		public static string Decode(string token, string key, bool verify = true)
 		{
 			var parts = token.Split('.');
 			var header = parts[0];
@@ -63,9 +76,8 @@ namespace JWT
 			byte[] crypto = Base64UrlDecode(parts[2]);
 
 			var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
-			var headerData = JObject.Parse(headerJson);
+			var headerData = jsonSerializer.Deserialize<Dictionary<string,object>>(headerJson);
 			var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
-			var payloadData = JObject.Parse(payloadJson);
 
 			if (verify)
 			{
@@ -79,11 +91,26 @@ namespace JWT
 
 				if (decodedCrypto != decodedSignature)
 				{
-					throw new ApplicationException(string.Format("Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
+					throw new SignatureVerificationException(string.Format("Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
 				}
 			}
 
-			return payloadData.ToString();
+			return payloadJson;
+		}
+
+		/// <summary>
+		/// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+		/// </summary>
+		/// <param name="token">The JWT.</param>
+		/// <param name="key">The key that was used to sign the JWT.</param>
+		/// <param name="verify">Whether to verify the signature (default is true).</param>
+		/// <returns>An object representing the payload.</returns>
+		/// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+		public static object DecodeToObject(string token, string key, bool verify = true)
+		{
+			var payloadJson = JsonWebToken.Decode(token, key, verify);
+			var payloadData = jsonSerializer.Deserialize<Dictionary<string,object>>(payloadJson);
+			return payloadData;
 		}
 
 		private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
@@ -93,7 +120,7 @@ namespace JWT
 				case "HS256": return JwtHashAlgorithm.HS256;
 				case "HS384": return JwtHashAlgorithm.HS384;
 				case "HS512": return JwtHashAlgorithm.HS512;
-				default: throw new InvalidOperationException("Algorithm not supported.");
+				default: throw new SignatureVerificationException("Algorithm not supported.");
 			}
 		}
 
@@ -125,4 +152,10 @@ namespace JWT
 		}
 	}
 
+	public class SignatureVerificationException : Exception
+	{
+		public SignatureVerificationException(string message) : base(message)
+		{
+		}
+	}
 }
