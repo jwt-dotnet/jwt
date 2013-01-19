@@ -1,12 +1,47 @@
 # JSON Web Token (JWT) Implementation for .NET
 
-See [the spec][0]
+This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
 
-## Usage (coming soon)
+## Installation
+The easiest way to install is via NuGet.  See [here](https://nuget.org/packages/JWT).  Else, you can download and compile it yourself.
 
-    using JWT;
-    JsonWebToken.Encode()
-    JsonWebToken.Decode()
+## Usage
+### Creating Tokens
+    var payload = new Dictionary<string, object>() {
+        { "claim1", 0 },
+        { "claim2", "claim2-value" }
+    };
+    var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+    string token = JWT.JsonWebToken.Encode(payload, secretKey, JWT.JwtHashAlgorithm.HS256);
+    Console.Out.WriteLine(token);
 
+Output will be:
 
- [0]: http://self-issued.info/docs/draft-jones-json-web-token-01.html
+    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
+
+### Verifying and Decoding Tokens
+
+    var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
+    var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+    try
+    {
+        string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey);
+        Console.Out.WriteLine(jsonPayload);
+    }
+    catch (JWT.SignatureVerificationException)
+    {
+        Console.Out.WriteLine("Invalid token!");
+    }
+
+Output will be:
+
+    {"claim1":0,"claim2":"claim2-value"}
+
+You can also deserialize the JSON payload directly to a .Net object with DecodeToObject:
+
+    var payload = JWT.JsonWebToken.DecodeToObject(token, secretKey) as IDictionary<string, object>;
+    Console.Out.WriteLine(payload["claim2"]);
+
+which will output:
+    
+    claim2-value
