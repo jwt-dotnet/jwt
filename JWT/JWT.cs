@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Script.Serialization;
+using JWT.Exceptions;
 
 namespace JWT
 {
     public enum JwtHashAlgorithm
     {
+// ReSharper disable InconsistentNaming
         HS256,
         HS384,
         HS512
+// ReSharper restore InconsistentNaming
     }
 
     /// <summary>
@@ -18,8 +21,8 @@ namespace JWT
     /// </summary>
     public static class JsonWebToken
     {
-        private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
-        private static JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
+        private static readonly Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
+        private static readonly JavaScriptSerializer JsonSerializer = new JavaScriptSerializer();
 
         static JsonWebToken()
         {
@@ -43,8 +46,8 @@ namespace JWT
             var segments = new List<string>();
             var header = new { typ = "JWT", alg = algorithm.ToString() };
 
-            byte[] headerBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(payload));
+            var headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
+            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
@@ -53,7 +56,7 @@ namespace JWT
 
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
-            byte[] signature = HashAlgorithms[algorithm](key, bytesToSign);
+            var signature = HashAlgorithms[algorithm](key, bytesToSign);
             segments.Add(Base64UrlEncode(signature));
 
             return string.Join(".", segments.ToArray());
@@ -81,19 +84,35 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         public static string Decode(string token, byte[] key, bool verify = true)
         {
+            if (token == null)
+            {
+                throw new ArgumentNullException("token");
+            }
+
             var parts = token.Split('.');
-            var header = parts[0];
-            var payload = parts[1];
-            byte[] crypto = Base64UrlDecode(parts[2]);
+            string header;
+            string payload;
+            byte[] crypto;
+
+            try
+            {
+                header = parts[0];
+                payload = parts[1];
+                crypto = Base64UrlDecode(parts[2]);
+            }
+            catch (IndexOutOfRangeException ior)
+            {
+                throw new JwtFormatException("Invalid JWT format.", ior);
+            }
 
             var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
-            var headerData = jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
             var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
 
             if (verify)
             {
                 var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
-                var algorithm = (string)headerData["alg"];
+                var algorithm = (string) headerData["alg"];
 
                 var signature = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
                 var decodedCrypto = Convert.ToBase64String(crypto);
@@ -101,7 +120,8 @@ namespace JWT
 
                 if (decodedCrypto != decodedSignature)
                 {
-                    throw new SignatureVerificationException(string.Format("Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
+                    throw new SignatureVerificationException(string.Format(
+                        "Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
                 }
             }
 
@@ -131,8 +151,8 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
-            var payloadJson = JsonWebToken.Decode(token, key, verify);
-            var payloadData = jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+            var payloadJson = Decode(token, key, verify);
+            var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
 
@@ -168,18 +188,10 @@ namespace JWT
                 case 0: break; // No pad chars in this case
                 case 2: output += "=="; break; // Two pad chars
                 case 3: output += "="; break; // One pad char
-                default: throw new System.Exception("Illegal base64url string!");
+                default: throw new Exception("Illegal base64url string!");
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
-        }
-    }
-
-    public class SignatureVerificationException : Exception
-    {
-        public SignatureVerificationException(string message)
-            : base(message)
-        {
         }
     }
 }
