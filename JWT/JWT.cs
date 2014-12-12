@@ -82,6 +82,10 @@ namespace JWT
         public static string Decode(string token, byte[] key, bool verify = true)
         {
             var parts = token.Split('.');
+            if (parts.Length != 3)
+            {
+                throw new ArgumentException("Token must consist from 3 delimited by dot parts");
+            }
             var header = parts[0];
             var payload = parts[1];
             byte[] crypto = Base64UrlDecode(parts[2]);
