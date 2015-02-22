@@ -82,6 +82,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="JwtFormatException">Thrown if the provided token does not contain all of the necessary parts.</exception> 
         public static string Decode(string token, byte[] key, bool verify = true)
         {
             if (token == null)
