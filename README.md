@@ -45,3 +45,17 @@ You can also deserialize the JSON payload directly to a .Net object with DecodeT
 which will output:
     
     claim2-value
+
+#### exp claim
+
+As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4) the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
+
+    var now = Math.Round((DateTime.UtcNow - new DateTime(1970,1,1,0,0,0,DateTimeKind.Utc)).TotalSeconds);
+    var payload = new Dictionary<string, object>() {
+        { "exp", now }
+    };
+    var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+    string token = JWT.JsonWebToken.Encode(payload, secretKey, JWT.JwtHashAlgorithm.HS256);
+
+    string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey);
+    // !! JWT.SignatureVerificationException
