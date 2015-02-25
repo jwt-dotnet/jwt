@@ -107,6 +107,25 @@ namespace JWT
                 {
                     throw new SignatureVerificationException(string.Format("Invalid signature. Expected {0} got {1}", decodedCrypto, decodedSignature));
                 }
+
+                // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
+                var payloadData = jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+                if (payloadData.ContainsKey("exp") && payloadData["exp"] != null)
+                {
+                    // safely unpack a boxed int 
+                    int exp;
+                    try { exp = (int)payloadData["exp"]; }
+                    catch (Exception) 
+                    { 
+                        throw new SignatureVerificationException("Claim 'exp' must be an integer.");
+                    }
+
+                    var secondsSinceEpoch = Math.Round((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+                    if (secondsSinceEpoch >= exp)
+                    {
+                        throw new SignatureVerificationException("Token has expired.");
+                    }
+                }
             }
 
             return payloadJson;
