@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 //using System.Security.Cryptography;
 using System.Text;
-//using System.Web.Script.Serialization;
 using PCLCrypto;
-using Newtonsoft.Json;
+using Simple;
+//using Newtonsoft.Json;
 
-namespace JWT
+namespace JWT.Portable
 {
     public enum JwtHashAlgorithm
     {
@@ -21,7 +21,6 @@ namespace JWT
     public static class JsonWebToken
     {
         private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
-        //private static JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
         
         static JsonWebToken()
         {
@@ -45,9 +44,6 @@ namespace JWT
                         return PCLCrypto.WinRTCrypto.CryptographicEngine.Sign(hmacKey, value);
                     }
                 }
-                //{ JwtHashAlgorithm.HS256, (key, value) => { using (var sha = new HMACSHA256(key)) { return sha.ComputeHash(value); } } },
-                //{ JwtHashAlgorithm.HS384, (key, value) => { using (var sha = new HMACSHA384(key)) { return sha.ComputeHash(value); } } },
-                //{ JwtHashAlgorithm.HS512, (key, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } }
             };
         }
 
@@ -63,9 +59,9 @@ namespace JWT
             var segments = new List<string>();
             var header = new { typ = "JWT", alg = algorithm.ToString() };
 
-            
-            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload));
+
+            byte[] headerBytes = Encoding.UTF8.GetBytes(SimpleJson.SerializeObject(header));
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(SimpleJson.SerializeObject(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
@@ -115,7 +111,7 @@ namespace JWT
             var payloadbytes = Base64UrlDecode(payload);
 
             var headerJson = Encoding.UTF8.GetString(headerbytes, 0, headerbytes.Length);
-            var headerData = JsonConvert.DeserializeObject<Dictionary<string, object>>(headerJson);
+            var headerData = Simple.SimpleJson.DeserializeObject<Dictionary<string, object>>(headerJson);
             var payloadJson = Encoding.UTF8.GetString(payloadbytes, 0, payloadbytes.Length);
 
             if (verify)
@@ -160,7 +156,7 @@ namespace JWT
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
             var payloadJson = JsonWebToken.Decode(token, key, verify);
-            var payloadData = JsonConvert.DeserializeObject<Dictionary<string, object>>(payloadJson);
+            var payloadData = Simple.SimpleJson.DeserializeObject<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
 

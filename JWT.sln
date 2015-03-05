@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT", "JWT\JWT.csproj", "{A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Portable", "JWT.Portable\JWT.Portable.csproj", "{153F50C4-C50A-4C3F-AA7B-16A19A3015E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Portable.Tests", "JWT.Portable.Tests\JWT.Portable.Tests.csproj", "{DCEA251E-667A-4BB3-8209-B28621C8D193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests", "JWT.Tests\JWT.Tests.csproj", "{927C1623-F33C-423B-B40A-B977E5373915}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{153F50C4-C50A-4C3F-AA7B-16A19A3015E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{153F50C4-C50A-4C3F-AA7B-16A19A3015E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{153F50C4-C50A-4C3F-AA7B-16A19A3015E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCEA251E-667A-4BB3-8209-B28621C8D193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEA251E-667A-4BB3-8209-B28621C8D193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEA251E-667A-4BB3-8209-B28621C8D193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEA251E-667A-4BB3-8209-B28621C8D193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{927C1623-F33C-423B-B40A-B977E5373915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{927C1623-F33C-423B-B40A-B977E5373915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{927C1623-F33C-423B-B40A-B977E5373915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{927C1623-F33C-423B-B40A-B977E5373915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
