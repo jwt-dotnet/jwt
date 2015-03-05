@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>JWT.Portable</id>
-		<version>1.0.1-beta</version>
+		<version>1.0.2-beta</version>
 		<authors>John Sheehan, Michael Lehenbauer, Devin Rader</authors>
 		<description>Portable Class Library implementation of JWT (JSON Web Token) for .NET (Public Domain)</description>
 		<language>en-US</language>

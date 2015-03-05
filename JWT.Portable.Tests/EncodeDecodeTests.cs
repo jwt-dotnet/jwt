@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-
-
 namespace JWT.Tests
 {
     [TestClass]
