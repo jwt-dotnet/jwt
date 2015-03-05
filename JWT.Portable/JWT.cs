@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Security.Cryptography;
 using System.Text;
 using PCLCrypto;
 using Simple;
-//using Newtonsoft.Json;
 
-namespace JWT.Portable
+namespace JWT
 {
     public enum JwtHashAlgorithm
     {

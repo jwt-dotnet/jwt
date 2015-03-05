@@ -76,10 +76,6 @@
       <Project>{153f50c4-c50a-4c3f-aa7b-16a19a3015e7}</Project>
       <Name>JWT.Portable</Name>
     </ProjectReference>
-    <ProjectReference Include="..\JWT\JWT.csproj">
-      <Project>{a80b51b8-ddf6-4026-98a4-b59653e50b38}</Project>
-      <Name>JWT</Name>
-    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
 
-namespace JWT.Portable.Tests
+namespace JWT.Tests
 {
     [TestClass]
     public class EncodeDecodeTests
