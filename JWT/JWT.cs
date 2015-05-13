@@ -32,16 +32,19 @@ namespace JWT
         }
 
         /// <summary>
-        /// Creates a JWT given a payload, the signing key, and the algorithm to use.
+        /// Creates a JWT given a header, a payload, the signing key, and the algorithm to use.
         /// </summary>
+        /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers.</param>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
         /// <param name="key">The key bytes used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
-        public static string Encode(object payload, byte[] key, JwtHashAlgorithm algorithm)
+        public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
             var segments = new List<string>();
-            var header = new { typ = "JWT", alg = algorithm.ToString() };
+            var header = new Dictionary<string, object>(extraHeaders);
+            header.Add("typ", "JWT");
+            header.Add("alg", algorithm.ToString());
 
             byte[] headerBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(header));
             byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(payload));
@@ -66,9 +69,34 @@ namespace JWT
         /// <param name="key">The key used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
+        public static string Encode(object payload, byte[] key, JwtHashAlgorithm algorithm)
+        {
+            return Encode(new Dictionary<string, object>(), payload, key, algorithm);
+        }
+
+        /// <summary>
+        /// Creates a JWT given a set of arbitrary extra headers, a payload, the signing key, and the algorithm to use.
+        /// </summary>
+        /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers.</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="key">The key bytes used to sign the token.</param>
+        /// <param name="algorithm">The hash algorithm to use.</param>
+        /// <returns>The generated JWT.</returns>
+        public static string Encode(IDictionary<string, object> extraHeaders, object payload, string key, JwtHashAlgorithm algorithm)
+        {
+            return Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key), algorithm);
+        }
+
+        /// <summary>
+        /// Creates a JWT given a payload, the signing key, and the algorithm to use.
+        /// </summary>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="key">The key used to sign the token.</param>
+        /// <param name="algorithm">The hash algorithm to use.</param>
+        /// <returns>The generated JWT.</returns>
         public static string Encode(object payload, string key, JwtHashAlgorithm algorithm)
         {
-            return Encode(payload, Encoding.UTF8.GetBytes(key), algorithm);
+            return Encode(new Dictionary<string, object>(), payload, Encoding.UTF8.GetBytes(key), algorithm);
         }
 
         /// <summary>
