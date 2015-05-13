@@ -1,7 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT", "JWT\JWT.csproj", "{A80B51B8-DDF6-4026-98A4-B59653E50B38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests", "JWT.Tests\JWT.Tests.csproj", "{BF568781-D576-4545-A552-4DC839B1AF14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,10 @@ Global
 		{A80B51B8-DDF6-4026-98A4-B59653E50B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A80B51B8-DDF6-4026-98A4-B59653E50B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A80B51B8-DDF6-4026-98A4-B59653E50B38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF568781-D576-4545-A552-4DC839B1AF14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF568781-D576-4545-A552-4DC839B1AF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF568781-D576-4545-A552-4DC839B1AF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF568781-D576-4545-A552-4DC839B1AF14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
