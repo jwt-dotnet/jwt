@@ -59,3 +59,35 @@ As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-
 
     string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey);
     // !! JWT.SignatureVerificationException
+
+### Configure JSON Serialization
+
+By default JSON Serialization is done by System.Web.Script.Serialization.JavaScriptSerializer.  To configure a different one first implement the IJsonSerializer interface.
+```cs
+public class CustomJsonSerializer : IJsonSerializer
+{
+    public string Serialize(object obj)
+    {
+        // Implement using favorite JSON Serializer
+    }
+
+    public T Deserialize<T>(string json)
+    {
+        // Implement using favorite JSON Serializer
+    }
+}
+```
+
+Next configure this serializer as the JsonSerializer.
+```cs
+JsonWebToken.JsonSerializer = new CustomJsonSerializer();
+```
+
+### Configure Logging
+
+To enable logging of the encoded / decoded JSON, set Log using your favorite logger. 
+
+```cs
+JsonWebToken.Log = msg => Logger.Debug(msg);
+```
+

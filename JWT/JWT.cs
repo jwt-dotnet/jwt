@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web.Script.Serialization;
 
 namespace JWT
 {
@@ -19,7 +18,11 @@ namespace JWT
     public static class JsonWebToken
     {
         private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
-        private static JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
+
+        /// <summary>
+        /// Pluggable JSON Serializer
+        /// </summary>
+        public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
 
         static JsonWebToken()
         {
@@ -42,12 +45,14 @@ namespace JWT
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
             var segments = new List<string>();
-            var header = new Dictionary<string, object>(extraHeaders);
-            header.Add("typ", "JWT");
-            header.Add("alg", algorithm.ToString());
+            var header = new Dictionary<string, object>(extraHeaders)
+            {
+                {"typ", "JWT"}, 
+                {"alg", algorithm.ToString()}
+            };
 
-            byte[] headerBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(jsonSerializer.Serialize(payload));
+            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
+            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
@@ -119,8 +124,9 @@ namespace JWT
             byte[] crypto = Base64UrlDecode(parts[2]);
 
             var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
-            var headerData = jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
             var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
+
+            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             if (verify)
             {
@@ -137,12 +143,12 @@ namespace JWT
                 }
 
                 // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
-                var payloadData = jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+                var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
                 if (payloadData.ContainsKey("exp") && payloadData["exp"] != null)
                 {
                     // safely unpack a boxed int 
                     int exp;
-                    try { exp = (int)payloadData["exp"]; }
+                    try { exp = Convert.ToInt32(payloadData["exp"]); }
                     catch (Exception) 
                     { 
                         throw new SignatureVerificationException("Claim 'exp' must be an integer.");
@@ -183,7 +189,7 @@ namespace JWT
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
             var payloadJson = JsonWebToken.Decode(token, key, verify);
-            var payloadData = jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+            var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
 
@@ -199,7 +205,7 @@ namespace JWT
         public static T DecodeToObject<T>(string token, string key, bool verify = true)
         {
             var payloadJson = JsonWebToken.Decode(token, key, verify);
-            var payloadData = jsonSerializer.Deserialize<T>(payloadJson);
+            var payloadData = JsonSerializer.Deserialize<T>(payloadJson);
             return payloadData;
         }
 
