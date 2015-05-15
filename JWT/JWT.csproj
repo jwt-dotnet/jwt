@@ -38,6 +38,8 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IJsonSerializer.cs" />
+    <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="JWT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

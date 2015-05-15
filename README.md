@@ -20,7 +20,6 @@ Console.WriteLine(token);
 ```
 
 Output will be:
-
     eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
 
 ### Verifying and Decoding Tokens
@@ -69,4 +68,28 @@ var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 string token = JWT.JsonWebToken.Encode(payload, secretKey, JWT.JwtHashAlgorithm.HS256);
 
 string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey); // JWT.SignatureVerificationException!
+```
+
+### Configure JSON Serialization
+
+By default JSON Serialization is done by System.Web.Script.Serialization.JavaScriptSerializer.  To configure a different one first implement the IJsonSerializer interface.
+
+```csharp
+public class CustomJsonSerializer : IJsonSerializer
+{
+    public string Serialize(object obj)
+    {
+        // Implement using favorite JSON Serializer
+    }
+
+    public T Deserialize<T>(string json)
+    {
+        // Implement using favorite JSON Serializer
+    }
+}
+```
+
+Next configure this serializer as the JsonSerializer.
+```cs
+JsonWebToken.JsonSerializer = new CustomJsonSerializer();
 ```

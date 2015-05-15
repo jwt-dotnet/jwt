@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Web.Script.Serialization;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
 namespace JWT.Tests
@@ -15,7 +13,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Should_Encode_Type()
         {
-            string result = JWT.JsonWebToken.Encode(customer, "ABC", JwtHashAlgorithm.HS256);
+            string result = JsonWebToken.Encode(customer, "ABC", JwtHashAlgorithm.HS256);
 
             Assert.AreEqual(token, result);
         }
@@ -25,7 +23,44 @@ namespace JWT.Tests
         {
             var extraheaders = new Dictionary<string, object>() { {"foo", "bar"} };
             
-            string result = JWT.JsonWebToken.Encode(extraheaders, customer, "ABC", JwtHashAlgorithm.HS256);
+            string result = JsonWebToken.Encode(extraheaders, customer, "ABC", JwtHashAlgorithm.HS256);
+
+            Assert.AreEqual(extraheaderstoken, result);
+        }
+
+        [TestMethod]
+        public void Should_Encode_Type_With_ServiceStack()
+        {
+            JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
+            string result = JsonWebToken.Encode(customer, "ABC", JwtHashAlgorithm.HS256);
+
+            Assert.AreEqual(token, result);
+        }
+
+        [TestMethod]
+        public void Should_Encode_Type_With_ServiceStack_And_Extra_Headers() {
+            JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
+            
+            var extraheaders = new Dictionary<string, object>() { { "foo", "bar" } };
+            string result = JsonWebToken.Encode(extraheaders, customer, "ABC", JwtHashAlgorithm.HS256);
+
+            Assert.AreEqual(extraheaderstoken, result);
+        }
+
+        [TestMethod]
+        public void Should_Encode_Type_With_Newtonsoft_Serializer() {
+            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
+            string result = JsonWebToken.Encode(customer, "ABC", JwtHashAlgorithm.HS256);
+
+            Assert.AreEqual(token, result);
+        }
+
+        [TestMethod]
+        public void Should_Encode_Type_With_Newtonsoft_Serializer_And_Extra_Headers() {
+            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
+
+            var extraheaders = new Dictionary<string, object>() { { "foo", "bar" } };
+            string result = JsonWebToken.Encode(extraheaders, customer, "ABC", JwtHashAlgorithm.HS256);
 
             Assert.AreEqual(extraheaderstoken, result);
         }
