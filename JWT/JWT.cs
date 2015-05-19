@@ -17,12 +17,14 @@ namespace JWT
     /// </summary>
     public static class JsonWebToken
     {
-        private static Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
+        private static readonly IDictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
 
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
-        public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
+        public static readonly IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
+
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         static JsonWebToken()
         {
@@ -47,8 +49,8 @@ namespace JWT
             var segments = new List<string>();
             var header = new Dictionary<string, object>(extraHeaders)
             {
-                {"typ", "JWT"}, 
-                {"alg", algorithm.ToString()}
+                { "typ", "JWT" },
+                { "alg", algorithm.ToString() }
             };
 
             byte[] headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
@@ -121,7 +123,7 @@ namespace JWT
             }
             var header = parts[0];
             var payload = parts[1];
-            byte[] crypto = Base64UrlDecode(parts[2]);
+            var crypto = Base64UrlDecode(parts[2]);
 
             var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
             var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
@@ -154,7 +156,7 @@ namespace JWT
                         throw new SignatureVerificationException("Claim 'exp' must be an integer.");
                     }
 
-                    var secondsSinceEpoch = Math.Round((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+                    var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
                     if (secondsSinceEpoch >= exp)
                     {
                         throw new SignatureVerificationException("Token has expired.");
@@ -188,7 +190,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
-            var payloadJson = JsonWebToken.Decode(token, key, verify);
+            var payloadJson = Decode(token, key, verify);
             var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
@@ -204,7 +206,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         public static T DecodeToObject<T>(string token, string key, bool verify = true)
         {
-            var payloadJson = JsonWebToken.Decode(token, key, verify);
+            var payloadJson = Decode(token, key, verify);
             var payloadData = JsonSerializer.Deserialize<T>(payloadJson);
             return payloadData;
         }
@@ -240,8 +242,8 @@ namespace JWT
             {
                 case 0: break; // No pad chars in this case
                 case 2: output += "=="; break; // Two pad chars
-                case 3: output += "="; break; // One pad char
-                default: throw new System.Exception("Illegal base64url string!");
+                case 3: output += "="; break;  // One pad char
+                default: throw new Exception("Illegal base64url string!");
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
