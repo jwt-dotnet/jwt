@@ -22,7 +22,7 @@ namespace JWT
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
-        public static readonly IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
+        public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
@@ -282,14 +282,6 @@ namespace JWT
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
-        }
-    }
-
-    public class SignatureVerificationException : Exception
-    {
-        public SignatureVerificationException(string message)
-            : base(message)
-        {
         }
     }
 }
