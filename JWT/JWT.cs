@@ -245,6 +245,7 @@ namespace JWT
                 case "HS256": return JwtHashAlgorithm.HS256;
                 case "HS384": return JwtHashAlgorithm.HS384;
                 case "HS512": return JwtHashAlgorithm.HS512;
+                case "RS256": return JwtHashAlgorithm.RS256;
                 default: throw new SignatureVerificationException("Algorithm not supported.");
             }
         }
