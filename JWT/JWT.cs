@@ -26,6 +26,11 @@ namespace JWT
         /// </summary>
         public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
 
+        /// <summary>
+        /// Pluggable X509Certificate2 factory
+        /// </summary>
+        public static Func<byte[], string, X509KeyStorageFlags, X509Certificate2> X509Certificate2Factory = CreateX509Certificate2();
+
         static JsonWebToken()
         {
             HashAlgorithms = new Dictionary<JwtHashAlgorithm, Func<byte[], string, byte[], byte[]>>
@@ -37,9 +42,14 @@ namespace JWT
             };
         }
 
+        private static Func<byte[], string, X509KeyStorageFlags, X509Certificate2> CreateX509Certificate2()
+        {
+            return (key, secret, flags) => new X509Certificate2(key, secret, flags);
+        }
+
         private static byte[] RS256(byte[] key, string secret, byte[] value)
         {
-            var cert = new X509Certificate2(key, secret);
+            var cert = X509Certificate2Factory(key, secret, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable);
             var rsa = (RSACryptoServiceProvider)cert.PrivateKey;
             var param = new CspParameters
             {
