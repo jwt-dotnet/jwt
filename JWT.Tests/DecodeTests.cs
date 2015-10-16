@@ -113,8 +113,8 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SignatureVerificationException))]
-        public void Should_Throw_On_Expired_Token()
+        [ExpectedException(typeof(TokenExpiredException))]
+        public void Should_Throw_On_Expired_Claim()
         {
             var anHourAgoUtc = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
             Int32 unixTimestamp = (Int32)(anHourAgoUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;

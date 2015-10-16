@@ -114,6 +114,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static string Decode(string token, byte[] key, bool verify = true)
         {
             var parts = token.Split('.');
@@ -162,7 +163,7 @@ namespace JWT
                 {
                     exp = Convert.ToInt32(payloadData["exp"]);
                 }
-                catch (Exception)
+                catch (FormatException)
                 {
                     throw new SignatureVerificationException("Claim 'exp' must be an integer.");
                 }
@@ -170,7 +171,7 @@ namespace JWT
                 var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
                 if (secondsSinceEpoch >= exp)
                 {
-                    throw new SignatureVerificationException("Token has expired.");
+                    throw new TokenExpiredException("Token has expired.");
                 }
             }
         }
@@ -183,6 +184,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static string Decode(string token, string key, bool verify = true)
         {
             return Decode(token, Encoding.UTF8.GetBytes(key), verify);
@@ -196,6 +198,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static object DecodeToObject(string token, byte[] key, bool verify = true)
         {
             var payloadJson = Decode(token, key, verify);
@@ -211,6 +214,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
             return DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
@@ -225,6 +229,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static T DecodeToObject<T>(string token, byte[] key, bool verify = true)
         {
             var payloadJson = Decode(token, key, verify);
@@ -241,6 +246,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
+        /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static T DecodeToObject<T>(string token, string key, bool verify = true)
         {
             return DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
@@ -278,7 +284,7 @@ namespace JWT
                 case 0: break; // No pad chars in this case
                 case 2: output += "=="; break; // Two pad chars
                 case 3: output += "="; break;  // One pad char
-                default: throw new Exception("Illegal base64url string!");
+                default: throw new FormatException("Illegal base64url string!");
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
