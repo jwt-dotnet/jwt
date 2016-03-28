@@ -173,6 +173,25 @@ namespace JWT
                     throw new SignatureVerificationException("Token has expired.");
                 }
             }
+            // verify nbf claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.5
+            if (payloadData.ContainsKey("nbf") && payloadData["nbf"] != null)
+            {
+                int nbf;
+                try
+                {
+                    nbf = Convert.ToInt32(payloadData["nbf"]);
+                }
+                catch (Exception)
+                {
+                    throw new SignatureVerificationException("Claim 'nbf' must be an integer.");
+                }
+
+                var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
+                if (secondsSinceEpoch < nbf)
+                {
+                    throw new SignatureVerificationException("Token is not yet valid.");
+                }
+            }
         }
 
         /// <summary>

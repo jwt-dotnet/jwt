@@ -11,7 +11,7 @@ namespace JWT.Tests
     {
         private static readonly Customer customer = new Customer { FirstName = "Bob", Age = 37 };
 
-        private const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";
+        private const string token =          "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";
         private const string malformedtoken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";
 
         private static readonly IDictionary<string, object> dictionaryPayload = new Dictionary<string, object>
@@ -96,6 +96,17 @@ namespace JWT.Tests
 
         [TestMethod]
         [ExpectedException(typeof(SignatureVerificationException))]
+        public void Should_Throw_On_Tampered_Token_PayloadPart()
+        {
+            var parts = token.Split('.');
+            
+            var tamperedToken = parts[0] + "." + "abc" + parts[1].Substring(3) + "." + parts[2];
+
+            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(tamperedToken, "ABC", true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SignatureVerificationException))]
         public void Should_Throw_On_Invalid_Key()
         {
             string invalidkey = "XYZ";
@@ -122,6 +133,27 @@ namespace JWT.Tests
             var invalidexptoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
             JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(SignatureVerificationException))]
+        public void Should_Throw_On_Before_NotBefore_Token()
+        {
+            var anHourFromNowUtc = DateTime.UtcNow.Add(new TimeSpan(1, 0, 0));
+            Int32 unixTimestamp = (Int32)(anHourFromNowUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+            var invalidnbftoken = JsonWebToken.Encode(new { nbf = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
+
+            JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", true);
+        }
+
+        [TestMethod]
+        public void Should_Decode_Token_After_NotBefore_Token_Becomes_Valid()
+        {
+
+            var validnbftoken = JsonWebToken.Encode(new { nbf = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
+
+            JsonWebToken.DecodeToObject<Customer>(validnbftoken, "ABC", true);
         }
     }
 
