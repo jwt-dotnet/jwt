@@ -150,6 +150,8 @@ namespace JWT.Tests
         [TestMethod]
         public void Should_Decode_Token_After_NotBefore_Token_Becomes_Valid()
         {
+            var nowUtc = DateTime.UtcNow;
+            Int32 unixTimestamp = (Int32)(nowUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
             var validnbftoken = JsonWebToken.Encode(new { nbf = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
