@@ -26,7 +26,7 @@ namespace JWT.Tests
             var jsonSerializer = new JavaScriptSerializer();
             var expectedPayload = jsonSerializer.Serialize(customer);
 
-            string decodedPayload = JsonWebToken.Decode(token, "ABC", false);
+            string decodedPayload = JsonWebToken.Decode(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             Assert.AreEqual(expectedPayload, decodedPayload);
         }
@@ -34,7 +34,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Should_Decode_Token_To_Dictionary()
         {
-            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", false);
+            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
@@ -44,7 +44,7 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", false);
+            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
@@ -54,7 +54,7 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
 
-            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", false);
+            object decodedPayload = JsonWebToken.DecodeToObject(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
@@ -62,7 +62,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Should_Decode_Token_To_Generic_Type()
         {
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", false);
+            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(customer);
         }
@@ -72,7 +72,7 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", false);
+            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(customer);
         }
@@ -82,7 +82,7 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
 
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", false);
+            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(token, "ABC", JwtHashAlgorithm.HS256, false);
 
             decodedPayload.ShouldBeEquivalentTo(customer);
         }
@@ -91,7 +91,7 @@ namespace JWT.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void Should_Throw_On_Malformed_Token()
         {
-            JsonWebToken.DecodeToObject<Customer>(malformedtoken, "ABC", false);
+            JsonWebToken.DecodeToObject<Customer>(malformedtoken, "ABC", JwtHashAlgorithm.HS256, false);
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace JWT.Tests
         {
             string invalidkey = "XYZ";
 
-            JsonWebToken.DecodeToObject<Customer>(token, invalidkey, true);
+            JsonWebToken.DecodeToObject<Customer>(token, invalidkey, JwtHashAlgorithm.HS256, true);
         }
 
         [TestMethod]
@@ -109,7 +109,7 @@ namespace JWT.Tests
         {
             var invalidexptoken = JsonWebToken.Encode(new { exp = "asdsad" }, "ABC", JwtHashAlgorithm.HS256);
 
-            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true);
+            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", JwtHashAlgorithm.HS256, true);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace JWT.Tests
 
             var invalidexptoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
-            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true);
+            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", JwtHashAlgorithm.HS256, true);
         }
     }
 

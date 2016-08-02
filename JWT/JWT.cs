@@ -114,7 +114,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static string Decode(string token, byte[] key, bool verify = true)
+        public static string Decode(string token, byte[] key, JwtHashAlgorithm algorithm, bool verify = true)
         {
             var parts = token.Split('.');
             if (parts.Length != 3)
@@ -133,9 +133,7 @@ namespace JWT
             if (verify)
             {
                 var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
-                var algorithm = (string)headerData["alg"];
-
-                var signature = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
+                var signature = HashAlgorithms[algorithm](key, bytesToSign);
                 var decodedCrypto = Convert.ToBase64String(crypto);
                 var decodedSignature = Convert.ToBase64String(signature);
 
@@ -183,9 +181,9 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static string Decode(string token, string key, bool verify = true)
+        public static string Decode(string token, string key, JwtHashAlgorithm algorithm, bool verify = true)
         {
-            return Decode(token, Encoding.UTF8.GetBytes(key), verify);
+            return Decode(token, Encoding.UTF8.GetBytes(key), algorithm, verify);
         }
 
         /// <summary>
@@ -196,9 +194,9 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static object DecodeToObject(string token, byte[] key, bool verify = true)
+        public static object DecodeToObject(string token, byte[] key, JwtHashAlgorithm algorithm, bool verify = true)
         {
-            var payloadJson = Decode(token, key, verify);
+            var payloadJson = Decode(token, key, algorithm, verify);
             var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
             return payloadData;
         }
@@ -211,9 +209,9 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static object DecodeToObject(string token, string key, bool verify = true)
+        public static object DecodeToObject(string token, string key, JwtHashAlgorithm algorithm, bool verify = true)
         {
-            return DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
+            return DecodeToObject(token, Encoding.UTF8.GetBytes(key), algorithm, verify);
         }
 
         /// <summary>
@@ -225,9 +223,9 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static T DecodeToObject<T>(string token, byte[] key, bool verify = true)
+        public static T DecodeToObject<T>(string token, byte[] key, JwtHashAlgorithm algorithm, bool verify = true)
         {
-            var payloadJson = Decode(token, key, verify);
+            var payloadJson = Decode(token, key, algorithm, verify);
             var payloadData = JsonSerializer.Deserialize<T>(payloadJson);
             return payloadData;
         }
@@ -241,9 +239,9 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
-        public static T DecodeToObject<T>(string token, string key, bool verify = true)
+        public static T DecodeToObject<T>(string token, string key, JwtHashAlgorithm algorithm, bool verify = true)
         {
-            return DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
+            return DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), algorithm, verify);
         }
 
         private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
