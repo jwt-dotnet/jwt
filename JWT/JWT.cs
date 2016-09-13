@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace JWT
@@ -10,7 +11,7 @@ namespace JWT
     /// </summary>
     public static class JsonWebToken
     {
-        private static readonly IDictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
+        private static readonly IDictionary<JwtHashAlgorithm, Func<byte[], string, byte[], byte[]>> HashAlgorithms;
 
         /// <summary>
         /// Pluggable JSON Serializer
@@ -21,11 +22,12 @@ namespace JWT
 
         static JsonWebToken()
         {
-            HashAlgorithms = new Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>>
+            HashAlgorithms = new Dictionary<JwtHashAlgorithm, Func<byte[], string, byte[], byte[]>>
             {
-                { JwtHashAlgorithm.HS256, (key, value) => { using (var sha = new HMACSHA256(key)) { return sha.ComputeHash(value); } } },
-                { JwtHashAlgorithm.HS384, (key, value) => { using (var sha = new HMACSHA384(key)) { return sha.ComputeHash(value); } } },
-                { JwtHashAlgorithm.HS512, (key, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } }
+                { JwtHashAlgorithm.HS256, (key, _, value) => { using (var sha = new HMACSHA256(key)) { return sha.ComputeHash(value); } } },
+                { JwtHashAlgorithm.HS384, (key, _, value) => { using (var sha = new HMACSHA384(key)) { return sha.ComputeHash(value); } } },
+                { JwtHashAlgorithm.HS512, (key, _, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } },
+                { JwtHashAlgorithm.RS256, (key, secret, value) => RS256(key, secret, value) }
             };
         }
 
@@ -38,7 +40,7 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(object payload, string key, JwtHashAlgorithm algorithm)
         {
-            return Encode(new Dictionary<string, object>(), payload, Encoding.UTF8.GetBytes(key), algorithm);
+            return Encode(new Dictionary<string, object>(), payload, Encoding.UTF8.GetBytes(key), null, algorithm);
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
-            return Encode(new Dictionary<string, object>(), payload, key, algorithm);
+            return Encode(new Dictionary<string, object>(), payload, key, null, algorithm);
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, string key, JwtHashAlgorithm algorithm)
         {
-            return Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key), algorithm);
+            return Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key), null, algorithm);
         }
 
         /// <summary>
@@ -76,6 +78,20 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
+            return Encode(extraHeaders, payload, key, null, algorithm);
+        }
+
+        /// <summary>
+        /// Creates a JWT given a payload, the signing key, and the algorithm to use.
+        /// </summary>
+        /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers.</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="key">The key bytes used to sign the token.</param>
+        /// <param name="secret">The secret for the hash algorithm.</param>
+        /// <param name="algorithm">The hash algorithm to use.</param>
+        /// <returns>The generated JWT.</returns>
+        public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, string secret, JwtHashAlgorithm algorithm)
+        {
             var segments = new List<string>();
             var header = new Dictionary<string, object>(extraHeaders)
             {
@@ -84,15 +100,15 @@ namespace JWT
             };
 
             var headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
-            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
-
             segments.Add(Base64UrlEncode(headerBytes));
+
+            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
             segments.Add(Base64UrlEncode(payloadBytes));
 
             var stringToSign = string.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
-            var signature = HashAlgorithms[algorithm](key, bytesToSign);
+            var signature = HashAlgorithms[algorithm](key, secret, bytesToSign);
             segments.Add(Base64UrlEncode(signature));
 
             return string.Join(".", segments.ToArray());
@@ -237,6 +253,19 @@ namespace JWT
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
+        }
+
+        private static byte[] RS256(byte[] key, string secret, byte[] value)
+        {
+            var cert = new X509Certificate2(key, secret);
+            var rsa = (RSACryptoServiceProvider)cert.PrivateKey;
+            var param = new CspParameters
+            {
+                KeyContainerName = rsa.CspKeyContainerInfo.KeyContainerName,
+                KeyNumber = rsa.CspKeyContainerInfo.KeyNumber == KeyNumber.Exchange ? 1 : 2
+            };
+            var csp = new RSACryptoServiceProvider(param) { PersistKeyInCsp = false };
+            return csp.SignData(value, "SHA256");
         }
 
         private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
