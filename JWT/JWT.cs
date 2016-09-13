@@ -53,20 +53,19 @@ namespace JWT
                 { "alg", algorithm.ToString() }
             };
 
-            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
+            var headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
+            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
 
-            var stringToSign = string.Join(".", segments);
-
+            var stringToSign = string.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
-            byte[] signature = HashAlgorithms[algorithm](key, bytesToSign);
+            var signature = HashAlgorithms[algorithm](key, bytesToSign);
             segments.Add(Base64UrlEncode(signature));
 
-            return string.Join(".", segments);
+            return string.Join(".", segments.ToArray());
         }
 
         /// <summary>
@@ -163,7 +162,7 @@ namespace JWT
             int expInt;
             try
             {
-                expInt = Convert.ToInt32(CultureInfo.InvariantCulture, expObj);
+                expInt = Convert.ToInt32(expObj);
             }
             catch (FormatException)
             {
