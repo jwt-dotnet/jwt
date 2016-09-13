@@ -155,15 +155,15 @@ namespace JWT
 
             // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
             var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
-            object exp;
-            if (!payloadData.TryGetValue("exp", out exp) || exp == null)
+            object expObj;
+            if (!payloadData.TryGetValue("exp", out expObj) || expObj == null)
             {
                 return;
             }
             int expInt;
             try
             {
-                expInt = Convert.ToInt32(CultureInfo.InvariantCulture, exp);
+                expInt = Convert.ToInt32(CultureInfo.InvariantCulture, expObj);
             }
             catch (FormatException)
             {
