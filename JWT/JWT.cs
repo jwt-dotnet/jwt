@@ -5,14 +5,7 @@ using System.Text;
 
 namespace JWT
 {
-    public enum JwtHashAlgorithm
-    {
-        HS256,
-        HS384,
-        HS512
-    }
-
-    /// <summary>
+	/// <summary>
     /// Provides methods for encoding and decoding JSON Web Tokens.
     /// </summary>
     public static class JsonWebToken
