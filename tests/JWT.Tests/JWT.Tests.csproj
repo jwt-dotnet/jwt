@@ -74,7 +74,7 @@
     <Compile Include="Serializers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JWT\JWT.csproj">
+    <ProjectReference Include="..\..\src\JWT\JWT.csproj">
       <Project>{a80b51b8-ddf6-4026-98a4-b59653e50b38}</Project>
       <Name>JWT</Name>
     </ProjectReference>
