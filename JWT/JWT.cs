@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JWT
 {
@@ -10,6 +12,30 @@ namespace JWT
         HS256,
         HS384,
         HS512
+    }
+
+    public static class Extensions
+    {
+        private static readonly Regex HEX_SANITY =
+            new Regex(@"^[0-9a-fA-F]+$");
+
+        public static byte[] FromHex(this string hex)
+        {
+            if (0 != (hex.Length % 2))
+                throw new ArgumentOutOfRangeException(
+                    "A hex string should be an even number of characters");
+            else if(!HEX_SANITY.IsMatch(hex))
+                throw new ArgumentOutOfRangeException(
+                    "Hexadecimal numbers consists only of the digits 0-9 " +
+                    "and the letters a-z");
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                for (int i = 0; i < hex.Length; i += 2)
+                    ms.WriteByte((Convert.ToByte(hex.Substring(i, 2), 16)));
+                return ms.ToArray();
+            }
+        }
     }
 
     /// <summary>
@@ -91,7 +117,7 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, string key, JwtHashAlgorithm algorithm)
         {
-            return Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key), algorithm);
+            return Encode(extraHeaders, payload, key.FromHex(), algorithm);
         }
 
         /// <summary>
@@ -103,7 +129,7 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(object payload, string key, JwtHashAlgorithm algorithm)
         {
-            return Encode(new Dictionary<string, object>(), payload, Encoding.UTF8.GetBytes(key), algorithm);
+            return Encode(new Dictionary<string, object>(), payload, key.FromHex(), algorithm);
         }
 
         /// <summary>
@@ -187,7 +213,7 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static string Decode(string token, string key, bool verify = true)
         {
-            return Decode(token, Encoding.UTF8.GetBytes(key), verify);
+            return Decode(token, key.FromHex(), verify);
         }
 
         /// <summary>
@@ -217,7 +243,7 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static object DecodeToObject(string token, string key, bool verify = true)
         {
-            return DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
+            return DecodeToObject(token, key.FromHex(), verify);
         }
 
         /// <summary>
@@ -249,7 +275,7 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static T DecodeToObject<T>(string token, string key, bool verify = true)
         {
-            return DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
+            return DecodeToObject<T>(token, key.FromHex(), verify);
         }
 
         private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
