@@ -128,25 +128,13 @@ namespace JWT
             {
                 throw new ArgumentException("Token must consist from 3 delimited by dot parts");
             }
-            var header = parts[0];
+
             var payload = parts[1];
-            var crypto = Base64UrlDecode(parts[2]);
-
-            var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
             var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
-
-            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             if (verify)
             {
-                var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
-                var algorithm = (string)headerData["alg"];
-
-                var signature = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
-                var decodedCrypto = Convert.ToBase64String(crypto);
-                var decodedSignature = Convert.ToBase64String(signature);
-
-                Verify(decodedCrypto, decodedSignature, payloadJson);
+                Verify(payload, payloadJson, parts, key);
             }
 
             return payloadJson;
@@ -239,17 +227,6 @@ namespace JWT
             return converted;
         }
 
-        private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
-        {
-            switch (algorithm)
-            {
-                case "HS256": return JwtHashAlgorithm.HS256;
-                case "HS384": return JwtHashAlgorithm.HS384;
-                case "HS512": return JwtHashAlgorithm.HS512;
-                default: throw new SignatureVerificationException("Algorithm not supported.");
-            }
-        }
-
         private static void Verify(string decodedCrypto, string decodedSignature, string payloadJson)
         {
             if (decodedCrypto != decodedSignature)
@@ -277,6 +254,34 @@ namespace JWT
             if (secondsSinceEpoch >= expInt)
             {
                 throw new TokenExpiredException("Token has expired.");
+            }
+        }
+
+        private static void Verify(string payload, string payloadJson, string[] parts, byte[] key)
+        {
+            var crypto = Base64UrlDecode(parts[2]);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var header = parts[0];
+            var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
+            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+            var algorithm = (string)headerData["alg"];
+
+            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
+            var signatureData = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            Verify(decodedCrypto, decodedSignature, payloadJson);
+        }
+
+        private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
+        {
+            switch (algorithm)
+            {
+                case "HS256": return JwtHashAlgorithm.HS256;
+                case "HS384": return JwtHashAlgorithm.HS384;
+                case "HS512": return JwtHashAlgorithm.HS512;
+                default: throw new SignatureVerificationException("Algorithm not supported.");
             }
         }
     }
