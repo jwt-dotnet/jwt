@@ -227,7 +227,15 @@ namespace JWT
             return converted;
         }
 
-        private static void Verify(string decodedCrypto, string decodedSignature, string payloadJson)
+        /// <summary>
+        /// Given the JWT, verifies it.
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON).</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signature</param>
+        /// <exception cref="SignatureVerificationException">The signature is invalid.</exception>
+        /// <exception cref="TokenExpiredException">The token has expired.</exception>
+        public static void Verify(string payloadJson, string decodedCrypto, string decodedSignature)
         {
             if (decodedCrypto != decodedSignature)
             {
@@ -271,7 +279,7 @@ namespace JWT
             var signatureData = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            Verify(decodedCrypto, decodedSignature, payloadJson);
+            Verify(payloadJson, decodedCrypto, decodedSignature);
         }
 
         private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
