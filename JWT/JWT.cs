@@ -53,20 +53,19 @@ namespace JWT
                 { "alg", algorithm.ToString() }
             };
 
-            byte[] headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
-            byte[] payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
+            var headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
+            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
 
             segments.Add(Base64UrlEncode(headerBytes));
             segments.Add(Base64UrlEncode(payloadBytes));
 
-            var stringToSign = string.Join(".", segments);
-
+            var stringToSign = string.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
-            byte[] signature = HashAlgorithms[algorithm](key, bytesToSign);
+            var signature = HashAlgorithms[algorithm](key, bytesToSign);
             segments.Add(Base64UrlEncode(signature));
 
-            return string.Join(".", segments);
+            return string.Join(".", segments.ToArray());
         }
 
         /// <summary>
@@ -155,24 +154,24 @@ namespace JWT
 
             // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
             var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
-            if (payloadData.ContainsKey("exp") && payloadData["exp"] != null)
+            object expObj;
+            if (!payloadData.TryGetValue("exp", out expObj) || expObj == null)
             {
-                // safely unpack a boxed int 
-                int exp;
-                try
-                {
-                    exp = Convert.ToInt32(payloadData["exp"]);
-                }
-                catch (FormatException)
-                {
-                    throw new SignatureVerificationException("Claim 'exp' must be an integer.");
-                }
-
-                var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
-                if (secondsSinceEpoch >= exp)
-                {
-                    throw new TokenExpiredException("Token has expired.");
-                }
+                return;
+            }
+            int expInt;
+            try
+            {
+                expInt = Convert.ToInt32(expObj);
+            }
+            catch (FormatException)
+            {
+                throw new SignatureVerificationException("Claim 'exp' must be an integer.");
+            }
+            var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
+            if (secondsSinceEpoch >= expInt)
+            {
+                throw new TokenExpiredException("Token has expired.");
             }
         }
 
