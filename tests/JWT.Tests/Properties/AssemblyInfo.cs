@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -8,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("JWT.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Public Domain")]
 [assembly: AssemblyProduct("JWT.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Public Domain")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
