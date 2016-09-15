@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT", "src\JWT\JWT.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests", "tests\JWT.Tests\JWT.Tests.csproj", "{BF568781-D576-4545-A552-4DC839B1AF14}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{513CE2B5-E0D6-43BC-998A-A02CB2875479}"
+	ProjectSection(SolutionItems) = preProject
+		JWT.nuspec = JWT.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
