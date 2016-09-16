@@ -1,4 +1,4 @@
-tools\nuget.exe update -self
+﻿tools\nuget.exe update -self
 
 if not exist package mkdir package
 if not exist package mkdir package
