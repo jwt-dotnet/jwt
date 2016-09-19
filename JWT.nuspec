@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>JWT</id>
-    <version>1.3.5-beta</version>
+    <version>1.3.5-beta2</version>
     <authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</authors>
     <description>JWT (JSON Web Token) implementation for .NET</description>
     <copyright>Public Domain</copyright>
