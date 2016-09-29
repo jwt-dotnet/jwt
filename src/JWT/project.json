@@ -1,0 +1,47 @@
+{
+  "version": "1.3.7-beta1",
+  "title": "JWT",
+  "description": "JWT (JSON Web Token) implemented for .NET",
+  "authors": [
+    "John Sheehan",
+    "Michael Lehenbauer",
+    "Alexander Batishchev",
+    "Alistair Bush"
+  ],
+
+  "packOptions": {
+    "projectUrl": "https://github.com/jwt-dotnet/jwt",
+    "tags": [
+      "json",
+      "jwt"
+    ],
+    "licenseUrl": "https://github.com/jwt-dotnet/jwt/blob/master/LICENSE.txt",
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:jwt-dotnet/jwt.git"
+    }
+  },
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0"
+  },
+
+  "frameworks": {
+    "net35": {
+      "frameworkAssemblies": {
+        "System": "",
+        "System.Core": "",
+        "System.Web.Extensions": ""
+      }
+    },
+    "netstandard1.6": {
+      "dependencies": {
+        "Newtonsoft.Json": "9.0.1"
+      }
+    }
+  },
+
+  "tooling": {
+    "defaultNamespace": "JWT"
+  }
+}
