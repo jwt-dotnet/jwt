@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
+#if !NETCOREAPP1_0
 using System.Web.Script.Serialization;
+#endif
 
 using FluentAssertions;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace JWT.Tests
 {
-    [TestClass]
     public class DecodeTests
     {
         private static readonly Customer _customer = new Customer { FirstName = "Bob", Age = 37 };
@@ -22,7 +24,8 @@ namespace JWT.Tests
             { "Age", 37 }
         };
 
-        [TestMethod]
+#if !NETCOREAPP1_0
+        [Fact]
         public void Should_Decode_Token_To_Json_Encoded_String()
         {
             var jsonSerializer = new JavaScriptSerializer();
@@ -30,10 +33,11 @@ namespace JWT.Tests
 
             string decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
 
-            Assert.AreEqual(expectedPayload, decodedPayload);
+            Assert.Equal(expectedPayload, decodedPayload);
         }
+#endif
 
-        [TestMethod]
+        [Fact]
         public void Should_Decode_Token_To_Dictionary()
         {
             object decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
@@ -41,7 +45,8 @@ namespace JWT.Tests
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
-        [TestMethod]
+#if !NETCOREAPP1_0
+        [Fact]
         public void Should_Decode_Token_To_Dictionary_With_ServiceStack()
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
@@ -50,8 +55,9 @@ namespace JWT.Tests
 
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
+#endif
 
-        [TestMethod]
+        [Fact]
         public void Should_Decode_Token_To_Dictionary_With_Newtonsoft()
         {
             JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
@@ -61,7 +67,7 @@ namespace JWT.Tests
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
-        [TestMethod]
+        [Fact]
         public void Should_Decode_Token_To_Generic_Type()
         {
             Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
@@ -69,7 +75,8 @@ namespace JWT.Tests
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
 
-        [TestMethod]
+#if !NETCOREAPP1_0
+        [Fact]
         public void Should_Decode_Token_To_Generic_Type_With_ServiceStack()
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
@@ -78,8 +85,9 @@ namespace JWT.Tests
 
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
+#endif
 
-        [TestMethod]
+        [Fact]
         public void Should_Decode_Token_To_Generic_Type_With_Newtonsoft()
         {
             JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
@@ -89,33 +97,29 @@ namespace JWT.Tests
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Fact]
         public void Should_Throw_On_Malformed_Token()
         {
-            JsonWebToken.DecodeToObject<Customer>(_malformedtoken, "ABC", false);
+            Assert.Throws<ArgumentException>(() => JsonWebToken.DecodeToObject<Customer>(_malformedtoken, "ABC", false));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(SignatureVerificationException))]
+        [Fact]
         public void Should_Throw_On_Invalid_Key()
         {
             string invalidkey = "XYZ";
 
-            JsonWebToken.DecodeToObject<Customer>(_token, invalidkey, true);
+            Assert.Throws<SignatureVerificationException>(() => JsonWebToken.DecodeToObject<Customer>(_token, invalidkey, true));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(SignatureVerificationException))]
+        [Fact]
         public void Should_Throw_On_Invalid_Expiration_Claim()
         {
             var invalidexptoken = JsonWebToken.Encode(new { exp = "asdsad" }, "ABC", JwtHashAlgorithm.HS256);
 
-            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true);
+            Assert.Throws<SignatureVerificationException>(() => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(TokenExpiredException))]
+        [Fact]
         public void Should_Throw_On_Expired_Claim()
         {
             var anHourAgoUtc = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
@@ -123,7 +127,7 @@ namespace JWT.Tests
 
             var invalidexptoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
-            JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true);
+            Assert.Throws<TokenExpiredException>(() => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", true));
         }
     }
 
