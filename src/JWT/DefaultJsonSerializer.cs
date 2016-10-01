@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD1_6
+﻿#if !NETSTANDARD1_3
 
 using System.Web.Script.Serialization;
 

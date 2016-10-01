@@ -34,9 +34,10 @@
         "System.Web.Extensions": ""
       }
     },
-    "netstandard1.6": {
+    "netstandard1.3": {
       "dependencies": {
-        "Newtonsoft.Json": "9.0.1"
+        "Newtonsoft.Json": "9.0.1",
+        "System.Security.Cryptography.Algorithms": "4.2.0"
       }
     }
   },

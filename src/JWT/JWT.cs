@@ -15,7 +15,7 @@ namespace JWT
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
-#if !NETSTANDARD1_6
+#if !NETSTANDARD1_3
         public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
 #else
         public static IJsonSerializer JsonSerializer = new NewtonsoftJsonSerializer();
