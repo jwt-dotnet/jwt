@@ -37,6 +37,20 @@ namespace JWT.Tests
         }
 #endif
 
+
+#if NETCOREAPP1_0
+        [Fact]
+        public void Should_Decode_Token_To_Json_Encoded_String()
+        {
+            var jsonSerializer = new NewtonsoftJsonSerializer();
+            var expectedPayload = jsonSerializer.Serialize(_customer);
+
+            string decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+
+            Assert.Equal(expectedPayload, decodedPayload);
+        }
+#endif
+
         [Fact]
         public void Should_Decode_Token_To_Dictionary()
         {
