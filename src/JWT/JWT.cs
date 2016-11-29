@@ -239,7 +239,10 @@ namespace JWT
         {
             if (decodedCrypto != decodedSignature)
             {
-	            throw new SignatureVerificationException("Invalid signature");
+	            var signatureVerificationException = new SignatureVerificationException("Invalid signature");
+				signatureVerificationException.Data.Add("Expected", decodedCrypto);
+				signatureVerificationException.Data.Add("Received", decodedSignature);
+	            throw signatureVerificationException;
             }
 
             // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
