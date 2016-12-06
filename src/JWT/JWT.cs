@@ -264,10 +264,12 @@ namespace JWT
             var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
             if (secondsSinceEpoch >= expInt)
             {
-                var tokenExpiredException = new TokenExpiredException("Token has expired.");
-                tokenExpiredException.Data.Add("exp", expInt);
-                tokenExpiredException.Data.Add("payloadData", payloadData);
-                throw tokenExpiredException;
+               var tokenExpiredException = new TokenExpiredException("Token has expired.")
+               {
+                  Expiration = UnixEpoch.AddSeconds(expInt),
+                  PayloadData = payloadData
+               };
+               throw tokenExpiredException;
             }
         }
 
