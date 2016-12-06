@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JWT
 {
-    public class TokenExpiredException : Exception
+    public class TokenExpiredException : SignatureVerificationException
     {
         private const string PayloadDataKey = "PayloadData";
         private const string ExpirationKey = "Expiration";
