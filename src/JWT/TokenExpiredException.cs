@@ -24,12 +24,5 @@ namespace JWT
             get { return GetOrDefault<DateTime?>(ExpirationKey); }
             internal set { Data.Add(ExpirationKey, value); }
         }
-
-        private T GetOrDefault<T>(string key)
-        {
-            if (Data.Contains(key))
-                return (T)Data[key];
-            return default(T);
-        }
     }
 }
