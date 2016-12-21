@@ -4,8 +4,8 @@ namespace JWT
 {
     public class SignatureVerificationException : Exception
     {
-       private const string ExpectedKey = "Expected";
-       private const string ReceivedKey = "Received";
+        private const string ExpectedKey = "Expected";
+        private const string ReceivedKey = "Received";
 
         public SignatureVerificationException(string message)
             : base(message)
@@ -17,7 +17,7 @@ namespace JWT
             get { return GetOrDefault<string>(ExpectedKey); }
             internal set { Data.Add(ExpectedKey, value); }
         }
- 
+
         public string Received
         {
             get { return GetOrDefault<string>(ReceivedKey); }
