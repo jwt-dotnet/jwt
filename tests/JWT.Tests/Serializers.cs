@@ -1,8 +1,13 @@
 ﻿using Newtonsoft.Json;
+
+#if !NETCOREAPP1_0
 using JsonSerializer = ServiceStack.Text.JsonSerializer;
+#endif
 
 namespace JWT.Tests
 {
+
+#if !NETCOREAPP1_0
     public class ServiceStackJsonSerializer : IJsonSerializer
     {
         public string Serialize(object obj)
@@ -15,6 +20,7 @@ namespace JWT.Tests
             return JsonSerializer.DeserializeFromString<T>(json);
         }
     }
+#endif
 
     public class NewtonJsonSerializer : IJsonSerializer
     {

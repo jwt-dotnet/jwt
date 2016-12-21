@@ -1,4 +1,6 @@
-﻿using System.Web.Script.Serialization;
+﻿#if !NETSTANDARD1_3
+
+using System.Web.Script.Serialization;
 
 namespace JWT
 {
@@ -31,3 +33,4 @@ namespace JWT
         }
     }
 }
+#endif

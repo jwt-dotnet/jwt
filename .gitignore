@@ -15,3 +15,5 @@ _ReSharper*/
 package/
 packages/
 *.nupkg
+.idea
+project.lock.json
