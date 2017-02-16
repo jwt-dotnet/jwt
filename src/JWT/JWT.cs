@@ -15,7 +15,7 @@ namespace JWT
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
-        public static IJsonSerializer JsonSerializer = new DefaultJsonSerializer();
+        public static IJsonSerializer JsonSerializer = new JsonNetSerializer();
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 

@@ -9,5 +9,8 @@
     <language>en-US</language>
     <projectUrl>https://github.com/jwt-dotnet/jwt</projectUrl>
     <tags>jwt json</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" />
+    </dependencies>
   </metadata>
 </package>
