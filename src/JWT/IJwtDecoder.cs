@@ -1,0 +1,6 @@
+﻿namespace JWT
+{
+    interface IJwtDecoder
+    {
+    }
+}
