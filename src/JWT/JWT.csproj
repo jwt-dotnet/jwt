@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="IJsonSerializer.cs" />
     <Compile Include="DefaultJsonSerializer.cs" />
+    <Compile Include="IJwtEncoder.cs" />
     <Compile Include="JWT.cs" />
     <Compile Include="JwtHashAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
