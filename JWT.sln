@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests", "tests\JWT.Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{513CE2B5-E0D6-43BC-998A-A02CB2875479}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		JWT.nuspec = JWT.nuspec
 		package.cmd = package.cmd
 	EndProjectSection
