@@ -42,6 +42,7 @@
     <Compile Include="DefaultJsonSerializer.cs" />
     <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtEncoder.cs" />
+    <Compile Include="IJwtValidator.cs" />
     <Compile Include="JWT.cs" />
     <Compile Include="JwtHashAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
