@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace JWT.Serializers
 {
-    public sealed class JsonNetSerializer : IJsonSerializer
+    public class JsonNetSerializer : IJsonSerializer
     {
         public string Serialize(object obj)
         {
