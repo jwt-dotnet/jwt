@@ -50,7 +50,7 @@ namespace JWT.Tests
             var serializer = new JsonNetSerializer();
             var decoder = new JwtDecoder(serializer, null);
 
-            var actualPayload = decoder.DecodeToObject<Customer>(_token, "ABC", false);
+            var actualPayload = decoder.DecodeToObject<Customer>(_token, "ABC", verify: false);
 
             actualPayload.ShouldBeEquivalentTo(_customer);
         }
@@ -86,9 +86,9 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
-            var invalidexptoken = encoder.Encode(new { exp = "asdsad" }, "ABC");
+            var invalidtoken = encoder.Encode(new { exp = "asdsad" }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
 
             action.ShouldThrow<SignatureVerificationException>();
         }
@@ -97,16 +97,18 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
             var decoder = new JwtDecoder(serializer, validator);
 
-            var anHourAgoUtc = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
-            var unixTimestamp = (int)anHourAgoUtc.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+            var now = dateTimeProvider.GetNow();
+            var hourAgo = now.Subtract(new TimeSpan(1, 0, 0));
+            var unixTimestamp = (int)(hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
-            var invalidexptoken = encoder.Encode(new { exp = unixTimestamp }, "ABC");
+            var expiredtoken = encoder.Encode(new { exp = unixTimestamp }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
 
             action.ShouldThrow<TokenExpiredException>();
         }
