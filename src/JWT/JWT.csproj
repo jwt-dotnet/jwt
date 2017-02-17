@@ -51,8 +51,8 @@
     <Compile Include="IDateTimeProvider.cs" />
     <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IAlgorithm.cs" />
-    <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtEncoder.cs" />
+    <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtValidator.cs" />
     <Compile Include="JsonWebToken.cs" />
     <Compile Include="JwtDecoder.cs" />
