@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
 
 using FluentAssertions;
-
+using JWT.Serializers;
+using JWT.Tests.Serializers;
 using Xunit;
 
 namespace JWT.Tests
@@ -22,86 +22,118 @@ namespace JWT.Tests
         };
 
         [Fact]
-        public void Should_Decode_Token_To_Json_Encoded_String()
+        public void Decode_Should_Decode_Token_To_Json_Encoded_String_With_JsonNet_Serializer()
         {
-            var jsonSerializer = new JavaScriptSerializer();
-            var expectedPayload = jsonSerializer.Serialize(_customer);
+            var serializer = new JsonNetSerializer();
+            JsonWebToken.JsonSerializer = serializer;
 
-            string decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+            var expectedPayload = serializer.Serialize(_customer);
+
+            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
 
             Assert.Equal(expectedPayload, decodedPayload);
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Dictionary()
+        public void Decode_Should_Decode_Token_To_Json_Encoded_String_With_WebScript_Serializer()
         {
-            object decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var serializer = new WebScriptJsonSerializer();
+            JsonWebToken.JsonSerializer = serializer;
+
+            var expectedPayload = serializer.Serialize(_customer);
+
+            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+
+            Assert.Equal(expectedPayload, decodedPayload);
+        }
+
+        [Fact]
+        public void Decode_Should_Decode_Token_To_Json_Encoded_String_With_ServiceStack_Serializer()
+        {
+            var serializer = new ServiceStackJsonSerializer();
+            JsonWebToken.JsonSerializer = serializer;
+
+            var expectedPayload = serializer.Serialize(_customer);
+
+            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+
+            Assert.Equal(expectedPayload, decodedPayload);
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_To_Dictionary_With_WebScript_Serializer()
+        {
+            JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
+
+            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Dictionary_With_ServiceStack()
+        public void DecodeToObject_Should_Decode_Token_To_Dictionary_With_ServiceStack_Serializer()
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            object decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Dictionary_With_Newtonsoft()
+        public void DecodeToObject_Should_Decode_Token_To_Dictionary_With_JsonNet_Serializer()
         {
-            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
+            JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
-            object decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Generic_Type()
+        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_WebScript_Serializer()
         {
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
+
+            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Generic_Type_With_ServiceStack()
+        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_ServiceStack_Serializer()
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
-        public void Should_Decode_Token_To_Generic_Type_With_Newtonsoft()
+        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_JsonNet_Serializer()
         {
-            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
+            JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
-            Customer decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
             decodedPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
-        public void Should_Throw_On_Malformed_Token()
+        public void DecodeToObject_Should_Throw_On_Malformed_Token()
         {
             Assert.Throws<ArgumentException>(() => JsonWebToken.DecodeToObject<Customer>(_malformedtoken, "ABC", verify: false));
         }
 
         [Fact]
-        public void Should_Throw_On_Invalid_Key()
+        public void DecodeToObject_Should_Throw_On_Invalid_Key()
         {
             Assert.Throws<SignatureVerificationException>(() => JsonWebToken.DecodeToObject<Customer>(_token, "XYZ", verify: true));
         }
 
         [Fact]
-        public void Should_Throw_On_Invalid_Expiration_Claim()
+        public void DecodeToObject_Should_Throw_On_Invalid_Expiration_Claim()
         {
             var invalidexptoken = JsonWebToken.Encode(new { exp = "asdsad" }, "ABC", JwtHashAlgorithm.HS256);
 
@@ -109,10 +141,10 @@ namespace JWT.Tests
         }
 
         [Fact]
-        public void Should_Throw_On_Expired_Claim()
+        public void DecodeToObject_Should_Throw_On_Expired_Claim()
         {
             var anHourAgoUtc = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
-            Int32 unixTimestamp = (Int32)(anHourAgoUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            var unixTimestamp = (Int32)(anHourAgoUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
 
             var invalidexptoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
