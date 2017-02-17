@@ -47,18 +47,18 @@
     <Compile Include="Algorithms\HMACSHA256Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />
-    <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IAlgorithm.cs" />
-    <Compile Include="IJwtEncoder.cs" />
+    <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IJwtDecoder.cs" />
+    <Compile Include="IJwtEncoder.cs" />
     <Compile Include="IJwtValidator.cs" />
-    <Compile Include="JwtDecoder.cs" />
-    <Compile Include="JwtValidator.cs" />
-    <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="JsonWebToken.cs" />
+    <Compile Include="JwtDecoder.cs" />
     <Compile Include="JwtEncoder.cs" />
     <Compile Include="JwtHashAlgorithm.cs" />
+    <Compile Include="JwtValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="SignatureVerificationException.cs" />
     <Compile Include="TokenExpiredException.cs" />
   </ItemGroup>
