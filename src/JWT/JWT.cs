@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace JWT
@@ -10,8 +9,6 @@ namespace JWT
     /// </summary>
     public static class JsonWebToken
     {
-        private static readonly IDictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>> HashAlgorithms;
-
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
@@ -19,20 +16,10 @@ namespace JWT
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
-        static JsonWebToken()
-        {
-            HashAlgorithms = new Dictionary<JwtHashAlgorithm, Func<byte[], byte[], byte[]>>
-            {
-                { JwtHashAlgorithm.HS256, (key, value) => { using (var sha = new HMACSHA256(key)) { return sha.ComputeHash(value); } } },
-                { JwtHashAlgorithm.HS384, (key, value) => { using (var sha = new HMACSHA384(key)) { return sha.ComputeHash(value); } } },
-                { JwtHashAlgorithm.HS512, (key, value) => { using (var sha = new HMACSHA512(key)) { return sha.ComputeHash(value); } } }
-            };
-        }
-
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
@@ -44,7 +31,7 @@ namespace JWT
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
@@ -57,7 +44,7 @@ namespace JWT
         /// Creates a JWT given a set of arbitrary extra headers, a payload, the signing key, and the algorithm to use.
         /// </summary>
         /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers.</param>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key bytes used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
@@ -70,32 +57,13 @@ namespace JWT
         /// Creates a JWT given a header, a payload, the signing key, and the algorithm to use.
         /// </summary>
         /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers.</param>
-        /// <param name="payload">An arbitrary payload (must be serializable to JSON via <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).</param>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key bytes used to sign the token.</param>
         /// <param name="algorithm">The hash algorithm to use.</param>
         /// <returns>The generated JWT.</returns>
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
-            var segments = new List<string>();
-            var header = new Dictionary<string, object>(extraHeaders)
-            {
-                { "typ", "JWT" },
-                { "alg", algorithm.ToString() }
-            };
-
-            var headerBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header));
-            var payloadBytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload));
-
-            segments.Add(Base64UrlEncode(headerBytes));
-            segments.Add(Base64UrlEncode(payloadBytes));
-
-            var stringToSign = string.Join(".", segments.ToArray());
-            var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
-
-            var signature = HashAlgorithms[algorithm](key, bytesToSign);
-            segments.Add(Base64UrlEncode(signature));
-
-            return string.Join(".", segments.ToArray());
+            return new JwtEncoder(new AlgorithmFactory().Create(algorithm), new JsonNetSerializer()).Encode(extraHeaders, payload, key);
         }
 
         /// <summary>
@@ -141,7 +109,7 @@ namespace JWT
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -155,7 +123,7 @@ namespace JWT
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -170,7 +138,7 @@ namespace JWT
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> to return</typeparam>
         /// <param name="token">The JWT.</param>
@@ -185,7 +153,7 @@ namespace JWT
         }
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object (by deserializing it with <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>).
+        /// Given a JWT, decode it and return the payload as an object.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> to return</typeparam>
         /// <param name="token">The JWT.</param>
@@ -281,24 +249,17 @@ namespace JWT
             var header = parts[0];
             var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
             var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
-            var algorithm = (string)headerData["alg"];
 
             var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
-            var signatureData = HashAlgorithms[GetHashAlgorithm(algorithm)](key, bytesToSign);
+
+            var algFactory = new AlgorithmFactory();
+            var algName = (string)headerData["alg"];
+            var alg = algFactory.Create(algName);
+
+            var signatureData = alg.Sign(key, bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             Verify(payloadJson, decodedCrypto, decodedSignature);
-        }
-
-        private static JwtHashAlgorithm GetHashAlgorithm(string algorithm)
-        {
-            switch (algorithm)
-            {
-                case "HS256": return JwtHashAlgorithm.HS256;
-                case "HS384": return JwtHashAlgorithm.HS384;
-                case "HS512": return JwtHashAlgorithm.HS512;
-                default: throw new SignatureVerificationException("Algorithm not supported.");
-            }
         }
     }
 }

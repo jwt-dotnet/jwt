@@ -7,16 +7,21 @@ namespace JWT
     {
         public IAlgorithm Create(string algorithmName)
         {
-            switch (algorithmName)
+            return Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
+        }
+
+        public IAlgorithm Create(JwtHashAlgorithm algorithm)
+        {
+            switch (algorithm)
             {
-                case "HS256":
+                case JwtHashAlgorithm.HS256:
                     return new HMACSHA256Algorithm();
-                case "HS384":
+                case JwtHashAlgorithm.HS384:
                     return new HMACSHA384Algorithm();
-                case "HS512":
+                case JwtHashAlgorithm.HS512:
                     return new HMACSHA512Algorithm();
                 default:
-                    throw new InvalidOperationException("Algorithm not supported.");
+                    throw new InvalidOperationException($"Algorithm {algorithm} is not supported.");
             }
         }
     }

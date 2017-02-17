@@ -1,6 +1,6 @@
 ﻿namespace JWT
 {
-    interface IJwtDecoder
+    public interface IJwtDecoder
     {
     }
 }
