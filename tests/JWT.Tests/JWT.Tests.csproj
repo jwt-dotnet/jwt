@@ -79,7 +79,8 @@
     <Compile Include="DecodeTests.cs" />
     <Compile Include="EncodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serializers.cs" />
+    <Compile Include="Serializers\ServiceStackJsonSerializer.cs" />
+    <Compile Include="Serializers\WebScriptJsonSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\JWT\JWT.csproj">

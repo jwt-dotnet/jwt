@@ -1,12 +1,13 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace JWT
+namespace JWT.Serializers
 {
     public class JsonNetSerializer : IJsonSerializer
     {
         public string Serialize(object obj)
         {
-            return JObject.FromObject(obj).ToString();
+            return JObject.FromObject(obj).ToString(Formatting.None);
         }
 
         public T Deserialize<T>(string json)

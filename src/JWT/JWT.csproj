@@ -50,7 +50,7 @@
     <Compile Include="IJwtEncoder.cs" />
     <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtValidator.cs" />
-    <Compile Include="JsonNetSerializer.cs" />
+    <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="JWT.cs" />
     <Compile Include="JwtEncoder.cs" />
     <Compile Include="JwtHashAlgorithm.cs" />
