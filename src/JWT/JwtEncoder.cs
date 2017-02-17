@@ -17,13 +17,13 @@ namespace JWT
         /// <inheritdoc />
         public string Encode(object payload, string key)
         {
-            return Encode(new Dictionary<string, object>(), payload, Encoding.UTF8.GetBytes(key));
+            return Encode(null, payload, Encoding.UTF8.GetBytes(key));
         }
 
         /// <inheritdoc />
         public string Encode(object payload, byte[] key)
         {
-            return Encode(new Dictionary<string, object>(), payload, key);
+            return Encode(null, payload, key);
         }
 
         /// <inheritdoc />
@@ -36,11 +36,10 @@ namespace JWT
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
             var segments = new List<string>(3);
-            var header = new Dictionary<string, object>(extraHeaders)
-            {
-                { "typ", "JWT" },
-                { "alg", _algorithm.Name }
-            };
+
+            var header = extraHeaders != null ? new Dictionary<string, object>(extraHeaders) : new Dictionary<string, object>();
+            header.Add("typ", "JWT");
+            header.Add("alg", _algorithm.Name);
 
             var headerBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(header));
             var payloadBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(payload));
