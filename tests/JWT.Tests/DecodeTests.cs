@@ -29,9 +29,9 @@ namespace JWT.Tests
 
             var expectedPayload = serializer.Serialize(_customer);
 
-            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+            var actualPayload = JsonWebToken.Decode(_token, "ABC", false);
 
-            Assert.Equal(expectedPayload, decodedPayload);
+            actualPayload.Should().Be(expectedPayload);
         }
 
         [Fact]
@@ -42,9 +42,9 @@ namespace JWT.Tests
 
             var expectedPayload = serializer.Serialize(_customer);
 
-            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+            var actualPayload = JsonWebToken.Decode(_token, "ABC", false);
 
-            Assert.Equal(expectedPayload, decodedPayload);
+            actualPayload.Should().Be(expectedPayload);
         }
 
         [Fact]
@@ -55,9 +55,9 @@ namespace JWT.Tests
 
             var expectedPayload = serializer.Serialize(_customer);
 
-            var decodedPayload = JsonWebToken.Decode(_token, "ABC", false);
+            var actualPayload = JsonWebToken.Decode(_token, "ABC", false);
 
-            Assert.Equal(expectedPayload, decodedPayload);
+            actualPayload.Should().Be(expectedPayload);
         }
 
         [Fact]
@@ -65,9 +65,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
+            actualPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
@@ -75,9 +75,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
+            actualPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
@@ -85,9 +85,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
+            actualPayload.ShouldBeEquivalentTo(_dictionaryPayload, options => options.IncludingAllRuntimeProperties());
         }
 
         [Fact]
@@ -95,9 +95,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_customer);
+            actualPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
@@ -105,9 +105,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_customer);
+            actualPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
@@ -115,40 +115,47 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
-            var decodedPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
+            var actualPayload = JsonWebToken.DecodeToObject<Customer>(_token, "ABC", false);
 
-            decodedPayload.ShouldBeEquivalentTo(_customer);
+            actualPayload.ShouldBeEquivalentTo(_customer);
         }
 
         [Fact]
-        public void DecodeToObject_Should_Throw_On_Malformed_Token()
+        public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
         {
-            Assert.Throws<ArgumentException>(() => JsonWebToken.DecodeToObject<Customer>(_malformedtoken, "ABC", verify: false));
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(_malformedtoken, "ABC", verify: false);
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]
-        public void DecodeToObject_Should_Throw_On_Invalid_Key()
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key()
         {
-            Assert.Throws<SignatureVerificationException>(() => JsonWebToken.DecodeToObject<Customer>(_token, "XYZ", verify: true));
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(_token, "XYZ", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>();
         }
 
         [Fact]
-        public void DecodeToObject_Should_Throw_On_Invalid_Expiration_Claim()
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
             var invalidexptoken = JsonWebToken.Encode(new { exp = "asdsad" }, "ABC", JwtHashAlgorithm.HS256);
 
-            Assert.Throws<SignatureVerificationException>(() => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true));
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>();
         }
 
         [Fact]
-        public void DecodeToObject_Should_Throw_On_Expired_Claim()
+        public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
             var anHourAgoUtc = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
-            var unixTimestamp = (Int32)(anHourAgoUtc.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
+            var unixTimestamp = (Int32)anHourAgoUtc.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
             var invalidexptoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
-            Assert.Throws<TokenExpiredException>(() => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true));
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
+
+            action.ShouldThrow<TokenExpiredException>();
         }
     }
 

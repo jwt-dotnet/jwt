@@ -18,9 +18,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
 
-            var result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_token);
+            actual.Should().Be(_token);
         }
 
         [Fact]
@@ -29,9 +29,9 @@ namespace JWT.Tests
             JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
 
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
-            var result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_extraheaderstoken);
+            actual.Should().Be(_extraheaderstoken);
         }
 
         [Fact]
@@ -39,9 +39,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            var result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_token);
+            actual.Should().Be(_token);
         }
 
         [Fact]
@@ -50,9 +50,9 @@ namespace JWT.Tests
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
-            var result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_extraheaderstoken);
+            actual.Should().Be(_extraheaderstoken);
         }
 
         [Fact]
@@ -60,9 +60,9 @@ namespace JWT.Tests
         {
             JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
-            var result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_token);
+            actual.Should().Be(_token);
         }
 
         [Fact]
@@ -71,9 +71,9 @@ namespace JWT.Tests
             JsonWebToken.JsonSerializer = new JsonNetSerializer();
 
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
-            var result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
 
-            result.Should().Be(_extraheaderstoken);
+            actual.Should().Be(_extraheaderstoken);
         }
     }
 }
