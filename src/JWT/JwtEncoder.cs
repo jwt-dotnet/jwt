@@ -3,7 +3,7 @@ using System.Text;
 
 namespace JWT
 {
-    public class JwtEncoder : IJwtEncoder
+    public sealed class JwtEncoder : IJwtEncoder
     {
         private readonly IAlgorithm _algorithm;
         private readonly IJsonSerializer _jsonSerializer;
