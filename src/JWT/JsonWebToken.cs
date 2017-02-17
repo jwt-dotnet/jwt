@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using JWT.Serializers;
 
 namespace JWT
@@ -15,7 +16,9 @@ namespace JWT
         /// </summary>
         public static IJsonSerializer JsonSerializer = new JsonNetSerializer();
 
-        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly Lazy<IJwtValidator> _jwtValidator = new Lazy<IJwtValidator>(() => new JwtValidator(JsonSerializer));
+
+        private static readonly Lazy<AlgorithmFactory> _algorithmFactory = new Lazy<AlgorithmFactory>(() => new AlgorithmFactory());
 
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
@@ -64,7 +67,10 @@ namespace JWT
         /// <returns>The generated JWT.</returns>
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
-            return new JwtEncoder(new AlgorithmFactory().Create(algorithm), new JsonNetSerializer()).Encode(extraHeaders, payload, key);
+            return new JwtEncoder(
+                _algorithmFactory.Value.Create(algorithm),
+                JsonSerializer)
+                    .Encode(extraHeaders, payload, key);
         }
 
         /// <summary>
@@ -92,21 +98,10 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         public static string Decode(string token, byte[] key, bool verify = true)
         {
-            var parts = token.Split('.');
-            if (parts.Length != 3)
-            {
-                throw new ArgumentException("Token must consist from 3 delimited by dot parts");
-            }
-
-            var payload = parts[1];
-            var payloadJson = Encoding.UTF8.GetString(Base64UrlDecode(payload));
-
-            if (verify)
-            {
-                Verify(payload, payloadJson, parts, key);
-            }
-
-            return payloadJson;
+            return new JwtDecoder(
+                JsonSerializer,
+                _jwtValidator.Value)
+                    .Decode(token, key, verify);
         }
 
         /// <summary>
@@ -194,73 +189,6 @@ namespace JWT
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
-        }
-
-        /// <summary>
-        /// Given the JWT, verifies it.
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON).</param>
-        /// <param name="decodedCrypto">Decoded body</param>
-        /// <param name="decodedSignature">Decoded signature</param>
-        /// <exception cref="SignatureVerificationException">The signature is invalid.</exception>
-        /// <exception cref="TokenExpiredException">The token has expired.</exception>
-        public static void Verify(string payloadJson, string decodedCrypto, string decodedSignature)
-        {
-            if (decodedCrypto != decodedSignature)
-            {
-                throw new SignatureVerificationException("Invalid signature")
-                {
-                    Expected = decodedCrypto,
-                    Received = decodedSignature
-                };
-            }
-
-            // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
-            var payloadData = JsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
-            object expObj;
-            if (!payloadData.TryGetValue("exp", out expObj) || expObj == null)
-            {
-                return;
-            }
-            int expInt;
-            try
-            {
-                expInt = Convert.ToInt32(expObj);
-            }
-            catch (FormatException)
-            {
-                throw new SignatureVerificationException("Claim 'exp' must be an integer.");
-            }
-            var secondsSinceEpoch = Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
-            if (secondsSinceEpoch >= expInt)
-            {
-                throw new TokenExpiredException("Token has expired.")
-                {
-                    Expiration = UnixEpoch.AddSeconds(expInt),
-                    PayloadData = payloadData
-                };
-            }
-        }
-
-        private static void Verify(string payload, string payloadJson, string[] parts, byte[] key)
-        {
-            var crypto = Base64UrlDecode(parts[2]);
-            var decodedCrypto = Convert.ToBase64String(crypto);
-
-            var header = parts[0];
-            var headerJson = Encoding.UTF8.GetString(Base64UrlDecode(header));
-            var headerData = JsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
-
-            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
-
-            var algFactory = new AlgorithmFactory();
-            var algName = (string)headerData["alg"];
-            var alg = algFactory.Create(algName);
-
-            var signatureData = alg.Sign(key, bytesToSign);
-            var decodedSignature = Convert.ToBase64String(signatureData);
-
-            Verify(payloadJson, decodedCrypto, decodedSignature);
         }
     }
 }
