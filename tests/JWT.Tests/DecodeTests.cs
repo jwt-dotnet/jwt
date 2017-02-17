@@ -158,11 +158,4 @@ namespace JWT.Tests
             action.ShouldThrow<TokenExpiredException>();
         }
     }
-
-    public class Customer
-    {
-        public string FirstName { get; set; }
-
-        public int Age { get; set; }
-    }
 }
