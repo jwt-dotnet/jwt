@@ -35,7 +35,7 @@ namespace JWT
         /// <inheritdoc />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
-            var segments = new List<string>();
+            var segments = new List<string>(3);
             var header = new Dictionary<string, object>(extraHeaders)
             {
                 { "typ", "JWT" },

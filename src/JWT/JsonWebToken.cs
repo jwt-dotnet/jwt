@@ -9,8 +9,11 @@ namespace JWT
     /// <summary>
     /// Provides methods for encoding and decoding JSON Web Tokens.
     /// </summary>
+    [Obsolete(ObsoleteMessage)]
     public static class JsonWebToken
     {
+        private const string ObsoleteMessage = "Static API is obsolete as of version 2.0 and will be removed in a future version.";
+
         /// <summary>
         /// Pluggable JSON Serializer
         /// </summary>
@@ -162,6 +165,19 @@ namespace JWT
         {
             var payloadJson = Decode(token, key, verify);
             return JsonSerializer.Deserialize<T>(payloadJson);
+        }
+
+        /// <summary>
+        /// Given the JWT, verifies it.
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON).</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signature</param>
+        /// <exception cref="SignatureVerificationException">The signature is invalid.</exception>
+        /// <exception cref="TokenExpiredException">The token has expired.</exception>
+        public static void Verify(string payloadJson, string decodedCrypto, string decodedSignature)
+        {
+            _jwtValidator.Value.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
 
         /// <remarks>From JWT spec</remarks>
