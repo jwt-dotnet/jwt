@@ -8,10 +8,12 @@ namespace JWT
         private static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         private readonly IJsonSerializer _jsonSerializer;
+        private readonly IDateTimeProvider _dateTimeProvider;
 
-        public JwtValidator(IJsonSerializer jsonSerializer)
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
         {
             _jsonSerializer = jsonSerializer;
+            _dateTimeProvider = dateTimeProvider;
         }
 
         /// <inheritdoc />
@@ -42,7 +44,9 @@ namespace JWT
             {
                 throw new SignatureVerificationException("Claim 'exp' must be an integer.");
             }
-            var secondsSinceEpoch = Math.Round((DateTime.UtcNow - _unixEpoch).TotalSeconds);
+
+            var now = _dateTimeProvider.GetNow();
+            var secondsSinceEpoch = Math.Round((now - _unixEpoch).TotalSeconds);
             if (secondsSinceEpoch >= expInt)
             {
                 throw new TokenExpiredException("Token has expired.")

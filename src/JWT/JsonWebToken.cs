@@ -19,7 +19,7 @@ namespace JWT
         /// </summary>
         public static IJsonSerializer JsonSerializer = new JsonNetSerializer();
 
-        private static readonly Lazy<IJwtValidator> _jwtValidator = new Lazy<IJwtValidator>(() => new JwtValidator(JsonSerializer));
+        private static readonly Lazy<IJwtValidator> _jwtValidator = new Lazy<IJwtValidator>(() => new JwtValidator(JsonSerializer, new UtcDateTimeProvider()));
 
         private static readonly Lazy<AlgorithmFactory> _algorithmFactory = new Lazy<AlgorithmFactory>(() => new AlgorithmFactory());
 

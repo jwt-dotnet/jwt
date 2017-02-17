@@ -3,7 +3,7 @@ using JWT.Algorithms;
 
 namespace JWT
 {
-    public class AlgorithmFactory
+    public sealed class AlgorithmFactory
     {
         public IAlgorithm Create(string algorithmName)
         {

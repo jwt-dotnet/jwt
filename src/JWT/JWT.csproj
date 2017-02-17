@@ -48,6 +48,7 @@
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />
     <Compile Include="IAlgorithm.cs" />
+    <Compile Include="IDateTimeProvider.cs" />
     <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtEncoder.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="SignatureVerificationException.cs" />
     <Compile Include="TokenExpiredException.cs" />
+    <Compile Include="UtcDateTimeProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
