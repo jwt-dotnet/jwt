@@ -19,7 +19,7 @@ var payload = new Dictionary<string, object>
 };
 var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
-IAlgorithm algorithm = new HMACSHA256Algorithm();
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new JsonNetSerializer();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
 
@@ -113,7 +113,7 @@ public class CustomJsonSerializer : IJsonSerializer
 
 And then pass this serializer as a dependency to JwtEncoder constructor:
 ```csharp
-IAlgorithm algorithm = new HMACSHA256Algorithm();
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new CustomJsonSerializer();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
 ```

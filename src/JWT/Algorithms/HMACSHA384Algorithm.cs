@@ -2,7 +2,7 @@
 
 namespace JWT.Algorithms
 {
-    public sealed class HMACSHA384Algorithm : IAlgorithm
+    public sealed class HMACSHA384Algorithm : IJwtAlgorithm
     {
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {

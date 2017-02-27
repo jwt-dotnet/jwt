@@ -1,6 +1,6 @@
 namespace JWT
 {
-    public interface IAlgorithm
+    public interface IJwtAlgorithm
     {
         byte[] Sign(byte[] key, byte[] bytesToSign);
 

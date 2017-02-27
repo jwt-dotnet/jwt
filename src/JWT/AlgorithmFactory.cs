@@ -5,12 +5,12 @@ namespace JWT
 {
     public sealed class AlgorithmFactory
     {
-        public IAlgorithm Create(string algorithmName)
+        public IJwtAlgorithm Create(string algorithmName)
         {
             return Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
         }
 
-        public IAlgorithm Create(JwtHashAlgorithm algorithm)
+        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
             switch (algorithm)
             {

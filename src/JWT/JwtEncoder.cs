@@ -5,10 +5,10 @@ namespace JWT
 {
     public sealed class JwtEncoder : IJwtEncoder
     {
-        private readonly IAlgorithm _algorithm;
+        private readonly IJwtAlgorithm _algorithm;
         private readonly IJsonSerializer _jsonSerializer;
 
-        public JwtEncoder(IAlgorithm algorithm, IJsonSerializer jsonSerializer)
+        public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer)
         {
             _algorithm = algorithm;
             _jsonSerializer = jsonSerializer;
