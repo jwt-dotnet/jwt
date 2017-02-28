@@ -21,7 +21,7 @@ namespace JWT
 
         private static readonly Lazy<IJwtValidator> _jwtValidator = new Lazy<IJwtValidator>(() => new JwtValidator(JsonSerializer, new UtcDateTimeProvider()));
 
-        private static readonly Lazy<AlgorithmFactory> _algorithmFactory = new Lazy<AlgorithmFactory>(() => new AlgorithmFactory());
+        private static readonly AlgorithmFactory _algorithmFactory = new AlgorithmFactory();
 
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
@@ -71,7 +71,7 @@ namespace JWT
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
             return new JwtEncoder(
-                _algorithmFactory.Value.Create(algorithm),
+                _algorithmFactory.Create(algorithm),
                 JsonSerializer)
                     .Encode(extraHeaders, payload, key);
         }
