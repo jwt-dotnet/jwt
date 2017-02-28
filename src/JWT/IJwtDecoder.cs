@@ -1,4 +1,6 @@
-﻿namespace JWT
+﻿using System.Collections.Generic;
+
+namespace JWT
 {
     public interface IJwtDecoder
     {
@@ -33,7 +35,7 @@
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
-        object DecodeToObject(string token, string key, bool verify);
+        IDictionary<string, object> DecodeToObject(string token, string key, bool verify);
 
         /// <summary>
         /// Given a JWT, decode it and return the payload as an object.
@@ -44,7 +46,7 @@
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
-        object DecodeToObject(string token, byte[] key, bool verify);
+        IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify);
 
         /// <summary>
         /// Given a JWT, decode it and return the payload as an object.

@@ -42,13 +42,13 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public object DecodeToObject(string token, string key, bool verify)
+        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify)
         {
             return DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
         }
 
         /// <inheritdoc />
-        public object DecodeToObject(string token, byte[] key, bool verify)
+        public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify)
         {
             var payloadJson = Decode(token, key, verify);
             return _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
