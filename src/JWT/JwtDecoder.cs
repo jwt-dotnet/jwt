@@ -6,6 +6,8 @@ namespace JWT
 {
     public sealed class JwtDecoder : IJwtDecoder
     {
+        private static readonly AlgorithmFactory _algFactory = new AlgorithmFactory();
+
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
 
@@ -78,9 +80,8 @@ namespace JWT
 
             var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
 
-            var algFactory = new AlgorithmFactory();
             var algName = (string)headerData["alg"];
-            var alg = algFactory.Create(algName);
+            var alg = _algFactory.Create(algName);
 
             var signatureData = alg.Sign(key, bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
