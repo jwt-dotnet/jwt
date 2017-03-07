@@ -47,12 +47,9 @@
     <Compile Include="Algorithms\HMACSHA256Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />
+    <Compile Include="IDateTimeProvider.cs" />
+    <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IJwtAlgorithm.cs" />
-    <Compile Include="IDateTimeProvider.cs" />
-    <Compile Include="IJsonSerializer.cs" />
-    <Compile Include="IAlgorithm.cs" />
-    <Compile Include="IDateTimeProvider.cs" />
-    <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IJwtDecoder.cs" />
     <Compile Include="IJwtEncoder.cs" />
     <Compile Include="IJwtValidator.cs" />
