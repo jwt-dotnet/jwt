@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace JWT.Algorithms
 {
-    public sealed class RS256Algorithm : IAlgorithm
+    public sealed class RS256Algorithm : IJwtAlgorithm
     {
         private readonly X509Certificate2 _cert;
 
