@@ -1,78 +1,100 @@
-# JSON Web Token (JWT) implementation for .NET
+# Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
 This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
 
 ## Installation
-The easiest way to install is via NuGet.  See [here](https://nuget.org/packages/JWT).  Else, you can download and compile it yourself.
+Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can download and compile it yourself.
+
+## Supported .NET Framework versions
+As of version 2.0, the lowest Supported version is 4.6.1
 
 ## Usage
-### Creating Tokens
+### Creating (Encoding) Tokens
 
 ```csharp
-var payload = new Dictionary<string, object>()
+var payload = new Dictionary<string, object>
 {
     { "claim1", 0 },
     { "claim2", "claim2-value" }
 };
-var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-string token = JWT.JsonWebToken.Encode(payload, secretKey, JWT.JwtHashAlgorithm.HS256);
+var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+IJsonSerializer serializer = new JsonNetSerializer();
+IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
+
+var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
 Output will be:
-    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
 
-### Verifying and Decoding Tokens
+>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
+
+### Parsing (Decoding) and Verifying Tokens
 
 ```csharp
 var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
-var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
-    string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey);
-    Console.WriteLine(jsonPayload);
+    IJsonSerializer serializer = new JsonNetSerializer();
+    IDateTimeProvider provider = new UtcDateTimeProvider();
+    IJwtValidator validator = new JwtValidator(serializer, provider);
+    IJwtDecoder decoder = new JwtDecoder(serializer, validator);
+    
+    var json = decoder.Decode(token, secret, verify: true);
+    Console.WriteLine(json);
 }
-catch (JWT.SignatureVerificationException)
+catch (TokenExpiredException)
 {
-    Console.WriteLine("Invalid token!");
+    Console.WriteLine("Token has expired");
+}
+catch (SignatureVerificationException)
+{
+    Console.WriteLine("Token has invalid signature");
 }
 ```
 
 Output will be:
 
-    {"claim1":0,"claim2":"claim2-value"}
+>{ "claim1": 0, "claim2": "claim2-value" }
 
-You can also deserialize the JSON payload directly to a .Net object with DecodeToObject:
+You can also deserialize the JSON payload directly to a .NET type with `DecodeToObject<T>`:
 
 ```csharp
-var payload = JWT.JsonWebToken.DecodeToObject(token, secretKey) as IDictionary<string, object>;
+var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
 Console.WriteLine(payload["claim2"]);
 ```
 
-which will output:
+Output will be:
     
-    claim2-value
+>claim2-value
 
 #### exp claim
 
-As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4) the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
+As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
 ```csharp
-var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-var now = Math.Round((DateTime.UtcNow - unixEpoch).TotalSeconds);
-var payload = new Dictionary<string, object>()
-{
-    { "exp", now }
-};
-var secretKey = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-string token = JWT.JsonWebToken.Encode(payload, secretKey, JWT.JwtHashAlgorithm.HS256);
+IDateTimeProvider provider = new UtcDateTimeProvider();
+var now = provider.GetNow();
 
-string jsonPayload = JWT.JsonWebToken.Decode(token, secretKey); // JWT.SignatureVerificationException!
+var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+var secondsSinceEpoch = Math.Round((now - unixEpoch).TotalSeconds);
+
+var payload = new Dictionary<string, object>
+{
+    { "exp", secondsSinceEpoch }
+};
+var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+var token = encoder.Encode(payload, secret);
+
+var json = decoder.Decode(token, secret); // TokenExpiredException
 ```
 
-### Configure JSON Serialization
+### Custom JSON serializer
 
-By default JSON Serialization is done by System.Web.Script.Serialization.JavaScriptSerializer.  To configure a different one first implement the IJsonSerializer interface.
+By default JSON serialization is done by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To configure a different one first implement the `IJsonSerializer` interface:
 
 ```csharp
 public class CustomJsonSerializer : IJsonSerializer
@@ -89,7 +111,9 @@ public class CustomJsonSerializer : IJsonSerializer
 }
 ```
 
-Next configure this serializer as the JsonSerializer.
-```cs
-JsonWebToken.JsonSerializer = new CustomJsonSerializer();
+And then pass this serializer as a dependency to JwtEncoder constructor:
+```csharp
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+IJsonSerializer serializer = new CustomJsonSerializer();
+IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
 ```

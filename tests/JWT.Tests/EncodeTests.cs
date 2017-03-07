@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using JWT.Serializers;
+using JWT.Tests.Serializers;
+using Xunit;
 
 namespace JWT.Tests
 {
-    [TestClass]
     public class EncodeTests
     {
         private static readonly Customer _customer = new Customer { FirstName = "Bob", Age = 37 };
@@ -11,62 +13,67 @@ namespace JWT.Tests
         private const string _token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";
         private const string _extraheaderstoken = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.slrbXF9VSrlX7LKsV-Umb_zEzWLxQjCfUOjNTbvyr1g";
 
-        [TestMethod]
-        public void Should_Encode_Type()
+        [Fact]
+        public void Should_Encode_Type_With_WebScript_Serializer()
         {
-            string result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+            JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
 
-            Assert.AreEqual(_token, result);
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+
+            actual.Should().Be(_token);
         }
 
-        [TestMethod]
-        public void Should_Encode_Type_With_Extra_Headers()
+        [Fact]
+        public void Should_Encode_Type_With_WebScript_Serializer_And_Extra_Headers()
         {
+            JsonWebToken.JsonSerializer = new WebScriptJsonSerializer();
+
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
 
-            string result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
-
-            Assert.AreEqual(_extraheaderstoken, result);
+            actual.Should().Be(_extraheaderstoken);
         }
 
-        [TestMethod]
-        public void Should_Encode_Type_With_ServiceStack()
-        {
-            JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
-            string result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
-
-            Assert.AreEqual(_token, result);
-        }
-
-        [TestMethod]
-        public void Should_Encode_Type_With_ServiceStack_And_Extra_Headers()
+        [Fact]
+        public void Should_Encode_Type_With_ServiceStack_Serializer()
         {
             JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
-            var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
-            string result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
 
-            Assert.AreEqual(_extraheaderstoken, result);
+            actual.Should().Be(_token);
         }
 
-        [TestMethod]
-        public void Should_Encode_Type_With_Newtonsoft_Serializer()
+        [Fact]
+        public void Should_Encode_Type_With_ServiceStack_Serializer_And_Extra_Headers()
         {
-            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
-            string result = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
-
-            Assert.AreEqual(_token, result);
-        }
-
-        [TestMethod]
-        public void Should_Encode_Type_With_Newtonsoft_Serializer_And_Extra_Headers()
-        {
-            JsonWebToken.JsonSerializer = new NewtonJsonSerializer();
+            JsonWebToken.JsonSerializer = new ServiceStackJsonSerializer();
 
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
-            string result = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
 
-            Assert.AreEqual(_extraheaderstoken, result);
+            actual.Should().Be(_extraheaderstoken);
+        }
+
+        [Fact]
+        public void Should_Encode_Type_With_JsonNet_Serializer()
+        {
+            JsonWebToken.JsonSerializer = new JsonNetSerializer();
+
+            var actual = JsonWebToken.Encode(_customer, "ABC", JwtHashAlgorithm.HS256);
+
+            actual.Should().Be(_token);
+        }
+
+        [Fact]
+        public void Should_Encode_Type_With_JsonNet_Serializer_And_Extra_Headers()
+        {
+            JsonWebToken.JsonSerializer = new JsonNetSerializer();
+
+            var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
+            var actual = JsonWebToken.Encode(extraheaders, _customer, "ABC", JwtHashAlgorithm.HS256);
+
+            actual.Should().Be(_extraheaderstoken);
         }
     }
 }
