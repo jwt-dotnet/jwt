@@ -5,7 +5,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
@@ -16,7 +15,7 @@
   <PropertyGroup>
     <Company>Public Domain</Company>
     <Copyright>Public Domain</Copyright>
-    <Description />
+    <Description>JWT.NET, a JWT (JSON Web Token) implementation for .NET</Description>
     <AssemblyVersion>2.2.0.0</AssemblyVersion>
     <FileVersion>2.2.0.0</FileVersion>
     <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
