@@ -1,7 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DefineConstants>NET45</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+    <DefineConstants>NETSTANDARD1_3</DefineConstants>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <Company>Public Domain</Company>
     <Copyright>Public Domain</Copyright>
     <Description />
@@ -16,8 +28,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD1_3</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DocumentationFile>bin\Debug\netstandard1.3\JWT.xml</DocumentationFile>
+    <OutputPath>bin\Debug\netstandard1.3\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
