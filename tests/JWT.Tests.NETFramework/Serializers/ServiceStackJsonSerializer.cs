@@ -1,6 +1,6 @@
 ﻿using ServiceStack.Text;
 
-namespace JWT.Tests.Serializers
+namespace JWT.Tests.NETFramework.Serializers
 {
     public class ServiceStackJsonSerializer : IJsonSerializer
     {
