@@ -14,7 +14,7 @@ namespace JWT.Algorithms
 
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
-            var rsa = (RSACryptoServiceProvider)_cert.PrivateKey;
+            var rsa = (RSACryptoServiceProvider)_cert.GetRSAPrivateKey();
             var param = new CspParameters
             {
                 KeyContainerName = rsa.CspKeyContainerInfo.KeyContainerName,
