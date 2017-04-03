@@ -148,13 +148,32 @@ namespace JWT.Tests
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
-            var hourAgo = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
-            var unixTimestamp = (int)(hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
-            var expiredtoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
+            var exp = (int)(DateTime.UtcNow.AddHours(-1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var expiredtoken = JsonWebToken.Encode(new { exp = exp }, "ABC", JwtHashAlgorithm.HS256);
 
             Action action = () => JsonWebToken.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
 
             action.ShouldThrow<TokenExpiredException>();
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
+        {
+            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var invalidnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
+
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>();
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
+        {
+            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
+            var validnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
+
+            JsonWebToken.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
         }
     }
 }
