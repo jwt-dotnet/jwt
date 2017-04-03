@@ -6,7 +6,7 @@ namespace JWT.Algorithms
     {
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
-            using (var sha = new HMACSHA256(key))
+            using (var sha = new HMACSHA384(key))
             {
                 return sha.ComputeHash(bytesToSign);
             }
