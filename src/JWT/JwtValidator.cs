@@ -5,7 +5,7 @@ namespace JWT
 {
     public sealed class JwtValidator : IJwtValidator
     {
-        private static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -46,12 +46,12 @@ namespace JWT
             }
 
             var now = _dateTimeProvider.GetNow();
-            var secondsSinceEpoch = Math.Round((now - _unixEpoch).TotalSeconds);
+            var secondsSinceEpoch = Math.Round((now - UnixEpoch).TotalSeconds);
             if (secondsSinceEpoch >= expInt)
             {
                 throw new TokenExpiredException("Token has expired.")
                 {
-                    Expiration = _unixEpoch.AddSeconds(expInt),
+                    Expiration = UnixEpoch.AddSeconds(expInt),
                     PayloadData = payloadData
                 };
             }
