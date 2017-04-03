@@ -28,7 +28,6 @@ namespace JWT
                 };
             }
 
-
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();
