@@ -48,6 +48,7 @@
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />
     <Compile Include="Algorithms\RS256Algorithm.cs" />
+    <Compile Include="IBase64UrlEncoder.cs" />
     <Compile Include="IDateTimeProvider.cs" />
     <Compile Include="IJsonSerializer.cs" />
     <Compile Include="IJwtAlgorithm.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="IJwtEncoder.cs" />
     <Compile Include="IJwtValidator.cs" />
     <Compile Include="JsonWebToken.cs" />
+    <Compile Include="JwtBase64UrlEncoder.cs" />
     <Compile Include="JwtDecoder.cs" />
     <Compile Include="JwtEncoder.cs" />
     <Compile Include="JwtHashAlgorithm.cs" />
@@ -64,9 +66,6 @@
     <Compile Include="SignatureVerificationException.cs" />
     <Compile Include="TokenExpiredException.cs" />
     <Compile Include="UtcDateTimeProvider.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
