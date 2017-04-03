@@ -23,6 +23,8 @@ namespace JWT
 
         private static readonly AlgorithmFactory _algorithmFactory = new AlgorithmFactory();
 
+        private static readonly IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
+
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
@@ -72,7 +74,8 @@ namespace JWT
         {
             return new JwtEncoder(
                 _algorithmFactory.Create(algorithm),
-                JsonSerializer)
+                JsonSerializer,
+                _urlEncoder)
                     .Encode(extraHeaders, payload, key);
         }
 
@@ -103,7 +106,8 @@ namespace JWT
         {
             return new JwtDecoder(
                 JsonSerializer,
-                _jwtValidator)
+                _jwtValidator,
+                _urlEncoder)
                     .Decode(token, key, verify);
         }
 
@@ -183,28 +187,13 @@ namespace JWT
         /// <remarks>From JWT spec</remarks>
         public static string Base64UrlEncode(byte[] input)
         {
-            var output = Convert.ToBase64String(input);
-            output = output.Split('=')[0]; // Remove any trailing '='s
-            output = output.Replace('+', '-'); // 62nd char of encoding
-            output = output.Replace('/', '_'); // 63rd char of encoding
-            return output;
+            return _urlEncoder.UrlEncode(input);
         }
 
         /// <remarks>From JWT spec</remarks>
         public static byte[] Base64UrlDecode(string input)
         {
-            var output = input;
-            output = output.Replace('-', '+'); // 62nd char of encoding
-            output = output.Replace('_', '/'); // 63rd char of encoding
-            switch (output.Length % 4) // Pad with trailing '='s
-            {
-                case 0: break; // No pad chars in this case
-                case 2: output += "=="; break; // Two pad chars
-                case 3: output += "="; break;  // One pad char
-                default: throw new FormatException("Illegal base64url string!");
-            }
-            var converted = Convert.FromBase64String(output); // Standard base64 decoder
-            return converted;
+            return _urlEncoder.UrlDecode(input);
         }
     }
 }
