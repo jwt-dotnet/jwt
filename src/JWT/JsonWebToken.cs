@@ -19,7 +19,7 @@ namespace JWT
         /// </summary>
         public static IJsonSerializer JsonSerializer = new JsonNetSerializer();
 
-        private static readonly Lazy<IJwtValidator> _jwtValidator = new Lazy<IJwtValidator>(() => new JwtValidator(JsonSerializer, new UtcDateTimeProvider()));
+        private static readonly IJwtValidator _jwtValidator = new JwtValidator(JsonSerializer, new UtcDateTimeProvider());
 
         private static readonly AlgorithmFactory _algorithmFactory = new AlgorithmFactory();
 
@@ -103,7 +103,7 @@ namespace JWT
         {
             return new JwtDecoder(
                 JsonSerializer,
-                _jwtValidator.Value)
+                _jwtValidator)
                     .Decode(token, key, verify);
         }
 
@@ -177,7 +177,7 @@ namespace JWT
         /// <exception cref="TokenExpiredException">The token has expired.</exception>
         public static void Verify(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            _jwtValidator.Value.Validate(payloadJson, decodedCrypto, decodedSignature);
+            _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
 
         /// <remarks>From JWT spec</remarks>
