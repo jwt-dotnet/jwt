@@ -28,44 +28,51 @@ namespace JWT
                 };
             }
 
-            // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
+
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
-            object expObj;
-            if (!payloadData.TryGetValue("exp", out expObj) || expObj == null)
-            {
-                return;
-            }
-            int expInt;
-            try
-            {
-                expInt = Convert.ToInt32(expObj);
-            }
-            catch (FormatException)
-            {
-                throw new SignatureVerificationException("Claim 'exp' must be an integer.");
-            }
 
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = Math.Round((now - UnixEpoch).TotalSeconds);
-            if (secondsSinceEpoch >= expInt)
+
+            // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
+            object expObj;
+            if (payloadData.TryGetValue("exp", out expObj))
             {
-                throw new TokenExpiredException("Token has expired.")
+                int expInt;
+                try
                 {
-                    Expiration = UnixEpoch.AddSeconds(expInt),
-                    PayloadData = payloadData
-                };
+                    expInt = Convert.ToInt32(expObj);
+                }
+                catch
+                {
+                    throw new SignatureVerificationException("Claim 'exp' must be an integer.");
+                }
+
+                if (secondsSinceEpoch >= expInt)
+                {
+                    throw new TokenExpiredException("Token has expired.")
+                    {
+                        Expiration = UnixEpoch.AddSeconds(expInt),
+                        PayloadData = payloadData
+                    };
+                }
             }
 
+            // verify nbf claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.5
             object nbfObj;
             if (payloadData.TryGetValue("nbf", out nbfObj))
             {
-                if (!(nbfObj is int))
+                int nbfInt;
+                try
                 {
-                    throw new Exception("Claim 'nbf' must be an integer.");
+                    nbfInt = Convert.ToInt32(nbfObj);
+                }
+                catch
+                {
+                    throw new SignatureVerificationException("Claim 'nbf' must be an integer.");
                 }
 
-                var nbf = (int)nbfObj;
-                if (secondsSinceEpoch < nbf)
+                if (secondsSinceEpoch < nbfInt)
                 {
                     throw new SignatureVerificationException("Token is not yet valid.");
                 }
