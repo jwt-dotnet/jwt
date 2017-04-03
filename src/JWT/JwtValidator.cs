@@ -55,6 +55,21 @@ namespace JWT
                     PayloadData = payloadData
                 };
             }
+
+            object nbfObj;
+            if (payloadData.TryGetValue("nbf", out nbfObj))
+            {
+                if (!(nbfObj is int))
+                {
+                    throw new Exception("Claim 'nbf' must be an integer.");
+                }
+
+                var nbf = (int)nbfObj;
+                if (secondsSinceEpoch < nbf)
+                {
+                    throw new SignatureVerificationException("Token is not yet valid.");
+                }
+            }
         }
     }
 }
