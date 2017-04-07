@@ -7,11 +7,13 @@ namespace JWT
     {
         private readonly IJwtAlgorithm _algorithm;
         private readonly IJsonSerializer _jsonSerializer;
+        private readonly IBase64UrlEncoder _urlEncoder;
 
-        public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer)
+        public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
             _algorithm = algorithm;
             _jsonSerializer = jsonSerializer;
+            _urlEncoder = urlEncoder;
         }
 
         /// <inheritdoc />
@@ -44,14 +46,14 @@ namespace JWT
             var headerBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(header));
             var payloadBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(payload));
 
-            segments.Add(JsonWebToken.Base64UrlEncode(headerBytes));
-            segments.Add(JsonWebToken.Base64UrlEncode(payloadBytes));
+            segments.Add(_urlEncoder.Encode(headerBytes));
+            segments.Add(_urlEncoder.Encode(payloadBytes));
 
             var stringToSign = string.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
             var signature = _algorithm.Sign(key, bytesToSign);
-            segments.Add(JsonWebToken.Base64UrlEncode(signature));
+            segments.Add(_urlEncoder.Encode(signature));
 
             return string.Join(".", segments.ToArray());
         }

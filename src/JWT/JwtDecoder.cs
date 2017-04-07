@@ -10,11 +10,13 @@ namespace JWT
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
+        private readonly IBase64UrlEncoder _urlEncoder;
 
-        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator)
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
         {
             _jsonSerializer = jsonSerializer;
             _jwtValidator = jwtValidator;
+            _urlEncoder = urlEncoder;
         }
 
         /// <inheritdoc />
@@ -33,7 +35,7 @@ namespace JWT
             }
 
             var payload = parts[1];
-            var payloadJson = Encoding.UTF8.GetString(JsonWebToken.Base64UrlDecode(payload));
+            var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
             if (verify)
             {
@@ -71,11 +73,11 @@ namespace JWT
 
         private void Validate(string payload, string payloadJson, string[] parts, byte[] key)
         {
-            var crypto = JsonWebToken.Base64UrlDecode(parts[2]);
+            var crypto = _urlEncoder.Decode(parts[2]);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var header = parts[0];
-            var headerJson = Encoding.UTF8.GetString(JsonWebToken.Base64UrlDecode(header));
+            var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
