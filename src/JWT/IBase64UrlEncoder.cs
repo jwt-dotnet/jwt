@@ -2,8 +2,8 @@ namespace JWT
 {
     public interface IBase64UrlEncoder
     {
-        string UrlEncode(byte[] input);
+        string Encode(byte[] input);
 
-        byte[] UrlDecode(string input);
+        byte[] Decode(string input);
     }
 }
