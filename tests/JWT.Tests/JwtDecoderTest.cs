@@ -125,9 +125,10 @@ namespace JWT.Tests
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
-            var decoder = new JwtDecoder(serializer, validator);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
             var invalidnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
 
@@ -142,9 +143,10 @@ namespace JWT.Tests
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
-            var decoder = new JwtDecoder(serializer, validator);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
             var validnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
 
