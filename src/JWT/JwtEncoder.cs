@@ -46,14 +46,14 @@ namespace JWT
             var headerBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(header));
             var payloadBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(payload));
 
-            segments.Add(_urlEncoder.UrlEncode(headerBytes));
-            segments.Add(_urlEncoder.UrlEncode(payloadBytes));
+            segments.Add(_urlEncoder.Encode(headerBytes));
+            segments.Add(_urlEncoder.Encode(payloadBytes));
 
             var stringToSign = string.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
             var signature = _algorithm.Sign(key, bytesToSign);
-            segments.Add(_urlEncoder.UrlEncode(signature));
+            segments.Add(_urlEncoder.Encode(signature));
 
             return string.Join(".", segments.ToArray());
         }

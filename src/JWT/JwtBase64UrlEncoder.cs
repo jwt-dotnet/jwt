@@ -7,7 +7,7 @@ namespace JWT
     /// </summary>
     public sealed class JwtBase64UrlEncoder : IBase64UrlEncoder
     {
-        public string UrlEncode(byte[] input)
+        public string Encode(byte[] input)
         {
             var output = Convert.ToBase64String(input);
             output = output.Split('=')[0]; // Remove any trailing '='s
@@ -16,7 +16,7 @@ namespace JWT
             return output;
         }
 
-        public byte[] UrlDecode(string input)
+        public byte[] Decode(string input)
         {
             var output = input;
             output = output.Replace('-', '+'); // 62nd char of encoding

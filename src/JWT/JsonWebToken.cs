@@ -187,13 +187,13 @@ namespace JWT
         /// <remarks>From JWT spec</remarks>
         public static string Base64UrlEncode(byte[] input)
         {
-            return _urlEncoder.UrlEncode(input);
+            return _urlEncoder.Encode(input);
         }
 
         /// <remarks>From JWT spec</remarks>
         public static byte[] Base64UrlDecode(string input)
         {
-            return _urlEncoder.UrlDecode(input);
+            return _urlEncoder.Decode(input);
         }
     }
 }

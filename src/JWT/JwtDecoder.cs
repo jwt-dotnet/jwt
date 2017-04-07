@@ -35,7 +35,7 @@ namespace JWT
             }
 
             var payload = parts[1];
-            var payloadJson = Encoding.UTF8.GetString(_urlEncoder.UrlDecode(payload));
+            var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
             if (verify)
             {
@@ -73,11 +73,11 @@ namespace JWT
 
         private void Validate(string payload, string payloadJson, string[] parts, byte[] key)
         {
-            var crypto = _urlEncoder.UrlDecode(parts[2]);
+            var crypto = _urlEncoder.Decode(parts[2]);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var header = parts[0];
-            var headerJson = Encoding.UTF8.GetString(_urlEncoder.UrlDecode(header));
+            var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
