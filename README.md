@@ -21,7 +21,8 @@ var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new JsonNetSerializer();
-IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
+IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
 var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
@@ -41,7 +42,8 @@ try
     IJsonSerializer serializer = new JsonNetSerializer();
     IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
-    IJwtDecoder decoder = new JwtDecoder(serializer, validator);
+    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
     
     var json = decoder.Decode(token, secret, verify: true);
     Console.WriteLine(json);
@@ -115,5 +117,6 @@ And then pass this serializer as a dependency to JwtEncoder constructor:
 ```csharp
 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new CustomJsonSerializer();
-IJwtEncoder encoder = new JwtEncoder(algorithm, serializer);
+IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 ```
