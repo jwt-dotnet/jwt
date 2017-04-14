@@ -13,7 +13,8 @@ namespace JWT.Tests
         public void Decode_Should_Decode_Token_To_Json_Encoded_String()
         {
             var serializer = new JsonNetSerializer();
-            var decoder = new JwtDecoder(serializer, null);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var expectedPayload = serializer.Serialize(TestData.Customer);
 
@@ -26,7 +27,8 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()
         {
             var serializer = new JsonNetSerializer();
-            var decoder = new JwtDecoder(serializer, null);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actualPayload = decoder.DecodeToObject(TestData.Token, "ABC", verify: false);
 
@@ -37,7 +39,8 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type()
         {
             var serializer = new JsonNetSerializer();
-            var decoder = new JwtDecoder(serializer, null);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actualPayload = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
 
@@ -48,7 +51,8 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
         {
             var serializer = new JsonNetSerializer();
-            var decoder = new JwtDecoder(serializer, null);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.MalformedToken, "ABC", verify: false);
 
@@ -60,7 +64,8 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var decoder = new JwtDecoder(serializer, validator);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.Token, "XYZ", verify: true);
 
@@ -72,9 +77,10 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var decoder = new JwtDecoder(serializer, validator);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var invalidtoken = encoder.Encode(new { exp = "asdsad" }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
@@ -88,13 +94,14 @@ namespace JWT.Tests
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
-            var decoder = new JwtDecoder(serializer, validator);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
             var now = dateTimeProvider.GetNow();
             var hourAgo = now.Subtract(new TimeSpan(1, 0, 0));
             var unixTimestamp = (int)(hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var expiredtoken = encoder.Encode(new { exp = unixTimestamp }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
