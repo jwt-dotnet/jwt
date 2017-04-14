@@ -77,5 +77,25 @@ namespace JWT.Tests
 
             action.ShouldThrow<TokenExpiredException>();
         }
+
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
+        {
+            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var invalidnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
+
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>();
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
+        {
+            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
+            var validnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
+
+            JsonWebToken.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
+        }
     }
 }

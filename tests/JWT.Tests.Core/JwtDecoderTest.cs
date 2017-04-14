@@ -98,15 +98,48 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder);
 
             var now = dateTimeProvider.GetNow();
-            var hourAgo = now.Subtract(new TimeSpan(1, 0, 0));
-            var unixTimestamp = (int)(hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
+            var exp = (int)(now.AddHours(-1) - JwtValidator.UnixEpoch).TotalSeconds;
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var expiredtoken = encoder.Encode(new { exp = unixTimestamp }, "ABC");
+            var expiredtoken = encoder.Encode(new { exp = exp }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
 
             action.ShouldThrow<TokenExpiredException>();
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
+        {
+            var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var invalidnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
+
+            Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>();
+        }
+
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
+        {
+            var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
+            var validnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
+
+            decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
         }
     }
 }
