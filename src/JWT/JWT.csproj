@@ -22,7 +22,7 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>2.2.0-beta</Version>
+    <Version>3.0.0-beta1</Version>
     <PackageTags>jwt json</PackageTags>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
