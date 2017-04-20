@@ -101,7 +101,7 @@ namespace JWT.Tests
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a double.");
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a number.");
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace JWT.Tests
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a double.");
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a number.");
         }
 
         [Fact]

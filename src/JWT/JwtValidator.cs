@@ -39,24 +39,24 @@ namespace JWT
             {
                 if (expObj == null)
                 {
-                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
+                    throw new SignatureVerificationException("Claim 'exp' must be a number.");
                 }
 
-                double expInt;
+                double expValue;
                 try
                 {
-                    expInt = Convert.ToDouble(expObj);
+                    expValue = Convert.ToDouble(expObj);
                 }
                 catch
                 {
-                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
+                    throw new SignatureVerificationException("Claim 'exp' must be a number.");
                 }
 
-                if (secondsSinceEpoch >= expInt)
+                if (secondsSinceEpoch >= expValue)
                 {
                     throw new TokenExpiredException("Token has expired.")
                     {
-                        Expiration = UnixEpoch.AddSeconds(expInt),
+                        Expiration = UnixEpoch.AddSeconds(expValue),
                         PayloadData = payloadData
                     };
                 }
@@ -68,20 +68,20 @@ namespace JWT
             {
                 if (nbfObj == null)
                 {
-                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
+                    throw new SignatureVerificationException("Claim 'nbf' must be a number.");
                 }
 
-                double nbfInt;
+                double nbfValue;
                 try
                 {
-                    nbfInt = Convert.ToDouble(nbfObj);
+                    nbfValue = Convert.ToDouble(nbfObj);
                 }
                 catch
                 {
-                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
+                    throw new SignatureVerificationException("Claim 'nbf' must be a number.");
                 }
 
-                if (secondsSinceEpoch < nbfInt)
+                if (secondsSinceEpoch < nbfValue)
                 {
                     throw new SignatureVerificationException("Token is not yet valid.");
                 }

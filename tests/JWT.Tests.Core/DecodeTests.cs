@@ -73,7 +73,7 @@ namespace JWT.Tests
 
             Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a double.");
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a number.");
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace JWT.Tests
 
             Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a double.");
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a number.");
         }
 
         [Fact]
