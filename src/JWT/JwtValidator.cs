@@ -37,10 +37,15 @@ namespace JWT
             object expObj;
             if (payloadData.TryGetValue("exp", out expObj))
             {
+                if (expObj == null)
+                {
+                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
+                }
+
                 double expInt;
                 try
                 {
-                    expInt = double.Parse(expObj.ToString());
+                    expInt = Convert.ToDouble(expObj);
                 }
                 catch
                 {
@@ -61,10 +66,15 @@ namespace JWT
             object nbfObj;
             if (payloadData.TryGetValue("nbf", out nbfObj))
             {
+                if (nbfObj == null)
+                {
+                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
+                }
+
                 double nbfInt;
                 try
                 {
-                    nbfInt = double.Parse(nbfObj.ToString());
+                    nbfInt = Convert.ToDouble(nbfObj);
                 }
                 catch
                 {

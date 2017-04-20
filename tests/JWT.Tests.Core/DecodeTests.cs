@@ -94,7 +94,8 @@ namespace JWT.Tests
             var serializer = new JsonNetSerializer();
             JsonWebToken.JsonSerializer = serializer;
 
-            var post2038 = new DateTime(3000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            //Why 2038? https://en.wikipedia.org/wiki/Year_2038_problem
+            var post2038 = new DateTime(2038, 1, 19, 3, 14, 8, DateTimeKind.Utc);
             var unixTimestamp = (post2038 - new DateTime(1970, 1, 1)).TotalSeconds;
             var payload = new { exp = unixTimestamp };
             var validToken = JsonWebToken.Encode(payload, "ABC", JwtHashAlgorithm.HS256);
@@ -108,7 +109,7 @@ namespace JWT.Tests
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
         {
-            var post2038 = new DateTime(3000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var post2038 = new DateTime(2038, 1, 19, 3, 14, 8, DateTimeKind.Utc);
             var nbf = (post2038 - JwtValidator.UnixEpoch).TotalSeconds;
             var invalidnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
 
