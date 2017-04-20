@@ -32,7 +32,6 @@ namespace JWT
 
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = Math.Round((now - UnixEpoch).TotalSeconds);
-            const string claimMustBeDoubleFormat = "Claim '{0}' must be a double.";
 
             // verify exp claim https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4
             object expObj;
@@ -40,7 +39,7 @@ namespace JWT
             {
                 if (expObj == null)
                 {
-                    throw new SignatureVerificationException(string.Format(claimMustBeDoubleFormat, "exp"));
+                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
                 }
 
                 double expInt;
@@ -50,7 +49,7 @@ namespace JWT
                 }
                 catch
                 {
-                    throw new SignatureVerificationException(string.Format(claimMustBeDoubleFormat, "exp"));
+                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
                 }
 
                 if (secondsSinceEpoch >= expInt)
@@ -69,7 +68,7 @@ namespace JWT
             {
                 if (nbfObj == null)
                 {
-                    throw new SignatureVerificationException(string.Format(claimMustBeDoubleFormat, "nbf"));
+                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
                 }
 
                 double nbfInt;
@@ -79,7 +78,7 @@ namespace JWT
                 }
                 catch
                 {
-                    throw new SignatureVerificationException(string.Format(claimMustBeDoubleFormat, "nbf"));
+                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
                 }
 
                 if (secondsSinceEpoch < nbfInt)
