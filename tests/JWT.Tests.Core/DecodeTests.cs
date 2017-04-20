@@ -67,10 +67,20 @@ namespace JWT.Tests
         }
 
         [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
+        {
+            var invalidexptoken = JsonWebToken.Encode(new { exp = (object)null }, "ABC", JwtHashAlgorithm.HS256);
+
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidexptoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a double.");
+        }
+
+        [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
             var hourAgo = DateTime.UtcNow.Subtract(new TimeSpan(1, 0, 0));
-            var unixTimestamp = (int)(hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
+            var unixTimestamp = (hourAgo - new DateTime(1970, 1, 1)).TotalSeconds;
             var expiredtoken = JsonWebToken.Encode(new { exp = unixTimestamp }, "ABC", JwtHashAlgorithm.HS256);
 
             Action action = () => JsonWebToken.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
@@ -79,14 +89,42 @@ namespace JWT.Tests
         }
 
         [Fact]
+        public void DecodeToObject_Should_DecodeToken_On_Exp_Claim_After_Year2038()
+        {
+            var serializer = new JsonNetSerializer();
+            JsonWebToken.JsonSerializer = serializer;
+
+            var post2038 = new DateTime(3000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var unixTimestamp = (post2038 - new DateTime(1970, 1, 1)).TotalSeconds;
+            var payload = new { exp = unixTimestamp };
+            var validToken = JsonWebToken.Encode(payload, "ABC", JwtHashAlgorithm.HS256);
+            
+            var expectedPayload = serializer.Serialize(payload);
+            var actualPayload = JsonWebToken.Decode(validToken, "ABC", true);
+
+            actualPayload.Should().Be(expectedPayload);
+        }
+        
+        [Fact]
         public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
         {
-            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var post2038 = new DateTime(3000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var nbf = (post2038 - JwtValidator.UnixEpoch).TotalSeconds;
             var invalidnbftoken = JsonWebToken.Encode(new { nbf = nbf }, "ABC", JwtHashAlgorithm.HS256);
 
             Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>();
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Token is not yet valid.");
+        }
+        
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Null_NotBefore_Claim()
+        {
+            var invalidnbftoken = JsonWebToken.Encode(new { nbf = (object)null }, "ABC", JwtHashAlgorithm.HS256);
+
+            Action action = () => JsonWebToken.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+
+            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a double.");
         }
 
         [Fact]

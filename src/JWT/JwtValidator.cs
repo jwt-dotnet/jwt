@@ -37,14 +37,14 @@ namespace JWT
             object expObj;
             if (payloadData.TryGetValue("exp", out expObj))
             {
-                int expInt;
+                double expInt;
                 try
                 {
-                    expInt = Convert.ToInt32(expObj);
+                    expInt = double.Parse(expObj.ToString());
                 }
                 catch
                 {
-                    throw new SignatureVerificationException("Claim 'exp' must be an integer.");
+                    throw new SignatureVerificationException("Claim 'exp' must be a double.");
                 }
 
                 if (secondsSinceEpoch >= expInt)
@@ -61,14 +61,14 @@ namespace JWT
             object nbfObj;
             if (payloadData.TryGetValue("nbf", out nbfObj))
             {
-                int nbfInt;
+                double nbfInt;
                 try
                 {
-                    nbfInt = Convert.ToInt32(nbfObj);
+                    nbfInt = double.Parse(nbfObj.ToString());
                 }
                 catch
                 {
-                    throw new SignatureVerificationException("Claim 'nbf' must be an integer.");
+                    throw new SignatureVerificationException("Claim 'nbf' must be a double.");
                 }
 
                 if (secondsSinceEpoch < nbfInt)
