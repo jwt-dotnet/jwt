@@ -62,3 +62,5 @@ Backup*/
 UpgradeLog*.XML
 UpgradeLog*.htm
 
+# Cake build files
+tools/
