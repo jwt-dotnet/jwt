@@ -1,0 +1,8 @@
+version: 1.0.{build}
+build_script:
+- ps: ./build.ps1
+test_script:
+- ps: ./build.ps1 -Target Test
+artifacts:
+- path: artifacts/*.nupkg
+deploy: off
