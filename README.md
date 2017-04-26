@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/dgcpnsa647u90pnh/branch/master?svg=true)](https://ci.appveyor.com/project/abatishchev/jwt/branch/master)
+
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
 This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
