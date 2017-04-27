@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/dgcpnsa647u90pnh/branch/master?svg=true)](https://ci.appveyor.com/project/abatishchev/jwt/branch/master)
+[![NuGet](https://img.shields.io/nuget/v/jwt.svg)]()[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)]()[![Build status](https://ci.appveyor.com/api/projects/status/dgcpnsa647u90pnh/branch/master?svg=true)](https://ci.appveyor.com/project/abatishchev/jwt/branch/master)
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
