@@ -1,3 +1,5 @@
+#tool "nuget:?package=xunit.runner.console"
+
 var configuration = Argument("configuration", "Release");
 
 Task("Clean")
@@ -44,17 +46,34 @@ Task("Pack")
 });
 
 Task("Test")
+.IsDependentOn("TestCore")
+.IsDependentOn("TestNetFramework");
+
+Task("TestCore")
 .IsDependentOn("Restore")
 .IsDependentOn("Build")
 .Does(() =>
 {
-    var tests = GetFiles("./test/**/*.csproj");
-    Console.WriteLine("Running {0} tests", tests.Count());
+    var coreTestProject = "JWT.Tests.Core";
+    Console.WriteLine("Running tests in {0}", coreTestProject);
+    DotNetCoreTest(string.Format("./tests/{0}/{0}.csproj", coreTestProject));
+});
 
-    foreach (var test in tests) 
-    {
-        DotNetCoreTest(test.FullPath);
-    }
+Task("TestNetFramework")
+.Does(() =>
+{
+    var frameworkTestProject = "JWT.Tests.NETFramework";
+    Console.WriteLine("Running tests in {0}", frameworkTestProject);
+
+    NuGetRestore(
+      string.Format("./tests/{0}/{0}.csproj", frameworkTestProject),
+      new NuGetRestoreSettings { PackagesDirectory = string.Format("./tests/{0}/packages/", frameworkTestProject) });
+    
+    MSBuild(
+      string.Format("./tests/{0}/{0}.csproj", frameworkTestProject),
+      new MSBuildSettings { Configuration = "Release" });
+
+    XUnit2(string.Format("./tests/{0}/bin/Release/{0}.dll", frameworkTestProject));
 });
 
 Task("Default")
