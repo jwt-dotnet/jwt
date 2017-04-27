@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/jwt.svg)]()
+[![NuGet](https://img.shields.io/nuget/v/jwt.svg)]()[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)]()
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
