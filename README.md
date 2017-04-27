@@ -1,3 +1,5 @@
+[![NuGet](https://img.shields.io/nuget/v/jwt.svg)]()
+
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
 This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
