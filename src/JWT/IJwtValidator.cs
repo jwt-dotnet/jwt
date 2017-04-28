@@ -1,5 +1,8 @@
 ﻿namespace JWT
 {
+    /// <summary>
+    /// JwtValidator interface.
+    /// </summary>
     public interface IJwtValidator
     {
         /// <summary>

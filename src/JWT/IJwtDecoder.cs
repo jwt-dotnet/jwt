@@ -2,6 +2,9 @@
 
 namespace JWT
 {
+    /// <summary>
+    /// JwtDecoder interface.
+    /// </summary>
     public interface IJwtDecoder
     {
         /// <summary>

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace JWT
 {
+    /// <summary>
+    /// Decodes Jwt.
+    /// </summary>
     public sealed class JwtDecoder : IJwtDecoder
     {
         private static readonly AlgorithmFactory _algFactory = new AlgorithmFactory();
@@ -12,6 +15,12 @@ namespace JWT
         private readonly IJwtValidator _jwtValidator;
         private readonly IBase64UrlEncoder _urlEncoder;
 
+        /// <summary>
+        /// Creates an instance of the decoder.
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer.</param>
+        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
         {
             _jsonSerializer = jsonSerializer;
