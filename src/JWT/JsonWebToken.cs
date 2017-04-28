@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using JWT.Algorithms;
 using JWT.Serializers;
 
 namespace JWT
@@ -21,7 +21,7 @@ namespace JWT
 
         private static readonly IJwtValidator _jwtValidator = new JwtValidator(JsonSerializer, new UtcDateTimeProvider());
 
-        private static readonly AlgorithmFactory _algorithmFactory = new AlgorithmFactory();
+        private static readonly IAlgorithmFactory _hmacshaAlgorithmFactory = new HMACSHAAlgorithmFactory();
 
         private static readonly IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
 
@@ -73,7 +73,7 @@ namespace JWT
         public static string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key, JwtHashAlgorithm algorithm)
         {
             return new JwtEncoder(
-                _algorithmFactory.Create(algorithm),
+                _hmacshaAlgorithmFactory.Create(algorithm),
                 JsonSerializer,
                 _urlEncoder)
                     .Encode(extraHeaders, payload, key);

@@ -43,7 +43,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlgorithmFactory.cs" />
+    <Compile Include="Algorithms\HMACSHAAlgorithmFactory.cs" />
     <Compile Include="Algorithms\HMACSHA256Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />

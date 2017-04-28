@@ -6,7 +6,7 @@ namespace JWT
 {
     public sealed class JwtDecoder : IJwtDecoder
     {
-        private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new AlgorithmFactory();
+        private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new HMACSHAAlgorithmFactory();
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
