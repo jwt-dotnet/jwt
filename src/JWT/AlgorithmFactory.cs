@@ -3,7 +3,7 @@ using JWT.Algorithms;
 
 namespace JWT
 {
-    public sealed class AlgorithmFactory
+    public sealed class AlgorithmFactory : IAlgorithmFactory
     {
         public IJwtAlgorithm Create(string algorithmName)
         {
@@ -11,6 +11,11 @@ namespace JWT
         }
 
         public IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
+        {
+            return Create(algorithm, null);
+        }
+
+        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm, object param)
         {
             switch (algorithm)
             {
@@ -20,6 +25,8 @@ namespace JWT
                     return new HMACSHA384Algorithm();
                 case JwtHashAlgorithm.HS512:
                     return new HMACSHA512Algorithm();
+                case JwtHashAlgorithm.RS256:
+                    throw new NotSupportedException($"For {nameof(JwtHashAlgorithm.RS256)} please implement custom factory by implementing {nameof(IAlgorithmFactory)}");
                 default:
                     throw new InvalidOperationException($"Algorithm {algorithm} is not supported.");
             }
