@@ -12,11 +12,6 @@ namespace JWT
 
         public IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
-            return Create(algorithm, null);
-        }
-
-        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm, object param)
-        {
             switch (algorithm)
             {
                 case JwtHashAlgorithm.HS256:
@@ -26,7 +21,7 @@ namespace JWT
                 case JwtHashAlgorithm.HS512:
                     return new HMACSHA512Algorithm();
                 case JwtHashAlgorithm.RS256:
-                    throw new NotSupportedException($"For {nameof(JwtHashAlgorithm.RS256)} please implement custom factory by implementing {nameof(IAlgorithmFactory)}");
+                    throw new NotSupportedException($"For algorithm {nameof(JwtHashAlgorithm.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
                 default:
                     throw new InvalidOperationException($"Algorithm {algorithm} is not supported.");
             }
