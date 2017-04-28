@@ -3,12 +3,21 @@ using System.Text;
 
 namespace JWT
 {
+    /// <summary>
+    /// Encodes Jwt.
+    /// </summary>
     public sealed class JwtEncoder : IJwtEncoder
     {
         private readonly IJwtAlgorithm _algorithm;
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IBase64UrlEncoder _urlEncoder;
 
+        /// <summary>
+        /// Creates an instance of encoder.
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer.</param>
+        /// <param name="algorithm">The Jwt Algorithm.</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
             _algorithm = algorithm;

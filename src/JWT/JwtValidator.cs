@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace JWT
 {
+    /// <summary>
+    /// Jwt Validator.
+    /// </summary>
     public sealed class JwtValidator : IJwtValidator
     {
         public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -10,6 +13,11 @@ namespace JWT
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
 
+        /// <summary>
+        /// Creates an instance of the Jwt Validator.
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer.</param>
+        /// <param name="dateTimeProvider">The DateTime Provider.</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
         {
             _jsonSerializer = jsonSerializer;

@@ -2,8 +2,17 @@ using System.Collections.Generic;
 
 namespace JWT
 {
+    /// <summary>
+    /// JwtEncoder interface.
+    /// </summary>
     public interface IJwtEncoder
     {
+        /// <summary>
+        /// Encodes the paygiven with the provided key.
+        /// </summary>
+        /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
+        /// <param name="key">The key used to sign the token.</param>
+        /// <returns></returns>
         string Encode(object payload, string key);
 
         /// <summary>
