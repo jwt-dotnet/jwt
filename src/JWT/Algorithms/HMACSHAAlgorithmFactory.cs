@@ -2,14 +2,14 @@
 
 namespace JWT.Algorithms
 {
-    public sealed class HMACSHAAlgorithmFactory : IAlgorithmFactory
+    public class HMACSHAAlgorithmFactory : IAlgorithmFactory
     {
         public IJwtAlgorithm Create(string algorithmName)
         {
             return Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
         }
 
-        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
+        public virtual IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
             switch (algorithm)
             {

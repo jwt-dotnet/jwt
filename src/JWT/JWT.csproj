@@ -48,6 +48,7 @@
     <Compile Include="Algorithms\HMACSHA384Algorithm.cs" />
     <Compile Include="Algorithms\HMACSHA512Algorithm.cs" />
     <Compile Include="Algorithms\RS256Algorithm.cs" />
+    <Compile Include="Algorithms\RSAlgorithmFactory.cs" />
     <Compile Include="IAlgorithmFactory.cs" />
     <Compile Include="IBase64UrlEncoder.cs" />
     <Compile Include="IDateTimeProvider.cs" />
