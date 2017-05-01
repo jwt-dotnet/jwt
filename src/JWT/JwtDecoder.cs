@@ -6,17 +6,27 @@ namespace JWT
 {
     public sealed class JwtDecoder : IJwtDecoder
     {
-        private static readonly AlgorithmFactory _algFactory = new AlgorithmFactory();
+        private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new HMACSHAAlgorithmFactory();
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
         private readonly IBase64UrlEncoder _urlEncoder;
+        private readonly IAlgorithmFactory _algFactory;
 
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
+            : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
         {
             _jsonSerializer = jsonSerializer;
             _jwtValidator = jwtValidator;
             _urlEncoder = urlEncoder;
+        }
+
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
+        {
+            _jsonSerializer = jsonSerializer;
+            _jwtValidator = jwtValidator;
+            _urlEncoder = urlEncoder;
+            _algFactory = algFactory;
         }
 
         /// <inheritdoc />
