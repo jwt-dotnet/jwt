@@ -1,29 +1,17 @@
 ﻿using System;
-using JWT.Algorithms;
 
 namespace JWT.Algorithms
 {
-    /// <summary>
-    /// Provides IJwtAlgorithms.
-    /// </summary>
+    /// <inheritdoc />
     public class HMACSHAAlgorithmFactory : IAlgorithmFactory
     {
-        /// <summary>
-        /// Creates an AlgorithmFactory using the provided
-        /// algorithm name.
-        /// </summary>
-        /// <param name="algorithmName">The name of the algorithm.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IJwtAlgorithm Create(string algorithmName)
         {
             return Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
         }
 
-        /// <summary>
-        /// Creates an AlgorithmFactory using the provided
-        /// algorithm name.
-        /// </summary>
-        /// <param name="algorithm">The name of the algorithm.</param>
+        /// <inheritdoc />
         public virtual IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
             switch (algorithm)
