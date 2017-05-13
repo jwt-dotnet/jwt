@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JWT.Algorithms;
 
 namespace JWT
 {
@@ -9,23 +10,40 @@ namespace JWT
     /// </summary>
     public sealed class JwtDecoder : IJwtDecoder
     {
-        private static readonly AlgorithmFactory _algFactory = new AlgorithmFactory();
+        private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new HMACSHAAlgorithmFactory();
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
         private readonly IBase64UrlEncoder _urlEncoder;
+        private readonly IAlgorithmFactory _algFactory;
 
         /// <summary>
-        /// Creates an instance of the decoder.
+        /// Creates an instance of <see cref="JwtDecoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
         /// <param name="jwtValidator">The Jwt Validator.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
+            : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
         {
             _jsonSerializer = jsonSerializer;
             _jwtValidator = jwtValidator;
             _urlEncoder = urlEncoder;
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtDecoder" />.
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer.</param>
+        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder.</param>
+        /// <param name="algFactory">The Algorithm Factory.</param>
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
+        {
+            _jsonSerializer = jsonSerializer;
+            _jwtValidator = jwtValidator;
+            _urlEncoder = urlEncoder;
+            _algFactory = algFactory;
         }
 
         /// <inheritdoc />

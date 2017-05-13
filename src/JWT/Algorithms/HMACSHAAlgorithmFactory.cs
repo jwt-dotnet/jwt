@@ -1,30 +1,18 @@
 ﻿using System;
-using JWT.Algorithms;
 
-namespace JWT
+namespace JWT.Algorithms
 {
-    /// <summary>
-    /// Provides IJwtAlgorithms.
-    /// </summary>
-    public sealed class AlgorithmFactory
+    /// <inheritdoc />
+    public class HMACSHAAlgorithmFactory : IAlgorithmFactory
     {
-        /// <summary>
-        /// Creates an AlgorithmFactory using the provided
-        /// algorithm name.
-        /// </summary>
-        /// <param name="algorithmName">The name of the algorithm.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public IJwtAlgorithm Create(string algorithmName)
         {
             return Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
         }
 
-        /// <summary>
-        /// Creates an AlgorithmFactory using the provided
-        /// algorithm name.
-        /// </summary>
-        /// <param name="algorithm">The name of the algorithm.</param>
-        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
+        /// <inheritdoc />
+        public virtual IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
             switch (algorithm)
             {
@@ -34,6 +22,8 @@ namespace JWT
                     return new HMACSHA384Algorithm();
                 case JwtHashAlgorithm.HS512:
                     return new HMACSHA512Algorithm();
+                case JwtHashAlgorithm.RS256:
+                    throw new NotSupportedException($"For algorithm {nameof(JwtHashAlgorithm.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
                 default:
                     throw new InvalidOperationException($"Algorithm {algorithm} is not supported.");
             }

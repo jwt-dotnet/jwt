@@ -8,13 +8,17 @@ namespace JWT
     /// </summary>
     public sealed class JwtValidator : IJwtValidator
     {
+        /// <summary>
+        /// Describes instants in time, defined as the number of seconds that have elapsed since 00:00:00 UTC, Thursday, 1 January 1970, not counting leap seconds.
+        /// See https://en.wikipedia.org/wiki/Unix_time />
+        /// </summary>
         public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
 
         /// <summary>
-        /// Creates an instance of the Jwt Validator.
+        /// Creates an instance of <see cref="JwtValidator" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
         /// <param name="dateTimeProvider">The DateTime Provider.</param>
