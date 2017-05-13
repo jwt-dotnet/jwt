@@ -13,7 +13,7 @@ namespace JWT
         private readonly IBase64UrlEncoder _urlEncoder;
 
         /// <summary>
-        /// Creates an instance of encoder.
+        /// Creates an instance of <see cref="JwtEncoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
         /// <param name="algorithm">The Jwt Algorithm.</param>
