@@ -66,9 +66,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JwtDecoderTest.cs" />
+    <Compile Include="JwtEncoderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serializers\ServiceStackJsonSerializer.cs" />
-    <Compile Include="Serializers\WebScriptJsonSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
