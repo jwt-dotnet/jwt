@@ -67,7 +67,7 @@ Task("TestNetFramework")
 
     NuGetRestore(
       string.Format("./tests/{0}/{0}.csproj", frameworkTestProject),
-      new NuGetRestoreSettings { PackagesDirectory = string.Format("./tests/{0}/packages/", frameworkTestProject) });
+      new NuGetRestoreSettings { PackagesDirectory = string.Format("./packages/", frameworkTestProject) });
     
     MSBuild(
       string.Format("./tests/{0}/{0}.csproj", frameworkTestProject),
