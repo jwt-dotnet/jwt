@@ -62,8 +62,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JwtDecoderTest.cs" />
-    <Compile Include="JwtEncoderTest.cs" />
+    <COmpile Include="..\JWT.Tests.Core\JwtDecoderTest.cs" />
+    <Compile Include="..\JWT.Tests.Core\JwtEncoderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
