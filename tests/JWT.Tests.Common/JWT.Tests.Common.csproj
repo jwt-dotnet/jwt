@@ -4,4 +4,14 @@
     <TargetFramework>netstandard1.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="JwtDecoderTest.cs" />
+    <Compile Remove="JwtEncoderTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="JwtDecoderTest.cs" />
+    <None Include="JwtEncoderTest.cs" />
+  </ItemGroup>
+
 </Project>
