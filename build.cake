@@ -3,44 +3,20 @@ var configuration = Argument("configuration", "Release");
 Task("Clean")
 .Does(() =>
 {
-    CleanDirectory("./artifacts/");
+    CleanDirectories(string.Format("./**/obj/{0}/", configuration));
+    CleanDirectories(string.Format("./**/bin/{0}/", configuration));
 });
 
 Task("Restore")
 .Does(() => 
 {
-    DotNetCoreRestore();
+    NuGetRestore("./Jwt.sln");
 });
 
 Task("Build")
 .Does(() =>
 {
-    var projects = GetFiles("./src/**/*.csproj");
-    Console.WriteLine("Building {0} projects", projects.Count());
-
-    foreach (var project in projects)
-    {
-        DotNetCoreBuild(project.FullPath, new DotNetCoreBuildSettings
-        {
-            Configuration = configuration
-        });
-    }
-});
-
-Task("Pack")
-.Does(() =>
-{
-    var projects = GetFiles("./src/**/*.csproj");
-    Console.WriteLine("Packing {0} projects", projects.Count());
-
-    foreach (var project in projects)
-    {
-        DotNetCorePack(project.FullPath, new DotNetCorePackSettings
-        {
-            Configuration = configuration,
-            OutputDirectory = "./artifacts/"
-        });
-    }
+    MSBuild("./Jwt.sln", settings => settings.SetConfiguration(configuration));
 });
 
 Task("Test")
@@ -48,21 +24,13 @@ Task("Test")
 .IsDependentOn("Build")
 .Does(() =>
 {
-    var tests = GetFiles("./test/**/*.csproj");
-    Console.WriteLine("Running {0} tests", tests.Count());
-
-    foreach (var test in tests) 
-    {
-        DotNetCoreTest(test.FullPath);
-    }
+    XUnit2(string.Format("./tests/**/bin/{0}/*.Tests.dll", configuration), new XUnit2Settings { ToolPath = "./packages/xunit.runner.console.2.2.0/tools/xunit.console.x86.exe" });
 });
 
 Task("Default")
     .IsDependentOn("Clean")
     .IsDependentOn("Restore")
-    .IsDependentOn("Build")
-    .IsDependentOn("Pack");
-
+    .IsDependentOn("Build");
 
 var target = Argument("target", "Default");
 RunTarget(target);
