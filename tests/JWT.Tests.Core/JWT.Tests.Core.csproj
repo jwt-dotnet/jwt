@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\JWT.Tests.Common\JwtDecoderTest.cs" Link="JwtDecoderTest.cs" />
+    <Compile Include="..\JWT.Tests.Common\JwtEncoderTest.cs" Link="JwtEncoderTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="4.19.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="xunit" Version="2.2.0" />
