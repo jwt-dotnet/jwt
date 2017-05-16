@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace JWT
 {
@@ -31,7 +32,7 @@ namespace JWT
         /// <inheritdoc />
         public void Validate(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            if (decodedCrypto != decodedSignature)
+            if (!CompareCryptoWithSignature(decodedCrypto, decodedSignature))
             {
                 throw new SignatureVerificationException("Invalid signature")
                 {
@@ -98,6 +99,26 @@ namespace JWT
                     throw new SignatureVerificationException("Token is not yet valid.");
                 }
             }
+        }
+
+        /// <remarks>In the future this method can be open for extension so made protected virtual</remarks>
+        private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
+        {
+            if (decodedCrypto.Length != decodedSignature.Length)
+            {
+                return false;
+            }
+
+            byte[] decodedCryptoBytes = Encoding.ASCII.GetBytes(decodedCrypto);
+            byte[] decodedSignatureBytes = Encoding.ASCII.GetBytes(decodedSignature);
+
+            byte result = 0;
+            for (int i = 0; i < decodedCrypto.Length; i++)
+            {
+                result |= (byte)(decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
+            }
+
+            return result == 0;
         }
     }
 }

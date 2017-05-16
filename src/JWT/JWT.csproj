@@ -21,7 +21,7 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>3.0.0-beta3</Version>
+    <Version>3.0.0-beta4</Version>
     <PackageTags>jwt json</PackageTags>
   </PropertyGroup>
 
