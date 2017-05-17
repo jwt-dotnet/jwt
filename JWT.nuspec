@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>JWT</id>
-    <version>2.4.1</version>
+    <version>2.4.2</version>
     <authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</authors>
     <owners>johnsheehan, devinrader, abatishchev</owners>
     <description>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</description>
