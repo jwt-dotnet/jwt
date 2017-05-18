@@ -27,17 +27,12 @@ namespace JWT.Algorithms
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
 #if NETSTANDARD1_3
-            var rsa = (RSACryptoServiceProvider)_cert.GetRSAPrivateKey();
+            var rsa = _cert.GetRSAPrivateKey();
 #else
-            var rsa = (RSACryptoServiceProvider)_cert.PrivateKey;
+            var rsa = _cert.PrivateKey;
 #endif
-            var param = new CspParameters
-            {
-                KeyContainerName = rsa.CspKeyContainerInfo.KeyContainerName,
-                KeyNumber = rsa.CspKeyContainerInfo.KeyNumber == KeyNumber.Exchange ? 1 : 2
-            };
-            var csp = new RSACryptoServiceProvider(param) { PersistKeyInCsp = false };
-            return csp.SignData(bytesToSign, "SHA256");
+
+            return rsa.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
         /// <summary>
