@@ -30,22 +30,13 @@ namespace JWT.Serializers
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        /// <summary>
-        /// Serialize the given object.
-        /// </summary>
-        /// <param name="obj">The object to serialize.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public string Serialize(object obj)
         {
             return JObject.FromObject(obj, _serializer).ToString(Formatting.None);
         }
 
-        /// <summary>
-        /// Deserialize the given string.
-        /// </summary>
-        /// <typeparam name="T">The type to deserialize the string to.</typeparam>
-        /// <param name="json">The JSON to be deserialized.</param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public T Deserialize<T>(string json)
         {
             return JObject.Parse(json).ToObject<T>();
