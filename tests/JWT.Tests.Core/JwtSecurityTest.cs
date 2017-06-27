@@ -10,6 +10,7 @@ namespace JWT.Tests.Core
     public class JwtSecurityTest
     {
         [Fact]
+        [Trait("Category", "Security")]
         public void Algorithm_None_Should_Throw_Exception()
         {
             var serializer = new JsonNetSerializer();
@@ -23,6 +24,7 @@ namespace JWT.Tests.Core
         }
 
         [Fact]
+        [Trait("Category", "Security")]
         public void HMAC_Decoding_When_Expecting_RSA_Should_Fail()
         {
             var serializer = new JsonNetSerializer();
@@ -40,7 +42,7 @@ namespace JWT.Tests.Core
 
             Action action = () => decoder.Decode(HMACEncodedToken, TestData.ServerRSAPublicKey, verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>("because HMAC Tokens can be forged in RSA Decoder");
+            action.ShouldThrow<NotSupportedException>("because HMAC Tokens can be forged in RSA Decoder");
         }
     
         private System.Security.Cryptography.X509Certificates.X509Certificate2 GetRSAPublicKeyAsCertificate()

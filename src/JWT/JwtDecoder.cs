@@ -29,6 +29,7 @@ namespace JWT
             _jsonSerializer = jsonSerializer;
             _jwtValidator = jwtValidator;
             _urlEncoder = urlEncoder;
+            _algFactory = _defaultAlgorithmFactory;
         }
 
         /// <summary>
