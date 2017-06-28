@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -33,13 +34,13 @@ namespace JWT.Serializers
         /// <inheritdoc />
         public string Serialize(object obj)
         {
-            return JObject.FromObject(obj, _serializer).ToString(Formatting.None);
+            return JObject.FromObject(obj, _serializer).ToString(_serializer.Formatting, _serializer.Converters.ToArray());
         }
 
         /// <inheritdoc />
         public T Deserialize<T>(string json)
         {
-            return JObject.Parse(json).ToObject<T>();
+            return JObject.Parse(json).ToObject<T>(_serializer);
         }
     }
 }
