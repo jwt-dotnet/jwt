@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
-using Xunit;
 using JWT.Tests.Common;
+using Xunit;
 
 namespace JWT.Tests
 {
