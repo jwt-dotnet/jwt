@@ -1,7 +1,7 @@
-﻿using System;
+﻿using JWT.Algorithms;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using JWT.Algorithms;
 
 namespace JWT
 {
@@ -25,12 +25,7 @@ namespace JWT
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
             : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
-        {
-            _jsonSerializer = jsonSerializer;
-            _jwtValidator = jwtValidator;
-            _urlEncoder = urlEncoder;
-            _algFactory = _defaultAlgorithmFactory;
-        }
+        { }
 
         /// <summary>
         /// Creates an instance of <see cref="JwtDecoder" />.
