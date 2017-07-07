@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using JWT.Algorithms;
@@ -26,9 +26,6 @@ namespace JWT
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
             : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
         {
-            _jsonSerializer = jsonSerializer;
-            _jwtValidator = jwtValidator;
-            _urlEncoder = urlEncoder;
         }
 
         /// <summary>

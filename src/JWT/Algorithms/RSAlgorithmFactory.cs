@@ -20,9 +20,13 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public override IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
-            return algorithm == JwtHashAlgorithm.RS256 ?
-                       new RS256Algorithm(_certFactory()) :
-                       base.Create(algorithm);
+            switch (algorithm)
+            {
+                case JwtHashAlgorithm.RS256:
+                    return new RS256Algorithm(_certFactory());
+                default:
+                    throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
+            }
         }
     }
 }
