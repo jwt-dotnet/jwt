@@ -5,5 +5,5 @@ build_script:
 test_script:
 - ps: ./build.ps1 -Target Test
 artifacts:
-- path: ./**/*.nupkg
+- path: ./artifacts/*.nupkg
 deploy: off
