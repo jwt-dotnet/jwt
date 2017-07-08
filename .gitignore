@@ -64,3 +64,6 @@ UpgradeLog*.htm
 
 # Cake build files
 tools/
+
+# Temporary folder generated when creating NuGet package
+package.tmp/
