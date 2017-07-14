@@ -20,29 +20,28 @@ namespace JWT.Algorithms
         }
 
         /// <summary>
+        /// The algorithm name.
+        /// </summary>
+        public string Name => JwtHashAlgorithm.RS256.ToString();
+
+        /// <summary>
         /// Signs the provided byte array with the provided key.
         /// </summary>
         /// <param name="key">The key used to sign the data.</param>
         /// <param name="bytesToSign">The data to sign.</param>
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
-#if NETSTANDARD1_3
-            var rsa = (RSACryptoServiceProvider)_cert.GetRSAPrivateKey();
-#else
-            var rsa = (RSACryptoServiceProvider)_cert.PrivateKey;
-#endif
-            var param = new CspParameters
-            {
-                KeyContainerName = rsa.CspKeyContainerInfo.KeyContainerName,
-                KeyNumber = rsa.CspKeyContainerInfo.KeyNumber == KeyNumber.Exchange ? 1 : 2
-            };
-            var csp = new RSACryptoServiceProvider(param) { PersistKeyInCsp = false };
-            return csp.SignData(bytesToSign, "SHA256");
+            var rsa = GetRSA(_cert);
+            return rsa.SignData(bytesToSign, "SHA256");
         }
 
-        /// <summary>
-        /// The algorithm name.
-        /// </summary>
-        public string Name => JwtHashAlgorithm.RS256.ToString();
+        private static RSA GetRSA(X509Certificate2 cert)
+        {
+#if NETSTANDARD1_3
+            return (RSA)cert.GetRSAPrivateKey();
+#else
+            return (RSA)cert.PrivateKey;
+#endif
+        }
     }
 }
