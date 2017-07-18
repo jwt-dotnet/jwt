@@ -95,7 +95,7 @@ namespace JWT
             return _jsonSerializer.Deserialize<T>(payloadJson);
         }
 
-        private void Validate(string payload, string payloadJson, string[] parts, byte[] key)
+        public void Validate(string payload, string payloadJson, string[] parts, byte[] key)
         {
             var crypto = _urlEncoder.Decode(parts[2]);
             var decodedCrypto = Convert.ToBase64String(crypto);
