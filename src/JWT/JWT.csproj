@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net462;netstandard1.3</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
-    <TargetFramework>net462;netstandard1.3</TargetFramework>
+    <TargetFrameworkIdentifier>net462</TargetFrameworkIdentifier>
     <DefineConstants>NET46</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
