@@ -32,7 +32,7 @@ namespace JWT.Algorithms
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
             var rsa = GetRSA(_cert);
-            return rsa.SignData(bytesToSign, "SHA256");
+            return rsa.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
         private static RSA GetRSA(X509Certificate2 cert)
@@ -40,7 +40,7 @@ namespace JWT.Algorithms
 #if NETSTANDARD1_3
             return cert.GetRSAPrivateKey();
 #else
-            return cert.PrivateKey;
+            return (RSA)cert.PrivateKey;
 #endif
         }
     }
