@@ -63,7 +63,7 @@ namespace JWT
 
             if (verify)
             {
-                Validate(payload, payloadJson, parts, key);
+                Validate(parts, key);
             }
 
             return payloadJson;
@@ -95,7 +95,12 @@ namespace JWT
             return _jsonSerializer.Deserialize<T>(payloadJson);
         }
 
-        private void Validate(string payload, string payloadJson, string[] parts, byte[] key)
+        /// <summary>
+        /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
+        /// </summary>
+        /// <param name="parts">The JWT split into parts.</param>
+        /// <param name="key">The key that was used to sign the JWT.</param>
+        public void Validate(string[] parts, byte[] key)
         {
             var crypto = _urlEncoder.Decode(parts[2]);
             var decodedCrypto = Convert.ToBase64String(crypto);
@@ -103,6 +108,9 @@ namespace JWT
             var header = parts[0];
             var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+
+            var payload = parts[1];
+            var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
             var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
 
