@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard1.3</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net462'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net452'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <DefineConstants>NET46</DefineConstants>
+    <DefineConstants>NET45</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
