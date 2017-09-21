@@ -122,3 +122,28 @@ IJsonSerializer serializer = new CustomJsonSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 ```
+
+### Custom JSON serialization settings with the default JsonNetSerializer
+
+As mentioned above, the default JSON serialization is done by `JsonNetSerializer`. You can define your own custom serialization settings as follows:
+
+```csharp
+JsonSerializer customJsonSerializer = new JsonSerializer
+{
+    // All json keys start with lowercase characters instead of the exact casing of the model/property. e.g. fullName
+    ContractResolver = new CamelCasePropertyNamesContractResolver(); 
+    
+    // Nice and easy to read, but you can also do Formatting.None to reduce the payload size (by hardly anything...)
+    Formatting = Formatting.Indented;
+    
+    // The best date/time format/standard.
+    DateFormatHandling = DateFormatHandling.IsoDateFormat; 
+    
+    // Don't add key/values when the value is null.
+    NullValueHandling = NullValueHandling.Ignore; 
+    
+    // Use the enum string-value, not the implicit int value. eg. "colour" : "red"
+    Converters.Add(new StringEnumConverter()); 
+}
+IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
+```
