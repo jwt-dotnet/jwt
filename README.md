@@ -131,19 +131,19 @@ As mentioned above, the default JSON serialization is done by `JsonNetSerializer
 JsonSerializer customJsonSerializer = new JsonSerializer
 {
     // All json keys start with lowercase characters instead of the exact casing of the model/property. e.g. fullName
-    ContractResolver = new CamelCasePropertyNamesContractResolver(); 
+    ContractResolver = new CamelCasePropertyNamesContractResolver(), 
     
     // Nice and easy to read, but you can also do Formatting.None to reduce the payload size (by hardly anything...)
-    Formatting = Formatting.Indented;
+    Formatting = Formatting.Indented,
     
     // The best date/time format/standard.
-    DateFormatHandling = DateFormatHandling.IsoDateFormat; 
+    DateFormatHandling = DateFormatHandling.IsoDateFormat,
     
     // Don't add key/values when the value is null.
-    NullValueHandling = NullValueHandling.Ignore; 
+    NullValueHandling = NullValueHandling.Ignore,
     
     // Use the enum string-value, not the implicit int value. eg. "colour" : "red"
-    Converters.Add(new StringEnumConverter()); 
+    Converters.Add(new StringEnumConverter())
 }
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
