@@ -142,8 +142,8 @@ JsonSerializer customJsonSerializer = new JsonSerializer
     // Don't add key/values when the value is null.
     NullValueHandling = NullValueHandling.Ignore,
     
-    // Use the enum string-value, not the implicit int value. eg. "colour" : "red"
+    // Use the enum string-value, not the implicit int value, e.g. "oolor" : "red"
     Converters.Add(new StringEnumConverter())
-}
+};
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
