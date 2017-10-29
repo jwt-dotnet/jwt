@@ -37,7 +37,7 @@ namespace JWT
         /// <summary>
         /// gets the Signature of an JWT
         /// </summary>
-        public string Signature => _parts[(int)JwtPartsPointer.Payload];
+        public string Signature => _parts[(int)JwtPartsPointer.Signature];
 
         /// <summary>
         /// gets the Parts of an JWT
