@@ -44,11 +44,7 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Decode(string token)
-        {
-            var payload = splitToParts(token)[(int)JwtParts.Payload];
-            return Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
-        }
+        public string Decode(string token) => Encoding.UTF8.GetString(_urlEncoder.Decode(new Jwt(token).Payload));
 
         /// <inheritdoc />
         public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
@@ -58,7 +54,7 @@ namespace JWT
         {
             if (verify)
             {
-                Validate(splitToParts(token), key);
+                Validate(new Jwt(token).Parts, key);
             }
 
             return Decode(token);
@@ -110,28 +106,6 @@ namespace JWT
 
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
-
-        /// <summary>
-        /// Get the Jwt token as string and return a parts array of <see cref="string[]"/> object.
-        /// </summary>
-        /// <param name="token">The JWT.</param>
-        /// <returns>The converted parts array of <see cref="string[]"/></returns>
-        /// <exception cref="ArgumentException">Thrown if the given token have the wrong fromat.</exception>
-        private string[] splitToParts(string token)
-        {
-            var parts = token.Split('.');
-            if (parts.Length != 3)
-            {
-                throw new ArgumentException("Token must consist from 3 delimited by dot parts");
-            }
-            return parts;
-        }
-    }
-
-    enum JwtParts
-    {
-        Header = 0,
-        Payload = 1,
-        Signature = 2
-    }
+       
+    }    
 }
