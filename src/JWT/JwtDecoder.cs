@@ -44,7 +44,7 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Decode(string token) => Encoding.UTF8.GetString(_urlEncoder.Decode(new Jwt(token).Payload));
+        public string Decode(string token) => Encoding.UTF8.GetString(_urlEncoder.Decode(new JwtParts(token).Payload));
 
         /// <inheritdoc />
         public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
@@ -54,7 +54,7 @@ namespace JWT
         {
             if (verify)
             {
-                Validate(new Jwt(token).Parts, key);
+                Validate(new JwtParts(token).Parts, key);
             }
 
             return Decode(token);
@@ -78,25 +78,25 @@ namespace JWT
         /// <inheritdoc />
         public T DecodeToObject<T>(string token, byte[] key, bool verify) => _jsonSerializer.Deserialize<T>(Decode(token, key, verify));
 
+        public void Validate(string[] parts, byte[] key) => Validate(new JwtParts(parts), key);
 
         /// <summary>
         /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
         /// </summary>
         /// <param name="parts">The JWT split into parts.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
-        public void Validate(string[] parts, byte[] key)
+        public void Validate(JwtParts jwt, byte[] key)
         {
-            var crypto = _urlEncoder.Decode(parts[(int)JwtParts.Signature]);
+            var crypto = _urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
-
-            var header = parts[(int)JwtParts.Header];
-            var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(header));
+            
+            var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(jwt.Header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
-            var payload = parts[(int) JwtParts.Payload];
+            var payload = jwt.Payload;
             var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
-            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(header, ".", payload));
+            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(jwt.Header, ".", payload));
 
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
@@ -105,7 +105,6 @@ namespace JWT
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
-        }
-       
+        }       
     }    
 }
