@@ -50,8 +50,18 @@ namespace JWT
         public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public string Decode(string token, byte[] key, bool verify)
         {
+            if (String.IsNullOrWhiteSpace(token))
+                throw new ArgumentException(nameof(token));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(key));
+
             if (verify)
             {
                 Validate(new JwtParts(token), key);
