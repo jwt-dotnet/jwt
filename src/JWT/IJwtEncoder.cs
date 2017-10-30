@@ -3,12 +3,12 @@ using System.Collections.Generic;
 namespace JWT
 {
     /// <summary>
-    /// JwtEncoder interface.
+    /// Represents a JWT encoder.
     /// </summary>
     public interface IJwtEncoder
     {
         /// <summary>
-        /// Encodes the paygiven with the provided key.
+        /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key used to sign the token.</param>
