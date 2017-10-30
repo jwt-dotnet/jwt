@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace JWT
 {
     /// <summary>
-    ///  /// Represents an exception thrown when when a token is expired.
+    /// Represents an exception thrown when when a token is expired.
     /// </summary>
     public class TokenExpiredException : SignatureVerificationException
     {
@@ -23,7 +23,7 @@ namespace JWT
         /// <summary>
         /// The payload.
         /// </summary>
-        public Dictionary<string, object> PayloadData
+        public IDictionary<string, object> PayloadData
         {
             get => GetOrDefault<Dictionary<string, object>>(PayloadDataKey);
             internal set => Data.Add(PayloadDataKey, value);

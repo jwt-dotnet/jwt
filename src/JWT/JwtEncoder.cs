@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -26,26 +27,26 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Encode(object payload, string key)
-        {
-            return Encode(null, payload, Encoding.UTF8.GetBytes(key));
-        }
+        public string Encode(object payload, string key) => Encode(null, payload, Encoding.UTF8.GetBytes(key));
 
         /// <inheritdoc />
-        public string Encode(object payload, byte[] key)
-        {
-            return Encode(null, payload, key);
-        }
+        public string Encode(object payload, byte[] key) => Encode(null, payload, key);
 
         /// <inheritdoc />
-        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key)
-        {
-            return Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key));
-        }
+        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key));
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
+            if (payload == null)
+                throw new ArgumentNullException(nameof(payload));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(key));
+
             var segments = new List<string>(3);
 
             var header = extraHeaders != null ? new Dictionary<string, object>(extraHeaders) : new Dictionary<string, object>();

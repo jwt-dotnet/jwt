@@ -70,13 +70,33 @@ namespace JWT
         public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify) => DecodeToObject<Dictionary<string, object>>(token, key, verify);
 
         /// <inheritdoc />
-        public T DecodeToObject<T>(string token) => _jsonSerializer.Deserialize<T>(Decode(token));
+        /// <exception cref="ArgumentException" />
+        public T DecodeToObject<T>(string token)
+        {
+            if (String.IsNullOrWhiteSpace(token))
+                throw new ArgumentException(nameof(token));
+
+            return _jsonSerializer.Deserialize<T>(Decode(token));
+        }
 
         /// <inheritdoc />
         public T DecodeToObject<T>(string token, string key, bool verify) => DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
-        public T DecodeToObject<T>(string token, byte[] key, bool verify) => _jsonSerializer.Deserialize<T>(Decode(token, key, verify));
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        public T DecodeToObject<T>(string token, byte[] key, bool verify)
+        {
+            if (String.IsNullOrWhiteSpace(token))
+                throw new ArgumentException(nameof(token));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(key));
+
+            return _jsonSerializer.Deserialize<T>(Decode(token, key, verify));
+        }
 
         /// <summary>
         /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
@@ -90,8 +110,17 @@ namespace JWT
         /// </summary>
         /// <param name="jwt">The JWT parts.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public void Validate(JwtParts jwt, byte[] key)
         {
+            if (jwt == null)
+                throw new ArgumentNullException(nameof(jwt));
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            if (key.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(key));
+
             var crypto = _urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 

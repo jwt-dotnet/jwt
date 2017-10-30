@@ -1,7 +1,7 @@
 ﻿namespace JWT
 {
     /// <summary>
-    ///  Represents a JWT validator.
+    /// Represents a JWT validator.
     /// </summary>
     public interface IJwtValidator
     {
