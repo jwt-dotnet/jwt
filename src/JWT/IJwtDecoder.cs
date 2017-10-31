@@ -4,12 +4,21 @@ using System.Collections.Generic;
 namespace JWT
 {
     /// <summary>
-    /// JwtDecoder interface.
+    /// Represents a JWT decoder.
     /// </summary>
     public interface IJwtDecoder
     {
+        #region Decode
+
         /// <summary>
-        /// Given a JWT, decode it and return the JSON payload.
+        /// Given a JWT, decodes it and return the JSON payload.
+        /// </summary>
+        /// <param name="token">The JWT.</param>
+        /// <returns>A string containing the JSON payload.</returns>
+        string Decode(string token);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the JSON payload.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -20,7 +29,7 @@ namespace JWT
         string Decode(string token, string key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decode it and return the JSON payload.
+        /// Given a JWT, decodes it and return the JSON payload.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key bytes that were used to sign the JWT.</param>
@@ -30,8 +39,18 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         string Decode(string token, byte[] key, bool verify);
 
+        #endregion
+
+        #region IDictionary<string, object> DecodeToObject
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <param name="token">The JWT.</param>
+        /// <returns>An object representing the payload.</returns>
+        IDictionary<string, object> DecodeToObject(string token);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -42,7 +61,7 @@ namespace JWT
         IDictionary<string, object> DecodeToObject(string token, string key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
         /// <param name="token">The JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -52,8 +71,20 @@ namespace JWT
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify);
 
+        #endregion
+
+        #region T DecodeToObject<T>
+
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to return</typeparam>
+        /// <param name="token">The JWT.</param>
+        /// <returns>An object representing the payload.</returns>
+        T DecodeToObject<T>(string token);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> to return</typeparam>
         /// <param name="token">The JWT.</param>
@@ -65,7 +96,7 @@ namespace JWT
         T DecodeToObject<T>(string token, string key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decode it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> to return</typeparam>
         /// <param name="token">The JWT.</param>
@@ -75,5 +106,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
         T DecodeToObject<T>(string token, byte[] key, bool verify);
+
+        #endregion
     }
 }

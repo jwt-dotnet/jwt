@@ -7,12 +7,16 @@ namespace JWT
     /// </summary>
     public sealed class JwtBase64UrlEncoder : IBase64UrlEncoder
     {
-        /// <summary>
-        /// Encode the byte array to a Base64 string.
-        /// </summary>
-        /// <param name="input"></param>
+        /// <inheritdoc />
+        /// <exception cref="T:System.ArgumentNullException" />
+        /// <exception cref="T:System.ArgumentOutOfRangeException" />
         public string Encode(byte[] input)
         {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+            if (input.Length == 0)
+                throw new ArgumentOutOfRangeException(nameof(input));
+
             var output = Convert.ToBase64String(input);
             output = output.Split('=')[0]; // Remove any trailing '='s
             output = output.Replace('+', '-'); // 62nd char of encoding
@@ -20,13 +24,13 @@ namespace JWT
             return output;
         }
 
-        /// <summary>
-        /// Decode the Base64 string to a byte array.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
+        /// <exception cref="T:System.ArgumentException" />
         public byte[] Decode(string input)
         {
+            if (String.IsNullOrWhiteSpace(input))
+                throw new ArgumentException(nameof(input));
+
             var output = input;
             output = output.Replace('-', '+'); // 62nd char of encoding
             output = output.Replace('_', '/'); // 63rd char of encoding

@@ -1,12 +1,12 @@
 ﻿namespace JWT
 {
     /// <summary>
-    /// JwtValidator interface.
+    /// Represents a JWT validator.
     /// </summary>
     public interface IJwtValidator
     {
         /// <summary>
-        /// Given the JWT, verifies it.
+        /// Given the JWT, verifies its signature correctness.
         /// </summary>
         /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON).</param>
         /// <param name="decodedCrypto">Decoded body</param>

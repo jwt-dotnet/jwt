@@ -3,7 +3,7 @@
 namespace JWT
 {
     /// <summary>
-    /// Exception used when a signature validation fails.
+    /// Represents an exception thrown when a signature validation fails.
     /// </summary>
     public class SignatureVerificationException : Exception
     {
@@ -24,8 +24,8 @@ namespace JWT
         /// </summary>
         public string Expected
         {
-            get { return GetOrDefault<string>(ExpectedKey); }
-            internal set { Data.Add(ExpectedKey, value); }
+            get => GetOrDefault<string>(ExpectedKey);
+            internal set => Data.Add(ExpectedKey, value);
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace JWT
         /// </summary>
         public string Received
         {
-            get { return GetOrDefault<string>(ReceivedKey); }
-            internal set { Data.Add(ReceivedKey, value); }
+            get => GetOrDefault<string>(ReceivedKey);
+            internal set => Data.Add(ReceivedKey, value);
         }
 
         /// <summary>
