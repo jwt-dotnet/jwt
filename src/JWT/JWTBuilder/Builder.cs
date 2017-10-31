@@ -27,7 +27,7 @@ namespace JWT.JWTBuilder
         /// <param name="name">Set the header-name. You can only use the defined headers!</param>
         /// <param name="value">The value you want give to the header.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder AddHeader(HeaderNames name, string value)
+        public Builder AddHeader(HeaderName name, string value)
         {
             this.jwt.Header.Add(name.GetHeaderName(), value);
             return this;
@@ -143,7 +143,7 @@ namespace JWT.JWTBuilder
         /// <returns>The JWT string.</returns>
         public string Build()
         {
-            if (!canWeBuild())
+            if (!canBuild())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
                 "- SetAlgorithm \n\r" +
@@ -163,7 +163,7 @@ namespace JWT.JWTBuilder
         public string Decode(string token)
         {
             tryToCreateAValidator();
-            if (!canWeDecode())
+            if (!canDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
                 "- SetSerializer \n\r" +
@@ -174,7 +174,7 @@ namespace JWT.JWTBuilder
                 );
 
             }
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);            
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
             return decoder.Decode(token, secret, verify);
         }
         /// <summary>
@@ -185,7 +185,7 @@ namespace JWT.JWTBuilder
         public T Decode<T>(string token)
         {
             tryToCreateAValidator();
-            if (!canWeDecode())
+            if (!canDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
                 "- SetSerializer \n\r" +
@@ -218,7 +218,7 @@ namespace JWT.JWTBuilder
         /// Check if we have enaught information to build a new Token.
         /// </summary>
         /// <returns>Returns true if all requierd information are there to create a token.</returns>
-        private bool canWeBuild()
+        private bool canBuild()
         {
             if (
                 algorithm != null &&
@@ -236,7 +236,7 @@ namespace JWT.JWTBuilder
         /// Check if we have enaught informations to decode a token.
         /// </summary>
         /// <returns>Returns ture if all requiered informations are there to create a token.</returns>
-        private bool canWeDecode()
+        private bool canDecode()
         {
             if (serializer != null &&
             utcProvieder != null &&
@@ -244,11 +244,7 @@ namespace JWT.JWTBuilder
             urlEncoder != null
             )
             {
-                if (verify && secret == null && secret.Length > 0)
-                {
-                    return false;
-                }
-                return true;
+                return (!verify || (verify && secret == null && secret.Length > 0));
             }
             return false;
         }

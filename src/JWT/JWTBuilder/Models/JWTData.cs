@@ -11,19 +11,19 @@ namespace JWT.JWTBuilder.Models
         /// Create a new instance of JWTData and initalize Header and Payload.
         /// </summary>
         /// <returns>A Instance of <see cref"JWTData"/></returns>
-        public JWTData() : this(Header: new Dictionary<string, string>(), PayLoad: new Dictionary<string, object>())
+        public JWTData() : this(header: new Dictionary<string, string>(), payLoad: new Dictionary<string, object>())
         {
         }
 
         /// <summary>
         /// Create a new instance of JWTData
         /// </summary>
-        /// <param name="Header">A Instance of a dictionary that contains the headers</param>
-        /// <param name="PayLoad">A instance of a dictionary that contans the payload</param>
-        public JWTData(Dictionary<string, string> Header, Dictionary<string, object> PayLoad)
+        /// <param name="header">A Instance of a dictionary that contains the headers</param>
+        /// <param name="payLoad">A instance of a dictionary that contans the payload</param>
+        public JWTData(Dictionary<string, string> header, Dictionary<string, object> payLoad)
         {
-            this.Header = Header;
-            this.PayLoad = PayLoad;
+            this.Header = header;
+            this.PayLoad = payLoad;
         }
 
         /// <summary>

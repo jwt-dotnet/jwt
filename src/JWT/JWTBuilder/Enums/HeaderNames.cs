@@ -6,7 +6,7 @@ namespace JWT.JWTBuilder.Enums
     /// All predefined Headers specified by RFC. (https://tools.ietf.org/html/rfc7519)
     /// Last update 31.10.2017
     /// </summary>
-    public enum HeaderNames
+    public enum HeaderName
     {
         [Description("typ")]
         Type,
