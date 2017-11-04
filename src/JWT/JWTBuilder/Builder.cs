@@ -175,6 +175,10 @@ namespace JWT.JWTBuilder
 
             }
             var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            if(verify == false)
+            {
+                return decoder.Decode(token);
+            }
             return decoder.Decode(token, secret, verify);
         }
         /// <summary>
@@ -244,7 +248,7 @@ namespace JWT.JWTBuilder
             urlEncoder != null
             )
             {
-                return (!verify || (verify && secret == null && secret.Length > 0));
+                return (!verify || (verify && secret != null && secret.Length > 0));
             }
             return false;
         }
