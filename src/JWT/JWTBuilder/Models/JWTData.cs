@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 namespace JWT.JWTBuilder.Models
 {
@@ -26,6 +27,16 @@ namespace JWT.JWTBuilder.Models
             this.PayLoad = payLoad;
         }
 
+        public JWTData(string token)
+        {
+            var partsOfToken = token.Split('.');
+            if(partsOfToken.Length != 3)
+            {
+                throw new ArgumentOutOfRangeException(nameof(partsOfToken), "Token must consist of 3 delimited by dot parts.");
+            }
+
+        }
+
         /// <summary>
         /// The header information as a key, value store of the JWT
         /// </summary>
@@ -36,6 +47,12 @@ namespace JWT.JWTBuilder.Models
         /// </summary>
         /// <returns>The payload of the JWT</returns>
         public Dictionary<string, object> PayLoad { get; set; }
+
+        private Dictionary<string, string> ConvertStringHeader(string header)
+        {
+
+            return null;
+        }
 
     }
 }

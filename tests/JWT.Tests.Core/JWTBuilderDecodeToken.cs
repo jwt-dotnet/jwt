@@ -25,14 +25,7 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutToken()
         {
             string payload = null;
-            try
-            {
-                payload = new JWTBuilder.Builder().Decode(null);
-            }
-            catch (System.Exception ex)
-            {
-                Assert.True(true);
-            }
+            Assert.Throws<ArgumentException>(() => { payload = new JWTBuilder.Builder().Decode(null); });
 
             Assert.True(payload == null);
         }
@@ -41,14 +34,7 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutSerilizer()
         {
             string payload = null;
-            try
-            {
-                payload = new JWTBuilder.Builder().SetSerializer(null).Decode(sampleSecret);
-            }
-            catch (System.Exception ex)
-            {
-                Assert.True(true);
-            }
+            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetSerializer(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
@@ -63,14 +49,7 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutUrlEncoder()
         {
             string payload = null;
-            try
-            {
-                payload = new JWTBuilder.Builder().SetUrlEncoder(null).Decode(sampleToken);
-            }
-            catch (System.Exception ex)
-            {
-                Assert.True(true);
-            }
+            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetUrlEncoder(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
@@ -85,15 +64,7 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutTimeProvider()
         {
             string payload = null;
-            try
-            {
-                payload = new JWTBuilder.Builder().SetTimeProvider(null).Decode(sampleToken);
-            }
-            catch (System.Exception ex)
-            {
-                Assert.True(true);
-            }
-
+            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetTimeProvider(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
@@ -139,7 +110,7 @@ namespace JWT.Tests.Core
                 payload = new JWTBuilder.Builder()
                .MustVerify()
                .Decode(sampleToken);
-            });            
+            });
             Assert.True(payload == null);
         }
 
@@ -173,7 +144,7 @@ namespace JWT.Tests.Core
                 .SetSecret(sampleSecret)
                 .MustVerify()
                 .Decode<Dictionary<string, string>>(sampleToken);
-            });            
+            });
             Assert.True(payload == null);
         }
     }
