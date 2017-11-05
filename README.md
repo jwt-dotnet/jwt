@@ -14,19 +14,12 @@ As of version 2.0, the lowest Supported version is 4.6.1
 ### Creating (Encoding) Tokens
 
 ```csharp
-var payload = new Dictionary<string, object>
-{
-    { "claim1", 0 },
-    { "claim2", "claim2-value" }
-};
-var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+var token = new JWTBuilder.Builder().
+    .SetAlgorithm(new HMACSHA256Algorithm())
+    .SetSecret("GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk")
+    .AddClaim(PublicClaimsNames.ExpirationTime, DateTime.UtcNow.AddHours(5).ToString())
+    .Build();
 
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
-IJsonSerializer serializer = new JsonNetSerializer();
-IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
-
-var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
@@ -41,13 +34,10 @@ var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6Im
 var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
-    IJsonSerializer serializer = new JsonNetSerializer();
-    IDateTimeProvider provider = new UtcDateTimeProvider();
-    IJwtValidator validator = new JwtValidator(serializer, provider);
-    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
-    
-    var json = decoder.Decode(token, secret, verify: true);
+    var json = new JWTBuilder.Builder()
+        .SetSecret(secret)
+        .MustVerify()
+        .Decode(token);                    
     Console.WriteLine(json);
 }
 catch (TokenExpiredException)
@@ -64,10 +54,13 @@ Output will be:
 
 >{ "claim1": 0, "claim2": "claim2-value" }
 
-You can also deserialize the JSON payload directly to a .NET type with `DecodeToObject<T>`:
+You can also deserialize the JSON payload directly to a .NET type with `Decode<T>`:
 
 ```csharp
-var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
+var payload = new JWTBuilder.Builder()
+        .SetSecret(secret)
+        .MustVerify()
+        .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
 ```
 
