@@ -17,7 +17,7 @@ namespace JWT.JWTBuilder.Enums
         [Description("exp")]
         ExpirationTime,
         [Description("nbf")]
-        NotBefor,
+        NotBefore,
         [Description("iat")]
         IssuedAt,
         [Description("jti")]
