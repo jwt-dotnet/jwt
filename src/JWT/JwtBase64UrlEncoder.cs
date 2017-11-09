@@ -38,6 +38,9 @@ namespace JWT
             {
                 case 0:
                     break; // No pad chars in this case
+                case 1:
+                    output += "===";
+                    break; // Three pad chars
                 case 2:
                     output += "==";
                     break; // Two pad chars
