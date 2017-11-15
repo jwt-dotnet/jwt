@@ -140,7 +140,7 @@ namespace JWT
             var payload = jwt.Payload;
             var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
-            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(jwt.Header, ".", payload));
+            var bytesToSign = Encoding.UTF8.GetBytes(String.Concat(jwt.Header, ".", payload));
 
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);

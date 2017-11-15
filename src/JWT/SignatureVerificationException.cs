@@ -25,7 +25,7 @@ namespace JWT
         public string Expected
         {
             get => GetOrDefault<string>(ExpectedKey);
-            internal set => Data.Add(ExpectedKey, value);
+            internal set => this.Data.Add(ExpectedKey, value);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace JWT
         public string Received
         {
             get => GetOrDefault<string>(ReceivedKey);
-            internal set => Data.Add(ReceivedKey, value);
+            internal set => this.Data.Add(ReceivedKey, value);
         }
 
         /// <summary>
@@ -45,8 +45,8 @@ namespace JWT
         /// <returns></returns>
         protected T GetOrDefault<T>(string key)
         {
-            if (Data.Contains(key))
-                return (T)Data[key];
+            if (this.Data.Contains(key))
+                return (T)this.Data[key];
             return default(T);
         }
     }

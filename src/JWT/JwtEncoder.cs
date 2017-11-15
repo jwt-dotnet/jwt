@@ -59,13 +59,13 @@ namespace JWT
             segments.Add(_urlEncoder.Encode(headerBytes));
             segments.Add(_urlEncoder.Encode(payloadBytes));
 
-            var stringToSign = string.Join(".", segments.ToArray());
+            var stringToSign = String.Join(".", segments.ToArray());
             var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
 
             var signature = _algorithm.Sign(key, bytesToSign);
             segments.Add(_urlEncoder.Encode(signature));
 
-            return string.Join(".", segments.ToArray());
+            return String.Join(".", segments.ToArray());
         }
     }
 }

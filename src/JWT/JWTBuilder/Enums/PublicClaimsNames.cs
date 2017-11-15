@@ -3,9 +3,11 @@ using System.ComponentModel;
 namespace JWT.JWTBuilder.Enums
 {
     /// <summary>
-    /// All Public Claims of a JWT, specified by iana. (https://www.iana.org/assignments/jwt/jwt.xhtml)
-    /// Latest Upadte 31.10.2017
+    /// All Public Claims of a JWT, specified by IANA, see https://www.iana.org/assignments/jwt/jwt.xhtml
     /// </summary>
+    /// <remarks>
+    /// Latest update: 31.10.2017
+    /// </remarks>
     public enum PublicClaimsNames
     {
         [Description("iss")]

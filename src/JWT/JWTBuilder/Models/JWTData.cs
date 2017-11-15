@@ -2,35 +2,34 @@ using System;
 using System.Collections.Generic;
 namespace JWT.JWTBuilder.Models
 {
-
     /// <summary>
     /// Represents the Data that will store in a JWT.
     /// </summary>
-    public class JWTData
+    public class JwtData
     {
         /// <summary>
-        /// Create a new instance of JWTData and initalize Header and Payload.
+        /// Creates a new instance of <see cref="JwtData" /> and initalizes Header and Payload.
         /// </summary>
-        /// <returns>A Instance of <see cref"JWTData"/></returns>
-        public JWTData() : this(header: new Dictionary<string, string>(), payLoad: new Dictionary<string, object>())
+        public JwtData()
+            : this(new Dictionary<string, string>(), new Dictionary<string, object>())
         {
         }
 
         /// <summary>
-        /// Create a new instance of JWTData
+        /// Creates a new instance of <see cref="JwtData" />
         /// </summary>
-        /// <param name="header">A Instance of a dictionary that contains the headers</param>
-        /// <param name="payLoad">A instance of a dictionary that contans the payload</param>
-        public JWTData(Dictionary<string, string> header, Dictionary<string, object> payLoad)
+        /// <param name="header">Dictionary that contains the headers</param>
+        /// <param name="payload">Dictionary that contans the payload</param>
+        public JwtData(IDictionary<string, string> header, IDictionary<string, object> payload)
         {
             this.Header = header;
-            this.PayLoad = payLoad;
+            this.Payload = payload;
         }
 
-        public JWTData(string token)
+        public JwtData(string token)
         {
             var partsOfToken = token.Split('.');
-            if(partsOfToken.Length != 3)
+            if (partsOfToken.Length != 3)
             {
                 throw new ArgumentOutOfRangeException(nameof(partsOfToken), "Token must consist of 3 delimited by dot parts.");
             }
@@ -38,21 +37,13 @@ namespace JWT.JWTBuilder.Models
         }
 
         /// <summary>
-        /// The header information as a key, value store of the JWT
+        /// The header information as a key-value store of the JWT
         /// </summary>
-        /// <returns>The headers of the JWT</returns>
-        public Dictionary<string, string> Header { get; set; }
+        public IDictionary<string, string> Header { get; set; }
+
         /// <summary>
-        /// The payload of the JWT as a key,value store
+        /// The payload of the JWT as a key-value store
         /// </summary>
-        /// <returns>The payload of the JWT</returns>
-        public Dictionary<string, object> PayLoad { get; set; }
-
-        private Dictionary<string, string> ConvertStringHeader(string header)
-        {
-
-            return null;
-        }
-
+        public IDictionary<string, object> Payload { get; set; }
     }
 }
