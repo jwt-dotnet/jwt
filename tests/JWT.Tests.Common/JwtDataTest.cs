@@ -7,21 +7,25 @@ namespace JWT.Tests.Common
     public class JwtDataTest
     {
         [Fact]
-        public void CanCreate_With_New_JwtData_With_Params()
+        public void JwtData_With_Ctor_Params()
         {
-            var headers = new Dictionary<string, string>();
-            headers.Add("test", "test");
+            var headers = new Dictionary<string, string>
+            {
+                { "test", "header" }
+            };
 
-            var payload = new Dictionary<string, object>();
-            payload.Add("test", "payload");
+            var payload = new Dictionary<string, object>
+            {
+                { "test", "payload" }
+            };
 
-            var jwtData = new JwtData();
+            var jwtData = new JwtData(headers, payload);
 
-            Assert.True(jwtData.Header["test"] == "test");
-            Assert.True(jwtData.Payload["test"].ToString() == "payload");
+            Assert.Equal(jwtData.Header["test"], "header");
+            Assert.Equal(jwtData.Payload["test"], "payload");
 
             jwtData.Payload.Add("payload01", "payload02");
-            Assert.True(jwtData.Payload["payload01"].ToString() == "payload02");
+            Assert.Equal(jwtData.Payload["payload01"], "payload02");
         }
     }
 }

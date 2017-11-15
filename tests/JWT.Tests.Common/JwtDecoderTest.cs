@@ -1,5 +1,4 @@
 using System;
-using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common;
@@ -16,11 +15,11 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
-            var expectedPayload = serializer.Serialize(TestData.Customer);
+            var expected = serializer.Serialize(TestData.Customer);
 
-            var actualPayload = decoder.Decode(TestData.Token, "ABC", verify: false);
+            var actual = decoder.Decode(TestData.Token, "ABC", verify: false);
 
-            actualPayload.Should().Be(expectedPayload);
+            Assert.Equal(actual, expected);
         }
 
         [Fact]
@@ -30,9 +29,9 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
-            var actualPayload = decoder.DecodeToObject(TestData.Token, "ABC", verify: false);
+            var actual = decoder.DecodeToObject(TestData.Token, "ABC", verify: false);
 
-            actualPayload.ShouldBeEquivalentTo(TestData.DictionaryPayload, options => options.IncludingAllRuntimeProperties());
+            Assert.Equal(actual, TestData.DictionaryPayload);
         }
 
         [Fact]
@@ -42,9 +41,9 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
-            var actualPayload = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
+            var actual = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
 
-            actualPayload.ShouldBeEquivalentTo(TestData.Customer);
+            Assert.Same(actual, TestData.Customer);
         }
 
         [Fact]
@@ -56,52 +55,53 @@ namespace JWT.Tests
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.MalformedToken, "ABC", verify: false);
 
-            action.ShouldThrow<ArgumentException>();
+            Assert.Throws<InvalidTokenPartsException>(action);
         }
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key()
         {
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.Token, "XYZ", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>();
+            Assert.Throws<SignatureVerificationException>(action);
         }
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var invalidtoken = encoder.Encode(new { exp = "asdsad" }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>();
+            Assert.Throws<SignatureVerificationException>(action);
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
         {
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var invalidtoken = encoder.Encode(new { exp = (object)null }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'exp' must be a number.");
+            var message = Assert.Throws<SignatureVerificationException>(action).Message;
+            Assert.Equal(message, "Claim 'exp' must be a number.");
         }
 
         [Fact]
@@ -109,41 +109,41 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var validTor = new JwtValidTor(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var now = dateTimeProvider.GetNow();
-            var exp = (int)(now.AddHours(-1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var exp = (int)(now.AddHours(-1) - JwtValidTor.UnixEpoch).TotalSeconds;
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var expiredtoken = encoder.Encode(new { exp = exp }, "ABC");
+            var expiredtoken = encoder.Encode(new { exp }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
 
-            action.ShouldThrow<TokenExpiredException>();
+            Assert.Throws<TokenExpiredException>(action);
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_DecodeToken_On_Exp_Claim_After_Year2038()
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var validTor = new JwtValidTor(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            //Why 2038? https://en.wikipedia.org/wiki/Year_2038_problem
+            // Why 2038? See https://en.wikipedia.org/wiki/Year_2038_problem
             var post2038 = new DateTime(2038, 1, 19, 3, 14, 8, DateTimeKind.Utc);
             var exp = (post2038 - new DateTime(1970, 1, 1)).TotalSeconds;
-            var payload = new { exp = exp };
+            var payload = new { exp };
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var validToken = encoder.Encode(payload, "ABC");
 
-            var expectedPayload = serializer.Serialize(payload);
-            var actualPayload = decoder.Decode(validToken, "ABC", true);
+            var expected = serializer.Serialize(payload);
+            var actual = decoder.Decode(validToken, "ABC", true);
 
-            actualPayload.Should().Be(expectedPayload);
+            Assert.Equal(actual, expected);
         }
 
         [Fact]
@@ -151,17 +151,17 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var validTor = new JwtValidTor(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
-            var invalidnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
+            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidTor.UnixEpoch).TotalSeconds;
+            var invalidnbftoken = encoder.Encode(new { nbf }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>();
+            Assert.Throws<SignatureVerificationException>(action);
         }
 
         [Fact]
@@ -169,16 +169,17 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var validTor = new JwtValidTor(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var invalidnbftoken = encoder.Encode(new { nbf = (object)null }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
 
-            action.ShouldThrow<SignatureVerificationException>().WithMessage("Claim 'nbf' must be a number.");
+            var message = Assert.Throws<SignatureVerificationException>(action).Message;
+            Assert.Equal(message, "Claim 'nbf' must be a number.");
         }
 
         [Fact]
@@ -186,13 +187,13 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var validTor = new JwtValidTor(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
-            var validnbftoken = encoder.Encode(new { nbf = nbf }, "ABC");
+            var nbf = (int)(DateTime.UtcNow - JwtValidTor.UnixEpoch).TotalSeconds;
+            var validnbftoken = encoder.Encode(new { nbf }, "ABC");
 
             decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
         }

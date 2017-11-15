@@ -28,6 +28,7 @@ namespace JWT.Tests.Common
                 .AddClaim(PublicClaimsNames.ExpirationTime, testtime)
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+
             var decodedToken = System.Text.Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
             Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
         }
@@ -35,12 +36,7 @@ namespace JWT.Tests.Common
         [Fact]
         public void TryToCreateTokenWithoutInformaiton()
         {
-            string token = null;
-            Assert.Throws<Exception>(() =>
-            {
-                token = new Builder().Build();
-            });
-            Assert.True(token == null);
+            Assert.Throws<Exception>(() => new Builder().Build());
         }
 
         [Fact]
@@ -50,7 +46,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void TryToCreateATokenOnlyWithSecret()
+        public void TryToCreateTokenOnlyWithSecret()
         {
             Assert.Throws<Exception>(() => new Builder().SetSecret("fjhsdghflghlk").Build());
         }

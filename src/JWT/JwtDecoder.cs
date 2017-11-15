@@ -13,7 +13,7 @@ namespace JWT
         private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new HMACSHAAlgorithmFactory();
 
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly IJwtValidator _jwtValidator;
+        private readonly IJwtValidTor _jwtValidTor;
         private readonly IBase64UrlEncoder _urlEncoder;
         private readonly IAlgorithmFactory _algFactory;
 
@@ -21,10 +21,10 @@ namespace JWT
         /// Creates an instance of <see cref="JwtDecoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="jwtValidTor">The Jwt ValidTor.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
-        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
-            : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidTor jwtValidTor, IBase64UrlEncoder urlEncoder)
+            : this(jsonSerializer, jwtValidTor, urlEncoder, _defaultAlgorithmFactory)
         {
         }
 
@@ -32,13 +32,13 @@ namespace JWT
         /// Creates an instance of <see cref="JwtDecoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="jwtValidTor">The Jwt ValidTor.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         /// <param name="algFactory">The Algorithm Factory.</param>
-        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidTor jwtValidTor, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
         {
             _jsonSerializer = jsonSerializer;
-            _jwtValidator = jwtValidator;
+            _jwtValidTor = jwtValidTor;
             _urlEncoder = urlEncoder;
             _algFactory = algFactory;
         }
@@ -109,14 +109,14 @@ namespace JWT
         }
 
         /// <summary>
-        /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
+        /// Helper method that prepares data before calling <see cref="IJwtValidTor.Validate" />.
         /// </summary>
         /// <param name="parts">The array representation of a JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
         public void Validate(string[] parts, byte[] key) => Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
+        /// Helper method that prepares data before calling <see cref="IJwtValidTor.Validate" />.
         /// </summary>
         /// <param name="jwt">The JWT parts.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
@@ -148,7 +148,7 @@ namespace JWT
             var signatureData = alg.Sign(key, bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+            _jwtValidTor.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
     }
 }

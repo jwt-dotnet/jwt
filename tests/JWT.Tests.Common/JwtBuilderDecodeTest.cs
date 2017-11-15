@@ -17,78 +17,89 @@ namespace JWT.Tests.Common
             var payload = new Builder()
                 .Decode(_sampleToken);
 
-            Assert.True(payload.Length > 0);
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
         public void DecodeTokenWithoutToken()
         {
-            string payload = null;
-            Assert.Throws<ArgumentException>(() => { payload = new Builder().Decode(null); });
-
-            Assert.True(payload == null);
+            Assert.Throws<ArgumentException>(() => new Builder()
+                                                    .Decode(null));
         }
 
         [Fact]
         public void DecodeTokenWithoutSerilizer()
         {
-            string payload = null;
-            Assert.Throws<Exception>(() => { payload = new Builder().SetSerializer(null).Decode(_sampleToken); });
-            Assert.True(payload == null);
+            Assert.Throws<Exception>(() => new Builder()
+                                             .SetSerializer(null)
+                                             .Decode(_sampleToken));
         }
 
         [Fact]
-        public void DecodeTokenWithAnExplicitSerilizer()
+        public void DecodeTokenWithExplicitSerilizer()
         {
-            var payload = new Builder().SetSerializer(new JsonNetSerializer()).Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+            var payload = new Builder()
+                .SetSerializer(new JsonNetSerializer())
+                .Decode(_sampleToken);
+
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
         public void DecodeTokenWithoutUrlEncoder()
         {
-            string payload = null;
-            Assert.Throws<Exception>(() => { payload = new Builder().SetUrlEncoder(null).Decode(_sampleToken); });
-            Assert.True(payload == null);
+            Assert.Throws<Exception>(() => new Builder()
+                                             .SetUrlEncoder(null)
+                                             .Decode(_sampleToken));
         }
 
         [Fact]
-        public void DecodeTokenWithAnExplicitUrlEncoder()
+        public void DecodeTokenWithExplicitUrlEncoder()
         {
-            var payload = new Builder().SetUrlEncoder(new JwtBase64UrlEncoder()).Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+            var payload = new Builder()
+                .SetUrlEncoder(new JwtBase64UrlEncoder())
+                .Decode(_sampleToken);
+
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
         public void DecodeTokenWithoutTimeProvider()
         {
-            string payload = null;
-            Assert.Throws<Exception>(() => { payload = new Builder().SetTimeProvider(null).Decode(_sampleToken); });
-            Assert.True(payload == null);
+            Assert.Throws<Exception>(() => new Builder()
+                                             .SetTimeProvider(null)
+                                             .Decode(_sampleToken));
         }
 
         [Fact]
-        public void DecodeTokenWithAnExplicitTimeProvider()
+        public void DecodeTokenWithExplicitTimeProvider()
         {
-            var payload = new Builder().SetTimeProvider(new UtcDateTimeProvider()).Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+            var payload = new Builder()
+                .SetTimeProvider(new UtcDateTimeProvider())
+                .Decode(_sampleToken);
+
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
-        public void DecodeTokenWithoutValidator()
+        public void DecodeTokenWithoutValidTor()
         {
-            var payload = new Builder().SetValidator(null).Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+            var payload = new Builder()
+                .SetValidTor(null)
+                .Decode(_sampleToken);
 
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
-        public void DecodeTokenWithAnExplicitValidator()
+        public void DecodeTokenWithExplicitValidTor()
         {
-            var payload = new Builder().SetValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider())).Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
-        }
+            var payload = new Builder()
+                .SetValidTor(new JwtValidTor(new JsonNetSerializer(), new UtcDateTimeProvider()))
+                .Decode(_sampleToken);
 
+            Assert.NotEmpty(payload);
+        }
 
         [Fact]
         public void DecodeTokenWithVerifyCheck()
@@ -97,20 +108,16 @@ namespace JWT.Tests.Common
                 .SetSecret(_sampleSecret)
                 .MustVerify()
                 .Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
         public void DecodeTokenWithVerifyCheckWithoutSecret()
         {
-            string payload = null;
-            Assert.Throws<Exception>(() =>
-            {
-                payload = new Builder()
-               .MustVerify()
-               .Decode(_sampleToken);
-            });
-            Assert.True(payload == null);
+            Assert.Throws<Exception>(() => new Builder()
+                                            .MustVerify()
+                                            .Decode(_sampleToken));
         }
 
         [Fact]
@@ -119,32 +126,32 @@ namespace JWT.Tests.Common
             var payload = new Builder()
                 .NotVerify()
                 .Decode(_sampleToken);
-            Assert.True(payload.Length > 0);
+
+            Assert.NotEmpty(payload);
         }
 
         [Fact]
-        public void DecodeTokenToADictionary()
+        public void DecodeTokenToDictionary()
         {
             var payload = new Builder()
                 .SetSecret(_sampleSecret)
                 .MustVerify()
                 .Decode<Dictionary<string, string>>(_sampleToken);
+
             Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
         }
 
         [Fact]
-        public void DecodeTokenToADictionaryWithoutSerializier()
+        public void DecodeTokenToDictionaryWithoutSerializier()
         {
-            Dictionary<string, string> payload = null;
             Assert.Throws<Exception>(() =>
-            {
-                payload = new Builder()
-                .SetSerializer(null)
-                .SetSecret(_sampleSecret)
-                .MustVerify()
-                .Decode<Dictionary<string, string>>(_sampleToken);
-            });
-            Assert.True(payload == null);
+                                     {
+                                         new Builder()
+                                             .SetSerializer(null)
+                                             .SetSecret(_sampleSecret)
+                                             .MustVerify()
+                                             .Decode<Dictionary<string, string>>(_sampleToken);
+                                     });
         }
     }
 }

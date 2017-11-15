@@ -12,7 +12,6 @@ namespace JWT.Tests.Common
 
         // Security Constants
         public const string AlgorithmNoneToken = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.ANY";
-        
 
         public static readonly IDictionary<string, object> DictionaryPayload = new Dictionary<string, object>
         {
@@ -51,6 +50,5 @@ namespace JWT.Tests.Common
             + "YouEKIpRSnxeRi45LX0ouRgTmwT/8xr6VxVKe1eToMJ85f/7FXewWR+W1dIN+NXi"
             + "MzhzkzbNqAeDkg=="
             + "-----END PRIVATE KEY-----";
-
     }
 }

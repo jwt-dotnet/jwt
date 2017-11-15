@@ -17,7 +17,7 @@ namespace JWT.JwtBuilder
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IJwtAlgorithm _algorithm;
         private IDateTimeProvider _utcProvieder = new UtcDateTimeProvider();
-        private IJwtValidator _validator;
+        private IJwtValidTor _validTor;
         private bool _verify;
         private string _secret;
 
@@ -86,13 +86,13 @@ namespace JWT.JwtBuilder
         }
 
         /// <summary>
-        /// Set the validator. This is requierd for decode with verification!
+        /// Set the validTor. This is requierd for decode with verification!
         /// </summary>
-        /// <param name="validator">Your custom validator</param>
+        /// <param name="validTor">Your custom validTor</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetValidator(IJwtValidator validator)
+        public Builder SetValidTor(IJwtValidTor validTor)
         {
-            _validator = validator;
+            _validTor = validTor;
             return this;
         }
 
@@ -175,19 +175,19 @@ namespace JWT.JwtBuilder
         /// <returns>return the json payload</returns>
         public string Decode(string token)
         {
-            TryToCreateAValidator();
+            TryToCreateAValidTor();
             if (!CanDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
                                     "- SetSerializer \n\r" +
                                     "- SetUrlEncoder \n\r" +
                                     "- SetTimeProvider \n\r" +
-                                    "- SetValidator \n\r" +
+                                    "- SetValidTor \n\r" +
                                     "If you called MustVerify you must also call SetSecret"
                 );
 
             }
-            var decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
+            var decoder = new JwtDecoder(_serializer, _validTor, _urlEncoder);
             if (_verify == false)
             {
                 return decoder.Decode(token);
@@ -202,35 +202,35 @@ namespace JWT.JwtBuilder
         /// <returns>The payload converted to <see cref="T" /></returns>
         public T Decode<T>(string token)
         {
-            TryToCreateAValidator();
+            TryToCreateAValidTor();
             if (!CanDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
                                     "- SetSerializer \n\r" +
                                     "- SetUrlEncoder \n\r" +
                                     "- SetTimeProvider \n\r" +
-                                    "- SetValidator \n\r" +
+                                    "- SetValidTor \n\r" +
                                     "If you called MustVerify you must also call SetSecret"
                 );
 
             }
-            var decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
+            var decoder = new JwtDecoder(_serializer, _validTor, _urlEncoder);
             return decoder.DecodeToObject<T>(token, _secret, _verify);
         }
 
         /// <summary>
-        /// Try to create a validator is not a custom validator set.
+        /// Try to create a validTor is not a custom validTor set.
         /// <exception cref="Exception">Thrown if the <see cref="_serializer"/> or the <see cref="_utcProvieder"/> are null.</exception>
         /// </summary>
-        private void TryToCreateAValidator()
+        private void TryToCreateAValidTor()
         {
             if (_serializer == null || _utcProvieder == null)
             {
-                throw new Exception("Can't create a Validator. Please call SetSerializer and SetTimeProvider");
+                throw new Exception("Can't create a ValidTor. Please call SetSerializer and SetTimeProvider");
             }
-            if (_validator == null)
+            if (_validTor == null)
             {
-                _validator = new JwtValidator(_serializer, _utcProvieder);
+                _validTor = new JwtValidTor(_serializer, _utcProvieder);
             }
         }
 
@@ -256,7 +256,7 @@ namespace JWT.JwtBuilder
         {
             if (_serializer != null &&
                 _utcProvieder != null &&
-                _validator != null &&
+                _validTor != null &&
                 _urlEncoder != null
             )
             {

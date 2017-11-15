@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using Xunit;
@@ -14,13 +13,13 @@ namespace JWT.Tests.Common
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             Action action = () => decoder.Decode(TestData.AlgorithmNoneToken, "ABC", verify: true);
 
-            action.ShouldThrow<ArgumentException>();
+            Assert.Throws<ArgumentException>(action);
         }
 
         [Fact]
@@ -33,13 +32,13 @@ namespace JWT.Tests.Common
 
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRSAPublicKey);
 
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRSAPublicKey));
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algFactory);
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
             Action action = () => decoder.Decode(encodedToken, TestData.ServerRSAPublicKey, verify: true);
 
-            action.ShouldThrow<NotSupportedException>("Because HMAC Tokens can be forged in RSA Decoder");
+            Assert.Throws<NotSupportedException>(action);
         }
     }
 }
