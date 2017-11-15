@@ -1,21 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using JWT.Algorithms;
-using JWT.JWTBuilder.Enums;
-using JWT.JWTBuilder.Models;
-using JWT.Serializers;
-using JWT.Tests.Common;
+using JWT.JwtBuilder;
+using JWT.JwtBuilder.Enums;
 using Xunit;
 
-namespace JWT.Tests
+namespace JWT.Tests.Common
 {
-    public class JWTBuilderEncodeToken
+    public class JwtBuilderEncodeTest
     {
         [Fact]
         public void CreateToken()
         {
-            var token = new JWTBuilder.Builder()
+            var token = new Builder()
                 .SetAlgorithm(new HMACSHA256Algorithm())
                 .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
                 .Build();
@@ -26,7 +22,7 @@ namespace JWT.Tests
         public void CreateTokenWithPayload()
         {
             var testtime = DateTime.UtcNow.AddHours(5).ToString();
-            var token = new JWTBuilder.Builder()
+            var token = new Builder()
                 .SetAlgorithm(new HMACSHA256Algorithm())
                 .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
                 .AddClaim(PublicClaimsNames.ExpirationTime, testtime)
@@ -35,13 +31,14 @@ namespace JWT.Tests
             var decodedToken = System.Text.Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
             Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
         }
+
         [Fact]
         public void TryToCreateTokenWithoutInformaiton()
         {
             string token = null;
             Assert.Throws<Exception>(() =>
             {
-                token = new JWTBuilder.Builder().Build();
+                token = new Builder().Build();
             });
             Assert.True(token == null);
         }
@@ -49,13 +46,13 @@ namespace JWT.Tests
         [Fact]
         public void TryToCreateTokenOnlyWithAlgorithm()
         {
-            Assert.Throws<Exception>(() => new JWTBuilder.Builder().SetAlgorithm(new HMACSHA256Algorithm()).Build());
+            Assert.Throws<Exception>(() => new Builder().SetAlgorithm(new HMACSHA256Algorithm()).Build());
         }
 
         [Fact]
         public void TryToCreateATokenOnlyWithSecret()
         {
-            Assert.Throws<Exception>(() => new JWTBuilder.Builder().SetSecret("fjhsdghflghlk").Build());
+            Assert.Throws<Exception>(() => new Builder().SetSecret("fjhsdghflghlk").Build());
         }
     }
 }

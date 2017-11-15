@@ -20,9 +20,7 @@ namespace JWT
 
             var parts = token.Split('.');
             if (parts.Length != 3)
-            {
-                throw new ArgumentOutOfRangeException(nameof(parts), "Token must consist of 3 delimited by dot parts.");
-            }
+                throw new InvalidTokenPartsException(nameof(token));
 
             this.Parts = parts;
         }
@@ -38,7 +36,7 @@ namespace JWT
             if (parts == null)
                 throw new ArgumentNullException(nameof(parts));
             if (parts.Length != 3)
-                throw new ArgumentOutOfRangeException(nameof(parts), "Token must consist of 3 delimited by dot parts.");
+                throw new InvalidTokenPartsException(nameof(parts));
 
             this.Parts = parts;
         }

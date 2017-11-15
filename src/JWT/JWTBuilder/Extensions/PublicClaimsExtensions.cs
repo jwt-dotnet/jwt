@@ -1,7 +1,7 @@
-﻿using JWT.JWTBuilder.Enums;
+﻿using JWT.JwtBuilder.Enums;
 using System;
 
-namespace JWT.JWTBuilder.Extensions
+namespace JWT.JwtBuilder.Extensions
 {
     public static class PublicClaimsExtensions
     {

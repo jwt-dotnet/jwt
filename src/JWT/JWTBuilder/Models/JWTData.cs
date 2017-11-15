@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
-namespace JWT.JWTBuilder.Models
+
+namespace JWT.JwtBuilder.Models
 {
     /// <summary>
     /// Represents the Data that will store in a JWT.
@@ -30,10 +30,7 @@ namespace JWT.JWTBuilder.Models
         {
             var partsOfToken = token.Split('.');
             if (partsOfToken.Length != 3)
-            {
-                throw new ArgumentOutOfRangeException(nameof(partsOfToken), "Token must consist of 3 delimited by dot parts.");
-            }
-
+                throw new InvalidTokenPartsException(nameof(token));
         }
 
         /// <summary>

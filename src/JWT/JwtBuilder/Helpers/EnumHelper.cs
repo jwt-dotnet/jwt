@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Reflection;
-using JWT.JWTBuilder.Enums;
+using JWT.JwtBuilder.Enums;
 
 namespace JWT.JwtBuilder.Helpers
 {

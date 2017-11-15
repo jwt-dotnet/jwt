@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace JWT.JWTBuilder.Enums
+namespace JWT.JwtBuilder.Enums
 {
     /// <summary>
     /// All predefined Headers specified by RFC, see https://tools.ietf.org/html/rfc7519

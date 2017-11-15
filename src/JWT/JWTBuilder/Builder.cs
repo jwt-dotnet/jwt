@@ -1,10 +1,10 @@
 ﻿using System;
 using JWT.JwtBuilder.Helpers;
-using JWT.JWTBuilder.Enums;
-using JWT.JWTBuilder.Models;
+using JWT.JwtBuilder.Enums;
+using JWT.JwtBuilder.Models;
 using JWT.Serializers;
 
-namespace JWT.JWTBuilder
+namespace JWT.JwtBuilder
 {
     /// <summary>
     /// Build and decode JWT with Fluent API.

@@ -3,10 +3,9 @@ using System.Security.Cryptography.X509Certificates;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
-using JWT.Tests.Common;
 using Xunit;
 
-namespace JWT.Tests.Core
+namespace JWT.Tests.Common
 {
     public class JwtSecurityTest
     {
