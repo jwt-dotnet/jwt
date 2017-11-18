@@ -79,7 +79,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenWithoutValidator()
         {
-            var payload = new JwtBuilder().SetValidator(null).Decode(sampleToken);
+            var payload = new JwtBuilder().SetValidTor(null).Decode(sampleToken);
             Assert.True(payload.Length > 0);
 
         }
@@ -87,7 +87,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenWithAnExplicitValidator()
         {
-            var payload = new JwtBuilder().SetValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider())).Decode(sampleToken);
+            var payload = new JwtBuilder().SetValidTor(new JwtValidTor(new JsonNetSerializer(), new UtcDateTimeProvider())).Decode(sampleToken);
             Assert.True(payload.Length > 0);
         }
 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using JWT.Algorithms;
 using JWT.Builder.Enums;
 using JWT.Builder.Models;
@@ -8,9 +6,9 @@ using JWT.Serializers;
 using JWT.Tests.Common;
 using Xunit;
 
-namespace JWT.Tests
+namespace JWT.Tests.Common
 {
-    public class JWTBuilderEncodeToken
+    public class JwtBuilderEncodeTest
     {
         [Fact]
         public void CreateToken()
@@ -32,18 +30,15 @@ namespace JWT.Tests
                 .AddClaim(PublicClaimsNames.ExpirationTime, testtime)
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+
             var decodedToken = System.Text.Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
             Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
         }
+
         [Fact]
         public void TryToCreateTokenWithoutInformaiton()
         {
-            string token = null;
-            Assert.Throws<Exception>(() =>
-            {
-                token = new JwtBuilder().Build();
-            });
-            Assert.True(token == null);
+            Assert.Throws<Exception>(() => new JwtBuilder().Build());
         }
 
         [Fact]
@@ -53,7 +48,7 @@ namespace JWT.Tests
         }
 
         [Fact]
-        public void TryToCreateATokenOnlyWithSecret()
+        public void TryToCreateTokenOnlyWithSecret()
         {
             Assert.Throws<Exception>(() => new JwtBuilder().SetSecret("fjhsdghflghlk").Build());
         }

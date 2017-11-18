@@ -3,9 +3,11 @@ using System.ComponentModel;
 namespace JWT.Builder.Enums
 {
     /// <summary>
-    /// All predefined Headers specified by RFC. (https://tools.ietf.org/html/rfc7519)
-    /// Last update 31.10.2017
+    /// All predefined Headers specified by RFC, see https://tools.ietf.org/html/rfc7519
     /// </summary>
+    /// <remarks>
+    /// Latest update: 31.10.2017
+    /// </remarks>
     public enum HeaderName
     {
         [Description("typ")]

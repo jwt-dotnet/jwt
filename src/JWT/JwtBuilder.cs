@@ -7,31 +7,33 @@ using System;
 namespace JWT
 {
     /// <summary>
-    /// Build an Decode JWT for with a Fluent-API.
+    /// Build and decode JWT with Fluent API.
     /// </summary>
     public class JwtBuilder
     {
-        private JWTData jwt = new JWTData();
-        private IJsonSerializer serializer = new JsonNetSerializer();
-        private IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-        private IJwtAlgorithm algorithm;
-        private IDateTimeProvider utcProvieder = new UtcDateTimeProvider();
-        private IJwtValidator validator;
-        private bool verify = false;
-        private string secret = "";
+        private readonly JwtData _jwt = new JwtData();
+
+        private IJsonSerializer _serializer = new JsonNetSerializer();
+        private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
+        private IJwtAlgorithm _algorithm;
+        private IDateTimeProvider _utcProvieder = new UtcDateTimeProvider();
+        private IJwtValidTor _validTor;
+        private bool _verify;
+        private string _secret;
 
         /// <summary>
         /// Here you can add headers to your JWT.
-        /// TODO: this currently not working, because the JWT porject not allow to set a header from the outside...
+        /// TODO: this currently not working, because the JWT project not allow to set a header from the outside.
         /// </summary>
         /// <param name="name">Set the header-name. You can only use the defined headers!</param>
         /// <param name="value">The value you want give to the header.</param>
         /// <returns>The current builder-instance</returns>
         public JwtBuilder AddHeader(HeaderName name, string value)
         {
-            this.jwt.Header.Add(name.GetHeaderName(), value);
+            _jwt.Header.Add(name.GetHeaderName(), value);
             return this;
         }
+
         /// <summary>
         /// Add any claim you want to the JWT
         /// </summary>
@@ -40,20 +42,21 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder AddClaim(string name, object value)
         {
-            this.jwt.PayLoad.Add(name, value);
+            _jwt.Payload.Add(name, value);
             return this;
         }
+
         /// <summary>
         /// Add string claims to the JWT payload.
         /// </summary>
         /// <param name="name">Your name of the Claim.</param>
-        /// <param name="value">Your value of the claim as string.</param>
+        /// <param name="value">Your value of the claim as String.</param>
         /// <returns>The current builder-instance</returns>
         public JwtBuilder AddClaim(string name, string value) => this.AddClaim(name, (object)value);
         /// <summary>
         /// Add public claims to the JWT payload.
         /// </summary>
-        /// <param name="name">The name of the public claim you want set</param>
+        /// <param name="names">The name of the public claim you want set</param>
         /// <param name="value">The string-value for the public claim</param>
         /// <returns>The current builder-instance</returns>
         public JwtBuilder AddClaim(PublicClaimsNames names, string value) => this.AddClaim(names.GetPublicClaimName(), value);
@@ -64,9 +67,10 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder SetSerializer(IJsonSerializer serializer)
         {
-            this.serializer = serializer;
+            _serializer = serializer;
             return this;
         }
+
         /// <summary>
         /// Set a time provieder to get the time reference.!--
         /// If you don't call this the builder will use <see cref="UtcDateTimeProvider"/>
@@ -75,19 +79,21 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder SetTimeProvider(IDateTimeProvider provider)
         {
-            this.utcProvieder = provider;
+            _utcProvieder = provider;
             return this;
         }
+
         /// <summary>
-        /// Set the validator. This is requierd for decode with verification!
+        /// Set the validTor. This is requierd for decode with verification!
         /// </summary>
-        /// <param name="validator">Your custom validator</param>
-        /// <returns>The current builder-instance</returns>
-        public JwtBuilder SetValidator(IJwtValidator validator)
+        /// <param name="validTor">Your custom validTor</param>
+        /// <returns>The current builder-instance</returns>        
+        public JwtBuilder SetValidTor(IJwtValidTor validTor)
         {
-            this.validator = validator;
+            _validTor = validTor;
             return this;
         }
+
         /// <summary>
         /// Set a custom URL encoder.
         /// If you don't call this it will be use <see cref="JwtBase64UrlEncoder"/>
@@ -96,9 +102,10 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder SetUrlEncoder(IBase64UrlEncoder urlEncoder)
         {
-            this.urlEncoder = urlEncoder;
+            _urlEncoder = urlEncoder;
             return this;
         }
+
         /// <summary>
         /// Set a algorithm. This is requierd if you want create a new Token!
         /// </summary>
@@ -106,9 +113,10 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder SetAlgorithm(IJwtAlgorithm algorithm)
         {
-            this.algorithm = algorithm;
+            _algorithm = algorithm;
             return this;
         }
+
         /// <summary>
         /// Set a secret. This is requiered to build a new Token and to verify a token while decoding.
         /// </summary>
@@ -116,43 +124,46 @@ namespace JWT
         /// <returns>The current builder-instance</returns>
         public JwtBuilder SetSecret(string secret)
         {
-            this.secret = secret;
+            _secret = secret;
             return this;
         }
+
         /// <summary>
         /// Tell the Decoder to check if the token is trusted!
         /// </summary>
         /// <returns>The current builder-instance</returns>
         public JwtBuilder MustVerify()
         {
-            this.verify = true;
+            _verify = true;
             return this;
         }
+
         /// <summary>
         /// Tell the Decoder to not check the token. This is default!
         /// </summary>
         /// <returns>The current builder-instance</returns>
         public JwtBuilder NotVerify()
         {
-            this.verify = false;
+            _verify = false;
             return this;
         }
+
         /// <summary>
         /// Build the token from the Information that this instance of <see cref="JwtBuilder"/> have.
         /// </summary>
-        /// <returns>The JWT string.</returns>
+        /// <returns>The JWT String.</returns>
         public string Build()
         {
-            if (!canBuild())
+            if (!CanBuild())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
-                "- SetAlgorithm \n\r" +
-                "- SetSerializer \n\r" +
-                "- SetUrlEncoder \n\r" +
-                "- SetSecret \n\r");
+                                    "- SetAlgorithm \n\r" +
+                                    "- SetSerializer \n\r" +
+                                    "- SetUrlEncoder \n\r" +
+                                    "- SetSecret \n\r");
             }
-            var encoder = new JwtEncoder(this.algorithm, this.serializer, this.urlEncoder);
-            return encoder.Encode(this.jwt.PayLoad, secret);
+            var encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
+            return encoder.Encode(_jwt.Payload, _secret);
         }
 
         /// <summary>
@@ -162,96 +173,94 @@ namespace JWT
         /// <returns>return the json payload</returns>
         public string Decode(string token)
         {
-            tryToCreateAValidator();
-            if (!canDecode())
+            TryToCreateAValidTor();
+            if (!CanDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
-                "- SetSerializer \n\r" +
-                "- SetUrlEncoder \n\r" +
-                "- SetTimeProvider \n\r" +
-                "- SetValidator \n\r" +
-                "If you called MustVerify you must also call SetSecret"
+                                    "- SetSerializer \n\r" +
+                                    "- SetUrlEncoder \n\r" +
+                                    "- SetTimeProvider \n\r" +
+                                    "- SetValidTor \n\r" +
+                                    "If you called MustVerify you must also call SetSecret"
                 );
 
             }
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
-            if(verify == false)
+            var decoder = new JwtDecoder(_serializer, _validTor, _urlEncoder);
+            if (_verify == false)
             {
                 return decoder.Decode(token);
             }
-            return decoder.Decode(token, secret, verify);
+            return decoder.Decode(token, _secret, _verify);
         }
+
         /// <summary>
         /// Decode a token with the decode-information you pushed in the buider.
         /// </summary>
         /// <param name="token">the JWT you want to Extract</param>
-        /// <returns>The payload converted to <see cref="T"/></returns>
+        /// <returns>The payload converted to <see cref="T" /></returns>
         public T Decode<T>(string token)
         {
-            tryToCreateAValidator();
-            if (!canDecode())
+            TryToCreateAValidTor();
+            if (!CanDecode())
             {
                 throw new Exception("Can't build a Token. Check if you have call all of this: \n\r" +
-                "- SetSerializer \n\r" +
-                "- SetUrlEncoder \n\r" +
-                "- SetTimeProvider \n\r" +
-                "- SetValidator \n\r" +
-                "If you called MustVerify you must also call SetSecret"
+                                    "- SetSerializer \n\r" +
+                                    "- SetUrlEncoder \n\r" +
+                                    "- SetTimeProvider \n\r" +
+                                    "- SetValidTor \n\r" +
+                                    "If you called MustVerify you must also call SetSecret"
                 );
 
             }
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
-            return decoder.DecodeToObject<T>(token, secret, verify);
+            var decoder = new JwtDecoder(_serializer, _validTor, _urlEncoder);
+            return decoder.DecodeToObject<T>(token, _secret, _verify);
         }
+
         /// <summary>
-        /// Try to create a validator is not a custom validator set.
-        /// <exception cref="Exception">Thrown if the <see cref="serializer"/> or the <see cref="utcProvieder"/> are null.</exception
+        /// Try to create a validTor is not a custom validTor set.
+        /// <exception cref="Exception">Thrown if the <see cref="_serializer"/> or the <see cref="_utcProvieder"/> are null.</exception>
         /// </summary>
-        private void tryToCreateAValidator()
+        private void TryToCreateAValidTor()
         {
-            if (serializer == null || utcProvieder == null)
+            if (_serializer == null || _utcProvieder == null)
             {
-                throw new Exception("Can't create a Validator. Please call SetSerializer and SetTimeProvider");
+                throw new Exception("Can't create a ValidTor. Please call SetSerializer and SetTimeProvider");
             }
-            if (validator == null)
+            if (_validTor == null)
             {
-                validator = new JwtValidator(serializer, utcProvieder);
+                _validTor = new JwtValidTor(_serializer, _utcProvieder);
             }
         }
+
         /// <summary>
         /// Check if we have enaught information to build a new Token.
         /// </summary>
         /// <returns>Returns true if all requierd information are there to create a token.</returns>
-        private bool canBuild()
+        private bool CanBuild()
         {
-            if (
-                algorithm != null &&
-                serializer != null &&
-                urlEncoder != null &&
-                jwt.PayLoad != null &&
-                secret != null &&
-                secret.Length > 0)
-            {
-                return true;
-            }
-            return false;
+            return _algorithm != null &&
+                   _serializer != null &&
+                   _urlEncoder != null &&
+                   _jwt.Payload != null &&
+                   _secret != null &&
+                   _secret.Length > 0;
         }
+
         /// <summary>
         /// Check if we have enaught informations to decode a token.
         /// </summary>
         /// <returns>Returns ture if all requiered informations are there to create a token.</returns>
-        private bool canDecode()
+        private bool CanDecode()
         {
-            if (serializer != null &&
-            utcProvieder != null &&
-            validator != null &&
-            urlEncoder != null
+            if (_serializer != null &&
+                _utcProvieder != null &&
+                _validTor != null &&
+                _urlEncoder != null
             )
             {
-                return (!verify || (verify && secret != null && secret.Length > 0));
+                return !_verify || _verify && !String.IsNullOrEmpty(_secret);
             }
             return false;
         }
-
     }
 }

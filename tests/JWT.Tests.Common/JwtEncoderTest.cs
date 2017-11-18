@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common;
@@ -18,7 +17,7 @@ namespace JWT.Tests
 
             var actual = encoder.Encode(TestData.Customer, "ABC");
 
-            actual.Should().Be(TestData.Token);
+             Assert.Equal(actual, TestData.Token);
         }
 
         [Fact]
@@ -31,7 +30,7 @@ namespace JWT.Tests
             var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
             var actual = encoder.Encode(extraheaders, TestData.Customer, "ABC");
 
-            actual.Should().Be(TestData.ExtraHeadersToken);
+            Assert.Equal(actual, TestData.ExtraHeadersToken);
         }
     }
 }
