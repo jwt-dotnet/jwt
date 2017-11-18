@@ -4,7 +4,7 @@ using JWT.Builder.Enums;
 
 namespace JWT.Builder.Helper
 {
-    public static class EnumHelper
+    internal static class EnumHelper
     {
         /// <summary>
         /// Get the Header-Name from the enum-value

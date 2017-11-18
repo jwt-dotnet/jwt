@@ -1,9 +1,6 @@
 ﻿using System;
 using JWT.Algorithms;
 using JWT.Builder.Enums;
-using JWT.Builder.Models;
-using JWT.Serializers;
-using JWT.Tests.Common;
 using Xunit;
 
 namespace JWT.Tests.Common
