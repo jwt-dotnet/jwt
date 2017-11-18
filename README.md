@@ -14,7 +14,7 @@ As of version 2.0, the lowest Supported version is 4.6.1
 ### Creating (Encoding) Tokens
 
 ```csharp
-var token = new JWTBuilder.Builder().
+var token = new JWTBuilder().
     .SetAlgorithm(new HMACSHA256Algorithm())
     .SetSecret("GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk")
     .AddClaim(PublicClaimsNames.ExpirationTime, DateTime.UtcNow.AddHours(5).ToString())
@@ -34,7 +34,7 @@ var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6Im
 var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
-    var json = new JWTBuilder.Builder()
+    var json = new JWTBuilder()
         .SetSecret(secret)
         .MustVerify()
         .Decode(token);                    
@@ -57,7 +57,7 @@ Output will be:
 You can also deserialize the JSON payload directly to a .NET type with `Decode<T>`:
 
 ```csharp
-var payload = new JWTBuilder.Builder()
+var payload = new JWTBuilder()
         .SetSecret(secret)
         .MustVerify()
         .Decode<IDictionary<string, object>>(token);     

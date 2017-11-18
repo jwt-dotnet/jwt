@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace JWT.JWTBuilder.Models
+namespace JWT.Builder.Models
 {
 
     /// <summary>

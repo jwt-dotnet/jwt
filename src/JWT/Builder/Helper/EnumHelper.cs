@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Reflection;
-using JWT.JWTBuilder.Enums;
+using JWT.Builder.Enums;
 
-namespace JWT.JWTBuilder.Helper
+namespace JWT.Builder.Helper
 {
     public static class EnumHelper
     {

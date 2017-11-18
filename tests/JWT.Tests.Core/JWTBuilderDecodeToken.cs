@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using JWT;
 
 namespace JWT.Tests.Core
 {
@@ -15,7 +16,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeToken()
         {
-            var payload = new JWTBuilder.Builder()
+            var payload = new JwtBuilder()
                 .Decode(sampleToken);
 
             Assert.True(payload.Length > 0);
@@ -25,7 +26,7 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutToken()
         {
             string payload = null;
-            Assert.Throws<ArgumentException>(() => { payload = new JWTBuilder.Builder().Decode(null); });
+            Assert.Throws<ArgumentException>(() => { payload = new JwtBuilder().Decode(null); });
 
             Assert.True(payload == null);
         }
@@ -34,14 +35,14 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutSerilizer()
         {
             string payload = null;
-            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetSerializer(null).Decode(sampleToken); });            
+            Assert.Throws<Exception>(() => { payload = new JwtBuilder().SetSerializer(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
         [Fact]
         public void DecodeTokenWithAnExplicitSerilizer()
         {
-            var payload = new JWTBuilder.Builder().SetSerializer(new JsonNetSerializer()).Decode(sampleToken);
+            var payload = new JwtBuilder().SetSerializer(new JsonNetSerializer()).Decode(sampleToken);
             Assert.True(payload.Length > 0);
         }
 
@@ -49,14 +50,14 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutUrlEncoder()
         {
             string payload = null;
-            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetUrlEncoder(null).Decode(sampleToken); });            
+            Assert.Throws<Exception>(() => { payload = new JwtBuilder().SetUrlEncoder(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
         [Fact]
         public void DecodeTokenWithAnExplicitUrlEncoder()
         {
-            var payload = new JWTBuilder.Builder().SetUrlEncoder(new JwtBase64UrlEncoder()).Decode(sampleToken);
+            var payload = new JwtBuilder().SetUrlEncoder(new JwtBase64UrlEncoder()).Decode(sampleToken);
             Assert.True(payload.Length > 0);
         }
 
@@ -64,21 +65,21 @@ namespace JWT.Tests.Core
         public void DecodeTokenWithoutTimeProvider()
         {
             string payload = null;
-            Assert.Throws<Exception>(() => { payload = new JWTBuilder.Builder().SetTimeProvider(null).Decode(sampleToken); });            
+            Assert.Throws<Exception>(() => { payload = new JwtBuilder().SetTimeProvider(null).Decode(sampleToken); });            
             Assert.True(payload == null);
         }
 
         [Fact]
         public void DecodeTokenWithAnExplicitTimeProvider()
         {
-            var payload = new JWTBuilder.Builder().SetTimeProvider(new UtcDateTimeProvider()).Decode(sampleToken);
+            var payload = new JwtBuilder().SetTimeProvider(new UtcDateTimeProvider()).Decode(sampleToken);
             Assert.True(payload.Length > 0);
         }
 
         [Fact]
         public void DecodeTokenWithoutValidator()
         {
-            var payload = new JWTBuilder.Builder().SetValidator(null).Decode(sampleToken);
+            var payload = new JwtBuilder().SetValidator(null).Decode(sampleToken);
             Assert.True(payload.Length > 0);
 
         }
@@ -86,7 +87,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenWithAnExplicitValidator()
         {
-            var payload = new JWTBuilder.Builder().SetValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider())).Decode(sampleToken);
+            var payload = new JwtBuilder().SetValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider())).Decode(sampleToken);
             Assert.True(payload.Length > 0);
         }
 
@@ -94,7 +95,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenWithVerifyCheck()
         {
-            var payload = new JWTBuilder.Builder()
+            var payload = new JwtBuilder()
                 .SetSecret(sampleSecret)
                 .MustVerify()
                 .Decode(sampleToken);
@@ -107,7 +108,7 @@ namespace JWT.Tests.Core
             string payload = null;
             Assert.Throws<Exception>(() =>
             {
-                payload = new JWTBuilder.Builder()
+                payload = new JwtBuilder()
                .MustVerify()
                .Decode(sampleToken);
             });
@@ -117,7 +118,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenWithoutVerifyCheck()
         {
-            var payload = new JWTBuilder.Builder()
+            var payload = new JwtBuilder()
                 .NotVerify()
                 .Decode(sampleToken);
             Assert.True(payload.Length > 0);
@@ -126,7 +127,7 @@ namespace JWT.Tests.Core
         [Fact]
         public void DecodeTokenToADictionary()
         {
-            var payload = new JWTBuilder.Builder()
+            var payload = new JwtBuilder()
                 .SetSecret(sampleSecret)
                 .MustVerify()
                 .Decode<Dictionary<string, string>>(sampleToken);
@@ -139,7 +140,7 @@ namespace JWT.Tests.Core
             Dictionary<string, string> payload = null;
             Assert.Throws<Exception>(() =>
             {
-                payload = new JWTBuilder.Builder()
+                payload = new JwtBuilder()
                 .SetSerializer(null)
                 .SetSecret(sampleSecret)
                 .MustVerify()

@@ -1,15 +1,15 @@
-﻿using System;
-using JWT.JWTBuilder.Enums;
-using JWT.JWTBuilder.Helper;
-using JWT.JWTBuilder.Models;
+﻿using JWT.Builder.Enums;
+using JWT.Builder.Helper;
+using JWT.Builder.Models;
 using JWT.Serializers;
+using System;
 
-namespace JWT.JWTBuilder
+namespace JWT
 {
     /// <summary>
     /// Build an Decode JWT for with a Fluent-API.
     /// </summary>
-    public class Builder
+    public class JwtBuilder
     {
         private JWTData jwt = new JWTData();
         private IJsonSerializer serializer = new JsonNetSerializer();
@@ -27,7 +27,7 @@ namespace JWT.JWTBuilder
         /// <param name="name">Set the header-name. You can only use the defined headers!</param>
         /// <param name="value">The value you want give to the header.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder AddHeader(HeaderName name, string value)
+        public JwtBuilder AddHeader(HeaderName name, string value)
         {
             this.jwt.Header.Add(name.GetHeaderName(), value);
             return this;
@@ -38,7 +38,7 @@ namespace JWT.JWTBuilder
         /// <param name="name">Your name of the Claim.</param>
         /// <param name="value">Your value of the Claim. It will be parse to JSON.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder AddClaim(string name, object value)
+        public JwtBuilder AddClaim(string name, object value)
         {
             this.jwt.PayLoad.Add(name, value);
             return this;
@@ -49,20 +49,20 @@ namespace JWT.JWTBuilder
         /// <param name="name">Your name of the Claim.</param>
         /// <param name="value">Your value of the claim as string.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder AddClaim(string name, string value) => this.AddClaim(name, (object)value);
+        public JwtBuilder AddClaim(string name, string value) => this.AddClaim(name, (object)value);
         /// <summary>
         /// Add public claims to the JWT payload.
         /// </summary>
         /// <param name="name">The name of the public claim you want set</param>
         /// <param name="value">The string-value for the public claim</param>
         /// <returns>The current builder-instance</returns>
-        public Builder AddClaim(PublicClaimsNames names, string value) => this.AddClaim(names.GetPublicClaimName(), value);
+        public JwtBuilder AddClaim(PublicClaimsNames names, string value) => this.AddClaim(names.GetPublicClaimName(), value);
         /// <summary>
         /// Set a custom Serializier. If you don't set this it will be <see cref="JsonNetSerializer" /> use.
         /// </summary>
         /// <param name="serializer">The serializier instance you want use.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetSerializer(IJsonSerializer serializer)
+        public JwtBuilder SetSerializer(IJsonSerializer serializer)
         {
             this.serializer = serializer;
             return this;
@@ -73,7 +73,7 @@ namespace JWT.JWTBuilder
         /// </summary>
         /// <param name="provider">Zou custom provider you want use.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetTimeProvider(IDateTimeProvider provider)
+        public JwtBuilder SetTimeProvider(IDateTimeProvider provider)
         {
             this.utcProvieder = provider;
             return this;
@@ -83,7 +83,7 @@ namespace JWT.JWTBuilder
         /// </summary>
         /// <param name="validator">Your custom validator</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetValidator(IJwtValidator validator)
+        public JwtBuilder SetValidator(IJwtValidator validator)
         {
             this.validator = validator;
             return this;
@@ -94,7 +94,7 @@ namespace JWT.JWTBuilder
         /// </summary>
         /// <param name="urlEncoder">your custom encoder</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetUrlEncoder(IBase64UrlEncoder urlEncoder)
+        public JwtBuilder SetUrlEncoder(IBase64UrlEncoder urlEncoder)
         {
             this.urlEncoder = urlEncoder;
             return this;
@@ -104,7 +104,7 @@ namespace JWT.JWTBuilder
         /// </summary>
         /// <param name="algorithm">your alogrithm to sign the JWT.</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetAlgorithm(IJwtAlgorithm algorithm)
+        public JwtBuilder SetAlgorithm(IJwtAlgorithm algorithm)
         {
             this.algorithm = algorithm;
             return this;
@@ -114,7 +114,7 @@ namespace JWT.JWTBuilder
         /// </summary>
         /// <param name="secret">You secret to sign the token</param>
         /// <returns>The current builder-instance</returns>
-        public Builder SetSecret(string secret)
+        public JwtBuilder SetSecret(string secret)
         {
             this.secret = secret;
             return this;
@@ -123,7 +123,7 @@ namespace JWT.JWTBuilder
         /// Tell the Decoder to check if the token is trusted!
         /// </summary>
         /// <returns>The current builder-instance</returns>
-        public Builder MustVerify()
+        public JwtBuilder MustVerify()
         {
             this.verify = true;
             return this;
@@ -132,13 +132,13 @@ namespace JWT.JWTBuilder
         /// Tell the Decoder to not check the token. This is default!
         /// </summary>
         /// <returns>The current builder-instance</returns>
-        public Builder NotVerify()
+        public JwtBuilder NotVerify()
         {
             this.verify = false;
             return this;
         }
         /// <summary>
-        /// Build the token from the Information that this instance of <see cref="Builder"/> have.
+        /// Build the token from the Information that this instance of <see cref="JwtBuilder"/> have.
         /// </summary>
         /// <returns>The JWT string.</returns>
         public string Build()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using JWT.Algorithms;
-using JWT.JWTBuilder.Models;
+using JWT.Builder.Models;
 using JWT.Serializers;
 using JWT.Tests.Common;
 using Xunit;
