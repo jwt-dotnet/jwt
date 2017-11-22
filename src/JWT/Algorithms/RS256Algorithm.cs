@@ -37,7 +37,7 @@ namespace JWT.Algorithms
 
         private static RSA GetRSA(X509Certificate2 cert)
         {
-#if NETSTANDARD1_3
+#if NETSTANDARD
             return cert.GetRSAPrivateKey();
 #else
             return (RSA)cert.PrivateKey;

@@ -7,9 +7,9 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <DefineConstants>NET46</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
-    <DefineConstants>NETSTANDARD1_3</DefineConstants>
+    <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -22,7 +22,7 @@
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
     <Version>3.2.0-beta</Version>
     <PackageTags>jwt json</PackageTags>
-    <FileVersion>3.1.1.0</FileVersion>
+    <FileVersion>3.2.0.0</FileVersion>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
@@ -41,7 +41,7 @@
    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />    
   </ItemGroup>
 </Project>
