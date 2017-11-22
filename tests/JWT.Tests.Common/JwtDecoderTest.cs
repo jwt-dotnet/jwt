@@ -3,8 +3,6 @@ using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common;
 using Xunit;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace JWT.Tests
 {
@@ -32,7 +30,8 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actual = decoder.DecodeToObject(TestData.Token, "ABC", verify: false);
-            Assert.True(CompareDictionary(actual, TestData.DictionaryPayload));
+
+            Assert.Equal(actual, TestData.DictionaryPayload, new DictionaryEqualityComparer());
         }
 
         [Fact]
@@ -43,9 +42,8 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actual = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
-            Assert.True(CompareCustomer(actual, TestData.Customer));
+            Assert.Equal(actual, TestData.Customer, new CustomerEqualityComparer());
         }
-
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
@@ -197,19 +195,6 @@ namespace JWT.Tests
             var validnbftoken = encoder.Encode(new { nbf }, "ABC");
 
             decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
-        }
-
-        private static bool CompareDictionary(IDictionary<string, object> actual, IDictionary<string, object> expected)
-        {
-            return actual.Count == expected.Count &&
-                   Enumerable.Zip(actual, expected, (s, t) => String.Equals(s.Key, t.Key, StringComparison.Ordinal) &&
-                                                              String.Equals(s.Value.ToString(), t.Value.ToString(), StringComparison.Ordinal))
-                             .All(b => b);
-        }
-
-        private static bool CompareCustomer(Customer actual, Customer expected)
-        {
-            return actual.Age == expected.Age && String.Equals(actual.FirstName, expected.FirstName, StringComparison.Ordinal);
         }
     }
 }
