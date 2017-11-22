@@ -43,9 +43,9 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actual = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
-            Assert.True(CompareCustomer(actual, TestData.Customer));            
+            Assert.True(CompareCustomer(actual, TestData.Customer));
         }
-        
+
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
@@ -199,20 +199,17 @@ namespace JWT.Tests
             decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
         }
 
-        private bool CompareDictionary(IDictionary<string, object> source, IDictionary<string, object> target)
+        private static bool CompareDictionary(IDictionary<string, object> actual, IDictionary<string, object> expected)
         {
-            return source.All(e =>
-            {
-                return target.Any(e2 =>
-                {
-                    return e.Key == e2.Key && e.Value.ToString() == e2.Value.ToString();
-                });
-            }) && source.Count == target.Count;
+            return actual.Count == expected.Count &&
+                   Enumerable.Zip(actual, expected, (s, t) => String.Equals(s.Key, t.Key, StringComparison.Ordinal) &&
+                                                              String.Equals(s.Value.ToString(), t.Value.ToString(), StringComparison.Ordinal))
+                             .All(b => b);
         }
 
-        private bool CompareCustomer(Customer actual, Customer customer)
+        private static bool CompareCustomer(Customer actual, Customer expected)
         {
-            return actual.Age == customer.Age && actual.FirstName.ToString() == customer.FirstName.ToString();            
+            return actual.Age == expected.Age && String.Equals(actual.FirstName, expected.FirstName, StringComparison.Ordinal);
         }
     }
 }

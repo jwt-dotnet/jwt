@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Text;
 using JWT.Algorithms;
 using JWT.Builder.Enums;
 using Xunit;
@@ -20,7 +22,7 @@ namespace JWT.Tests.Common
         [Fact]
         public void CreateTokenWithPayload()
         {
-            var testtime = DateTime.UtcNow.AddHours(5).ToString();
+            var testtime = DateTime.UtcNow.AddHours(5).ToString(CultureInfo.InvariantCulture);
             var token = new JwtBuilder()
                 .SetAlgorithm(new HMACSHA256Algorithm())
                 .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
@@ -28,7 +30,7 @@ namespace JWT.Tests.Common
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
 
-            var decodedToken = System.Text.Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
+            var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
             Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
         }
 
