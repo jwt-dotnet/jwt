@@ -143,19 +143,19 @@ namespace JWT
         /// Instructs to do verify the JWT signature.
         /// </summary>
         /// <returns>The current builder instance</returns>
-        public JwtBuilder MustVerify() => SetVerify(true);
+        public JwtBuilder MustVerifySignature() => SetVerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
         /// </summary>
         /// <returns>The current builder instance</returns>
-        public JwtBuilder DoNotVerify() => SetVerify(false);
+        public JwtBuilder DoNotVerifySignature() => SetVerifySignature(false);
 
         /// <summary>
         /// Instructs whether to verify the JWT signature.
         /// </summary>
         /// <returns>The current builder instance</returns>
-        public JwtBuilder SetVerify(bool verify)
+        public JwtBuilder SetVerifySignature(bool verify)
         {
             _verify = verify;
             return this;
@@ -194,7 +194,7 @@ namespace JWT
                                     "- SetUrlEncoder \r\n" +
                                     "- SetTimeProvider \r\n" +
                                     "- SetValidtor.\r\n" +
-                                    "If you called MustVerify you must also call SetSecret.");
+                                    "If you called MustVerifySignature you must also call SetSecret.");
 
             }
             var decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
@@ -216,7 +216,7 @@ namespace JWT
                                     "- SetUrlEncoder \r\n" +
                                     "- SetTimeProvider \r\n" +
                                     "- SetValidtor \r\n" +
-                                    "If you called MustVerify you must also call SetSecret"
+                                    "If you called MustVerifySignature you must also call SetSecret"
                 );
 
             }

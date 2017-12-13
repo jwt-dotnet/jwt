@@ -105,7 +105,7 @@ namespace JWT.Tests.Common
         {
             var payload = new JwtBuilder()
                 .SetSecret(_sampleSecret)
-                .MustVerify()
+                .MustVerifySignature()
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
@@ -115,7 +115,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithVerify_WithoutSecret_Should_Throw_Exception()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
-                                         .MustVerify()
+                                         .MustVerifySignature()
                                          .Decode(_sampleToken));
         }
 
@@ -123,7 +123,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutVerify()
         {
             var payload = new JwtBuilder()
-                .DoNotVerify()
+                .DoNotVerifySignature()
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
@@ -134,7 +134,7 @@ namespace JWT.Tests.Common
         {
             var payload = new JwtBuilder()
                 .SetSecret(_sampleSecret)
-                .MustVerify()
+                .MustVerifySignature()
                 .Decode<Dictionary<string, string>>(_sampleToken);
 
             Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
@@ -146,7 +146,7 @@ namespace JWT.Tests.Common
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
                                                          .SetSerializer(null)
                                                          .SetSecret(_sampleSecret)
-                                                         .MustVerify()
+                                                         .MustVerifySignature()
                                                          .Decode<Dictionary<string, string>>(_sampleToken));
         }
     }
