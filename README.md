@@ -20,7 +20,7 @@ var payload = new Dictionary<string, object>
     { "claim1", 0 },
     { "claim2", "claim2-value" }
 };
-var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new JsonNetSerializer();
@@ -36,8 +36,8 @@ Console.WriteLine(token);
 ```csharp
 var token = new JwtBuilder().
     .SetAlgorithm(new HMACSHA256Algorithm())
-    .SetSecret("GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk")
-    .AddClaim(PublicClaimsNames.ExpirationTime, DateTime.UtcNow.AddHours(5).ToString())
+    .SetSecret(secret)
+    .AddClaim(ClaimName.ExpirationTime, DateTime.UtcNow.AddHours(1))
     .Build();
 
 Console.WriteLine(token);
@@ -50,8 +50,9 @@ The output would be:
 ### Parsing (decoding) and verifying token
 
 ```csharp
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
-var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
+const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
@@ -76,13 +77,11 @@ catch (SignatureVerificationException)
 ## Or using the fluent builder API
 
 ```csharp
-var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
-var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
     var json = new JwtBuilder()
         .SetSecret(secret)
-        .MustVerify()
+        .MustVerifySignature()
         .Decode(token);                    
     Console.WriteLine(json);
 }
@@ -100,12 +99,19 @@ The output would be:
 
 >{ "claim1": 0, "claim2": "claim2-value" }
 
-You can also deserialize the JSON payload directly to a .NET type with `Decode<T>`:
+You can also deserialize the JSON payload directly to a .NET type:
+
+```csharp
+var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
+Console.WriteLine(payload["claim2"]);
+ ```
+
+ ## Or using the fluent builder API
 
 ```csharp
 var payload = new JwtBuilder()
         .SetSecret(secret)
-        .MustVerify()
+        .MustVerifySignature()
         .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
 ```
@@ -114,7 +120,7 @@ The output would be:
     
 >claim2-value
 
-#### Set token expiration
+#### Set and validate token expiration
 
 As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
@@ -129,7 +135,7 @@ var payload = new Dictionary<string, object>
 {
     { "exp", secondsSinceEpoch }
 };
-var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+cosnt string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 var token = encoder.Encode(payload, secret);
 
 var json = decoder.Decode(token, secret); // throws TokenExpiredException

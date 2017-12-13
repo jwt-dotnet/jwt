@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace JWT.Builder
 {
     /// <summary>
-    /// All Public Claims of a JWT specified by IANA, see https://www.iana.org/assignments/jwt/jwt.xhtml
+    /// All public claims of a JWT specified by IANA, see https://www.iana.org/assignments/jwt/jwt.xhtml
     /// </summary>
     /// <remarks>
     /// Latest update: 31.10.2017
