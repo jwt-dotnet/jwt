@@ -6,23 +6,21 @@ namespace JWT.Builder.Internal
     internal static class EnumHelper
     {
         /// <summary>
-        /// Get the HeaderName from the enum-value
+        /// Gets the string representation of a well-known header name enum
         /// </summary>
         public static string GetHeaderName(this HeaderName value) => GetDescription(value);
 
         /// <summary>
-        /// Get the ClaimName from the enum-value
+        /// Gets the string representation of a well-known claim name enum
         /// </summary>
         public static string GetPublicClaimName(this ClaimName value) => GetDescription(value);
 
         /// <summary>
-        /// Get the Value of the Describtion Attribut from a object.
+        /// Gets the value of the Describtion Attribute from the object.
         /// </summary>
         /// <param name="value">An object that is decorated with <see cref="DescriptionAttribute"/></param>
-        private static string GetDescription(object value)
-        {
-            var info = value.GetType().GetField(value.ToString());
-            return info.GetCustomAttribute<DescriptionAttribute>()?.Description ?? value.ToString();
-        }
+        private static string GetDescription(object value) => value.GetType()
+                                                                   .GetField(value.ToString())
+                                                                   .GetCustomAttribute<DescriptionAttribute>()?.Description ?? value.ToString();
     }
 }
