@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Common.Models
 {
     public static class TestData
     {
@@ -10,7 +10,6 @@ namespace JWT.Tests.Common
         public const string MalformedToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";
         public const string ExtraHeadersToken = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.slrbXF9VSrlX7LKsV-Umb_zEzWLxQjCfUOjNTbvyr1g";
 
-        // Security Constants
         public const string AlgorithmNoneToken = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.ANY";
 
         public static readonly IDictionary<string, object> DictionaryPayload = new Dictionary<string, object>
@@ -19,7 +18,7 @@ namespace JWT.Tests.Common
             { "Age", 37 }
         };
 
-        public const string ServerRSAPublicKey = "-----BEGIN CERTIFICATE-----"
+        public const string ServerRsaPublicKey = "-----BEGIN CERTIFICATE-----"
             + "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czEL"
             + "MAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcN"
             + "MTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkG"
@@ -34,7 +33,7 @@ namespace JWT.Tests.Common
             + "DchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j"
             + "-----END CERTIFICATE-----";
 
-        public const string ServerRSAPrivateKey = "-----BEGIN PRIVATE KEY-----"
+        public const string ServerRsaPrivateKey = "-----BEGIN PRIVATE KEY-----"
             + "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALsspKjcF/mB0nhe"
             + "aT+9KizOeBM6Qpi69LzOLBw8rxohSFJw/BFB/ch+8jXbtq23IwtavJTwSeY6a7pb"
             + "ZgrwCwUK/27gy04m/tum5FJBfCVGTTI4vqUYeTKimQzxj2pupQ+wx//1tKrXMIDG"

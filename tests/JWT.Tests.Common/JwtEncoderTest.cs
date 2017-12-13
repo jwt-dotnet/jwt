@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using JWT.Algorithms;
 using JWT.Serializers;
-using JWT.Tests.Common;
+using JWT.Tests.Common.Models;
 using Xunit;
 
 namespace JWT.Tests
