@@ -17,7 +17,7 @@ namespace JWT.Tests
 
             var actual = encoder.Encode(TestData.Customer, "ABC");
 
-             Assert.Equal(actual, TestData.Token);
+            Assert.Equal(actual, TestData.Token);
         }
 
         [Fact]
