@@ -12,7 +12,7 @@ namespace JWT
         private const string ExpirationKey = "Expiration";
 
         /// <summary>
-        /// Create the TokenExpiredException.
+        /// Creates an instance of <see cref="TokenExpiredException" />.
         /// </summary>
         /// <param name="message">The error message.</param>
         public TokenExpiredException(string message)

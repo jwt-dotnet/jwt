@@ -8,7 +8,7 @@ namespace JWT
     public class InvalidTokenPartsException : ArgumentOutOfRangeException
     {
         /// <summary>
-        /// Create the SignatureVerificationException.
+        /// Creates an instance of <see cref="InvalidTokenPartsException" />.
         /// </summary>
         /// <param name="paramName">The name of the parameter that caused the exception.</param>
         public InvalidTokenPartsException(string paramName)

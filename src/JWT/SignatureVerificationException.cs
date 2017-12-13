@@ -11,7 +11,7 @@ namespace JWT
         private const string ReceivedKey = "Received";
 
         /// <summary>
-        /// Create the SignatureVerificationException.
+        /// Creates an instance of <see cref="SignatureVerificationException" />.
         /// </summary>
         /// <param name="message">The error message.</param>
         public SignatureVerificationException(string message)
@@ -43,11 +43,6 @@ namespace JWT
         /// <typeparam name="T"></typeparam>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        protected T GetOrDefault<T>(string key)
-        {
-            if (this.Data.Contains(key))
-                return (T)this.Data[key];
-            return default(T);
-        }
+        protected T GetOrDefault<T>(string key) => this.Data.Contains(key) ? (T)this.Data[key] : default(T);
     }
 }
