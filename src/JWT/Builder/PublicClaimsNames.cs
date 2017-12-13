@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace JWT.Builder.Enums
+namespace JWT.Builder
 {
     /// <summary>
     /// All Public Claims of a JWT, specified by IANA, see https://www.iana.org/assignments/jwt/jwt.xhtml
