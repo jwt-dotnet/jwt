@@ -1,8 +1,7 @@
-﻿using JWT.Builder.Enums;
-using JWT.Builder.Helper;
-using JWT.Serializers;
-using System;
+﻿using System;
 using JWT.Builder;
+using JWT.Builder.Internal;
+using JWT.Serializers;
 
 namespace JWT
 {
@@ -56,10 +55,10 @@ namespace JWT
         /// <summary>
         /// Add public claims to the JWT payload.
         /// </summary>
-        /// <param name="names">The name of the public claim you want set</param>
+        /// <param name="name">The name of the public claim you want set</param>
         /// <param name="value">The string-value for the public claim</param>
         /// <returns>The current builder-instance</returns>
-        public JwtBuilder AddClaim(PublicClaimsNames names, string value) => this.AddClaim(names.GetPublicClaimName(), value);
+        public JwtBuilder AddClaim(ClaimName name, string value) => this.AddClaim(name.GetPublicClaimName(), value);
         /// <summary>
         /// Set a custom Serializier. If you don't set this it will be <see cref="JsonNetSerializer" /> use.
         /// </summary>

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 using JWT.Algorithms;
-using JWT.Builder.Enums;
+using JWT.Builder;
 using Xunit;
 
 namespace JWT.Tests.Common
@@ -26,7 +26,7 @@ namespace JWT.Tests.Common
             var token = new JwtBuilder()
                 .SetAlgorithm(new HMACSHA256Algorithm())
                 .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
-                .AddClaim(PublicClaimsNames.ExpirationTime, testtime)
+                .AddClaim(ClaimName.ExpirationTime, testtime)
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
 
