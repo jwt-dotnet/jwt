@@ -7,14 +7,34 @@ This library supports generating and decoding [JSON Web Tokens](http://tools.iet
 ## Installation
 Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can download and compile it yourself.
 
-## Supported .NET Framework versions
-As of version 2.0, the lowest Supported version is 4.6.1
+## Supported .NET Framework version:
+- .NET 4.6.0
+- NET Standard 1.3
 
 ## Usage
-### Creating (Encoding) Tokens
+### Creating (encoding) token
 
 ```csharp
-var token = new JWTBuilder().
+var payload = new Dictionary<string, object>
+{
+    { "claim1", 0 },
+    { "claim2", "claim2-value" }
+};
+var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+IJsonSerializer serializer = new JsonNetSerializer();
+IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+
+var token = encoder.Encode(payload, secret);
+Console.WriteLine(token);
+```
+
+## Or using the fluent builder API
+
+```csharp
+var token = new JwtBuilder().
     .SetAlgorithm(new HMACSHA256Algorithm())
     .SetSecret("GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk")
     .AddClaim(PublicClaimsNames.ExpirationTime, DateTime.UtcNow.AddHours(5).ToString())
@@ -23,18 +43,44 @@ var token = new JWTBuilder().
 Console.WriteLine(token);
 ```
 
-Output will be:
+The output will be:
 
 >eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
 
-### Parsing (Decoding) and Verifying Tokens
+### Parsing (decoding) and verifying tokens
 
 ```csharp
 var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
 var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
-    var json = new JWTBuilder()
+    IJsonSerializer serializer = new JsonNetSerializer();
+    IDateTimeProvider provider = new UtcDateTimeProvider();
+    IJwtValidator validator = new JwtValidator(serializer, provider);
+    IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
+    
+    var json = decoder.Decode(token, secret, verify: true);
+    Console.WriteLine(json);
+}
+catch (TokenExpiredException)
+{
+    Console.WriteLine("Token has expired");
+}
+catch (SignatureVerificationException)
+{
+    Console.WriteLine("Token has invalid signature");
+}
+```
+
+## Or using the fluent builder API
+
+```csharp
+var token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
+var secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+try
+{
+    var json = new JwtBuilder()
         .SetSecret(secret)
         .MustVerify()
         .Decode(token);                    
@@ -50,21 +96,21 @@ catch (SignatureVerificationException)
 }
 ```
 
-Output will be:
+The output will be:
 
 >{ "claim1": 0, "claim2": "claim2-value" }
 
 You can also deserialize the JSON payload directly to a .NET type with `Decode<T>`:
 
 ```csharp
-var payload = new JWTBuilder()
+var payload = new JwtBuilder()
         .SetSecret(secret)
         .MustVerify()
         .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
 ```
 
-Output will be:
+The output will be:
     
 >claim2-value
 
@@ -91,7 +137,7 @@ var json = decoder.Decode(token, secret); // TokenExpiredException
 
 ### Custom JSON serializer
 
-By default JSON serialization is done by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To configure a different one first implement the `IJsonSerializer` interface:
+By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
 ```csharp
 public class CustomJsonSerializer : IJsonSerializer
@@ -109,6 +155,7 @@ public class CustomJsonSerializer : IJsonSerializer
 ```
 
 And then pass this serializer as a dependency to JwtEncoder constructor:
+
 ```csharp
 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new CustomJsonSerializer();
@@ -123,19 +170,19 @@ As mentioned above, the default JSON serialization is done by `JsonNetSerializer
 ```csharp
 JsonSerializer customJsonSerializer = new JsonSerializer
 {
-    // All json keys start with lowercase characters instead of the exact casing of the model/property. e.g. fullName
+    // All json keys start with lowercase characters instead of the exact casing of the model/property, e.g. fullName
     ContractResolver = new CamelCasePropertyNamesContractResolver(), 
     
-    // Nice and easy to read, but you can also do Formatting.None to reduce the payload size (by hardly anything...)
+    // Nice and easy to read, but you can also use Formatting.None to reduce the payload size
     Formatting = Formatting.Indented,
     
-    // The best date/time format/standard.
+    // The most appropriate datetime format.
     DateFormatHandling = DateFormatHandling.IsoDateFormat,
     
-    // Don't add key/values when the value is null.
+    // Don't add keys/values when the value is null.
     NullValueHandling = NullValueHandling.Ignore,
     
-    // Use the enum string-value, not the implicit int value, e.g. "oolor" : "red"
+    // Use the enum string value, not the implicit int value, e.g. "red" for enum Color { Red }
     Converters.Add(new StringEnumConverter())
 };
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
