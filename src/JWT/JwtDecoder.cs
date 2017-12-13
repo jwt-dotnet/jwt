@@ -21,7 +21,7 @@ namespace JWT
         /// Creates an instance of <see cref="JwtDecoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="jwtValidator">The Jwt validator.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
             : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
@@ -32,7 +32,7 @@ namespace JWT
         /// Creates an instance of <see cref="JwtDecoder" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt Validator.</param>
+        /// <param name="jwtValidator">The Jwt validator.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         /// <param name="algFactory">The Algorithm Factory.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
@@ -140,7 +140,7 @@ namespace JWT
             var payload = jwt.Payload;
             var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
 
-            var bytesToSign = Encoding.UTF8.GetBytes(string.Concat(jwt.Header, ".", payload));
+            var bytesToSign = Encoding.UTF8.GetBytes(String.Concat(jwt.Header, ".", payload));
 
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);

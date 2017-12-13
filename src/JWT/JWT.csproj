@@ -9,7 +9,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
-    <DefineConstants>NETSTANDARD1_3</DefineConstants>
+    <DefineConstants>NETSTANDARD</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -20,9 +20,9 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>3.1.1</Version>
+    <Version>3.2.0-beta</Version>
     <PackageTags>jwt json</PackageTags>
-    <FileVersion>3.1.1.0</FileVersion>
+    <FileVersion>3.2.0.0</FileVersion>
     <AssemblyVersion>3.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
@@ -43,5 +43,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
   </ItemGroup>
 </Project>

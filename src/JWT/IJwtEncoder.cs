@@ -12,7 +12,7 @@ namespace JWT
         /// </summary>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key used to sign the token.</param>
-        /// <returns></returns>
+        /// <returns>The generated JWT.</returns>
         string Encode(object payload, string key);
 
         /// <summary>

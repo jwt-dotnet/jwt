@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using JWT.Builder.Internal;
 
 namespace JWT
 {
     /// <summary>
-    /// Jwt Validator.
+    /// Jwt validator.
     /// </summary>
     public sealed class JwtValidator : IJwtValidator
     {
@@ -55,7 +56,7 @@ namespace JWT
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();
-            var secondsSinceEpoch = Math.Round((now - UnixEpoch).TotalSeconds);
+            var secondsSinceEpoch = now.GetSecondsSinceEpoch();
 
             ValidateExpClaim(payloadData, secondsSinceEpoch);
             ValidateNbfClaim(payloadData, secondsSinceEpoch);
