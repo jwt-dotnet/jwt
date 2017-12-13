@@ -26,6 +26,10 @@ namespace JWT.Builder
             this.Payload = payload;
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="JwtData" />
+        /// </summary>
+        /// <param name="token">The JWT token</param>
         public JwtData(string token)
         {
             var partsOfToken = token.Split('.');
