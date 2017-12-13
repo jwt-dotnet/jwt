@@ -61,7 +61,7 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key()
         {
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -74,7 +74,7 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -90,7 +90,7 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
         {
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -108,12 +108,12 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidTor(serializer, dateTimeProvider);
+            var validTor = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var now = dateTimeProvider.GetNow();
-            var exp = (int)(now.AddHours(-1) - JwtValidTor.UnixEpoch).TotalSeconds;
+            var exp = (int)(now.AddHours(-1) - JwtValidator.UnixEpoch).TotalSeconds;
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var expiredtoken = encoder.Encode(new { exp }, "ABC");
@@ -128,7 +128,7 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidTor(serializer, dateTimeProvider);
+            var validTor = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -150,12 +150,12 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidTor(serializer, dateTimeProvider);
+            var validTor = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidTor.UnixEpoch).TotalSeconds;
+            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
             var invalidnbftoken = encoder.Encode(new { nbf }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
@@ -168,7 +168,7 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidTor(serializer, dateTimeProvider);
+            var validTor = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -186,12 +186,12 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidTor(serializer, dateTimeProvider);
+            var validTor = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow - JwtValidTor.UnixEpoch).TotalSeconds;
+            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
             var validnbftoken = encoder.Encode(new { nbf }, "ABC");
 
             decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);

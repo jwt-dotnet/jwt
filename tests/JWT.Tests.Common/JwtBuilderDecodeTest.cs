@@ -23,15 +23,15 @@ namespace JWT.Tests.Common
         public void DecodeTokenWithoutToken()
         {
             Assert.Throws<ArgumentException>(() => new JwtBuilder()
-                                                    .Decode(null));
+                                                 .Decode(null));
         }
 
         [Fact]
         public void DecodeTokenWithoutSerilizer()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
-                                             .SetSerializer(null)
-                                             .Decode(_sampleToken));
+                                         .SetSerializer(null)
+                                         .Decode(_sampleToken));
         }
 
         [Fact]
@@ -48,8 +48,8 @@ namespace JWT.Tests.Common
         public void DecodeTokenWithoutUrlEncoder()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
-                                             .SetUrlEncoder(null)
-                                             .Decode(_sampleToken));
+                                         .SetUrlEncoder(null)
+                                         .Decode(_sampleToken));
         }
 
         [Fact]
@@ -66,8 +66,8 @@ namespace JWT.Tests.Common
         public void DecodeTokenWithoutTimeProvider()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
-                                             .SetTimeProvider(null)
-                                             .Decode(_sampleToken));
+                                         .SetTimeProvider(null)
+                                         .Decode(_sampleToken));
         }
 
         [Fact]
@@ -81,20 +81,20 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutValidTor()
+        public void DecodeTokenWithoutValidator()
         {
             var payload = new JwtBuilder()
-                .SetValidTor(null)
+                .SetValidtor(null)
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
         }
 
         [Fact]
-        public void DecodeTokenWithExplicitValidTor()
+        public void DecodeTokenWithExplicitValidator()
         {
             var payload = new JwtBuilder()
-                .SetValidTor(new JwtValidTor(new JsonNetSerializer(), new UtcDateTimeProvider()))
+                .SetValidtor(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider()))
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
@@ -115,15 +115,15 @@ namespace JWT.Tests.Common
         public void DecodeTokenWithVerifyCheckWithoutSecret()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
-                                            .MustVerify()
-                                            .Decode(_sampleToken));
+                                         .MustVerify()
+                                         .Decode(_sampleToken));
         }
 
         [Fact]
         public void DecodeTokenWithoutVerifyCheck()
         {
             var payload = new JwtBuilder()
-                .NotVerify()
+                .DoNotVerify()
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);

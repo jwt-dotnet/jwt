@@ -1,9 +1,9 @@
 ﻿namespace JWT
 {
     /// <summary>
-    /// Represents a JWT validTor.
+    /// Represents a JWT validator.
     /// </summary>
-    public interface IJwtValidTor
+    public interface IJwtValidator
     {
         /// <summary>
         /// Given the JWT, verifies its signature correctness.

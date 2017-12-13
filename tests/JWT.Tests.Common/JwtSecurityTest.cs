@@ -13,7 +13,7 @@ namespace JWT.Tests.Common
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
@@ -32,7 +32,7 @@ namespace JWT.Tests.Common
 
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRSAPublicKey);
 
-            var validTor = new JwtValidTor(serializer, new UtcDateTimeProvider());
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRSAPublicKey));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 

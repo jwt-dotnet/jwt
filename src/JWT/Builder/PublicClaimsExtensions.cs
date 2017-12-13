@@ -66,7 +66,7 @@ namespace JWT.Builder
 
         private static double GetSecoundsSinceEpoche(DateTime time)
         {
-            return Math.Round((time - JwtValidTor.UnixEpoch).TotalSeconds);
+            return Math.Round((time - JwtValidator.UnixEpoch).TotalSeconds);
         }
 
         private static string GetSecoundsSinceEpocheAsString(DateTime time)

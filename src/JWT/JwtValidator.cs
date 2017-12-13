@@ -7,7 +7,7 @@ namespace JWT
     /// <summary>
     /// Jwt ValidTor.
     /// </summary>
-    public sealed class JwtValidTor : IJwtValidTor
+    public sealed class JwtValidator : IJwtValidator
     {
         /// <summary>
         /// Describes a point in time, defined as the number of seconds that have elapsed since 00:00:00 UTC, Thursday, 1 January 1970, not counting leap seconds.
@@ -19,11 +19,11 @@ namespace JWT
         private readonly IDateTimeProvider _dateTimeProvider;
 
         /// <summary>
-        /// Creates an instance of <see cref="JwtValidTor" />.
+        /// Creates an instance of <see cref="JwtValidator" />.
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer.</param>
         /// <param name="dateTimeProvider">The DateTime Provider.</param>
-        public JwtValidTor(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
         {
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
