@@ -10,7 +10,7 @@ namespace JWT.Tests.Common
     public class JwtBuilderEncodeTest
     {
         [Fact]
-        public void CreateToken()
+        public void Build_Token()
         {
             var token = new JwtBuilder()
                 .SetAlgorithm(new HMACSHA256Algorithm())
@@ -20,7 +20,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void CreateTokenWithPayload()
+        public void Build_WithPayload()
         {
             var testtime = DateTime.UtcNow.AddHours(5).ToString(CultureInfo.InvariantCulture);
             var token = new JwtBuilder()
@@ -35,21 +35,26 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void TryToCreateTokenWithoutInformaiton()
+        public void Build_WithoutDependencies_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() => new JwtBuilder().Build());
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                         .Build());
         }
 
         [Fact]
-        public void TryToCreateTokenOnlyWithAlgorithm()
+        public void Build_WithAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() => new JwtBuilder().SetAlgorithm(new HMACSHA256Algorithm()).Build());
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                         .SetAlgorithm(new HMACSHA256Algorithm())
+                                         .Build());
         }
 
         [Fact]
-        public void TryToCreateTokenOnlyWithSecret()
+        public void Build_WithoutAlgorithm_WithSecret_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() => new JwtBuilder().SetSecret("fjhsdghflghlk").Build());
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                         .SetSecret("fjhsdghflghlk")
+                                         .Build());
         }
     }
 }

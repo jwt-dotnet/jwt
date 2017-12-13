@@ -11,7 +11,7 @@ namespace JWT.Tests.Common
         private const string _sampleSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
         [Fact]
-        public void DecodeToken()
+        public void DecodeToken_()
         {
             var payload = new JwtBuilder()
                 .Decode(_sampleToken);
@@ -20,22 +20,22 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutToken()
+        public void DecodeToken_WithoutToken_Should_Throw_Exception()
         {
             Assert.Throws<ArgumentException>(() => new JwtBuilder()
                                                  .Decode(null));
         }
 
         [Fact]
-        public void DecodeTokenWithoutSerilizer()
+        public void DecodeToken_WithoutSerializer_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() => new JwtBuilder()
-                                         .SetSerializer(null)
-                                         .Decode(_sampleToken));
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                                         .SetSerializer(null)
+                                                         .Decode(_sampleToken));
         }
 
         [Fact]
-        public void DecodeTokenWithExplicitSerilizer()
+        public void DecodeToken_WithSerializer()
         {
             var payload = new JwtBuilder()
                 .SetSerializer(new JsonNetSerializer())
@@ -45,7 +45,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutUrlEncoder()
+        public void DecodeToken_WithoutUrlEncoder_Should_Throw_Exception()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
                                          .SetUrlEncoder(null)
@@ -53,7 +53,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithExplicitUrlEncoder()
+        public void DecodeToken_WithUrlEncoder()
         {
             var payload = new JwtBuilder()
                 .SetUrlEncoder(new JwtBase64UrlEncoder())
@@ -63,15 +63,15 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutTimeProvider()
+        public void DecodeToken_WithoutTimeProvider_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() => new JwtBuilder()
-                                         .SetTimeProvider(null)
-                                         .Decode(_sampleToken));
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                                         .SetTimeProvider(null)
+                                                         .Decode(_sampleToken));
         }
 
         [Fact]
-        public void DecodeTokenWithExplicitTimeProvider()
+        public void DecodeToken_WithDateTimeProvider()
         {
             var payload = new JwtBuilder()
                 .SetTimeProvider(new UtcDateTimeProvider())
@@ -81,7 +81,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutValidator()
+        public void DecodeToken_WithoutValidator()
         {
             var payload = new JwtBuilder()
                 .SetValidtor(null)
@@ -91,7 +91,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithExplicitValidator()
+        public void DecodeToken_WithExplicitValidator()
         {
             var payload = new JwtBuilder()
                 .SetValidtor(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider()))
@@ -101,7 +101,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithVerifyCheck()
+        public void DecodeToken_WithVerify()
         {
             var payload = new JwtBuilder()
                 .SetSecret(_sampleSecret)
@@ -112,7 +112,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithVerifyCheckWithoutSecret()
+        public void DecodeToken_WithVerify_WithoutSecret_Should_Throw_Exception()
         {
             Assert.Throws<Exception>(() => new JwtBuilder()
                                          .MustVerify()
@@ -120,7 +120,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenWithoutVerifyCheck()
+        public void DecodeToken_WithoutVerify()
         {
             var payload = new JwtBuilder()
                 .DoNotVerify()
@@ -130,7 +130,7 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenToDictionary()
+        public void DecodeToken_ToDictionary()
         {
             var payload = new JwtBuilder()
                 .SetSecret(_sampleSecret)
@@ -141,16 +141,13 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeTokenToDictionaryWithoutSerializier()
+        public void DecodeToken_ToDictionary_WithoutSerializer_Should_Throw_Exception()
         {
-            Assert.Throws<Exception>(() =>
-                                     {
-                                         new JwtBuilder()
-                                             .SetSerializer(null)
-                                             .SetSecret(_sampleSecret)
-                                             .MustVerify()
-                                             .Decode<Dictionary<string, string>>(_sampleToken);
-                                     });
+            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
+                                                         .SetSerializer(null)
+                                                         .SetSecret(_sampleSecret)
+                                                         .MustVerify()
+                                                         .Decode<Dictionary<string, string>>(_sampleToken));
         }
     }
 }

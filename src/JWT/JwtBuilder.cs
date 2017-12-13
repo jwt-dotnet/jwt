@@ -165,15 +165,16 @@ namespace JWT
         /// Builds a token using the supplied dependencies.
         /// </summary>
         /// <returns>The generated JWT.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if either of: algorithm, serializer, encoder, secret is null.</exception>
         public string Build()
         {
             if (!CanBuild())
             {
-                throw new Exception("Can't build a Token. Check if you have call all of this: \r\n" +
-                                    "- SetAlgorithm \r\n" +
-                                    "- SetSerializer \r\n" +
-                                    "- SetUrlEncoder \r\n" +
-                                    "- SetSecret \r\n");
+                throw new InvalidOperationException("Can't build a token. Check if you have call all of this: \r\n" +
+                                                    "- SetAlgorithm \r\n" +
+                                                    "- SetSerializer \r\n" +
+                                                    "- SetUrlEncoder \r\n" +
+                                                    "- SetSecret \r\n");
             }
             var encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
             return encoder.Encode(_jwt.Payload, _secret);
@@ -226,7 +227,7 @@ namespace JWT
         /// <summary>
         /// Tries to create a validator is not a custom validator set.
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown if entiher <see cref="_serializer"/> or <see cref="_dateTimeProvider"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if either of: serializer, dateTimeProvider is null.</exception>
         private void TryCreateValidator()
         {
             if (_serializer == null || _dateTimeProvider == null)
