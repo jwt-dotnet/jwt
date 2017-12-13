@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-namespace JWT.Builder.Models
+
+namespace JWT.Builder
 {
     /// <summary>
     /// Represents the Data that will store in a JWT.

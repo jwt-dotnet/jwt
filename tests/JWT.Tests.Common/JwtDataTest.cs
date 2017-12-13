@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using JWT.Builder.Models;
+using JWT.Builder;
 using Xunit;
 
 namespace JWT.Tests.Common

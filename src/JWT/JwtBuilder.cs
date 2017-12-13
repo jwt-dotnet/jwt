@@ -1,8 +1,8 @@
 ﻿using JWT.Builder.Enums;
 using JWT.Builder.Helper;
-using JWT.Builder.Models;
 using JWT.Serializers;
 using System;
+using JWT.Builder;
 
 namespace JWT
 {
