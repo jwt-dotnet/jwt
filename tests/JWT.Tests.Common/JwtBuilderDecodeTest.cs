@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JWT.Builder;
 using JWT.Serializers;
 using Xunit;
 

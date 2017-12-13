@@ -1,10 +1,9 @@
 ﻿using System;
 using JWT.Algorithms;
-using JWT.Builder;
 using JWT.Builder.Internal;
 using JWT.Serializers;
 
-namespace JWT
+namespace JWT.Builder
 {
     /// <summary>
     /// Build and decode JWT with Fluent API.
