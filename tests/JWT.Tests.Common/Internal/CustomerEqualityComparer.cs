@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using JWT.Tests.Common.Models;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Common.Internal
 {
     public sealed class CustomerEqualityComparer : IEqualityComparer<Customer>
     {

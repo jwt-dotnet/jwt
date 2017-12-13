@@ -2,6 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using JWT.Algorithms;
 using JWT.Serializers;
+using JWT.Tests.Common.Models;
 using Xunit;
 
 namespace JWT.Tests.Common
@@ -30,13 +31,13 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
 
-            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRSAPublicKey);
+            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey);
 
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRSAPublicKey));
+            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action action = () => decoder.Decode(encodedToken, TestData.ServerRSAPublicKey, verify: true);
+            Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKey, verify: true);
 
             Assert.Throws<NotSupportedException>(action);
         }

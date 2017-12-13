@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Common.Internal
 {
     public sealed class DictionaryEqualityComparer : IEqualityComparer<IDictionary<string, object>>
     {
