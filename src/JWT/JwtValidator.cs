@@ -6,7 +6,7 @@ using JWT.Builder.Internal;
 namespace JWT
 {
     /// <summary>
-    /// Jwt ValidTor.
+    /// Jwt validator.
     /// </summary>
     public sealed class JwtValidator : IJwtValidator
     {
