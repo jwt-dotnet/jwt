@@ -1,6 +1,5 @@
 ﻿using System;
 using JWT.Algorithms;
-using JWT.Builder.Internal;
 using JWT.Serializers;
 
 namespace JWT.Builder
