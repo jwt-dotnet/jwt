@@ -11,13 +11,13 @@ namespace JWT.Builder
     {
         private readonly JwtData _jwt = new JwtData();
 
-        private IJsonSerializer _serializer = new JsonNetSerializer();
-        private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
-        private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
-
         private IJwtEncoder _encoder;
         private IJwtDecoder _decoder;
         private IJwtValidator _validator;
+
+        private IJsonSerializer _serializer = new JsonNetSerializer();
+        private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
+        private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
 
         private IJwtAlgorithm _algorithm;
         private string _secret;
@@ -197,7 +197,6 @@ namespace JWT.Builder
 
             return _encoder.Encode(_jwt.Payload, _secret);
         }
-
 
         /// <summary>
         /// Decodes a token using the supplied dependencies.
