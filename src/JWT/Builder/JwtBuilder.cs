@@ -188,12 +188,12 @@ namespace JWT.Builder
             TryCreateValidator();
             if (!CanDecode())
             {
-                throw new Exception("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
+                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
                                     $"-{nameof(SetSerializer)}\r\n" +
                                     $"-{nameof(SetUrlEncoder)}\r\n" +
                                     $"-{nameof(SetDateTimeProvider)}\r\n" +
                                     $"-{nameof(SetValidator)}\r\n" +
-                                    $"If you called {nameof(MustVerifySignature)} you must also call SetSecret.");
+                                    $"If you called {nameof(MustVerifySignature)} you must also call {nameof(SetSecret)}.");
 
             }
             var decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
@@ -201,7 +201,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Decodes a token with the decode information you pushed in the buider.
+        /// Decodes a token using the supplied dependencies.
         /// </summary>
         /// <param name="token">The JWT you want to extract</param>
         /// <returns>The payload converted to <see cref="T" /></returns>
@@ -210,12 +210,12 @@ namespace JWT.Builder
             TryCreateValidator();
             if (!CanDecode())
             {
-                throw new Exception("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
+                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
                                     $"-{nameof(SetSerializer)}\r\n" +
                                     $"-{nameof(SetUrlEncoder)}\r\n" +
                                     $"-{nameof(SetDateTimeProvider)}\r\n" +
                                     $"-{nameof(SetValidator)}\r\n" +
-                                    $"If you called {nameof(MustVerifySignature)} you must also call SetSecret"
+                                    $"If you called {nameof(MustVerifySignature)} you must also call {nameof(SetSecret)}."
                 );
 
             }
@@ -230,7 +230,7 @@ namespace JWT.Builder
         private void TryCreateValidator()
         {
             if (_serializer == null || _dateTimeProvider == null)
-                throw new InvalidOperationException("Can't create a validator. Please call SetSerializer and SetDateTimeProvider");
+                throw new InvalidOperationException($"Can't create a validator. Call {nameof(SetSerializer)} and {nameof(SetDateTimeProvider)}.");
 
             if (_validator == null)
                 _validator = new JwtValidator(_serializer, _dateTimeProvider);
