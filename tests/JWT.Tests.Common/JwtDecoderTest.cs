@@ -80,9 +80,9 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var invalidtoken = encoder.Encode(new { exp = "asdsad" }, "ABC");
+            var token = encoder.Encode(new { exp = "asdsad" }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
             Assert.Throws<SignatureVerificationException>(action);
         }
@@ -96,9 +96,9 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var invalidtoken = encoder.Encode(new { exp = (object)null }, "ABC");
+            var token = encoder.Encode(new { exp = (object)null }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidtoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
             var message = Assert.Throws<SignatureVerificationException>(action).Message;
             Assert.Equal(message, "Claim 'exp' must be a number.");
@@ -114,12 +114,12 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var now = dateTimeProvider.GetNow();
-            var exp = (int)(now.AddHours(-1) - JwtValidator.UnixEpoch).TotalSeconds;
+            var exp = UnixEpoch.GetSecondsSince(now.AddHours(-1));
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var expiredtoken = encoder.Encode(new { exp }, "ABC");
+            var token = encoder.Encode(new { exp }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(expiredtoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
             Assert.Throws<TokenExpiredException>(action);
         }
@@ -155,11 +155,13 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow.AddHours(1) - JwtValidator.UnixEpoch).TotalSeconds;
-            var invalidnbftoken = encoder.Encode(new { nbf }, "ABC");
+            var now = dateTimeProvider.GetNow();
+            var nbf = UnixEpoch.GetSecondsSince(now.AddHours(1));
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var token = encoder.Encode(new { nbf }, "ABC");
+
+            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
             Assert.Throws<SignatureVerificationException>(action);
         }
@@ -174,9 +176,9 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var invalidnbftoken = encoder.Encode(new { nbf = (object)null }, "ABC");
+            var token = encoder.Encode(new { nbf = (object)null }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(invalidnbftoken, "ABC", verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
             var message = Assert.Throws<SignatureVerificationException>(action).Message;
             Assert.Equal(message, "Claim 'nbf' must be a number.");
@@ -191,11 +193,13 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var nbf = (int)(DateTime.UtcNow - JwtValidator.UnixEpoch).TotalSeconds;
-            var validnbftoken = encoder.Encode(new { nbf }, "ABC");
+            var now = dateTimeProvider.GetNow();
+            var nbf = UnixEpoch.GetSecondsSince(now);
 
-            decoder.DecodeToObject<Customer>(validnbftoken, "ABC", verify: true);
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var token = encoder.Encode(new { nbf }, "ABC");
+
+            decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
         }
     }
 }
