@@ -12,7 +12,7 @@ namespace JWT.Tests.Common
         private const string _sampleSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
         [Fact]
-        public void DecodeToken_()
+        public void DecodeToken()
         {
             var payload = new JwtBuilder()
                 .Decode(_sampleToken);

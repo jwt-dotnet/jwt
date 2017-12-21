@@ -5,7 +5,7 @@ using JWT.Tests.Common.Internal;
 using JWT.Tests.Common.Models;
 using Xunit;
 
-namespace JWT.Tests
+namespace JWT.Tests.Common
 {
     public class JwtDecoderTest
     {
