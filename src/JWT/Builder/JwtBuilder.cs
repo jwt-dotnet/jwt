@@ -288,7 +288,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Checks whether enought dependencies were supplied to build a new token.
+        /// Checks whether enough dependencies were supplied to build a new token.
         /// </summary>
         private bool CanBuild()
         {
@@ -300,7 +300,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Checks whether enought dependencies were supplied to decode a token.
+        /// Checks whether enough dependencies were supplied to decode a token.
         /// </summary>
         private bool CanDecode()
         {
