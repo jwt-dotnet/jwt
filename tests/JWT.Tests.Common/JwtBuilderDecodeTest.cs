@@ -67,7 +67,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutTimeProvider_Should_Throw_Exception()
         {
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                         .SetTimeProvider(null)
+                                                         .SetDateTimeProvider(null)
                                                          .Decode(_sampleToken));
         }
 
@@ -75,7 +75,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithDateTimeProvider()
         {
             var payload = new JwtBuilder()
-                .SetTimeProvider(new UtcDateTimeProvider())
+                .SetDateTimeProvider(new UtcDateTimeProvider())
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
@@ -85,7 +85,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutValidator()
         {
             var payload = new JwtBuilder()
-                .SetValidtor(null)
+                .SetValidator(null)
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
@@ -95,7 +95,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithExplicitValidator()
         {
             var payload = new JwtBuilder()
-                .SetValidtor(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider()))
+                .SetValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider()))
                 .Decode(_sampleToken);
 
             Assert.NotEmpty(payload);
