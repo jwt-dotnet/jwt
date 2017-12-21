@@ -7,7 +7,7 @@ namespace JWT.Builder
     /// <summary>
     /// Build and decode JWT with Fluent API.
     /// </summary>
-    public class JwtBuilder
+    public sealed class JwtBuilder
     {
         private readonly JwtData _jwt = new JwtData();
 
