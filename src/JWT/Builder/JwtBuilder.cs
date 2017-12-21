@@ -210,11 +210,11 @@ namespace JWT.Builder
             TryCreateValidator();
             if (!CanDecode())
             {
-                throw new Exception("Can't build a Token. Check if you have call all of this: \r\n" +
-                                    "- SetSerializer \r\n" +
-                                    "- SetUrlEncoder \r\n" +
-                                    "- SetTimeProvider \r\n" +
-                                    "- SetValidtor \r\n" +
+                throw new Exception("Can't decode a token. Check if you have call all of the followng methods: \r\n" +
+                                    "-SetSerializer\r\n" +
+                                    "-SetUrlEncoder\r\n" +
+                                    "-SetTimeProvider\r\n" +
+                                    "-SetValidtor\r\n" +
                                     "If you called MustVerifySignature you must also call SetSecret"
                 );
 

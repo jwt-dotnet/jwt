@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using JWT.Builder.Internal;
 
 namespace JWT
 {
@@ -10,12 +9,6 @@ namespace JWT
     /// </summary>
     public sealed class JwtValidator : IJwtValidator
     {
-        /// <summary>
-        /// Describes a point in time, defined as the number of seconds that have elapsed since 00:00:00 UTC, Thursday, 1 January 1970, not counting leap seconds.
-        /// See https://en.wikipedia.org/wiki/Unix_time />
-        /// </summary>
-        public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
 
@@ -56,7 +49,7 @@ namespace JWT
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();
-            var secondsSinceEpoch = now.GetSecondsSinceEpoch();
+            var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
             ValidateExpClaim(payloadData, secondsSinceEpoch);
             ValidateNbfClaim(payloadData, secondsSinceEpoch);
@@ -114,7 +107,7 @@ namespace JWT
             {
                 throw new TokenExpiredException("Token has expired.")
                 {
-                    Expiration = UnixEpoch.AddSeconds(expValue),
+                    Expiration = UnixEpoch.Value.AddSeconds(expValue),
                     PayloadData = payloadData
                 };
             }

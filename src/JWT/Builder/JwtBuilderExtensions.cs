@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using JWT.Builder.Internal;
 
 namespace JWT.Builder
 {
     public static class JwtBuilderExtensions
     {
-        public static JwtBuilder ExpirationTime(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.ExpirationTime, time.GetSecondsSinceEpochAsString());
+        public static JwtBuilder ExpirationTime(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.ExpirationTime, UnixEpoch.GetSecondsSinceAsString(time));
 
         public static JwtBuilder Issuer(this JwtBuilder builder, string issuer) => builder.AddClaim(ClaimName.Issuer, issuer);
 
@@ -14,9 +13,9 @@ namespace JWT.Builder
 
         public static JwtBuilder Audience(this JwtBuilder builder, string audience) => builder.AddClaim(ClaimName.Audience, audience);
 
-        public static JwtBuilder NotBefore(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.NotBefore, time.GetSecondsSinceEpochAsString());
+        public static JwtBuilder NotBefore(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.NotBefore, UnixEpoch.GetSecondsSinceAsString(time));
 
-        public static JwtBuilder IssuedAt(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.IssuedAt, time.GetSecondsSinceEpochAsString());
+        public static JwtBuilder IssuedAt(this JwtBuilder builder, DateTime time) => builder.AddClaim(ClaimName.IssuedAt, UnixEpoch.GetSecondsSinceAsString(time));
 
         public static JwtBuilder Id(this JwtBuilder builder, Guid id) => builder.Id(id.ToString());
 
