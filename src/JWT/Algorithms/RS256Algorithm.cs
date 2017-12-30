@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace JWT.Algorithms
@@ -31,7 +32,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The data to sign.</param>
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
-            var rsa = GetRSA(_cert);
+            var rsa = GetRSA(_cert) ?? throw new CryptographicException("Certificate doesn't contain private key");
             return rsa.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
