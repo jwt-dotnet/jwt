@@ -1,12 +1,12 @@
 namespace JWT
 {
     /// <summary>
-    /// JwtAlgorithm interface.
+    /// Represents an algorithm to encrypt JWT signature.
     /// </summary>
     public interface IJwtAlgorithm
     {
         /// <summary>
-        /// Signs the provided byte array with the provided key.
+        /// Signs provided byte array with provided key.
         /// </summary>
         /// <param name="key">The key used to sign the data.</param>
         /// <param name="bytesToSign">The data to sign.</param>
