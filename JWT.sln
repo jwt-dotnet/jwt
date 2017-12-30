@@ -1,22 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{513CE2B5-E0D6-43BC-998A-A02CB2875479}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		JWT.sln.DotSettings = JWT.sln.DotSettings
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT", "src\JWT\JWT.csproj", "{2F79EB8D-5B33-4EA6-AC1A-89B107F043D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT", "src\JWT\JWT.csproj", "{2F79EB8D-5B33-4EA6-AC1A-89B107F043D2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Core", "tests\JWT.Tests.Core\JWT.Tests.Core.csproj", "{79341F14-151C-4231-B2A7-56DAC44CB25E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests.NETFramework", "tests\JWT.Tests.NETFramework\JWT.Tests.NETFramework.csproj", "{88E1DB97-3507-4D8C-9B3D-715DE2F9E414}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests.Common", "tests\JWT.Tests.Common\JWT.Tests.Common.csproj", "{5D0282D5-9CC4-4D42-A3F0-E18270F92184}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Common", "tests\JWT.Tests.Common\JWT.Tests.Common.csproj", "{5D0282D5-9CC4-4D42-A3F0-E18270F92184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,5 +44,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1410453-72A1-44D5-AE80-32835754BEDA}
 	EndGlobalSection
 EndGlobal
