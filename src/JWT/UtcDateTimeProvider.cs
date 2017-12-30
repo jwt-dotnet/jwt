@@ -11,9 +11,9 @@ namespace JWT
         /// Retuns the current time (UTC).
         /// </summary>
         /// <returns></returns>
-        public DateTime GetNow()
+        public DateTimeOffset GetNow()
         {
-            return DateTime.UtcNow;
+            return DateTimeOffset.UtcNow;
         }
     }
 }
