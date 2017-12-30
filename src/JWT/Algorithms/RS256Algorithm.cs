@@ -19,9 +19,7 @@ namespace JWT.Algorithms
             _cert = cert;
         }
 
-        /// <summary>
-        /// The algorithm name.
-        /// </summary>
+        /// <inheritdoc />
         public string Name => JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
