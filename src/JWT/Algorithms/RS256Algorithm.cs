@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace JWT.Algorithms
@@ -25,11 +24,7 @@ namespace JWT.Algorithms
         /// </summary>
         public string Name => JwtHashAlgorithm.RS256.ToString();
 
-        /// <summary>
-        /// Signs the provided byte array with the provided key.
-        /// </summary>
-        /// <param name="key">The key used to sign the data.</param>
-        /// <param name="bytesToSign">The data to sign.</param>
+        /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
             var rsa = GetRSA(_cert) ?? throw new CryptographicException("Certificate doesn't contain private key");
