@@ -308,7 +308,7 @@ namespace JWT.Builder
                 _dateTimeProvider != null &&
                 _urlEncoder != null)
             {
-                return !_verify || _verify && !String.IsNullOrEmpty(_secret);
+                return !_verify || !String.IsNullOrEmpty(_secret);
             }
             return false;
         }
