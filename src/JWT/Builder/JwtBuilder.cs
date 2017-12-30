@@ -70,7 +70,7 @@ namespace JWT.Builder
         /// If not set then default <see cref="JsonNetSerializer" /> will be used.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetSerializer(IJsonSerializer serializer)
+        public JwtBuilder WithSerializer(IJsonSerializer serializer)
         {
             _serializer = serializer;
             return this;
@@ -83,7 +83,7 @@ namespace JWT.Builder
         /// If not set then default <see cref="UtcDateTimeProvider" /> will be used.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetDateTimeProvider(IDateTimeProvider provider)
+        public JwtBuilder WithDateTimeProvider(IDateTimeProvider provider)
         {
             _dateTimeProvider = provider;
             return this;
@@ -93,7 +93,7 @@ namespace JWT.Builder
         /// Sets JWT encoder.
         /// </summary>
         /// <returns>Current builder instance</returns>        
-        public JwtBuilder SetEncoder(IJwtEncoder encoder)
+        public JwtBuilder WithEncoder(IJwtEncoder encoder)
         {
             _encoder = encoder;
             return this;
@@ -103,7 +103,7 @@ namespace JWT.Builder
         /// Sets JWT decoder.
         /// </summary>
         /// <returns>Current builder instance</returns>        
-        public JwtBuilder SetDecoder(IJwtDecoder decoder)
+        public JwtBuilder WithDecoder(IJwtDecoder decoder)
         {
             _decoder = decoder;
             return this;
@@ -116,7 +116,7 @@ namespace JWT.Builder
         /// Required to decode with verification.
         /// </remarks>
         /// <returns>Current builder instance</returns>        
-        public JwtBuilder SetValidator(IJwtValidator validator)
+        public JwtBuilder WithValidator(IJwtValidator validator)
         {
             _validator = validator;
             return this;
@@ -129,7 +129,7 @@ namespace JWT.Builder
         /// If not set then default <see cref="JwtBase64UrlEncoder" /> will be used.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetUrlEncoder(IBase64UrlEncoder urlEncoder)
+        public JwtBuilder WithUrlEncoder(IBase64UrlEncoder urlEncoder)
         {
             _urlEncoder = urlEncoder;
             return this;
@@ -142,7 +142,7 @@ namespace JWT.Builder
         /// Required to create new token.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetAlgorithm(IJwtAlgorithm algorithm)
+        public JwtBuilder WithAlgorithm(IJwtAlgorithm algorithm)
         {
             _algorithm = algorithm;
             return this;
@@ -155,7 +155,7 @@ namespace JWT.Builder
         /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetSecret(string secret)
+        public JwtBuilder WithSecret(string secret)
         {
             _secret = secret;
             return this;
@@ -165,19 +165,19 @@ namespace JWT.Builder
         /// Instructs to do verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature() => SetVerifySignature(true);
+        public JwtBuilder MustVerifySignature() => VerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder DoNotVerifySignature() => SetVerifySignature(false);
+        public JwtBuilder DoNotVerifySignature() => VerifySignature(false);
 
         /// <summary>
         /// Instructs whether to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder SetVerifySignature(bool verify)
+        public JwtBuilder VerifySignature(bool verify)
         {
             _verify = verify;
             return this;
@@ -231,11 +231,11 @@ namespace JWT.Builder
         private void TryCreateEncoder()
         {
             if (_algorithm == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(SetAlgorithm)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
             if (_serializer == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(SetSerializer)}");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
             if (_urlEncoder == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(SetUrlEncoder)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
             _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
         }
@@ -245,11 +245,11 @@ namespace JWT.Builder
             TryCreateValidator();
 
             if (_serializer == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(SetSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
             if (_validator == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(SetValidator)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
             if (_urlEncoder == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(SetUrlEncoder)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
             _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
         }
@@ -260,9 +260,9 @@ namespace JWT.Builder
                 return;
 
             if (_serializer == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(SetSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
             if (_dateTimeProvider == null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(SetDateTimeProvider)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
             _validator = new JwtValidator(_serializer, _dateTimeProvider);
         }
@@ -271,20 +271,20 @@ namespace JWT.Builder
         {
             if (!CanBuild())
                 throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(SetAlgorithm)}\r\n" +
-                                                    $"-{nameof(SetSerializer)}\r\n" +
-                                                    $"-{nameof(SetUrlEncoder)}\r\n" +
-                                                    $"-{nameof(SetSecret)}");
+                                                    $"-{nameof(WithAlgorithm)}\r\n" +
+                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithUrlEncoder)}\r\n" +
+                                                    $"-{nameof(WithSecret)}");
         }
 
         private void EnsureCanDecode()
         {
             if (!CanDecode())
                 throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(SetSerializer)}\r\n" +
-                                                    $"-{nameof(SetValidator)}\r\n" +
-                                                    $"-{nameof(SetUrlEncoder)}\r\n" +
-                                                    $"If you called {nameof(MustVerifySignature)} you must also call {nameof(SetSecret)}.");
+                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithValidator)}\r\n" +
+                                                    $"-{nameof(WithUrlEncoder)}\r\n" +
+                                                    $"If you called {nameof(MustVerifySignature)} you must also call {nameof(WithSecret)}.");
         }
 
         /// <summary>
