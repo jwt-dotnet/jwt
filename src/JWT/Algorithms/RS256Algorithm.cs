@@ -43,7 +43,7 @@ namespace JWT.Algorithms
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
-#if NETSTANDARD
+#if NETSTANDARD1_3
             return cert.GetRSAPrivateKey();
 #else
             return (RSA)cert.PrivateKey;
@@ -53,7 +53,7 @@ namespace JWT.Algorithms
         private static RSACryptoServiceProvider GetPublicKey(X509Certificate2 cert)
         {
             AsymmetricAlgorithm alg;
-#if NETSTANDARD
+#if NETSTANDARD1_3
             alg = cert.GetRSAPublicKey();
 #else
             alg = cert.PublicKey.Key;
