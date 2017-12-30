@@ -165,19 +165,19 @@ namespace JWT.Builder
         /// Instructs to do verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature() => VerifySignature(true);
+        public JwtBuilder MustVerifySignature() => WithVerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder DoNotVerifySignature() => VerifySignature(false);
+        public JwtBuilder DoNotVerifySignature() => WithVerifySignature(false);
 
         /// <summary>
         /// Instructs whether to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder VerifySignature(bool verify)
+        public JwtBuilder WithVerifySignature(bool verify)
         {
             _verify = verify;
             return this;
