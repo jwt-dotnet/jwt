@@ -4,7 +4,7 @@ using JWT.Serializers;
 using JWT.Tests.Common.Models;
 using Xunit;
 
-namespace JWT.Tests
+namespace JWT.Tests.Common
 {
     public class JwtEncoderTest
     {

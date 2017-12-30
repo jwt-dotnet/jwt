@@ -13,8 +13,8 @@ namespace JWT.Tests.Common
         public void Build_Token()
         {
             var token = new JwtBuilder()
-                .SetAlgorithm(new HMACSHA256Algorithm())
-                .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
         }
@@ -24,8 +24,8 @@ namespace JWT.Tests.Common
         {
             var testtime = DateTime.UtcNow.AddHours(5).ToString(CultureInfo.InvariantCulture);
             var token = new JwtBuilder()
-                .SetAlgorithm(new HMACSHA256Algorithm())
-                .SetSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
                 .AddClaim(ClaimName.ExpirationTime, testtime)
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
@@ -45,7 +45,7 @@ namespace JWT.Tests.Common
         public void Build_WithAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                         .SetAlgorithm(new HMACSHA256Algorithm())
+                                         .WithAlgorithm(new HMACSHA256Algorithm())
                                          .Build());
         }
 
@@ -53,7 +53,7 @@ namespace JWT.Tests.Common
         public void Build_WithoutAlgorithm_WithSecret_Should_Throw_Exception()
         {
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                         .SetSecret("fjhsdghflghlk")
+                                         .WithSecret("fjhsdghflghlk")
                                          .Build());
         }
     }

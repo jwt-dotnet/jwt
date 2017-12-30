@@ -25,7 +25,7 @@ namespace JWT.Algorithms
                 case JwtHashAlgorithm.RS256:
                     throw new NotSupportedException($"For algorithm {nameof(JwtHashAlgorithm.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
                 default:
-                    throw new InvalidOperationException($"Algorithm {algorithm} is not supported.");
+                    throw new NotSupportedException($"Algorithm {algorithm} is not supported.");
             }
         }
     }

@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace JWT.Builder.Internal
+namespace JWT.Builder
 {
-    internal static class EnumHelper
+    internal static class EnumExtensions
     {
         /// <summary>
         /// Gets the string representation of a well-known header name enum
