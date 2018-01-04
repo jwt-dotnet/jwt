@@ -11,6 +11,6 @@ namespace JWT
         /// Get the current DateTime.
         /// </summary>
         /// <returns></returns>
-        DateTime GetNow();
+        DateTimeOffset GetNow();
     }
 }
