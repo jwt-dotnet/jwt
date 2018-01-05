@@ -40,11 +40,11 @@ namespace JWT.Builder
         /// <summary>
         /// The header information as a key-value store of the JWT
         /// </summary>
-        public IDictionary<string, string> Header { get; set; }
+        public IDictionary<string, string> Header { get; }
 
         /// <summary>
         /// The payload of the JWT as a key-value store
         /// </summary>
-        public IDictionary<string, object> Payload { get; set; }
+        public IDictionary<string, object> Payload { get; }
     }
 }
