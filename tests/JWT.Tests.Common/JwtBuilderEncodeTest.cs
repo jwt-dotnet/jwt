@@ -42,11 +42,17 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void Build_WithAlgorithm_WithoutSecret_Should_Throw_Exception()
+        public void Build_WithSymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
                                          .WithAlgorithm(new HMACSHA256Algorithm())
                                          .Build());
+        }
+
+        [Fact]
+        public void Build_WithAsymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
+        {
+            // TODO: add a test with an asymmetric algorithm
         }
 
         [Fact]

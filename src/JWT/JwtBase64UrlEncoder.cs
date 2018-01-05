@@ -8,8 +8,8 @@ namespace JWT
     public sealed class JwtBase64UrlEncoder : IBase64UrlEncoder
     {
         /// <inheritdoc />
-        /// <exception cref="T:System.ArgumentNullException" />
-        /// <exception cref="T:System.ArgumentOutOfRangeException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public string Encode(byte[] input)
         {
             if (input == null)
@@ -25,7 +25,8 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="T:System.ArgumentException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="FormatException" />
         public byte[] Decode(string input)
         {
             if (String.IsNullOrWhiteSpace(input))
@@ -45,7 +46,7 @@ namespace JWT
                     output += "=";
                     break; // One pad char
                 default:
-                    throw new FormatException("Illegal base64url string!");
+                    throw new FormatException("Illegal base64url string.");
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;

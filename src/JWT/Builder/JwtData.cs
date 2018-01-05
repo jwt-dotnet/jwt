@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace JWT.Builder
@@ -8,22 +9,31 @@ namespace JWT.Builder
     public class JwtData
     {
         /// <summary>
-        /// Creates a new instance of <see cref="JwtData" /> and initalizes Header and Payload.
+        /// Creates a new instance of <see cref="JwtData" /> with empty Header and Payload.
         /// </summary>
         public JwtData()
-            : this(new Dictionary<string, string>(), new Dictionary<string, object>())
+            : this(null, null)
         {
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="JwtData" />
+        /// Creates a new instance of <see cref="JwtData" />.
+        /// </summary>
+        /// <param name="payload">Dictionary that contans the payload</param>
+        public JwtData(IDictionary<string, object> payload)
+        : this(null, payload)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="JwtData" />.
         /// </summary>
         /// <param name="header">Dictionary that contains the headers</param>
         /// <param name="payload">Dictionary that contans the payload</param>
         public JwtData(IDictionary<string, string> header, IDictionary<string, object> payload)
         {
-            this.Header = header;
-            this.Payload = payload;
+            this.Header = header ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            this.Payload = payload ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -40,11 +50,11 @@ namespace JWT.Builder
         /// <summary>
         /// The header information as a key-value store of the JWT
         /// </summary>
-        public IDictionary<string, string> Header { get; set; }
+        public IDictionary<string, string> Header { get; }
 
         /// <summary>
         /// The payload of the JWT as a key-value store
         /// </summary>
-        public IDictionary<string, object> Payload { get; set; }
+        public IDictionary<string, object> Payload { get; }
     }
 }

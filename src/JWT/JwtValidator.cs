@@ -59,15 +59,13 @@ namespace JWT
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
         {
             if (decodedCrypto.Length != decodedSignature.Length)
-            {
                 return false;
-            }
 
-            byte[] decodedCryptoBytes = Encoding.ASCII.GetBytes(decodedCrypto);
-            byte[] decodedSignatureBytes = Encoding.ASCII.GetBytes(decodedSignature);
+            var decodedCryptoBytes = GetBytes(decodedCrypto);
+            var decodedSignatureBytes = GetBytes(decodedSignature);
 
             byte result = 0;
-            for (int i = 0; i < decodedCrypto.Length; i++)
+            for (var i = 0; i < decodedCrypto.Length; i++)
             {
                 result |= (byte)(decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
             }
@@ -84,14 +82,10 @@ namespace JWT
         private static void ValidateExpClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("exp", out var expObj))
-            {
                 return;
-            }
 
             if (expObj == null)
-            {
                 throw new SignatureVerificationException("Claim 'exp' must be a number.");
-            }
 
             double expValue;
             try
@@ -121,14 +115,10 @@ namespace JWT
         private static void ValidateNbfClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("nbf", out var nbfObj))
-            {
                 return;
-            }
 
             if (nbfObj == null)
-            {
                 throw new SignatureVerificationException("Claim 'nbf' must be a number.");
-            }
 
             double nbfValue;
             try
@@ -145,5 +135,7 @@ namespace JWT
                 throw new SignatureVerificationException("Token is not yet valid.");
             }
         }
+
+        private static byte[] GetBytes(string input) => Encoding.ASCII.GetBytes(input);
     }
 }

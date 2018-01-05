@@ -7,11 +7,7 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class HMACSHA384Algorithm : IJwtAlgorithm
     {
-        /// <summary>
-        /// Signs the provided byte array with the provided key.
-        /// </summary>
-        /// <param name="key">The key used to sign the data.</param>
-        /// <param name="bytesToSign">The data to sign.</param>
+        /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
             using (var sha = new HMACSHA384(key))
@@ -20,9 +16,10 @@ namespace JWT.Algorithms
             }
         }
 
-        /// <summary>
-        /// The algorithm name.
-        /// </summary>
+        /// <inheritdoc />
         public string Name => JwtHashAlgorithm.HS384.ToString();
+
+        /// <inheritdoc />
+        public bool IsAsymmetric { get; } = false;
     }
 }

@@ -19,29 +19,52 @@ namespace JWT.Algorithms
             _cert = cert;
         }
 
-        /// <summary>
-        /// The algorithm name.
-        /// </summary>
+        /// <inheritdoc />
         public string Name => JwtHashAlgorithm.RS256.ToString();
 
-        /// <summary>
-        /// Signs the provided byte array with the provided key.
-        /// </summary>
-        /// <param name="key">The key used to sign the data.</param>
-        /// <param name="bytesToSign">The data to sign.</param>
-        public byte[] Sign(byte[] key, byte[] bytesToSign)
+        /// <inheritdoc />
+        public bool IsAsymmetric { get; } = true;
+
+        /// <inheritdoc />
+        public byte[] Sign(byte[] _, byte[] bytesToSign)
         {
-            var rsa = GetRSA(_cert);
-            return rsa.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            if (!_cert.HasPrivateKey)
+                throw new CryptographicException("Certificate doesn't contain private key");
+
+            var privateKey = GetPrivateKey(_cert);
+            return privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
-        private static RSA GetRSA(X509Certificate2 cert)
+        /// <summary>
+        /// Verifies provided byte array with provided signature.
+        /// </summary>
+        /// <param name="bytesToSign">The data to verify.</param>
+        /// <param name="signature">The signature to verify with</param>
+        /// <returns></returns>
+        public bool Verify(byte[] bytesToSign, byte[] signature)
+        {
+            var publicKey = GetPublicKey(_cert);
+            return publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+        }
+
+        private static RSA GetPrivateKey(X509Certificate2 cert)
         {
 #if NETSTANDARD1_3
             return cert.GetRSAPrivateKey();
 #else
             return (RSA)cert.PrivateKey;
 #endif
+        }
+
+        private static RSACryptoServiceProvider GetPublicKey(X509Certificate2 cert)
+        {
+            AsymmetricAlgorithm alg;
+#if NETSTANDARD1_3
+            alg = cert.GetRSAPublicKey();
+#else
+            alg = cert.PublicKey.Key;
+#endif
+            return (RSACryptoServiceProvider)alg;
         }
     }
 }

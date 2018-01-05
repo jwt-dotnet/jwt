@@ -113,14 +113,6 @@ namespace JWT.Tests.Common
         }
 
         [Fact]
-        public void DecodeToken_WithVerifySignature_WithoutSecret_Should_Throw_Exception()
-        {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                           .MustVerifySignature()
-                                                           .Decode(_sampleToken));
-        }
-
-        [Fact]
         public void DecodeToken_WithoutVerifySignature()
         {
             var payload = new JwtBuilder()
