@@ -26,6 +26,7 @@ namespace JWT
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="FormatException" />
         public byte[] Decode(string input)
         {
             if (String.IsNullOrWhiteSpace(input))
@@ -45,7 +46,7 @@ namespace JWT
                     output += "=";
                     break; // One pad char
                 default:
-                    throw new FormatException("Illegal base64url string!");
+                    throw new FormatException("Illegal base64url string.");
             }
             var converted = Convert.FromBase64String(output); // Standard base64 decoder
             return converted;
