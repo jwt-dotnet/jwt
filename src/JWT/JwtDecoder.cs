@@ -10,8 +10,6 @@ namespace JWT
     /// </summary>
     public sealed class JwtDecoder : IJwtDecoder
     {
-        private static readonly IAlgorithmFactory _defaultAlgorithmFactory = new HMACSHAAlgorithmFactory();
-
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
         private readonly IBase64UrlEncoder _urlEncoder;
@@ -24,7 +22,7 @@ namespace JWT
         /// <param name="jwtValidator">The Jwt validator.</param>
         /// <param name="urlEncoder">The Base64 URL Encoder.</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
-            : this(jsonSerializer, jwtValidator, urlEncoder, _defaultAlgorithmFactory)
+            : this(jsonSerializer, jwtValidator, urlEncoder, new HMACSHAAlgorithmFactory())
         {
         }
 
