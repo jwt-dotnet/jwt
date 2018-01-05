@@ -208,9 +208,7 @@ namespace JWT.Builder
             if (_decoder == null)
                 TryCreateDecoder();
 
-            EnsureCanDecode();
-
-            return _decoder.Decode(token);
+            return _verify ? _decoder.Decode(token, _secret, _verify) : _decoder.Decode(token);
         }
 
         /// <summary>
@@ -222,8 +220,6 @@ namespace JWT.Builder
         {
             if (_decoder == null)
                 TryCreateDecoder();
-
-            EnsureCanDecode();
 
             return _verify ? _decoder.DecodeToObject<T>(token, _secret, _verify) : _decoder.DecodeToObject<T>(token);
         }
@@ -250,6 +246,8 @@ namespace JWT.Builder
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
             if (_urlEncoder == null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
+
+            EnsureCanDecode();
 
             _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
         }
@@ -293,7 +291,8 @@ namespace JWT.Builder
             return _algorithm != null &&
                    _serializer != null &&
                    _urlEncoder != null &&
-                   _jwt.Payload != null;
+                   _jwt.Payload != null &&
+                   _algorithm.IsAsymmetric || !String.IsNullOrEmpty(_secret);
         }
 
         /// <summary>
@@ -305,7 +304,7 @@ namespace JWT.Builder
                 _dateTimeProvider != null &&
                 _urlEncoder != null)
             {
-                return !_verify;
+                return !_verify || (_algorithm?.IsAsymmetric ?? true) || !String.IsNullOrEmpty(_secret);
             }
             return false;
         }

@@ -28,7 +28,10 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public byte[] Sign(byte[] _, byte[] bytesToSign)
         {
-            var privateKey = GetPrivateKey(_cert) ?? throw new CryptographicException("Certificate doesn't contain private key");
+            if (!_cert.HasPrivateKey)
+                throw new CryptographicException("Certificate doesn't contain private key");
+
+            var privateKey = GetPrivateKey(_cert);
             return privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 

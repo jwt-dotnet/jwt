@@ -28,7 +28,7 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Encode(object payload, string key) => Encode(null, payload, GetBytes(key));
+        public string Encode(object payload, string key) => Encode(null, payload, key != null ? GetBytes(key) : null);
 
         /// <inheritdoc />
         public string Encode(object payload, byte[] key) => Encode(null, payload, key);
@@ -38,15 +38,10 @@ namespace JWT
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
             if (payload == null)
                 throw new ArgumentNullException(nameof(payload));
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            if (key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
 
             var segments = new List<string>(3);
 
