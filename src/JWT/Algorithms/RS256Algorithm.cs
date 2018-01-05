@@ -23,6 +23,9 @@ namespace JWT.Algorithms
         public string Name => JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
+        public bool IsAsymmetric { get; } = true;
+
+        /// <inheritdoc />
         public byte[] Sign(byte[] _, byte[] bytesToSign)
         {
             var privateKey = GetPrivateKey(_cert) ?? throw new CryptographicException("Certificate doesn't contain private key");
