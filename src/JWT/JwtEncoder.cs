@@ -28,13 +28,13 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Encode(object payload, string key) => Encode(null, payload, Encoding.UTF8.GetBytes(key));
+        public string Encode(object payload, string key) => Encode(null, payload, GetBytes(key));
 
         /// <inheritdoc />
         public string Encode(object payload, byte[] key) => Encode(null, payload, key);
 
         /// <inheritdoc />
-        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, Encoding.UTF8.GetBytes(key));
+        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, GetBytes(key));
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
@@ -54,19 +54,21 @@ namespace JWT
             header.Add("typ", "JWT");
             header.Add("alg", _algorithm.Name);
 
-            var headerBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(header));
-            var payloadBytes = Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(payload));
+            var headerBytes = GetBytes(_jsonSerializer.Serialize(header));
+            var payloadBytes = GetBytes(_jsonSerializer.Serialize(payload));
 
             segments.Add(_urlEncoder.Encode(headerBytes));
             segments.Add(_urlEncoder.Encode(payloadBytes));
 
             var stringToSign = String.Join(".", segments.ToArray());
-            var bytesToSign = Encoding.UTF8.GetBytes(stringToSign);
+            var bytesToSign = GetBytes(stringToSign);
 
             var signature = _algorithm.Sign(key, bytesToSign);
             segments.Add(_urlEncoder.Encode(signature));
 
             return String.Join(".", segments.ToArray());
         }
+
+        private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
     }
 }

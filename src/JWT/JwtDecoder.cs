@@ -50,7 +50,7 @@ namespace JWT
         {
             var payload = new JwtParts(token).Payload;
             var decoded = _urlEncoder.Decode(payload);
-            return Encoding.UTF8.GetString(decoded);
+            return GetString(decoded);
         }
 
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
+        public string Decode(string token, string key, bool verify) => Decode(token, GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -94,7 +94,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) => DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
+        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) => DecodeToObject(token, GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -119,7 +119,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(string token, string key, bool verify) => DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
+        public T DecodeToObject<T>(string token, string key, bool verify) => DecodeToObject<T>(token, GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -162,13 +162,13 @@ namespace JWT
             var crypto = _urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
-            var headerJson = Encoding.UTF8.GetString(_urlEncoder.Decode(jwt.Header));
+            var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             var payload = jwt.Payload;
-            var payloadJson = Encoding.UTF8.GetString(_urlEncoder.Decode(payload));
+            var payloadJson = GetString(_urlEncoder.Decode(payload));
 
-            var bytesToSign = Encoding.UTF8.GetBytes(String.Concat(jwt.Header, ".", payload));
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", payload));
 
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
@@ -178,5 +178,7 @@ namespace JWT
 
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
+
+        private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
     }
 }
