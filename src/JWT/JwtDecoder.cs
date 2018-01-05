@@ -6,7 +6,7 @@ using JWT.Algorithms;
 namespace JWT
 {
     /// <summary>
-    /// Decodes Jwt.
+    /// Decodes JWT.
     /// </summary>
     public sealed class JwtDecoder : IJwtDecoder
     {
@@ -42,9 +42,15 @@ namespace JWT
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public string Decode(string token) => Encoding.UTF8.GetString(_urlEncoder.Decode(new JwtParts(token).Payload));
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
         public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
