@@ -45,18 +45,26 @@ namespace JWT
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
-        public string Decode(string token) => Encoding.UTF8.GetString(_urlEncoder.Decode(new JwtParts(token).Payload));
+        /// <exception cref="FormatException" />
+        public string Decode(string token)
+        {
+            var payload = new JwtParts(token).Payload;
+            var decoded = _urlEncoder.Decode(payload);
+            return Encoding.UTF8.GetString(decoded);
+        }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public string Decode(string token, string key, bool verify) => Decode(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public string Decode(string token, byte[] key, bool verify)
         {
             if (String.IsNullOrWhiteSpace(token))
@@ -75,57 +83,73 @@ namespace JWT
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public IDictionary<string, object> DecodeToObject(string token) => DecodeToObject<Dictionary<string, object>>(token);
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) => DecodeToObject(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify) => DecodeToObject<Dictionary<string, object>>(token, key, verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token)
         {
-            if (String.IsNullOrWhiteSpace(token))
-                throw new ArgumentException(nameof(token));
-
-            return _jsonSerializer.Deserialize<T>(Decode(token));
+            var payload = Decode(token);
+            return _jsonSerializer.Deserialize<T>(payload);
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token, string key, bool verify) => DecodeToObject<T>(token, Encoding.UTF8.GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token, byte[] key, bool verify)
         {
-            if (String.IsNullOrWhiteSpace(token))
-                throw new ArgumentException(nameof(token));
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-            if (key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
-
-            return _jsonSerializer.Deserialize<T>(Decode(token, key, verify));
+            var payload = Decode(token, key, verify);
+            return _jsonSerializer.Deserialize<T>(payload);
         }
 
         /// <summary>
-        /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />.
         /// </summary>
         /// <param name="parts">The array representation of a JWT.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public void Validate(string[] parts, byte[] key) => Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Helper method that prepares data before calling <see cref="IJwtValidator.Validate" />.
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />.
         /// </summary>
         /// <param name="jwt">The JWT parts.</param>
         /// <param name="key">The key that was used to sign the JWT.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public void Validate(JwtParts jwt, byte[] key)
         {
             if (jwt == null)
