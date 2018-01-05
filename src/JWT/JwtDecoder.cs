@@ -180,5 +180,7 @@ namespace JWT
         }
 
         private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
+
+        private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
     }
 }
