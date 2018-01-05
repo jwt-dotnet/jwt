@@ -210,7 +210,7 @@ namespace JWT.Builder
 
             EnsureCanDecode();
 
-            return _verify ? _decoder.Decode(token, _secret, _verify) : _decoder.Decode(token);
+            return _decoder.Decode(token);
         }
 
         /// <summary>
@@ -273,8 +273,7 @@ namespace JWT.Builder
                 throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
                                                     $"-{nameof(WithAlgorithm)}\r\n" +
                                                     $"-{nameof(WithSerializer)}\r\n" +
-                                                    $"-{nameof(WithUrlEncoder)}\r\n" +
-                                                    $"-{nameof(WithSecret)}");
+                                                    $"-{nameof(WithUrlEncoder)}.");
         }
 
         private void EnsureCanDecode()
@@ -283,8 +282,7 @@ namespace JWT.Builder
                 throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
                                                     $"-{nameof(WithSerializer)}\r\n" +
                                                     $"-{nameof(WithValidator)}\r\n" +
-                                                    $"-{nameof(WithUrlEncoder)}\r\n" +
-                                                    $"If you called {nameof(MustVerifySignature)} you must also call {nameof(WithSecret)}.");
+                                                    $"-{nameof(WithUrlEncoder)}.");
         }
 
         /// <summary>
@@ -295,8 +293,7 @@ namespace JWT.Builder
             return _algorithm != null &&
                    _serializer != null &&
                    _urlEncoder != null &&
-                   _jwt.Payload != null &&
-                   !String.IsNullOrEmpty(_secret);
+                   _jwt.Payload != null;
         }
 
         /// <summary>
@@ -308,7 +305,7 @@ namespace JWT.Builder
                 _dateTimeProvider != null &&
                 _urlEncoder != null)
             {
-                return !_verify || !String.IsNullOrEmpty(_secret);
+                return !_verify;
             }
             return false;
         }
