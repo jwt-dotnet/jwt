@@ -18,5 +18,8 @@ namespace JWT.Builder
 
         [Description("alg")]
         Algorithm
+        
+        [Description("kid")]
+        KeyId
     }
 }
