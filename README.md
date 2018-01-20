@@ -35,8 +35,8 @@ Console.WriteLine(token);
 
 ```csharp
 var token = new JwtBuilder().
-    .SetAlgorithm(new HMACSHA256Algorithm())
-    .SetSecret(secret)
+    .WithAlgorithm(new HMACSHA256Algorithm())
+    .WithSecret(secret)
     .AddClaim(ClaimName.ExpirationTime, DateTime.UtcNow.AddHours(1))
     .Build();
 
@@ -80,7 +80,7 @@ catch (SignatureVerificationException)
 try
 {
     var json = new JwtBuilder()
-        .SetSecret(secret)
+        .WithSeecret(secret)
         .MustVerifySignature()
         .Decode(token);                    
     Console.WriteLine(json);
@@ -110,7 +110,7 @@ Console.WriteLine(payload["claim2"]);
 
 ```csharp
 var payload = new JwtBuilder()
-        .SetSecret(secret)
+        .WithSecret(secret)
         .MustVerifySignature()
         .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
