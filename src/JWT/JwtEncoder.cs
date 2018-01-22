@@ -34,18 +34,18 @@ namespace JWT
         public string Encode(object payload, byte[] key) => Encode(null, payload, key);
 
         /// <inheritdoc />
-        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, GetBytes(key));
+        public string Encode(IDictionary<string, string> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, GetBytes(key));
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
-        public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
+        public string Encode(IDictionary<string, string> extraHeaders, object payload, byte[] key)
         {
             if (payload == null)
                 throw new ArgumentNullException(nameof(payload));
 
             var segments = new List<string>(3);
 
-            var header = extraHeaders != null ? new Dictionary<string, object>(extraHeaders) : new Dictionary<string, object>();
+            var header = extraHeaders != null ? new Dictionary<string, string>(extraHeaders) : new Dictionary<string, string>();
             header.Add("typ", "JWT");
             header.Add("alg", _algorithm.Name);
 
