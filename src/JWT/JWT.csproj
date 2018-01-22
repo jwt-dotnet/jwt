@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>5.0.0-beta2</Version>
+    <Version>5.0.0-beta3</Version>
     <PackageTags>jwt json</PackageTags>
     <FileVersion>5.0.0.0</FileVersion>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
