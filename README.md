@@ -80,7 +80,7 @@ catch (SignatureVerificationException)
 try
 {
     var json = new JwtBuilder()
-        .WithSeecret(secret)
+        .WithSecret(secret)
         .MustVerifySignature()
         .Decode(token);                    
     Console.WriteLine(json);
