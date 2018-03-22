@@ -104,7 +104,7 @@ namespace JWT
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
-        IDictionary<string, object> DecodeToObject(string token, List<byte[]> keys, bool verify);
+        IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify);
 
         #endregion
 
@@ -164,7 +164,7 @@ namespace JWT
         /// <returns>An object representing the payload.</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm.</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim.</exception>
-        T DecodeToObject<T>(string token, List<byte[]> keys, bool verify);
+        T DecodeToObject<T>(string token, IReadOnlyCollection<byte[]> keys, bool verify);
 
         #endregion
     }

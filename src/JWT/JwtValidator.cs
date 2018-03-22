@@ -58,7 +58,7 @@ namespace JWT
 
         private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures)
         {
-            return decodedSignatures.All(string.IsNullOrWhiteSpace);
+            return decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
         }
 
         private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures)

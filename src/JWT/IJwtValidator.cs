@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace JWT
+﻿namespace JWT
 {
     /// <summary>
     /// Represents a JWT validator.

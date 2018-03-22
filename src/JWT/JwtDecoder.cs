@@ -75,7 +75,7 @@ namespace JWT
         /// <exception cref="FormatException" />
         public string Decode(string token, byte[] key, bool verify)
         {
-            if (String.IsNullOrWhiteSpace(token))
+            if ( String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
@@ -99,7 +99,7 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if(keys==null || keys.Count ==0)
+            if (keys==null || keys.Count ==0)
                 throw new ArgumentNullException(nameof(keys));
             if (!DoesKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
@@ -145,7 +145,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, List<byte[]> keys, bool verify) => DecodeToObject<Dictionary<string, object>>(token, keys, verify);
+        public IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify) => DecodeToObject<Dictionary<string, object>>(token, keys, verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -183,7 +183,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(string token, List<byte[]> keys, bool verify)
+        public T DecodeToObject<T>(string token, IReadOnlyCollection<byte[]> keys, bool verify)
         {
             var payload = Decode(token, keys, verify);
             return _jsonSerializer.Deserialize<T>(payload);
@@ -250,7 +250,7 @@ namespace JWT
                 throw new ArgumentNullException(nameof(jwt));
             if (keys == null || keys.Count == 0)
                 throw new ArgumentNullException(nameof(keys));
-            if(!DoesKeysHaveValues(keys))
+            if (!DoesKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
@@ -276,7 +276,7 @@ namespace JWT
 
         private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
 
-        private static List<byte[]> GetBytes(IEnumerable<string> input)
+        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input)
         {
             return input.Select(key => GetBytes(key)).ToList();
         }

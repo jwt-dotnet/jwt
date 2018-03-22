@@ -281,26 +281,23 @@ namespace JWT.Builder
         private void EnsureCanBuild()
         {
             if (!CanBuild())
-                throw new InvalidOperationException(
-                    "Can't build a token. Check if you have call all of the followng methods:\r\n" +
-                    $"-{nameof(WithAlgorithm)}\r\n" +
-                    $"-{nameof(WithSerializer)}\r\n" +
-                    $"-{nameof(WithUrlEncoder)}.");
-            
-            if(!HasOnlyOneSecret())
-                throw new InvalidOperationException(
-                    "You can't provide more than one secret to use for encoding." +
-                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
+                throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
+                                                    $"-{nameof(WithAlgorithm)}\r\n" +
+                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithUrlEncoder)}.");
+
+            if (!HasOnlyOneSecret())
+                throw new InvalidOperationException("You can't provide more than one secret to use for encoding." +
+                                                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
         }
 
         private void EnsureCanDecode()
         {
             if (!CanDecode())
-                throw new InvalidOperationException(
-                    "Can't decode a token. Check if you have call all of the followng methods:\r\n" +
-                    $"-{nameof(WithSerializer)}\r\n" +
-                    $"-{nameof(WithValidator)}\r\n" +
-                    $"-{nameof(WithUrlEncoder)}.");
+                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
+                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithValidator)}\r\n" +
+                                                    $"-{nameof(WithUrlEncoder)}.");
         }
 
         /// <summary>
