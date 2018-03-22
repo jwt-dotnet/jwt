@@ -320,7 +320,7 @@ namespace JWT.Builder
                    _serializer != null &&
                    _urlEncoder != null &&
                    _jwt.Payload != null &&
-                   _algorithm.IsAsymmetric;
+                   _algorithm.IsAsymmetric || HasOnlyOneSecret();
         }
 
         /// <summary>
