@@ -55,6 +55,62 @@ namespace JWT
             ValidateNbfClaim(payloadData, secondsSinceEpoch);
         }
 
+        private bool AreAllDecodedSignaturesNullOrWhiteSpace(List<string> decodedSignatures)
+        {
+            foreach (string decodedSignature in decodedSignatures)
+            {
+                if (!string.IsNullOrWhiteSpace(decodedSignature))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsAnySignatureValid(string decodedCrypto, List<string> decodedSignatures)
+        {
+            foreach (string decodedSignature in decodedSignatures)
+            {
+                if (CompareCryptoWithSignature(decodedCrypto, decodedSignature))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="SignatureVerificationException" />
+        public void Validate(string payloadJson, string decodedCrypto, List<string> decodedSignatures)
+        {
+            if (String.IsNullOrWhiteSpace(payloadJson))
+                throw new ArgumentException(nameof(payloadJson));
+
+            if (String.IsNullOrWhiteSpace(decodedCrypto))
+                throw new ArgumentException(nameof(decodedCrypto));
+
+            if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
+                throw new ArgumentException(nameof(decodedSignatures));
+
+            if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
+            {
+                throw new SignatureVerificationException("Invalid signature")
+                {
+                    Expected = decodedCrypto,
+                    Received = $"{String.Join(",", decodedSignatures)}"
+                };
+            }
+
+            var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+
+            var now = _dateTimeProvider.GetNow();
+            var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+
+            ValidateExpClaim(payloadData, secondsSinceEpoch);
+            ValidateNbfClaim(payloadData, secondsSinceEpoch);
+        }
+
         /// <remarks>In the future this method can be opened for extension so made protected virtual</remarks>
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
         {
@@ -67,7 +123,7 @@ namespace JWT
             byte result = 0;
             for (var i = 0; i < decodedCrypto.Length; i++)
             {
-                result |= (byte)(decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
+                result |= (byte) (decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
             }
 
             return result == 0;
