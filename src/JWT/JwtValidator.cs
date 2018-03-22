@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JWT
@@ -55,34 +56,20 @@ namespace JWT
             ValidateNbfClaim(payloadData, secondsSinceEpoch);
         }
 
-        private bool AreAllDecodedSignaturesNullOrWhiteSpace(List<string> decodedSignatures)
+        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures)
         {
-            foreach (string decodedSignature in decodedSignatures)
-            {
-                if (!string.IsNullOrWhiteSpace(decodedSignature))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return decodedSignatures.All(string.IsNullOrWhiteSpace);
         }
 
-        private bool IsAnySignatureValid(string decodedCrypto, List<string> decodedSignatures)
+        private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures)
         {
-            foreach (string decodedSignature in decodedSignatures)
-            {
-                if (CompareCryptoWithSignature(decodedCrypto, decodedSignature))
-                    return true;
-            }
-
-            return false;
+            return decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
-        public void Validate(string payloadJson, string decodedCrypto, List<string> decodedSignatures)
+        public void Validate(string payloadJson, string decodedCrypto, string[] decodedSignatures)
         {
             if (String.IsNullOrWhiteSpace(payloadJson))
                 throw new ArgumentException(nameof(payloadJson));
@@ -123,7 +110,7 @@ namespace JWT
             byte result = 0;
             for (var i = 0; i < decodedCrypto.Length; i++)
             {
-                result |= (byte) (decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
+                result |= (byte)(decodedCryptoBytes[i] ^ decodedSignatureBytes[i]);
             }
 
             return result == 0;

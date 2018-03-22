@@ -25,6 +25,6 @@ namespace JWT
         /// <param name="decodedSignatures">Decoded signatures</param>
         /// <exception cref="SignatureVerificationException">The signature is invalid.</exception>
         /// <exception cref="TokenExpiredException">The token has expired.</exception>
-        void Validate(string payloadJson, string decodedCrypto, List<string> decodedSignatures);
+        void Validate(string payloadJson, string decodedCrypto, string[] decodedSignatures);
     }
 }

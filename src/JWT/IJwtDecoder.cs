@@ -50,7 +50,7 @@ namespace JWT
         /// <param name="keys">The keys bytes provided which one of them was used to sign the JWT.</param>
         /// <param name="verify">Whether to verify the signature (default is true).</param>
         /// <returns>A string containing the JSON payload.</returns>
-        string Decode(string token, List<byte[]> keys, bool verify);
+        string Decode(string token, IReadOnlyCollection<byte[]> keys, bool verify);
 
         #endregion
 

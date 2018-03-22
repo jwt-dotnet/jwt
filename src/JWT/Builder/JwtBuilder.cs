@@ -53,7 +53,7 @@ namespace JWT.Builder
         /// <param name="name">Claim name</param>
         /// <param name="value">Claim value</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(string name, string value) => AddClaim(name, (object) value);
+        public JwtBuilder AddClaim(string name, string value) => AddClaim(name, (object)value);
 
         /// <summary>
         /// Adds well-known claim to the JWT.
@@ -157,7 +157,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(string secret)
         {
-            _secrets = new[] {secret};
+            _secrets = new[] { secret };
             return this;
         }
 
@@ -240,14 +240,11 @@ namespace JWT.Builder
         private void TryCreateEncoder()
         {
             if (_algorithm == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
             if (_serializer == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
             if (_urlEncoder == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
             _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
         }
@@ -257,14 +254,11 @@ namespace JWT.Builder
             TryCreateValidator();
 
             if (_serializer == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
             if (_validator == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
             if (_urlEncoder == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
             EnsureCanDecode();
 
@@ -277,11 +271,9 @@ namespace JWT.Builder
                 return;
 
             if (_serializer == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
             if (_dateTimeProvider == null)
-                throw new InvalidOperationException(
-                    $"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
             _validator = new JwtValidator(_serializer, _dateTimeProvider);
         }
@@ -343,10 +335,7 @@ namespace JWT.Builder
         /// </summary>
         private bool HasSecrets()
         {
-            if (_secrets != null && _secrets.Length > 0)
-                return true;
-
-            return false;
+            return _secrets != null && _secrets.Length > 0;
         }
 
         /// <summary>
@@ -355,9 +344,7 @@ namespace JWT.Builder
         /// <returns></returns>
         private bool HasOnlyOneSecret()
         {
-            if (_secrets != null && _secrets.Length == 1)
-                return true;
-            return false;
+            return _secrets != null && _secrets.Length == 1;
         }
     }
 }

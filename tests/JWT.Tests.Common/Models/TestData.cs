@@ -18,9 +18,9 @@ namespace JWT.Tests.Common.Models
             { "Age", 37 }
         };
 
-        public static readonly string[] ServerRsaPublicKeys = {ServerRsaPublicKey, ServerAnotherRsaPublicKey};
+        public static readonly string[] ServerRsaPublicKeys = {ServerRsaPublicKey1, ServerRsaPublicKey2};
 
-        public const string ServerRsaPublicKey = "-----BEGIN CERTIFICATE-----"
+        public const string ServerRsaPublicKey1 = "-----BEGIN CERTIFICATE-----"
             + "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czEL"
             + "MAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcN"
             + "MTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkG"
@@ -35,7 +35,7 @@ namespace JWT.Tests.Common.Models
             + "DchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j"
             + "-----END CERTIFICATE-----";
         
-        public const string ServerAnotherRsaPublicKey = "-----BEGIN CERTIFICATE-----"
+        public const string ServerRsaPublicKey2 = "-----BEGIN CERTIFICATE-----"
                                                  + "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czEL"
                                                  + "MAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcN"
                                                  + "MTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkG"

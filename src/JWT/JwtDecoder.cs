@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using JWT.Algorithms;
 
@@ -94,7 +95,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public string Decode(string token, List<byte[]> keys, bool verify)
+        public string Decode(string token, IReadOnlyCollection<byte[]> keys, bool verify)
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
@@ -243,7 +244,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(JwtParts jwt, List<byte[]> keys)
+        public void Validate(JwtParts jwt, IReadOnlyCollection<byte[]> keys)
         {
             if (jwt == null)
                 throw new ArgumentNullException(nameof(jwt));
@@ -266,13 +267,8 @@ namespace JWT
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
 
-            List<string> decodedSignatures = new List<string>();
-            foreach (byte[] key in keys)
-            {
-                var signatureData = alg.Sign(key, bytesToSign);
-                decodedSignatures.Add(Convert.ToBase64String(signatureData));
-            }
-
+            string[] decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign)).Select(sd => Convert.ToBase64String(sd)).ToArray();
+            
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
         }
 
@@ -280,37 +276,19 @@ namespace JWT
 
         private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
 
-        private static List<byte[]> GetBytes(string[] input)
+        private static List<byte[]> GetBytes(IEnumerable<string> input)
         {
-            List<byte[]> bytes = new List<byte[]>();
-            foreach (string value in input)
-            {
-                bytes.Add(GetBytes(value));
-            }
-
-            return bytes;
+            return input.Select(GetBytes).ToList();
         }
         
-        private static string[] GetStrings(List<byte[]> input)
+        private static string[] GetStrings(IEnumerable<byte[]> input)
         {
-            string[] strings = new string[input.Count];
-            for(int i=0; i< input.Count; i++)
-            {
-                strings[i] = GetString(input[i]);
-            }
-
-            return strings;
+            return input.Select(GetString).ToArray();
         }
         
-        private static bool DoesKeysHaveValues(List<byte[]> keys)
+        private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys)
         {
-            foreach (var key in keys)
-            {
-                if (key.Length != 0)
-                    return true;
-            }
-
-            return false;
+            return keys.Any(key => key.Length != 0);
         }
 
     }

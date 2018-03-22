@@ -45,13 +45,13 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
 
-            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey);
+            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
 
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey));
+            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKey, verify: true);
+            Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKey1, verify: true);
 
             Assert.Throws<NotSupportedException>(action);
         }
@@ -64,10 +64,10 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
 
-            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey);
+            var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
 
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey));
+            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
             Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
