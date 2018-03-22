@@ -10,6 +10,7 @@ namespace JWT.Tests.Common
     {
         private const string _sampleToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
         private const string _sampleSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+        private readonly string[] _sampleSecrets = {"GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk", "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT"};
 
         [Fact]
         public void DecodeToken()
@@ -111,6 +112,17 @@ namespace JWT.Tests.Common
 
             Assert.NotEmpty(payload);
         }
+        
+        [Fact]
+        public void DecodeToken_WithVerifySignature_MultipleSecrets()
+        {
+            var payload = new JwtBuilder()
+                .WithSecrets(_sampleSecrets)
+                .MustVerifySignature()
+                .Decode(_sampleToken);
+
+            Assert.NotEmpty(payload);
+        }
 
         [Fact]
         public void DecodeToken_WithoutVerifySignature()
@@ -132,6 +144,18 @@ namespace JWT.Tests.Common
 
             Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
         }
+        
+        [Fact]
+        public void DecodeToken_ToDictionary_MultipleSecrets()
+        {
+            var payload = new JwtBuilder()
+                .WithSecrets(_sampleSecrets)
+                .MustVerifySignature()
+                .Decode<Dictionary<string, string>>(_sampleToken);
+
+            Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
+        }
+        
 
         [Fact]
         public void DecodeToken_ToDictionary_WithoutSerializer_Should_Throw_Exception()

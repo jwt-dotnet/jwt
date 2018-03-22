@@ -20,7 +20,6 @@ namespace JWT.Builder
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
 
         private IJwtAlgorithm _algorithm;
-//        private string _secret;
         private string[] _secrets;
         private bool _verify;
 
@@ -289,17 +288,17 @@ namespace JWT.Builder
 
         private void EnsureCanBuild()
         {
-            if(!HasOnlyOneSecret())
-                throw new InvalidOperationException(
-                    "You can't provide more than one secret to use for encoding." +
-                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
-                
             if (!CanBuild())
                 throw new InvalidOperationException(
                     "Can't build a token. Check if you have call all of the followng methods:\r\n" +
                     $"-{nameof(WithAlgorithm)}\r\n" +
                     $"-{nameof(WithSerializer)}\r\n" +
                     $"-{nameof(WithUrlEncoder)}.");
+            
+            if(!HasOnlyOneSecret())
+                throw new InvalidOperationException(
+                    "You can't provide more than one secret to use for encoding." +
+                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
         }
 
         private void EnsureCanDecode()
@@ -321,8 +320,7 @@ namespace JWT.Builder
                    _serializer != null &&
                    _urlEncoder != null &&
                    _jwt.Payload != null &&
-                   _algorithm.IsAsymmetric ||
-                   HasOnlyOneSecret();
+                   _algorithm.IsAsymmetric;
         }
 
         /// <summary>
@@ -345,15 +343,16 @@ namespace JWT.Builder
         /// </summary>
         private bool HasSecrets()
         {
-//            if (!string.IsNullOrEmpty(_secret))
-//                return true;
-
             if (_secrets != null && _secrets.Length > 0)
                 return true;
 
             return false;
         }
 
+        /// <summary>
+        /// Checks if there is only one secret was supplied for token encoding
+        /// </summary>
+        /// <returns></returns>
         private bool HasOnlyOneSecret()
         {
             if (_secrets != null && _secrets.Length == 1)

@@ -22,6 +22,20 @@ namespace JWT.Tests.Common
 
             Assert.Equal(actual, expected);
         }
+        
+        [Fact]
+        public void Decode_Should_Decode_Token_To_Json_Encoded_String_Multiple_Secrets()
+        {
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+
+            var expected = serializer.Serialize(TestData.Customer);
+
+            var actual = decoder.Decode(TestData.Token, new []{"ABC", "DEF"}, verify: false);
+
+            Assert.Equal(actual, expected);
+        }
 
         [Fact]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()
@@ -31,6 +45,18 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             var actual = decoder.DecodeToObject(TestData.Token, "ABC", verify: false);
+
+            Assert.Equal(actual, TestData.DictionaryPayload, new DictionaryEqualityComparer());
+        }
+        
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Secrets()
+        {
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+
+            var actual = decoder.DecodeToObject(TestData.Token, new []{"ABC", "DEF"}, verify: false);
 
             Assert.Equal(actual, TestData.DictionaryPayload, new DictionaryEqualityComparer());
         }
@@ -45,6 +71,17 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
             Assert.Equal(actual, TestData.Customer, new CustomerEqualityComparer());
         }
+        
+        [Fact]
+        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_Multiple_Secrets()
+        {
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+
+            var actual = decoder.DecodeToObject<Customer>(TestData.Token, new []{"ABC", "DEF"}, verify: false);
+            Assert.Equal(actual, TestData.Customer, new CustomerEqualityComparer());
+        }
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
@@ -54,6 +91,18 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.MalformedToken, "ABC", verify: false);
+
+            Assert.Throws<InvalidTokenPartsException>(action);
+        }
+        
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_Multiple_Secrets()
+        {
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+
+            Action action = () => decoder.DecodeToObject<Customer>(TestData.MalformedToken, new []{"ABC", "DEF"}, verify: false);
 
             Assert.Throws<InvalidTokenPartsException>(action);
         }
@@ -67,6 +116,19 @@ namespace JWT.Tests.Common
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
             Action action = () => decoder.DecodeToObject<Customer>(TestData.Token, "XYZ", verify: true);
+
+            Assert.Throws<SignatureVerificationException>(action);
+        }
+        
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key_Multiple_Secrets()
+        {
+            var serializer = new JsonNetSerializer();
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+
+            Action action = () => decoder.DecodeToObject<Customer>(TestData.Token, new []{"XYZ", "JKL"}, verify: true);
 
             Assert.Throws<SignatureVerificationException>(action);
         }
@@ -86,6 +148,22 @@ namespace JWT.Tests.Common
 
             Assert.Throws<SignatureVerificationException>(action);
         }
+        
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_MultipleKeys()
+        {
+            var serializer = new JsonNetSerializer();
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var token = encoder.Encode(new { exp = "asdsad" }, "ABC");
+
+            Action action = () => decoder.DecodeToObject<Customer>(token, new []{"ABC", "DEF"}, verify: true);
+
+            Assert.Throws<SignatureVerificationException>(action);
+        }
 
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
@@ -99,6 +177,23 @@ namespace JWT.Tests.Common
             var token = encoder.Encode(new { exp = (object)null }, "ABC");
 
             Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
+
+            var message = Assert.Throws<SignatureVerificationException>(action).Message;
+            Assert.Equal(message, "Claim 'exp' must be a number.");
+        }
+        
+        [Fact]
+        public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_MultipleKeys()
+        {
+            var serializer = new JsonNetSerializer();
+            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+
+            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var token = encoder.Encode(new { exp = (object)null }, "ABC");
+
+            Action action = () => decoder.DecodeToObject<Customer>(token, new []{"ABC", "DEF"}, verify: true);
 
             var message = Assert.Throws<SignatureVerificationException>(action).Message;
             Assert.Equal(message, "Claim 'exp' must be a number.");
