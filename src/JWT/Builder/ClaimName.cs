@@ -5,9 +5,6 @@ namespace JWT.Builder
     /// <summary>
     /// All public claims of a JWT specified by IANA, see https://www.iana.org/assignments/jwt/jwt.xhtml
     /// </summary>
-    /// <remarks>
-    /// Latest update: 31.10.2017
-    /// </remarks>
     public enum ClaimName
     {
         [Description("iss")]
@@ -115,7 +112,7 @@ namespace JWT.Builder
         [Description("cnf")]
         Confirmation,
 
-        [Description("sip_from_tag")]   
+        [Description("sip_from_tag")]
         SipFromTag,
 
         [Description("sip_date")]
