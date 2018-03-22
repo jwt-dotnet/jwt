@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace JWT
@@ -43,6 +44,48 @@ namespace JWT
                 {
                     Expected = decodedCrypto,
                     Received = decodedSignature
+                };
+            }
+
+            var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
+
+            var now = _dateTimeProvider.GetNow();
+            var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+
+            ValidateExpClaim(payloadData, secondsSinceEpoch);
+            ValidateNbfClaim(payloadData, secondsSinceEpoch);
+        }
+
+        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures)
+        {
+            return decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
+        }
+
+        private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures)
+        {
+            return decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="SignatureVerificationException" />
+        public void Validate(string payloadJson, string decodedCrypto, string[] decodedSignatures)
+        {
+            if (String.IsNullOrWhiteSpace(payloadJson))
+                throw new ArgumentException(nameof(payloadJson));
+
+            if (String.IsNullOrWhiteSpace(decodedCrypto))
+                throw new ArgumentException(nameof(decodedCrypto));
+
+            if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
+                throw new ArgumentException(nameof(decodedSignatures));
+
+            if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
+            {
+                throw new SignatureVerificationException("Invalid signature")
+                {
+                    Expected = decodedCrypto,
+                    Received = $"{String.Join(",", decodedSignatures)}"
                 };
             }
 

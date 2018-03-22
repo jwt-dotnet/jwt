@@ -20,7 +20,7 @@ namespace JWT.Builder
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
 
         private IJwtAlgorithm _algorithm;
-        private string _secret;
+        private string[] _secrets;
         private bool _verify;
 
         /// <summary>
@@ -157,7 +157,20 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(string secret)
         {
-            _secret = secret;
+            _secrets = new[] { secret };
+            return this;
+        }
+
+        /// <summary>
+        /// Sets certificates secrets.
+        /// </summary>
+        /// <remarks>
+        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />.
+        /// </remarks>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithSecrets(string[] secrets)
+        {
+            _secrets = secrets;
             return this;
         }
 
@@ -195,7 +208,7 @@ namespace JWT.Builder
 
             EnsureCanBuild();
 
-            return _encoder.Encode(_jwt.Payload, _secret);
+            return _encoder.Encode(_jwt.Payload, _secrets[0]);
         }
 
         /// <summary>
@@ -208,7 +221,7 @@ namespace JWT.Builder
             if (_decoder == null)
                 TryCreateDecoder();
 
-            return _verify ? _decoder.Decode(token, _secret, _verify) : _decoder.Decode(token);
+            return _verify ? _decoder.Decode(token, _secrets, _verify) : _decoder.Decode(token);
         }
 
         /// <summary>
@@ -221,7 +234,7 @@ namespace JWT.Builder
             if (_decoder == null)
                 TryCreateDecoder();
 
-            return _verify ? _decoder.DecodeToObject<T>(token, _secret, _verify) : _decoder.DecodeToObject<T>(token);
+            return _verify ? _decoder.DecodeToObject<T>(token, _secrets[0], _verify) : _decoder.DecodeToObject<T>(token);
         }
 
         private void TryCreateEncoder()
@@ -272,6 +285,10 @@ namespace JWT.Builder
                                                     $"-{nameof(WithAlgorithm)}\r\n" +
                                                     $"-{nameof(WithSerializer)}\r\n" +
                                                     $"-{nameof(WithUrlEncoder)}.");
+
+            if (!HasOnlyOneSecret())
+                throw new InvalidOperationException("You can't provide more than one secret to use for encoding." +
+                                                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
         }
 
         private void EnsureCanDecode()
@@ -292,7 +309,7 @@ namespace JWT.Builder
                    _serializer != null &&
                    _urlEncoder != null &&
                    _jwt.Payload != null &&
-                   _algorithm.IsAsymmetric || !String.IsNullOrEmpty(_secret);
+                   _algorithm.IsAsymmetric || HasOnlyOneSecret();
         }
 
         /// <summary>
@@ -304,9 +321,27 @@ namespace JWT.Builder
                 _dateTimeProvider != null &&
                 _urlEncoder != null)
             {
-                return !_verify || (_algorithm?.IsAsymmetric ?? true) || !String.IsNullOrEmpty(_secret);
+                return !_verify || (_algorithm?.IsAsymmetric ?? true) || HasSecrets();
             }
+
             return false;
+        }
+
+        /// <summary>
+        /// Checks if any secret was supplied to use in token decoding
+        /// </summary>
+        private bool HasSecrets()
+        {
+            return _secrets != null && _secrets.Length > 0;
+        }
+
+        /// <summary>
+        /// Checks if there is only one secret was supplied for token encoding
+        /// </summary>
+        /// <returns></returns>
+        private bool HasOnlyOneSecret()
+        {
+            return _secrets != null && _secrets.Length == 1;
         }
     }
 }
