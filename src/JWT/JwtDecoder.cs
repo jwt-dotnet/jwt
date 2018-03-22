@@ -278,12 +278,12 @@ namespace JWT
 
         private static List<byte[]> GetBytes(IEnumerable<string> input)
         {
-            return input.Select(GetBytes).ToList();
+            return input.Select(key => GetBytes(key)).ToList();
         }
         
         private static string[] GetStrings(IEnumerable<byte[]> input)
         {
-            return input.Select(GetString).ToArray();
+            return input.Select(key => GetString(key)).ToArray();
         }
         
         private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys)
