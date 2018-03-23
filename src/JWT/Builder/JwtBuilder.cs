@@ -155,20 +155,7 @@ namespace JWT.Builder
         /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />.
         /// </remarks>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithSecret(string secret)
-        {
-            _secrets = new[] { secret };
-            return this;
-        }
-
-        /// <summary>
-        /// Sets certificates secrets.
-        /// </summary>
-        /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />.
-        /// </remarks>
-        /// <returns>Current builder instance</returns>
-        public JwtBuilder WithSecrets(string[] secrets)
+        public JwtBuilder WithSecret(params string[] secrets)
         {
             _secrets = secrets;
             return this;
@@ -287,8 +274,7 @@ namespace JWT.Builder
                                                     $"-{nameof(WithUrlEncoder)}.");
 
             if (!HasOnlyOneSecret())
-                throw new InvalidOperationException("You can't provide more than one secret to use for encoding." +
-                                                    $" You should use {nameof(WithSecret)} instead of {nameof(WithSecrets)}.");
+                throw new InvalidOperationException("You can't provide more than one secret to use for encoding.");
         }
 
         private void EnsureCanDecode()
