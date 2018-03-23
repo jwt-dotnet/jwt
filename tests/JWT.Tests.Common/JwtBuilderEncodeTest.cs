@@ -67,7 +67,7 @@ namespace JWT.Tests.Common
         public void Build_WithMultipleSecrets_Should_Throw_Exception()
         {
             Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                .WithSecrets(new []{ "fjhsdghflghlk", "wrouhsfjkghure"})
+                .WithSecret(new []{ "fjhsdghflghlk", "wrouhsfjkghure"})
                 .Build());
         }
     }

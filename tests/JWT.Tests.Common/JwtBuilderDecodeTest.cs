@@ -117,7 +117,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithVerifySignature_MultipleSecrets()
         {
             var payload = new JwtBuilder()
-                .WithSecrets(_sampleSecrets)
+                .WithSecret(_sampleSecrets)
                 .MustVerifySignature()
                 .Decode(_sampleToken);
 
@@ -149,7 +149,7 @@ namespace JWT.Tests.Common
         public void DecodeToken_ToDictionary_MultipleSecrets()
         {
             var payload = new JwtBuilder()
-                .WithSecrets(_sampleSecrets)
+                .WithSecret(_sampleSecrets)
                 .MustVerifySignature()
                 .Decode<Dictionary<string, string>>(_sampleToken);
 
