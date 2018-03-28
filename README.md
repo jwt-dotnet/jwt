@@ -34,11 +34,12 @@ Console.WriteLine(token);
 ## Or using the fluent builder API
 
 ```csharp
-var token = new JwtBuilder().
-    .WithAlgorithm(new HMACSHA256Algorithm())
-    .WithSecret(secret)
-    .AddClaim(ClaimName.ExpirationTime, DateTime.UtcNow.AddHours(1))
-    .Build();
+  var token = new JwtBuilder()
+      .WithAlgorithm(new HMACSHA256Algorithm())
+      .WithSecret(secret)
+      .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+      .AddClaim("calim2", "claim2-value)
+      .Build();
 
 Console.WriteLine(token);
 ```
