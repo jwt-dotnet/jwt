@@ -26,7 +26,9 @@ namespace JWT.Algorithms
         public bool IsAsymmetric { get; } = true;
 
         /// <inheritdoc />
-        public byte[] Sign(byte[] _, byte[] bytesToSign)
+        public byte[] Sign(byte[] key, byte[] bytesToSign) => Sign(bytesToSign);
+
+        public byte[] Sign(byte[] bytesToSign)
         {
             if (!_cert.HasPrivateKey)
                 throw new CryptographicException("Certificate doesn't contain private key");
