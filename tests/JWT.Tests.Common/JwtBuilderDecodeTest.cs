@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Serializers;
 using Xunit;
@@ -168,32 +166,6 @@ namespace JWT.Tests.Common
                                                            .WithSecret(_sampleSecret)
                                                            .MustVerifySignature()
                                                            .Decode<Dictionary<string, string>>(_sampleToken));
-        }
-
-        [Fact]
-        public void Main()
-        {
-            var certificateText =
-                "-----BEGIN CERTIFICATE-----\n" +
-                "MIIBljCCAUACCQCIDMpqK7WfWDANBgkqhkiG9w0BAQsFADBSMQswCQYDVQQGEwJV\n" +
-                "UzETMBEGA1UECAwKU29tZS1TdGF0ZTESMBAGA1UECgwJTHV4b3R0aWNhMRowGAYD\n" +
-                "VQQLDBFMdXhvdHRpY2EgZXllY2FyZTAeFw0xODA1MjMxNTE1MjdaFw0yODA1MjAx\n" +
-                "NTE1MjdaMFIxCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApTb21lLVN0YXRlMRIwEAYD\n" +
-                "VQQKDAlMdXhvdHRpY2ExGjAYBgNVBAsMEUx1eG90dGljYSBleWVjYXJlMFwwDQYJ\n" +
-                "KoZIhvcNAQEBBQADSwAwSAJBAKuMYcirPj81WBtMituJJenF0CG/HYLcAUOtWKl1\n" +
-                "HchC0dM8VRRBI/HV+nZcweXzpjhX8ySa9s7kJneP0cuJiU8CAwEAATANBgkqhkiG\n" +
-                "9w0BAQsFAANBAKEM8wQwlqKgkfqnNFcbsZM0RUxS+eWR9LvycGuMN7aL9M6GOmfp\n" +
-                "QmF4MH4uvkaiZenqCkhDkyi4Cy81tz453tQ=\n" +
-                "-----END CERTIFICATE-----";
-
-            var token = @"eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJuLmNoaWVmZm8iLCJleHAiOjE1MjcyMzg4ODEsImlzcyI6Imx1eCJ9.BAaYzLwokmdKqLi6zKjGIpDXd__dZxi5PUWWHS3PSLPDYAInzPbEK8o4WxunoGD7eA0qtQNaxNpzeOc3BHrd4w";
-
-            var certificate = new X509Certificate2(Encoding.ASCII.GetBytes(certificateText));
-
-            var jwt = new JwtParts(token);
-            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signature = GetBytes(jwt.Signature);
-            var res = new RS256Algorithm(certificate).Verify(bytesToSign, signature);
         }
 
         internal static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
