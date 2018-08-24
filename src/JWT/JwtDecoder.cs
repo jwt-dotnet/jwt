@@ -277,7 +277,7 @@ namespace JWT
 
         private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input)
         {
-            return input.Select(key => GetBytes(key)).ToList();
+            return input.Select(key => GetBytes(key)).ToArray();
         }
 
         private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys)
