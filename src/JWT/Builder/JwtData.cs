@@ -30,9 +30,9 @@ namespace JWT.Builder
         /// </summary>
         /// <param name="header">Dictionary that contains the headers</param>
         /// <param name="payload">Dictionary that contans the payload</param>
-        public JwtData(IDictionary<string, string> header, IDictionary<string, object> payload)
+        public JwtData(IDictionary<string, object> header, IDictionary<string, object> payload)
         {
-            this.Header = header ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            this.Header = header ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             this.Payload = payload ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -50,7 +50,7 @@ namespace JWT.Builder
         /// <summary>
         /// The header information as a key-value store of the JWT
         /// </summary>
-        public IDictionary<string, string> Header { get; }
+        public IDictionary<string, object> Header { get; }
 
         /// <summary>
         /// The payload of the JWT as a key-value store

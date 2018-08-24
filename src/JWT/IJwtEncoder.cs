@@ -30,7 +30,7 @@ namespace JWT
         /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key bytes used to sign the token.</param>
         /// <returns>The generated JWT.</returns>
-        string Encode(IDictionary<string, string> extraHeaders, object payload, string key);
+        string Encode(IDictionary<string, object> extraHeaders, object payload, string key);
 
         /// <summary>
         /// Creates a JWT given a header, a payload, the signing key, and the algorithm to use.
@@ -39,6 +39,6 @@ namespace JWT
         /// <param name="payload">An arbitrary payload (must be serializable to JSON).</param>
         /// <param name="key">The key bytes used to sign the token.</param>
         /// <returns>The generated JWT.</returns>
-        string Encode(IDictionary<string, string> extraHeaders, object payload, byte[] key);
+        string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key);
     }
 }
