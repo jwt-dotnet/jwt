@@ -9,7 +9,7 @@ namespace JWT.Tests.Common
         [Fact]
         public void JwtData_With_Ctor_Params()
         {
-            var headers = new Dictionary<string, string>
+            var headers = new Dictionary<string, object>
             {
                 { "test", "header" }
             };

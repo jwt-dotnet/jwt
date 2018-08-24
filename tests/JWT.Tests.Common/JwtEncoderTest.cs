@@ -27,7 +27,10 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
 
-            var extraheaders = new Dictionary<string, object> { { "foo", "bar" } };
+            var extraheaders = new Dictionary<string, object>
+            {
+                { "foo", "bar" }
+            };
             var actual = encoder.Encode(extraheaders, TestData.Customer, "ABC");
 
             Assert.Equal(actual, TestData.ExtraHeadersToken);

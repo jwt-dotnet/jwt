@@ -195,7 +195,7 @@ namespace JWT.Builder
 
             EnsureCanBuild();
 
-            return _encoder.Encode(_jwt.Payload, _secrets[0]);
+            return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets[0]);
         }
 
         /// <summary>
