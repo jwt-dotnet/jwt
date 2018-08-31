@@ -119,7 +119,7 @@ namespace JWT
         /// <summary>
         /// Verifies the 'exp' claim.
         /// </summary>
-        /// <remarks>See https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4</remarks>
+        /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
         private static void ValidateExpClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
@@ -153,7 +153,7 @@ namespace JWT
         /// <summary>
         /// Verifies the 'nbf' claim.
         /// </summary>
-        /// <remarks>See https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.5</remarks>
+        /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.5</remarks>
         /// <exception cref="SignatureVerificationException" />
         private static void ValidateNbfClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
         {

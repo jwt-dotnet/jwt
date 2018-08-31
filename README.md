@@ -4,7 +4,7 @@
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
-This library supports generating and decoding [JSON Web Tokens](http://tools.ietf.org/html/draft-jones-json-web-token-10).
+This library supports generating and decoding [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
 ## Installation
 Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can download and compile it yourself.
@@ -125,7 +125,7 @@ The output would be:
 
 #### Set and validate token expiration
 
-As described in the [JWT RFC](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
+As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
 ```csharp
 IDateTimeProvider provider = new UtcDateTimeProvider();
