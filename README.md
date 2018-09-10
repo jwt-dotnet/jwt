@@ -1,7 +1,6 @@
 [![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/dgcpnsa647u90pnh/branch/master?svg=true)](https://ci.appveyor.com/project/abatishchev/jwt/branch/master)
-[![VSTS build status](https://abatishchev.visualstudio.com/Jwt.Net/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/Jwt.Net/_build/latest?definitionId=1)
+[![Build status](https://abatishchev.visualstudio.com/Jwt.Net/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/Jwt.Net/_build/latest?definitionId=1)
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
