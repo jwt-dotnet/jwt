@@ -14,10 +14,10 @@ namespace JWT
         private readonly IDateTimeProvider _dateTimeProvider;
 
         /// <summary>
-        /// Creates an instance of <see cref="JwtValidator" />.
+        /// Creates an instance of <see cref="JwtValidator" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="dateTimeProvider">The DateTime Provider.</param>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
         {
             _jsonSerializer = jsonSerializer;
@@ -29,41 +29,9 @@ namespace JWT
         /// <exception cref="SignatureVerificationException" />
         public void Validate(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            if (String.IsNullOrWhiteSpace(payloadJson))
-                throw new ArgumentException(nameof(payloadJson));
-
-            if (String.IsNullOrWhiteSpace(decodedCrypto))
-                throw new ArgumentException(nameof(decodedCrypto));
-
-            if (String.IsNullOrWhiteSpace(decodedSignature))
-                throw new ArgumentException(nameof(decodedSignature));
-
-            if (!CompareCryptoWithSignature(decodedCrypto, decodedSignature))
-            {
-                throw new SignatureVerificationException("Invalid signature")
-                {
-                    Expected = decodedCrypto,
-                    Received = decodedSignature
-                };
-            }
-
-            var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
-
-            var now = _dateTimeProvider.GetNow();
-            var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
-
-            ValidateExpClaim(payloadData, secondsSinceEpoch);
-            ValidateNbfClaim(payloadData, secondsSinceEpoch);
-        }
-
-        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures)
-        {
-            return decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
-        }
-
-        private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures)
-        {
-            return decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
+            var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            if (ex != null)
+                throw ex;
         }
 
         /// <inheritdoc />
@@ -71,32 +39,92 @@ namespace JWT
         /// <exception cref="SignatureVerificationException" />
         public void Validate(string payloadJson, string decodedCrypto, string[] decodedSignatures)
         {
+            var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignatures);
+            if (ex != null)
+                throw ex;
+        }
+
+        /// <summary>
+        /// Given the JWT, verifies its signature correctness without throwing an exception but returning it instead
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signature</param>
+        /// <param name="ex">Validation exception, if any</param>
+        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        public bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex)
+        {
+            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            return ex != null;
+        }
+
+        /// <summary>
+        /// Given the JWT, verifies its signatures correctness without throwing an exception but returning it instead
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signatures</param>
+        /// <param name="ex">Validation exception, if any</param>
+        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        public bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex)
+        {
+            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            return ex != null;
+        }
+
+        private Exception GetValidationException(string payloadJson, string decodedCrypto, string decodedSignature)
+        {
             if (String.IsNullOrWhiteSpace(payloadJson))
-                throw new ArgumentException(nameof(payloadJson));
+                return new ArgumentException(nameof(payloadJson));
 
             if (String.IsNullOrWhiteSpace(decodedCrypto))
-                throw new ArgumentException(nameof(decodedCrypto));
+                return new ArgumentException(nameof(decodedCrypto));
+
+            if (String.IsNullOrWhiteSpace(decodedSignature))
+                return new ArgumentException(nameof(decodedSignature));
+
+            if (!CompareCryptoWithSignature(decodedCrypto, decodedSignature))
+            {
+                return new SignatureVerificationException(decodedCrypto, decodedSignature);
+            }
+
+            return GetValidationException(payloadJson);
+        }
+
+        private Exception GetValidationException(string payloadJson, string decodedCrypto, string[] decodedSignatures)
+        {
+            if (String.IsNullOrWhiteSpace(payloadJson))
+                return new ArgumentException(nameof(payloadJson));
+
+            if (String.IsNullOrWhiteSpace(decodedCrypto))
+                return new ArgumentException(nameof(decodedCrypto));
 
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
-                throw new ArgumentException(nameof(decodedSignatures));
+                return new ArgumentException(nameof(decodedSignatures));
 
             if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
             {
-                throw new SignatureVerificationException("Invalid signature")
-                {
-                    Expected = decodedCrypto,
-                    Received = $"{String.Join(",", decodedSignatures)}"
-                };
+                return new SignatureVerificationException(decodedCrypto, decodedSignatures);
             }
 
+            return GetValidationException(payloadJson);
+        }
+
+        private Exception GetValidationException(string payloadJson)
+        {
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
-            ValidateExpClaim(payloadData, secondsSinceEpoch);
-            ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            return ValidateExpClaim(payloadData, secondsSinceEpoch) ?? ValidateNbfClaim(payloadData, secondsSinceEpoch);
         }
+
+        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures) =>
+            decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
+
+        private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures) =>
+            decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
 
         /// <remarks>In the future this method can be opened for extension so made protected virtual</remarks>
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
@@ -122,13 +150,13 @@ namespace JWT
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        private static void ValidateExpClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
+        private static Exception ValidateExpClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("exp", out var expObj))
-                return;
+                return null;
 
             if (expObj == null)
-                throw new SignatureVerificationException("Claim 'exp' must be a number.");
+                return new SignatureVerificationException("Claim 'exp' must be a number.");
 
             double expValue;
             try
@@ -137,17 +165,19 @@ namespace JWT
             }
             catch
             {
-                throw new SignatureVerificationException("Claim 'exp' must be a number.");
+                return new SignatureVerificationException("Claim 'exp' must be a number.");
             }
 
             if (secondsSinceEpoch >= expValue)
             {
-                throw new TokenExpiredException("Token has expired.")
+                return new TokenExpiredException("Token has expired.")
                 {
                     Expiration = UnixEpoch.Value.AddSeconds(expValue),
                     PayloadData = payloadData
                 };
             }
+
+            return null;
         }
 
         /// <summary>
@@ -155,13 +185,13 @@ namespace JWT
         /// </summary>
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.5</remarks>
         /// <exception cref="SignatureVerificationException" />
-        private static void ValidateNbfClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
+        private static Exception ValidateNbfClaim(IReadOnlyDictionary<string, object> payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("nbf", out var nbfObj))
-                return;
+                return null;
 
             if (nbfObj == null)
-                throw new SignatureVerificationException("Claim 'nbf' must be a number.");
+                return new SignatureVerificationException("Claim 'nbf' must be a number.");
 
             double nbfValue;
             try
@@ -170,15 +200,18 @@ namespace JWT
             }
             catch
             {
-                throw new SignatureVerificationException("Claim 'nbf' must be a number.");
+                return new SignatureVerificationException("Claim 'nbf' must be a number.");
             }
 
             if (secondsSinceEpoch < nbfValue)
             {
-                throw new SignatureVerificationException("Token is not yet valid.");
+                return new SignatureVerificationException("Token is not yet valid.");
             }
+
+            return null;
         }
 
-        private static byte[] GetBytes(string input) => Encoding.ASCII.GetBytes(input);
+        private static byte[] GetBytes(string input) =>
+            Encoding.ASCII.GetBytes(input);
     }
 }
