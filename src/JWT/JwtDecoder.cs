@@ -101,7 +101,7 @@ namespace JWT
                 throw new ArgumentException(nameof(token));
             if (keys is null || keys.Count == 0)
                 throw new ArgumentNullException(nameof(keys));
-            if (!DoesKeysHaveValues(keys))
+            if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
@@ -250,7 +250,7 @@ namespace JWT
                 throw new ArgumentNullException(nameof(jwt));
             if (keys is null || keys.Count == 0)
                 throw new ArgumentNullException(nameof(keys));
-            if (!DoesKeysHaveValues(keys))
+            if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
@@ -280,7 +280,7 @@ namespace JWT
         private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input) =>
             input.Select(key => GetBytes(key)).ToArray();
 
-        private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
+        private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
             keys.Any(key => key.Length != 0);
     }
 }
