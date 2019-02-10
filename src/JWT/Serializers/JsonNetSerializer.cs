@@ -13,9 +13,9 @@ namespace JWT.Serializers
         private readonly JsonSerializer _serializer;
 
         /// <summary>
-        /// Creates a new instance of <see cref="JsonNetSerializer" />.
+        /// Creates a new instance of <see cref="JsonNetSerializer" />
         /// </summary>
-        /// <remarks>Uses <see cref="JsonSerializer.CreateDefault()" /> as internal serializer.</remarks>
+        /// <remarks>Uses <see cref="JsonSerializer.CreateDefault()" /> as internal serializer</remarks>
         public JsonNetSerializer()
             : this(JsonSerializer.CreateDefault())
         {
@@ -23,9 +23,9 @@ namespace JWT.Serializers
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="JsonNetSerializer" />.
+        /// Creates a new instance of <see cref="JsonNetSerializer" />
         /// </summary>
-        /// <param name="serializer">Internal <see cref="JsonSerializer" /> to use for serialization.</param>
+        /// <param name="serializer">Internal <see cref="JsonSerializer" /> to use for serialization</param>
         public JsonNetSerializer(JsonSerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));

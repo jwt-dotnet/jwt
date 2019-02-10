@@ -17,23 +17,23 @@ namespace JWT
         private readonly IAlgorithmFactory _algFactory;
 
         /// <summary>
-        /// Creates an instance of <see cref="JwtDecoder" />.
+        /// Creates an instance of <see cref="JwtDecoder" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt validator.</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder.</param>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="jwtValidator">The Jwt validator</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
             : this(jsonSerializer, jwtValidator, urlEncoder, new HMACSHAAlgorithmFactory())
         {
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="JwtDecoder" />.
+        /// Creates an instance of <see cref="JwtDecoder" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer.</param>
-        /// <param name="jwtValidator">The Jwt validator.</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder.</param>
-        /// <param name="algFactory">The Algorithm Factory.</param>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="jwtValidator">The Jwt validator</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="algFactory">The Algorithm Factory</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
         {
             _jsonSerializer = jsonSerializer;
@@ -190,20 +190,20 @@ namespace JWT
         }
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />.
+        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />
         /// </summary>
-        /// <param name="parts">The array representation of a JWT.</param>
-        /// <param name="key">The key that was used to sign the JWT.</param>
+        /// <param name="parts">The array representation of a JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         public void Validate(string[] parts, byte[] key) => Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />.
+        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />
         /// </summary>
-        /// <param name="jwt">The JWT parts.</param>
-        /// <param name="key">The key that was used to sign the JWT.</param>
+        /// <param name="jwt">The JWT parts</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
@@ -237,10 +237,10 @@ namespace JWT
         }
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string[])" />.
+        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string[])" />
         /// </summary>
-        /// <param name="jwt">The JWT parts.</param>
-        /// <param name="keys">The keys provided which one of them was used to sign the JWT.</param>
+        /// <param name="jwt">The JWT parts</param>
+        /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
@@ -267,7 +267,9 @@ namespace JWT
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
 
-            var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign)).Select(sd => Convert.ToBase64String(sd)).ToArray();
+            var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
+                                        .Select(sd => Convert.ToBase64String(sd))
+                                        .ToArray();
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
         }
 

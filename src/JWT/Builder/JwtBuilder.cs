@@ -26,8 +26,8 @@ namespace JWT.Builder
         /// <summary>
         /// Add header to the JWT.
         /// </summary>
-        /// <param name="name">Well-known header name.</param>
-        /// <param name="value">The value you want give to the header.</param>
+        /// <param name="name">Well-known header name</param>
+        /// <param name="value">The value you want give to the header</param>
         /// <returns>Current builder instance</returns>
         public JwtBuilder AddHeader(HeaderName name, string value)
         {
@@ -152,7 +152,7 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />.
+        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
@@ -186,8 +186,8 @@ namespace JWT.Builder
         /// <summary>
         /// Builds a token using the supplied dependencies.
         /// </summary>
-        /// <returns>The generated JWT.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null.</exception>
+        /// <returns>The generated JWT</returns>
+        /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
         public string Build()
         {
             if (_encoder == null)
@@ -201,7 +201,7 @@ namespace JWT.Builder
         /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
-        /// <param name="token">The JWT.</param>
+        /// <param name="token">The JWT</param>
         /// <returns>The JSON payload</returns>
         public string Decode(string token)
         {
@@ -214,8 +214,8 @@ namespace JWT.Builder
         /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
-        /// <param name="token">The JWT.</param>
-        /// <returns>The payload converted to <see cref="T" />.</returns>
+        /// <param name="token">The JWT</param>
+        /// <returns>The payload converted to <see cref="T" /></returns>
         public T Decode<T>(string token)
         {
             if (_decoder == null)

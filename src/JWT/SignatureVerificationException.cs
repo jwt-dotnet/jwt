@@ -11,12 +11,19 @@ namespace JWT
         private const string ReceivedKey = "Received";
 
         /// <summary>
-        /// Creates an instance of <see cref="SignatureVerificationException" />.
+        /// Creates an instance of <see cref="SignatureVerificationException" />
         /// </summary>
-        /// <param name="message">The error message.</param>
+        /// <param name="message">The error message</param>
         public SignatureVerificationException(string message)
             : base(message)
         {
+        }
+
+        public SignatureVerificationException(string decodedCrypto, params string[] decodedSignatures)
+            : this("Invalid signature")
+        {
+            this.Expected = decodedCrypto;
+            this.Received = $"{String.Join(",", decodedSignatures)}";
         }
 
         /// <summary>
@@ -41,7 +48,7 @@ namespace JWT
         /// Retrieves the value for the provided key, or default.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="key">The key.</param>
+        /// <param name="key">The key</param>
         /// <returns></returns>
         protected T GetOrDefault<T>(string key) => this.Data.Contains(key) ? (T)this.Data[key] : default(T);
     }

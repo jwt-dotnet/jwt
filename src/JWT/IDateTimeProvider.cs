@@ -8,9 +8,8 @@ namespace JWT
     public interface IDateTimeProvider
     {
         /// <summary>
-        /// Get the current DateTime.
+        /// Gets the current DateTime.
         /// </summary>
-        /// <returns></returns>
         DateTimeOffset GetNow();
     }
 }

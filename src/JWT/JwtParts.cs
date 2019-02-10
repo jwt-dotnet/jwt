@@ -10,7 +10,7 @@ namespace JWT
         /// <summary>
         /// Creates a new instance of <see cref="JwtParts" /> from the string representation of a JWT
         /// </summary>
-        /// <param name="token">The string representation of a JWT.</param>
+        /// <param name="token">The string representation of a JWT</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         public JwtParts(string token)
@@ -28,7 +28,7 @@ namespace JWT
         /// <summary>
         /// Creates a new instance of <see cref="JwtParts" /> from the array representation of a JWT
         /// </summary>
-        /// <param name="parts">The array representation of a JWT.</param>
+        /// <param name="parts">The array representation of a JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         public JwtParts(string[] parts)
