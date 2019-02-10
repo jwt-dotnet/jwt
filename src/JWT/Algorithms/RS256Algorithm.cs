@@ -13,7 +13,6 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
-        /// <param name="cert"></param>
         public RS256Algorithm(X509Certificate2 cert)
         {
             _cert = cert;
@@ -40,9 +39,8 @@ namespace JWT.Algorithms
         /// <summary>
         /// Verifies provided byte array with provided signature.
         /// </summary>
-        /// <param name="bytesToSign">The data to verify.</param>
+        /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
-        /// <returns></returns>
         public bool Verify(byte[] bytesToSign, byte[] signature)
         {
             var publicKey = GetPublicKey(_cert);

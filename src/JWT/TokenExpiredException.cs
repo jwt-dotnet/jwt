@@ -12,9 +12,9 @@ namespace JWT
         private const string ExpirationKey = "Expiration";
 
         /// <summary>
-        /// Creates an instance of <see cref="TokenExpiredException" />.
+        /// Creates an instance of <see cref="TokenExpiredException" />
         /// </summary>
-        /// <param name="message">The error message.</param>
+        /// <param name="message">The error message</param>
         public TokenExpiredException(string message)
              : base(message)
         {
@@ -26,7 +26,7 @@ namespace JWT
         public IDictionary<string, object> PayloadData
         {
             get => GetOrDefault<Dictionary<string, object>>(PayloadDataKey);
-            internal set => Data.Add(PayloadDataKey, value);
+            internal set => this.Data.Add(PayloadDataKey, value);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace JWT
         public DateTime? Expiration
         {
             get => GetOrDefault<DateTime?>(ExpirationKey);
-            internal set => Data.Add(ExpirationKey, value);
+            internal set => this.Data.Add(ExpirationKey, value);
         }
     }
 }

@@ -8,9 +8,9 @@ namespace JWT
     public class InvalidTokenPartsException : ArgumentOutOfRangeException
     {
         /// <summary>
-        /// Creates an instance of <see cref="InvalidTokenPartsException" />.
+        /// Creates an instance of <see cref="InvalidTokenPartsException" />
         /// </summary>
-        /// <param name="paramName">The name of the parameter that caused the exception.</param>
+        /// <param name="paramName">The name of the parameter that caused the exception</param>
         public InvalidTokenPartsException(string paramName)
             : base(paramName, "Token must consist of 3 delimited by dot parts.")
         {
