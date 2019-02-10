@@ -150,7 +150,7 @@ namespace JWT
             if (!payloadData.TryGetValue("exp", out var expObj))
                 return null;
 
-            if (expObj == null)
+            if (expObj is null)
                 return new SignatureVerificationException("Claim 'exp' must be a number.");
 
             double expValue;
@@ -185,7 +185,7 @@ namespace JWT
             if (!payloadData.TryGetValue("nbf", out var nbfObj))
                 return null;
 
-            if (nbfObj == null)
+            if (nbfObj is null)
                 return new SignatureVerificationException("Claim 'nbf' must be a number.");
 
             double nbfValue;

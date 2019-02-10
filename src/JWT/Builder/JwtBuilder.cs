@@ -190,7 +190,7 @@ namespace JWT.Builder
         /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
         public string Build()
         {
-            if (_encoder == null)
+            if (_encoder is null)
                 TryCreateEncoder();
 
             EnsureCanBuild();
@@ -205,7 +205,7 @@ namespace JWT.Builder
         /// <returns>The JSON payload</returns>
         public string Decode(string token)
         {
-            if (_decoder == null)
+            if (_decoder is null)
                 TryCreateDecoder();
 
             return _verify ? _decoder.Decode(token, _secrets, _verify) : _decoder.Decode(token);
@@ -218,7 +218,7 @@ namespace JWT.Builder
         /// <returns>The payload converted to <see cref="T" /></returns>
         public T Decode<T>(string token)
         {
-            if (_decoder == null)
+            if (_decoder is null)
                 TryCreateDecoder();
 
             return _verify ? _decoder.DecodeToObject<T>(token, _secrets[0], _verify) : _decoder.DecodeToObject<T>(token);
@@ -226,11 +226,11 @@ namespace JWT.Builder
 
         private void TryCreateEncoder()
         {
-            if (_algorithm == null)
+            if (_algorithm is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
-            if (_serializer == null)
+            if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
-            if (_urlEncoder == null)
+            if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
             _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
@@ -240,11 +240,11 @@ namespace JWT.Builder
         {
             TryCreateValidator();
 
-            if (_serializer == null)
+            if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
-            if (_validator == null)
+            if (_validator is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
-            if (_urlEncoder == null)
+            if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
             EnsureCanDecode();
@@ -257,9 +257,9 @@ namespace JWT.Builder
             if (_validator != null)
                 return;
 
-            if (_serializer == null)
+            if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
-            if (_dateTimeProvider == null)
+            if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
             _validator = new JwtValidator(_serializer, _dateTimeProvider);

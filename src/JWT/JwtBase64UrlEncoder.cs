@@ -12,7 +12,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         public string Encode(byte[] input)
         {
-            if (input == null)
+            if (input is null)
                 throw new ArgumentNullException(nameof(input));
             if (input.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(input));

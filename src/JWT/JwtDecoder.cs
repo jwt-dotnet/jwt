@@ -77,7 +77,7 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -99,7 +99,7 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (keys == null || keys.Count == 0)
+            if (keys is null || keys.Count == 0)
                 throw new ArgumentNullException(nameof(keys));
             if (!DoesKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
@@ -209,9 +209,9 @@ namespace JWT
         /// <exception cref="FormatException" />
         public void Validate(JwtParts jwt, byte[] key)
         {
-            if (jwt == null)
+            if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -246,9 +246,9 @@ namespace JWT
         /// <exception cref="FormatException" />
         public void Validate(JwtParts jwt, IReadOnlyCollection<byte[]> keys)
         {
-            if (jwt == null)
+            if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (keys == null || keys.Count == 0)
+            if (keys is null || keys.Count == 0)
                 throw new ArgumentNullException(nameof(keys));
             if (!DoesKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
