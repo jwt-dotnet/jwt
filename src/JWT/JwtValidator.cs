@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace JWT
 {
@@ -55,7 +54,7 @@ namespace JWT
         public bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex)
         {
             ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
-            return ex != null;
+            return ex is null;
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace JWT
         public bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex)
         {
             ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
-            return ex != null;
+            return ex is null;
         }
 
         private Exception GetValidationException(string payloadJson, string decodedCrypto, string decodedSignature)
