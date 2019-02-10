@@ -40,7 +40,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
-            if (payload == null)
+            if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
 
             var segments = new List<string>(3);

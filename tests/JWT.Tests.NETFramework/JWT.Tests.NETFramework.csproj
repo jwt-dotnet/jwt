@@ -78,6 +78,9 @@
     <Compile Include="..\JWT.Tests.Common\JwtSecurityTest.cs">
       <Link>JwtSecurityTest.cs</Link>
     </Compile>
+    <Compile Include="..\JWT.Tests.Common\JwtValidatorTest.cs">
+      <Link>JwtValidatorTest.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

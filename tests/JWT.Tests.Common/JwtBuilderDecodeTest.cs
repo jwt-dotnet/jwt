@@ -167,7 +167,5 @@ namespace JWT.Tests.Common
                                                            .MustVerifySignature()
                                                            .Decode<Dictionary<string, string>>(_sampleToken));
         }
-
-        internal static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
     }
 }

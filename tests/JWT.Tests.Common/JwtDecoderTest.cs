@@ -22,7 +22,7 @@ namespace JWT.Tests.Common
 
             Assert.Equal(actual, expected);
         }
-        
+
         [Fact]
         public void Decode_Should_Decode_Token_To_Json_Encoded_String_Multiple_Secrets()
         {
@@ -48,7 +48,7 @@ namespace JWT.Tests.Common
 
             Assert.Equal(actual, TestData.DictionaryPayload, new DictionaryEqualityComparer());
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Secrets()
         {
@@ -71,7 +71,7 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject<Customer>(TestData.Token, "ABC", verify: false);
             Assert.Equal(actual, TestData.Customer, new CustomerEqualityComparer());
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type_Multiple_Secrets()
         {
@@ -94,7 +94,7 @@ namespace JWT.Tests.Common
 
             Assert.Throws<InvalidTokenPartsException>(action);
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_Multiple_Secrets()
         {
@@ -119,7 +119,7 @@ namespace JWT.Tests.Common
 
             Assert.Throws<SignatureVerificationException>(action);
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key_Multiple_Secrets()
         {
@@ -148,7 +148,7 @@ namespace JWT.Tests.Common
 
             Assert.Throws<SignatureVerificationException>(action);
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_MultipleKeys()
         {
@@ -181,7 +181,7 @@ namespace JWT.Tests.Common
             var message = Assert.Throws<SignatureVerificationException>(action).Message;
             Assert.Equal(message, "Claim 'exp' must be a number.");
         }
-        
+
         [Fact]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_MultipleKeys()
         {

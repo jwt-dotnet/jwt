@@ -11,6 +11,7 @@
     <Compile Include="..\JWT.Tests.Common\JwtDecoderTest.cs" Link="JwtDecoderTest.cs" />
     <Compile Include="..\JWT.Tests.Common\JwtEncoderTest.cs" Link="JwtEncoderTest.cs" />
     <Compile Include="..\JWT.Tests.Common\JwtSecurityTest.cs" Link="JwtSecurityTest.cs" />
+    <Compile Include="..\JWT.Tests.Common\JwtValidatorTest.cs" Link="JwtValidatorTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -77,7 +77,7 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -99,9 +99,9 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (keys == null || keys.Count == 0)
+            if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (!DoesKeysHaveValues(keys))
+            if (keys.Count == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
@@ -209,9 +209,9 @@ namespace JWT
         /// <exception cref="FormatException" />
         public void Validate(JwtParts jwt, byte[] key)
         {
-            if (jwt == null)
+            if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (key == null)
+            if (key is null)
                 throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -246,11 +246,11 @@ namespace JWT
         /// <exception cref="FormatException" />
         public void Validate(JwtParts jwt, IReadOnlyCollection<byte[]> keys)
         {
-            if (jwt == null)
+            if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (keys == null || keys.Count == 0)
+            if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (!DoesKeysHaveValues(keys))
+            if (keys.Count == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
@@ -277,14 +277,10 @@ namespace JWT
 
         private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
 
-        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input)
-        {
-            return input.Select(key => GetBytes(key)).ToArray();
-        }
+        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input) =>
+            input.Select(key => GetBytes(key)).ToArray();
 
-        private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys)
-        {
-            return keys.Any(key => key.Length != 0);
-        }
+        private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
+            keys.All(key => key.Length != 0);
     }
 }

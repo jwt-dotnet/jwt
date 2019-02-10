@@ -33,7 +33,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         public JwtParts(string[] parts)
         {
-            if (parts == null)
+            if (parts is null)
                 throw new ArgumentNullException(nameof(parts));
             if (parts.Length != 3)
                 throw new InvalidTokenPartsException(nameof(parts));
