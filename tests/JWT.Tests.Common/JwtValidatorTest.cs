@@ -1,36 +1,70 @@
 ﻿using System;
+using JWT.Algorithms;
+using JWT.Serializers;
+using JWT.Tests.Common.Models;
 using Xunit;
 
 namespace JWT.Tests.Common
 {
     public class JwtValidatorTest
     {
-        /*
-           payloadJson))
-              return new ArgumentException(nameof(payloadJson));
-
-          if (String.IsNullOrWhiteSpace(decodedCrypto))
-              return new ArgumentException(nameof(decodedCrypto));
-
-          if (String.IsNullOrWhiteSpace(decodedSignature))
-              return new ArgumentException(nameof(decodedSignature));
-           */
-
         [Theory]
         [InlineData(null, null, null)]
-        public void Validate_Should_Throw_Exception_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
+        [InlineData("", null, null)]
+        [InlineData("{}", null, null)]
+        [InlineData("{}", TestData.Token, null)]
+        [InlineData("{}", TestData.Token, "")]
+        public void Validate_Should_Throw_Exception_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            Assert.Throws<ArgumentException>(() => new JwtValidator(null, null).Validate(payloadJson, decodedCrypto, decodedSignature));
+            var jwtValidator = new JwtValidator(null, null);
+            Assert.Throws<ArgumentException>(() => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature));
         }
 
         [Fact]
-        public void Validate_Should_Throw_Exception_PayloadJson_Is_Empty()
+        public void Validate_Should_Throw_Exception_When_Crypto_Does_Not_Match_Signature()
         {
-            string payloadJson = "";
-            string decodedCrypto = null;
-            string decodedSignature = null;
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
 
-            Assert.Throws<ArgumentException>(() => new JwtValidator(null, null).Validate(payloadJson, decodedCrypto, decodedSignature));
+            var jwt = new JwtParts(TestData.Token);
+
+            var payloadJson = JwtDecoder.GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = JwtDecoder.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(JwtDecoder.GetBytes("ABC"), bytesToSign);
+            signatureData[0]++; // malformed signature
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            Assert.Throws<SignatureVerificationException>(() => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature));
+        }
+
+        [Fact]
+        public void Validate_Should_Not_Throw_Exception_When_Crypto_Matches_Signature()
+        {
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+
+            var jwt = new JwtParts(TestData.Token);
+
+            var payloadJson = JwtDecoder.GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = JwtDecoder.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(JwtDecoder.GetBytes("ABC"), bytesToSign);
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
     }
 }

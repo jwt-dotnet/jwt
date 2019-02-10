@@ -289,14 +289,12 @@ namespace JWT.Builder
         /// <summary>
         /// Checks whether enough dependencies were supplied to build a new token.
         /// </summary>
-        private bool CanBuild()
-        {
-            return _algorithm != null &&
-                   _serializer != null &&
-                   _urlEncoder != null &&
-                   _jwt.Payload != null &&
-                   _algorithm.IsAsymmetric || HasOnlyOneSecret();
-        }
+        private bool CanBuild() =>
+            _algorithm != null &&
+            _serializer != null &&
+            _urlEncoder != null &&
+            _jwt.Payload != null &&
+            (_algorithm.IsAsymmetric || HasOnlyOneSecret());
 
         /// <summary>
         /// Checks whether enough dependencies were supplied to decode a token.
@@ -316,18 +314,14 @@ namespace JWT.Builder
         /// <summary>
         /// Checks if any secret was supplied to use in token decoding
         /// </summary>
-        private bool HasSecrets()
-        {
-            return _secrets != null && _secrets.Length > 0;
-        }
+        private bool HasSecrets() =>
+            _secrets != null && _secrets.Length > 0;
 
         /// <summary>
         /// Checks if there is only one secret was supplied for token encoding
         /// </summary>
         /// <returns></returns>
-        private bool HasOnlyOneSecret()
-        {
-            return _secrets != null && _secrets.Length == 1;
-        }
+        private bool HasOnlyOneSecret() =>
+            _secrets != null && _secrets.Length == 1;
     }
 }

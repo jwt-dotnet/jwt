@@ -128,8 +128,8 @@ namespace JWT
             if (decodedCrypto.Length != decodedSignature.Length)
                 return false;
 
-            var decodedCryptoBytes = GetBytes(decodedCrypto);
-            var decodedSignatureBytes = GetBytes(decodedSignature);
+            var decodedCryptoBytes = JwtDecoder.GetBytes(decodedCrypto);
+            var decodedSignatureBytes = JwtDecoder.GetBytes(decodedSignature);
 
             byte result = 0;
             for (var i = 0; i < decodedCrypto.Length; i++)
@@ -206,8 +206,5 @@ namespace JWT
 
             return null;
         }
-
-        private static byte[] GetBytes(string input) =>
-            Encoding.ASCII.GetBytes(input);
     }
 }

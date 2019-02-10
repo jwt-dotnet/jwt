@@ -273,18 +273,14 @@ namespace JWT
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
         }
 
-        private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
+        internal static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
 
-        private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
+        internal static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
 
-        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input)
-        {
-            return input.Select(key => GetBytes(key)).ToArray();
-        }
+        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input) =>
+            input.Select(key => GetBytes(key)).ToArray();
 
-        private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys)
-        {
-            return keys.Any(key => key.Length != 0);
-        }
+        private static bool DoesKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
+            keys.Any(key => key.Length != 0);
     }
 }
