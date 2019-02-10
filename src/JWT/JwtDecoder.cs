@@ -99,9 +99,9 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (keys is null || keys.Count == 0)
+            if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (!AllKeysHaveValues(keys))
+            if (keys.Count == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
@@ -248,9 +248,9 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (keys is null || keys.Count == 0)
+            if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (!AllKeysHaveValues(keys))
+            if (keys.Count == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
