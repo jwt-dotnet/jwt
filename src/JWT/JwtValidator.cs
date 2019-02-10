@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace JWT
 {
@@ -127,8 +128,8 @@ namespace JWT
             if (decodedCrypto.Length != decodedSignature.Length)
                 return false;
 
-            var decodedCryptoBytes = JwtDecoder.GetBytes(decodedCrypto);
-            var decodedSignatureBytes = JwtDecoder.GetBytes(decodedSignature);
+            var decodedCryptoBytes = GetBytes(decodedCrypto);
+            var decodedSignatureBytes = GetBytes(decodedSignature);
 
             byte result = 0;
             for (var i = 0; i < decodedCrypto.Length; i++)
@@ -205,5 +206,9 @@ namespace JWT
 
             return null;
         }
+
+        internal static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
+
+        internal static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
     }
 }
