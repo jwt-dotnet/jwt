@@ -281,6 +281,6 @@ namespace JWT
             input.Select(key => GetBytes(key)).ToArray();
 
         private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
-            keys.Any(key => key.Length != 0);
+            keys.All(key => key.Length != 0);
     }
 }
