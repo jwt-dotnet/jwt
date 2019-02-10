@@ -92,7 +92,7 @@ namespace JWT.Builder
         /// <summary>
         /// Sets JWT encoder.
         /// </summary>
-        /// <returns>Current builder instance</returns>        
+        /// <returns>Current builder instance</returns>
         public JwtBuilder WithEncoder(IJwtEncoder encoder)
         {
             _encoder = encoder;
@@ -102,7 +102,7 @@ namespace JWT.Builder
         /// <summary>
         /// Sets JWT decoder.
         /// </summary>
-        /// <returns>Current builder instance</returns>        
+        /// <returns>Current builder instance</returns>
         public JwtBuilder WithDecoder(IJwtDecoder decoder)
         {
             _decoder = decoder;
@@ -115,7 +115,7 @@ namespace JWT.Builder
         /// <remarks>
         /// Required to decode with verification.
         /// </remarks>
-        /// <returns>Current builder instance</returns>        
+        /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidator(IJwtValidator validator)
         {
             _validator = validator;

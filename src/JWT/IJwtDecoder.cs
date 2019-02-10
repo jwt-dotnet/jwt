@@ -24,7 +24,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>A string containing the JSON payload</returns>
         string Decode(string token, string key, bool verify);
-        
+
         /// <summary>
         /// Given a JWT, decodes it and return the JSON payload.
         /// </summary>
@@ -72,7 +72,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim</exception>
         IDictionary<string, object> DecodeToObject(string token, string key, bool verify);
-        
+
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
@@ -94,7 +94,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim</exception>
         IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify);
-        
+
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
@@ -129,7 +129,7 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim</exception>
         T DecodeToObject<T>(string token, string key, bool verify);
-        
+
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>

@@ -84,9 +84,7 @@ namespace JWT
                 return new ArgumentException(nameof(decodedSignature));
 
             if (!CompareCryptoWithSignature(decodedCrypto, decodedSignature))
-            {
                 return new SignatureVerificationException(decodedCrypto, decodedSignature);
-            }
 
             return GetValidationException(payloadJson);
         }
@@ -103,9 +101,7 @@ namespace JWT
                 return new ArgumentException(nameof(decodedSignatures));
 
             if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
-            {
                 return new SignatureVerificationException(decodedCrypto, decodedSignatures);
-            }
 
             return GetValidationException(payloadJson);
         }
