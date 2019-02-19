@@ -56,7 +56,8 @@ namespace JWT.Builder
         /// <param name="name">Claim name</param>
         /// <param name="value">Claim value</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(string name, string value) => AddClaim(name, (object)value);
+        public JwtBuilder AddClaim(string name, string value) =>
+            AddClaim(name, (object)value);
 
         /// <summary>
         /// Adds well-known claim to the JWT.
@@ -64,7 +65,8 @@ namespace JWT.Builder
         /// <param name="name">Well-known claim name</param>
         /// <param name="value">Claim value</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(ClaimName name, string value) => AddClaim(name.GetPublicClaimName(), value);
+        public JwtBuilder AddClaim(ClaimName name, string value) =>
+            AddClaim(name.GetPublicClaimName(), value);
 
         /// <summary>
         /// Sets JWT serializer.
@@ -181,13 +183,15 @@ namespace JWT.Builder
         /// Instructs to do verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature() => WithVerifySignature(true);
+        public JwtBuilder MustVerifySignature() =>
+            WithVerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder DoNotVerifySignature() => WithVerifySignature(false);
+        public JwtBuilder DoNotVerifySignature() =>
+            WithVerifySignature(false);
 
         /// <summary>
         /// Instructs whether to verify the JWT signature.
