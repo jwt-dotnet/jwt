@@ -13,10 +13,8 @@ namespace JWT.Algorithms
         /// Initializes a new instance of the <see cref="RSAlgorithmFactory"/> class
         /// </summary>
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
-        public RSAlgorithmFactory(Func<X509Certificate2> certFactory)
-        {
+        public RSAlgorithmFactory(Func<X509Certificate2> certFactory) =>
             _certFactory = certFactory;
-        }
 
         /// <inheritdoc />
         public override IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
