@@ -8,18 +8,22 @@ namespace JWT.Builder
         /// <summary>
         /// Gets the string representation of a well-known header name enum
         /// </summary>
-        public static string GetHeaderName(this HeaderName value) => GetDescription(value);
+        public static string GetHeaderName(this HeaderName value) =>
+            GetDescription(value);
 
         /// <summary>
         /// Gets the string representation of a well-known claim name enum
         /// </summary>
-        public static string GetPublicClaimName(this ClaimName value) => GetDescription(value);
+        public static string GetPublicClaimName(this ClaimName value) =>
+            GetDescription(value);
 
         /// <summary>
         /// Gets the value of the <see cref="DescriptionAttribute" /> from the object.
         /// </summary>
-        private static string GetDescription(object value) => value.GetType()
-                                                                   .GetField(value.ToString())
-                                                                   .GetCustomAttribute<DescriptionAttribute>()?.Description ?? value.ToString();
+        private static string GetDescription(object value) =>
+            value.GetType()
+                 .GetField(value.ToString())
+                 .GetCustomAttribute<DescriptionAttribute>()
+                ?.Description ?? value.ToString();
     }
 }

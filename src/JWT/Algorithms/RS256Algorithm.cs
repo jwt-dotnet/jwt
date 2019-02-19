@@ -13,19 +13,18 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
-        public RS256Algorithm(X509Certificate2 cert)
-        {
+        public RS256Algorithm(X509Certificate2 cert) =>
             _cert = cert;
-        }
 
         /// <inheritdoc />
-        public string Name => JwtHashAlgorithm.RS256.ToString();
+        public string Name { get; } = JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
         public bool IsAsymmetric { get; } = true;
 
         /// <inheritdoc />
-        public byte[] Sign(byte[] key, byte[] bytesToSign) => Sign(bytesToSign);
+        public byte[] Sign(byte[] key, byte[] bytesToSign) =>
+            Sign(bytesToSign);
 
         public byte[] Sign(byte[] bytesToSign)
         {

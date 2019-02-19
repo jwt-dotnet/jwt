@@ -50,6 +50,7 @@ namespace JWT
         /// <typeparam name="T"></typeparam>
         /// <param name="key">The key</param>
         /// <returns></returns>
-        protected T GetOrDefault<T>(string key) => this.Data.Contains(key) ? (T)this.Data[key] : default(T);
+        protected T GetOrDefault<T>(string key) =>
+            this.Data.Contains(key) ? (T)this.Data[key] : default(T);
     }
 }

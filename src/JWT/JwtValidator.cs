@@ -117,10 +117,10 @@ namespace JWT
             return ValidateExpClaim(payloadData, secondsSinceEpoch) ?? ValidateNbfClaim(payloadData, secondsSinceEpoch);
         }
 
-        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures) =>
+        private static bool AreAllDecodedSignaturesNullOrWhiteSpace(IEnumerable<string> decodedSignatures) =>
             decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
 
-        private static bool IsAnySignatureValid(string decodedCrypto, string[] decodedSignatures) =>
+        private static bool IsAnySignatureValid(string decodedCrypto, IEnumerable<string> decodedSignatures) =>
             decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
 
         /// <remarks>In the future this method can be opened for extension so made protected virtual</remarks>
