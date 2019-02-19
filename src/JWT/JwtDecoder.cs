@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using JWT.Algorithms;
+
+using static JWT.Internal.EncodingHelper;
 
 namespace JWT
 {
@@ -273,14 +274,7 @@ namespace JWT
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
         }
 
-        private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
-
-        private static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
-
-        private static IReadOnlyCollection<byte[]> GetBytes(IEnumerable<string> input) =>
-            input.Select(key => GetBytes(key)).ToArray();
-
-        private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys) =>
+        private static bool AllKeysHaveValues(IEnumerable<byte[]> keys) =>
             keys.All(key => key.Length != 0);
     }
 }

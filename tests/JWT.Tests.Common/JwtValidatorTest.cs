@@ -4,6 +4,8 @@ using JWT.Serializers;
 using JWT.Tests.Common.Models;
 using Xunit;
 
+using static JWT.Internal.EncodingHelper;
+
 namespace JWT.Tests.Common
 {
     public class JwtValidatorTest
@@ -29,14 +31,14 @@ namespace JWT.Tests.Common
 
             var jwt = new JwtParts(TestData.Token);
 
-            var payloadJson = JwtValidator.GetString(urlEncoder.Decode(jwt.Payload));
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
 
             var crypto = urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = JwtValidator.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(JwtValidator.GetBytes("ABC"), bytesToSign);
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             signatureData[0]++; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
 
@@ -53,14 +55,14 @@ namespace JWT.Tests.Common
 
             var jwt = new JwtParts(TestData.Token);
 
-            var payloadJson = JwtValidator.GetString(urlEncoder.Decode(jwt.Payload));
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
 
             var crypto = urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = JwtValidator.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(JwtValidator.GetBytes("ABC"), bytesToSign);
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
@@ -90,14 +92,14 @@ namespace JWT.Tests.Common
 
             var jwt = new JwtParts(TestData.Token);
 
-            var payloadJson = JwtValidator.GetString(urlEncoder.Decode(jwt.Payload));
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
 
             var crypto = urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = JwtValidator.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(JwtValidator.GetBytes("ABC"), bytesToSign);
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             signatureData[0]++; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
 
@@ -117,14 +119,14 @@ namespace JWT.Tests.Common
 
             var jwt = new JwtParts(TestData.Token);
 
-            var payloadJson = JwtValidator.GetString(urlEncoder.Decode(jwt.Payload));
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
 
             var crypto = urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = JwtValidator.GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(JwtValidator.GetBytes("ABC"), bytesToSign);
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
