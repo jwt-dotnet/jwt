@@ -16,7 +16,7 @@
     <Description>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</Description>
     <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
-    <Authors>John Sheehan, Michael Lehenbauer, Alexander Batishchev</Authors>
+    <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
     <Version>5.0.0</Version>
     <PackageTags>jwt json</PackageTags>

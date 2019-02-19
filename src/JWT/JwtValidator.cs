@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
+using static JWT.Internal.EncodingHelper;
 
 namespace JWT
 {
@@ -206,9 +207,5 @@ namespace JWT
 
             return null;
         }
-
-        internal static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
-
-        internal static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
     }
 }

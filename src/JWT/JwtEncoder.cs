@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using JWT.Algorithms;
+
+using static JWT.Internal.EncodingHelper;
 
 namespace JWT
 {
@@ -63,7 +64,5 @@ namespace JWT
 
             return String.Join(".", segments.ToArray());
         }
-
-        private static byte[] GetBytes(string input) => Encoding.UTF8.GetBytes(input);
     }
 }

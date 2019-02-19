@@ -16,9 +16,8 @@ namespace JWT.Builder
         public static string GetPublicClaimName(this ClaimName value) => GetDescription(value);
 
         /// <summary>
-        /// Gets the value of the Describtion Attribute from the object.
+        /// Gets the value of the <see cref="DescriptionAttribute" /> from the object.
         /// </summary>
-        /// <param name="value">An object that is decorated with <see cref="DescriptionAttribute"/></param>
         private static string GetDescription(object value) => value.GetType()
                                                                    .GetField(value.ToString())
                                                                    .GetCustomAttribute<DescriptionAttribute>()?.Description ?? value.ToString();
