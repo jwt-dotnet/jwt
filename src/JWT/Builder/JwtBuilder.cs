@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using JWT.Algorithms;
 using JWT.Serializers;
+
+using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Builder
 {
@@ -20,7 +23,7 @@ namespace JWT.Builder
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
 
         private IJwtAlgorithm _algorithm;
-        private string[] _secrets;
+        private byte[][] _secrets;
         private bool _verify;
 
         /// <summary>
@@ -152,10 +155,23 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
+        {
+            _secrets = secrets.Select(s => GetBytes(s)).ToArray();
+            return this;
+        }
+
+        /// <summary>
+        /// Sets certificate secret.
+        /// </summary>
+        /// <remarks>
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// </remarks>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithSecret(params byte[][] secrets)
         {
             _secrets = secrets;
             return this;
