@@ -155,7 +155,7 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
@@ -168,7 +168,7 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params byte[][] secrets)
