@@ -275,6 +275,6 @@ namespace JWT
         }
 
         private static bool AllKeysHaveValues(IEnumerable<byte[]> keys) =>
-            keys.All(key => key.Length != 0);
+            keys.All(key => key.Any());
     }
 }
