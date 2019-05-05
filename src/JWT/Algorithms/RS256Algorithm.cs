@@ -27,15 +27,17 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="cert">The certificate having both public and private keys.</param>
         public RS256Algorithm(X509Certificate2 cert)
-            : this(GetPublicKey(cert), GetPrivateKeys(cert))
+            : this(GetPublicKey(cert), GetPrivateKey(cert))
         {
         }
 
         /// <inheritdoc />
-        public string Name => JwtHashAlgorithm.RS256.ToString();
+        public string Name =>
+            JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric { get; } = true;
+        public bool IsAsymmetric =>
+            true;
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>
@@ -47,7 +49,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The bytes to sign.</param>
         /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign) =>
-            return _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         /// <summary>
         /// Verifies provided byte array with provided signature.
