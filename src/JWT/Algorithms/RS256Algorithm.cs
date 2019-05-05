@@ -12,7 +12,7 @@ namespace JWT.Algorithms
         private readonly RSA _privateKey;
 
         /// <summary>
-        /// Creates an instance using the provided certificate.
+        /// Creates an instance using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The RSA service provider for verifying the data.</param>
         /// <param name="privateKey">The RSA key for signing the data.</param>
@@ -20,6 +20,15 @@ namespace JWT.Algorithms
         {
             _publicKey = publicKey;
             _privateKey = privateKey;
+        }
+        
+        /// <summary>
+        /// Creates an instance using the provided certificate.
+        /// </summary>
+        /// <param name="cert">The certificate having both public and private keys.</param>
+        public RS256Algorithm(X509Certificate2 cert)
+            : thise(GetPublicKey(cert), GetPrivateKeys(cert))
+        {
         }
 
         /// <inheritdoc />
@@ -50,6 +59,26 @@ namespace JWT.Algorithms
             // 2.16.840.1.101.3.4.2.1 is the object id for the sha256NoSign algorithm.
             // See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad for further details.
             return _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+        }
+        
+        private static RSA GetPrivateKey(X509Certificate2 cert)
+        {
+#if NETSTANDARD1_3
+            return cert.GetRSAPrivateKey();
+#else
+            return (RSA)cert.PrivateKey;
+#endif
+        }
+
+        private static RSACryptoServiceProvider GetPublicKey(X509Certificate2 cert)
+        {
+            AsymmetricAlgorithm alg;
+#if NETSTANDARD1_3
+            alg = cert.GetRSAPublicKey();
+#else
+            alg = cert.PublicKey.Key;
+#endif
+            return (RSACryptoServiceProvider)alg;
         }
     }
 }
