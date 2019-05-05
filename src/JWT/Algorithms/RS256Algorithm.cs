@@ -27,7 +27,7 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="cert">The certificate having both public and private keys.</param>
         public RS256Algorithm(X509Certificate2 cert)
-            : thise(GetPublicKey(cert), GetPrivateKeys(cert))
+            : this(GetPublicKey(cert), GetPrivateKeys(cert))
         {
         }
 
