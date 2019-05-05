@@ -29,17 +29,16 @@ namespace JWT.Algorithms
         public bool IsAsymmetric { get; } = true;
 
         /// <inheritdoc />
-        public byte[] Sign(byte[] key, byte[] bytesToSign) => Sign(bytesToSign);
+        public byte[] Sign(byte[] key, byte[] bytesToSign) =>
+            Sign(bytesToSign);
 
         /// <summary>
         /// Signs the provided bytes.
         /// </summary>
         /// <param name="bytesToSign">The bytes to sign.</param>
         /// <returns>The signed bytes.</returns>
-        public byte[] Sign(byte[] bytesToSign)
-        {
+        public byte[] Sign(byte[] bytesToSign) =>
             return _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        }
 
         /// <summary>
         /// Verifies provided byte array with provided signature.
@@ -49,8 +48,7 @@ namespace JWT.Algorithms
         public bool Verify(byte[] bytesToSign, byte[] signature)
         {
             // 2.16.840.1.101.3.4.2.1 is the object id for the sha256NoSign algorithm.
-            // See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
-            // for further details.
+            // See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad for further details.
             return _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
         }
     }
