@@ -8,14 +8,18 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
-        private readonly X509Certificate2 _cert;
+        private readonly RSACryptoServiceProvider _publicKey;
+        private readonly RSA _privateKey;
 
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
-        public RS256Algorithm(X509Certificate2 cert)
+        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
+        /// <param name="privateKey">The RSA key for signing the data.</param>
+        public RS256Algorithm(RSACryptoServiceProvider publicKey, RSA privateKey)
         {
-            _cert = cert;
+            _publicKey = publicKey;
+            _privateKey = privateKey;
         }
 
         /// <inheritdoc />
@@ -27,13 +31,14 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) => Sign(bytesToSign);
 
+        /// <summary>
+        /// Signs the provided bytes.
+        /// </summary>
+        /// <param name="bytesToSign">The bytes to sign.</param>
+        /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign)
         {
-            if (!_cert.HasPrivateKey)
-                throw new CryptographicException("Certificate doesn't contain private key");
-
-            var privateKey = GetPrivateKey(_cert);
-            return privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            return _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
         /// <summary>
@@ -43,28 +48,10 @@ namespace JWT.Algorithms
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature)
         {
-            var publicKey = GetPublicKey(_cert);
-            return publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
-        }
-
-        private static RSA GetPrivateKey(X509Certificate2 cert)
-        {
-#if NETSTANDARD1_3
-            return cert.GetRSAPrivateKey();
-#else
-            return (RSA)cert.PrivateKey;
-#endif
-        }
-
-        private static RSACryptoServiceProvider GetPublicKey(X509Certificate2 cert)
-        {
-            AsymmetricAlgorithm alg;
-#if NETSTANDARD1_3
-            alg = cert.GetRSAPublicKey();
-#else
-            alg = cert.PublicKey.Key;
-#endif
-            return (RSACryptoServiceProvider)alg;
+            // 2.16.840.1.101.3.4.2.1 is the object id for the sha256NoSign algorithm.
+            // See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
+            // for further details.
+            return _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
         }
     }
 }
