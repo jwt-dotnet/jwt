@@ -48,7 +48,7 @@ steps:
     failTaskOnFailedTests: true
     
 - task: DotNetCoreCLI@2
-  displayName: Package
+  displayName: Package NuGet package
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'
