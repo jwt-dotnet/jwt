@@ -30,6 +30,7 @@ steps:
     command: test
     projects: 'tests/**/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
+    testResultsFormat: 'xUnit'
 
 - task: PublishBuildArtifacts@1
   displayName: Publish build artifacts
