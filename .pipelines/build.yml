@@ -12,12 +12,12 @@ variables:
 
 steps:
 - task: DotNetCoreInstaller@0
-  displayName: Install Dot Net Core v$(dotNetVersion)
+  displayName: Install .NET Core v$(dotNetVersion)
   inputs:
       version: $(dotNetVersion)
 
 - task: MSBuild@1
-  displayName: Build $(solution)
+  displayName: Build solution
   inputs:
     solution: $(solution)   
     msbuildArguments: /restore /t:build /p:CreatePackage=true /p:NoPackageAnalysis=true /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)\artifacts
@@ -25,11 +25,11 @@ steps:
     maximumCpuCount: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run Tests
+  displayName: Run tests
   inputs:
     command: test
     projects: '**/*Tests/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
 
 - task: PublishBuildArtifacts@1
-  displayName: Publish Build Artifacts
+  displayName: Publish build artifacts
