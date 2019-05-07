@@ -2,31 +2,34 @@ trigger:
 - master
 
 pool:
-  vmImage: 'VS2017-Win2016'
+  vmImage: 'windows-2019'
 
 variables:
   solution: 'JWT.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  dotNetVersion: '2.2.106'
 
 steps:
-- task: DotNetCoreCLI@2
+- task: DotNetCoreInstaller@0
+  displayName: Install Dot Net Core v$(dotNetVersion)
   inputs:
-    command: restore
-    projects: '**/*.csproj'
-    feedsToUse: config
-    nugetConfigPath: NuGet.config
+      version: $(dotNetVersion)
+
+- task: MSBuild@1
+  displayName: Build $(solution)
+  inputs:
+    solution: $(solution)   
+    msbuildArguments: /restore /t:build /p:CreatePackage=true /p:NoPackageAnalysis=true /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)\artifacts
+    configuration: $(BuildConfiguration)
+    maximumCpuCount: true
 
 - task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '$(solution)'
-    configuration: '$(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
+  displayName: Run Tests
   inputs:
     command: test
     projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    arguments: ' -c $(buildConfiguration) --no-build --no-restore'
 
 - task: PublishBuildArtifacts@1
+  displayName: Publish Build Artifacts
