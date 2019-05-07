@@ -157,7 +157,7 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
@@ -170,7 +170,7 @@ namespace JWT.Builder
         /// Sets certificate secret.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an asymmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params byte[][] secrets)
@@ -289,8 +289,8 @@ namespace JWT.Builder
         {
             if (!CanBuild())
                 throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(WithAlgorithm)}\r\n" +
-                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
+                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
                                                     $"-{nameof(WithUrlEncoder)}.");
 
             if (!HasOnlyOneSecret())
@@ -301,8 +301,8 @@ namespace JWT.Builder
         {
             if (!CanDecode())
                 throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(WithSerializer)}\r\n" +
-                                                    $"-{nameof(WithValidator)}\r\n" +
+                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                                                    $"-{nameof(WithValidator)}\" + Environment.NewLine +
                                                     $"-{nameof(WithUrlEncoder)}.");
         }
 

@@ -10,14 +10,14 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 ## Installation
 Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can download and compile it yourself.
 
-## Supported .NET Framework versions:
-- .NET 4.6.0
+## Supported .NET versions:
+- .NET Framework 4.6.0
 - .NET Standard 1.3
 
 ## Usage
 ### Creating (encoding) token
 
-```csharp
+```c#
 var payload = new Dictionary<string, object>
 {
     { "claim1", 0 },
@@ -34,9 +34,9 @@ var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
-## Or using the fluent builder API
+### Or using the fluent builder API
 
-```csharp
+```c#
   var token = new JwtBuilder()
       .WithAlgorithm(new HMACSHA256Algorithm())
       .WithSecret(secret)
@@ -53,7 +53,7 @@ The output would be:
 
 ### Parsing (decoding) and verifying token
 
-```csharp
+```c#
 const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
 const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
@@ -78,9 +78,9 @@ catch (SignatureVerificationException)
 }
 ```
 
-## Or using the fluent builder API
+### Or using the fluent builder API
 
-```csharp
+```c#
 try
 {
     var json = new JwtBuilder()
@@ -105,14 +105,14 @@ The output would be:
 
 You can also deserialize the JSON payload directly to a .NET type:
 
-```csharp
+```c#
 var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
 Console.WriteLine(payload["claim2"]);
  ```
 
- ## Or using the fluent builder API
+### Or using the fluent builder API
 
-```csharp
+```c#
 var payload = new JwtBuilder()
         .WithSecret(secret)
         .MustVerifySignature()
@@ -124,7 +124,7 @@ The output would be:
     
 >claim2-value
 
-#### Set and validate token expiration
+### Set and validate token expiration
 
 As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
@@ -149,7 +149,7 @@ var json = decoder.Decode(token, secret); // throws TokenExpiredException
 
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
-```csharp
+```c#
 public class CustomJsonSerializer : IJsonSerializer
 {
     public string Serialize(object obj)
@@ -164,9 +164,9 @@ public class CustomJsonSerializer : IJsonSerializer
 }
 ```
 
-And then pass this serializer as a dependency to JwtEncoder constructor:
+And then pass this serializer to JwtEncoder constructor:
 
-```csharp
+```c#
 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
 IJsonSerializer serializer = new CustomJsonSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
@@ -177,10 +177,10 @@ IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
 As mentioned above, the default JSON serialization is done by `JsonNetSerializer`. You can define your own custom serialization settings as follows:
 
-```csharp
+```c#
 JsonSerializer customJsonSerializer = new JsonSerializer
 {
-    // All json keys start with lowercase characters instead of the exact casing of the model/property, e.g. fullName
+    // All keys start with lowercase characters instead of the exact casing of the model/property, e.g. fullName
     ContractResolver = new CamelCasePropertyNamesContractResolver(), 
     
     // Nice and easy to read, but you can also use Formatting.None to reduce the payload size
