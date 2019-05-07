@@ -25,10 +25,22 @@ steps:
     maximumCpuCount: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run tests
+  displayName: Run .NET Core tests
   inputs:
     command: test
-    projects: 'tests/**/*.csproj'
+    projects: 'tests/**/JWT.Tests.Core.csproj'
+    arguments: ' -c $(buildConfiguration) --no-build --no-restore'
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+    testResultsFormat: 'xUnit'
+    failTaskOnFailedTests: true
+    
+
+- task: DotNetCoreCLI@2
+  displayName: Run .NET Framework tests
+  inputs:
+    command: test
+    projects: 'tests/**/JWT.Tests.NetFramework.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
