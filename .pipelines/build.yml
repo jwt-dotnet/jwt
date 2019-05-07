@@ -35,7 +35,7 @@ steps:
     testResultsFormat: 'xUnit'
     failTaskOnFailedTests: true
     
- - task: DotNetCoreCLI@2
+- task: DotNetCoreCLI@2
   displayName: Package
   inputs:
     command: pack
