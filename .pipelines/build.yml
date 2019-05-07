@@ -25,15 +25,23 @@ steps:
     maximumCpuCount: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Core tests
+  displayName: Run tests
   inputs:
     command: test
-    projects: 'tests/**/JWT.Tests.Core.csproj'
+    projects: 'tests/**/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
     testResultsFormat: 'xUnit'
     failTaskOnFailedTests: true
+    
+ - task: DotNetCoreCLI@2
+  displayName: Package
+  inputs:
+    command: pack
+    packagesToPack: 'src/**/*.csproj'
+    configuration: $(BuildConfiguration)
+    nobuild: true
 
 - task: PublishBuildArtifacts@1
   displayName: Publish build artifacts
