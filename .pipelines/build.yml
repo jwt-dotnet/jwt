@@ -28,7 +28,7 @@ steps:
   displayName: Run tests
   inputs:
     command: test
-    projects: '**/*Tests/*.csproj'
+    projects: 'tests/**/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
 
 - task: PublishBuildArtifacts@1
