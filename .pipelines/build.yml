@@ -21,16 +21,12 @@ steps:
   inputs:
     command: 'restore'
     restoreSolution: $(solution)
-    feedsToUse: config
-    nugetConfigPath: NuGet.config
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-    feedsToUse: config
-    nugetConfigPath: NuGet.config
 
 - task: DotNetCoreCLI@2
   displayName: 'Build solution'
