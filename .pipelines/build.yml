@@ -8,19 +8,26 @@ variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  dotNetVersion: '2.2.106'
+  coreVersion: '2.2.106'
+  nugetVersion: '4.3.0'
 
 steps:
 - task: DotNetCoreInstaller@0
-  displayName: Install .NET Core v$(dotNetVersion)
+  displayName: Install .NET Core v$(coreVersion)
   inputs:
-      version: $(dotNetVersion)
+      version: $(coreVersion)
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
+
+- task: NuGetToolInstaller@0
+  displayName: Install NuGet v$(nugetVersion)
+  inputs:
+    versionSpec: $(nugetVersion)
+    checkLatest: true
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet packages for .NET Framework'
