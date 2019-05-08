@@ -9,7 +9,7 @@ variables:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
   coreVersion: '2.2.106'
-  nugetVersion: '4.3.0'
+  nugetVersion: '4.3.4'
 
 steps:
 - task: DotNetCoreInstaller@0
