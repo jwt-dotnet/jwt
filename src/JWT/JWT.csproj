@@ -9,7 +9,7 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <Company>Public Domain</Company>
     <Copyright>Public Domain</Copyright>
@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>5.0.1</Version>
+    <Version>5.1.1</Version>
     <PackageTags>jwt json</PackageTags>
     <FileVersion>5.0.0.0</FileVersion>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
@@ -28,7 +28,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>bin\Release\$(TargetFramework)\JWT.xml</DocumentationFile>

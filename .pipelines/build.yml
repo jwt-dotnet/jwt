@@ -8,21 +8,39 @@ variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  dotNetVersion: '2.2.106'
+  coreVersion: '2.2.106'
+  nugetVersion: '4.9.4'
 
 steps:
 - task: DotNetCoreInstaller@0
-  displayName: Install .NET Core v$(dotNetVersion)
+  displayName: Install .NET Core v$(coreVersion)
   inputs:
-      version: $(dotNetVersion)
+      version: $(coreVersion)
 
-- task: MSBuild@1
-  displayName: Build solution
+- task: DotNetCoreCLI@2
+  displayName: 'Restore NuGet packages for .NET Core'
   inputs:
-    solution: $(solution)   
-    msbuildArguments: /restore /t:build /p:CreatePackage=true /p:NoPackageAnalysis=true /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)\artifacts
-    configuration: $(BuildConfiguration)
-    maximumCpuCount: true
+    command: 'restore'
+    projects: '**/*.csproj'
+
+- task: NuGetToolInstaller@0
+  displayName: Install NuGet v$(nugetVersion)
+  inputs:
+    versionSpec: $(nugetVersion)
+    checkLatest: true
+
+- task: NuGetCommand@2
+  displayName: 'Restore NuGet packages for .NET Framework'
+  inputs:
+    command: 'restore'
+    restoreSolution: $(solution)
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build solution'
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '-c $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: Run .NET Core tests
