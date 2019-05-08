@@ -6,8 +6,8 @@ pool:
 
 variables:
   solution: 'JWT.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  buildPlatform: 'Any CPU'
   dotNetVersion: '2.2.106'
 
 steps:
@@ -27,26 +27,25 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: Run .NET Core tests
   inputs:
-    command: test
+    command: 'test'
     projects: 'tests/**/JWT.Tests.Core.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
     testResultsFormat: 'xUnit'
     failTaskOnFailedTests: true
-    
 
 - task: DotNetCoreCLI@2
   displayName: Run .NET Framework tests
   inputs:
-    command: test
+    command: 'test'
     projects: 'tests/**/JWT.Tests.NetFramework.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: VSTest
     testResultsFiles: '**/*.trx'
     testResultsFormat: 'xUnit'
     failTaskOnFailedTests: true
-    
+
 - task: DotNetCoreCLI@2
   displayName: Package NuGet package
   inputs:
