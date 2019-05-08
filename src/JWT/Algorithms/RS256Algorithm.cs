@@ -32,12 +32,10 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public string Name =>
-            JwtHashAlgorithm.RS256.ToString();
+        public string Name => JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric =>
-            true;
+        public bool IsAsymmetric => true;
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>

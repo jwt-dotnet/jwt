@@ -17,9 +17,9 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public string Name { get; } = JwtHashAlgorithm.HS384.ToString();
+        public string Name => JwtHashAlgorithm.HS384.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric { get; } = false;
+        public bool IsAsymmetric => false;
     }
 }
