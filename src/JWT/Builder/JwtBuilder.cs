@@ -56,7 +56,8 @@ namespace JWT.Builder
         /// <param name="name">Claim name</param>
         /// <param name="value">Claim value</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(string name, string value) => AddClaim(name, (object)value);
+        public JwtBuilder AddClaim(string name, string value) =>
+            AddClaim(name, (object)value);
 
         /// <summary>
         /// Adds well-known claim to the JWT.
@@ -64,7 +65,8 @@ namespace JWT.Builder
         /// <param name="name">Well-known claim name</param>
         /// <param name="value">Claim value</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(ClaimName name, string value) => AddClaim(name.GetPublicClaimName(), value);
+        public JwtBuilder AddClaim(ClaimName name, string value) =>
+            AddClaim(name.GetPublicClaimName(), value);
 
         /// <summary>
         /// Sets JWT serializer.
@@ -181,13 +183,15 @@ namespace JWT.Builder
         /// Instructs to do verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature() => WithVerifySignature(true);
+        public JwtBuilder MustVerifySignature() =>
+            WithVerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder DoNotVerifySignature() => WithVerifySignature(false);
+        public JwtBuilder DoNotVerifySignature() =>
+            WithVerifySignature(false);
 
         /// <summary>
         /// Instructs whether to verify the JWT signature.
@@ -285,8 +289,8 @@ namespace JWT.Builder
         {
             if (!CanBuild())
                 throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(WithAlgorithm)}\r\n" +
-                                                    $"-{nameof(WithSerializer)}\r\n" +
+                                                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
+                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
                                                     $"-{nameof(WithUrlEncoder)}.");
 
             if (!HasOnlyOneSecret())
@@ -296,9 +300,9 @@ namespace JWT.Builder
         private void EnsureCanDecode()
         {
             if (!CanDecode())
-                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(WithSerializer)}\r\n" +
-                                                    $"-{nameof(WithValidator)}\r\n" +
+                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the following methods:" + Environment.NewLine +
+                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                                                    $"-{nameof(WithValidator)}" + Environment.NewLine +
                                                     $"-{nameof(WithUrlEncoder)}.");
         }
 

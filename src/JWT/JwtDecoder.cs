@@ -60,14 +60,16 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public string Decode(string token, string key, bool verify) => Decode(token, GetBytes(key), verify);
+        public string Decode(string token, string key, bool verify) =>
+            Decode(token, GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public string Decode(string token, string[] keys, bool verify) => Decode(token, GetBytes(keys), verify);
+        public string Decode(string token, string[] keys, bool verify) =>
+            Decode(token, GetBytes(keys), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -118,35 +120,40 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token) => DecodeToObject<Dictionary<string, object>>(token);
+        public IDictionary<string, object> DecodeToObject(string token) =>
+            DecodeToObject<Dictionary<string, object>>(token);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) => DecodeToObject(token, GetBytes(key), verify);
+        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) =>
+            DecodeToObject(token, GetBytes(key), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, string[] keys, bool verify) => DecodeToObject(token, GetBytes(keys), verify);
+        public IDictionary<string, object> DecodeToObject(string token, string[] keys, bool verify) =>
+            DecodeToObject(token, GetBytes(keys), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify) => DecodeToObject<Dictionary<string, object>>(token, key, verify);
+        public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify) =>
+            DecodeToObject<Dictionary<string, object>>(token, key, verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify) => DecodeToObject<Dictionary<string, object>>(token, keys, verify);
+        public IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify) =>
+            DecodeToObject<Dictionary<string, object>>(token, keys, verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -164,9 +171,11 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(string token, string key, bool verify) => DecodeToObject<T>(token, GetBytes(key), verify);
+        public T DecodeToObject<T>(string token, string key, bool verify) =>
+            DecodeToObject<T>(token, GetBytes(key), verify);
 
-        public T DecodeToObject<T>(string token, string[] keys, bool verify) => DecodeToObject<T>(token, GetBytes(keys), verify);
+        public T DecodeToObject<T>(string token, string[] keys, bool verify) =>
+            DecodeToObject<T>(token, GetBytes(keys), verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -198,7 +207,8 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(string[] parts, byte[] key) => Validate(new JwtParts(parts), key);
+        public void Validate(string[] parts, byte[] key) =>
+            Validate(new JwtParts(parts), key);
 
         /// <summary>
         /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />

@@ -20,6 +20,6 @@ namespace JWT.Algorithms
         public string Name => JwtHashAlgorithm.HS256.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric { get; } = false;
+        public bool IsAsymmetric => false;
     }
 }
