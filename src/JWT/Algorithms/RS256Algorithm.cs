@@ -21,7 +21,7 @@ namespace JWT.Algorithms
             _publicKey = publicKey;
             _privateKey = privateKey;
         }
-        
+
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
@@ -32,12 +32,10 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public string Name =>
-            JwtHashAlgorithm.RS256.ToString();
+        public string Name => JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric =>
-            true;
+        public bool IsAsymmetric => true;
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>
@@ -62,7 +60,7 @@ namespace JWT.Algorithms
             // See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad for further details.
             return _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
         }
-        
+
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
 #if NETSTANDARD1_3

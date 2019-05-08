@@ -11,8 +11,10 @@ namespace JWT
         /// </summary>
         public static DateTime Value { get; } = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
-        public static double GetSecondsSince(DateTimeOffset time) => Math.Round((time - Value).TotalSeconds);
+        public static double GetSecondsSince(DateTimeOffset time) =>
+            Math.Round((time - Value).TotalSeconds);
 
-        public static string GetSecondsSinceAsString(DateTimeOffset time) => GetSecondsSince(time).ToString(CultureInfo.InvariantCulture);
+        public static string GetSecondsSinceAsString(DateTimeOffset time) =>
+            GetSecondsSince(time).ToString(CultureInfo.InvariantCulture);
     }
 }

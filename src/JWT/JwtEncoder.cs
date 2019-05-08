@@ -29,13 +29,16 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public string Encode(object payload, string key) => Encode(null, payload, key != null ? GetBytes(key) : null);
+        public string Encode(object payload, string key) =>
+            Encode(null, payload, key != null ? GetBytes(key) : null);
 
         /// <inheritdoc />
-        public string Encode(object payload, byte[] key) => Encode(null, payload, key);
+        public string Encode(object payload, byte[] key) =>
+            Encode(null, payload, key);
 
         /// <inheritdoc />
-        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) => Encode(extraHeaders, payload, GetBytes(key));
+        public string Encode(IDictionary<string, object> extraHeaders, object payload, string key) =>
+            Encode(extraHeaders, payload, GetBytes(key));
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />

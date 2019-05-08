@@ -44,17 +44,20 @@ namespace JWT
         /// <summary>
         /// Gets the Header part of a JWT
         /// </summary>
-        public string Header => this.Parts[(int)JwtPartsIndex.Header];
+        public string Header =>
+            this.Parts[(int)JwtPartsIndex.Header];
 
         /// <summary>
         /// Gets the Payload part of a JWT
         /// </summary>
-        public string Payload => this.Parts[(int)JwtPartsIndex.Payload];
+        public string Payload =>
+            this.Parts[(int)JwtPartsIndex.Payload];
 
         /// <summary>
         /// Gets the Signature part of a JWT
         /// </summary>
-        public string Signature => this.Parts[(int)JwtPartsIndex.Signature];
+        public string Signature =>
+            this.Parts[(int)JwtPartsIndex.Signature];
 
         /// <summary>
         /// Gets the parts of a JWT
