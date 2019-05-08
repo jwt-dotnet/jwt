@@ -40,7 +40,7 @@ steps:
   inputs:
     command: 'build'
     projects: '$(solution)'
-    configuration: '$(buildConfiguration)'
+    arguments: '-c $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: Run .NET Core tests
