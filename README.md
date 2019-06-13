@@ -12,7 +12,9 @@ Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can dow
 
 ## Supported .NET versions:
 - .NET Framework 4.6.0
+- .NET Framework 4.7.2
 - .NET Standard 1.3
+- .NET Standard 2.0
 
 ## Usage
 ### Creating (encoding) token

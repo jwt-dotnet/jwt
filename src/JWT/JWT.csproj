@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net46;net472;netstandard1.3;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net46'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'net472'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
   </PropertyGroup>
 
@@ -18,7 +18,7 @@
     <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
-    <Version>5.1.1</Version>
+    <Version>5.2.0</Version>
     <PackageTags>jwt json</PackageTags>
     <FileVersion>5.0.0.0</FileVersion>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
@@ -39,7 +39,7 @@
    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" />
