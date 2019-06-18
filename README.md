@@ -141,7 +141,7 @@ var payload = new Dictionary<string, object>
 {
     { "exp", secondsSinceEpoch }
 };
-cosnt string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 var token = encoder.Encode(payload, secret);
 
 var json = decoder.Decode(token, secret); // throws TokenExpiredException
