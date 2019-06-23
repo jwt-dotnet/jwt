@@ -134,8 +134,7 @@ As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4)
 IDateTimeProvider provider = new UtcDateTimeProvider();
 var now = provider.GetNow();
 
-var unixEpoch = JwtValidator.UnixEpoch; // 1970-01-01 00:00:00 UTC
-var secondsSinceEpoch = Math.Round((now - unixEpoch).TotalSeconds);
+var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
 var payload = new Dictionary<string, object>
 {
