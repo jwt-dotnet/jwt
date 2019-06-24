@@ -19,8 +19,17 @@ namespace JWT.Algorithms
         /// <param name="privateKey">The RSA key for signing the data.</param>
         public RS256Algorithm(RSACryptoServiceProvider publicKey, RSA privateKey)
         {
-            _publicKey = publicKey;
-            _privateKey = privateKey;
+            _publicKey = publicKey ?? throw new InvalidOperationException("Private key is null");
+            _privateKey = privateKey ?? throw new InvalidOperationException("Public key is null");
+        }
+
+        /// <summary>
+        /// Creates an instance using the provided pair of public and private keys.
+        /// </summary>
+        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
+        public RS256Algorithm(RSACryptoServiceProvider publicKey)
+        {
+            _publicKey = publicKey ?? throw new InvalidOperationException("Private key is null");
         }
 
         /// <summary>
@@ -48,7 +57,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The bytes to sign.</param>
         /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign) =>
-            (_privateKey ?? throw new InvalidOperationException("Private key is null")).SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         /// <summary>
         /// Verifies provided byte array with provided signature.
@@ -60,7 +69,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            (_publicKey ?? throw new InvalidOperationException("Public key is null")).VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+            _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
