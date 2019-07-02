@@ -19,8 +19,8 @@ namespace JWT.Algorithms
         /// <param name="privateKey">The RSA key for signing the data.</param>
         public RS256Algorithm(RSACryptoServiceProvider publicKey, RSA privateKey)
         {
-            _publicKey = publicKey ?? throw new InvalidOperationException("Private key is null");
-            _privateKey = privateKey ?? throw new InvalidOperationException("Public key is null");
+            _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
+            _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace JWT.Algorithms
         /// <param name="publicKey">The RSA service provider for verifying the data.</param>
         public RS256Algorithm(RSACryptoServiceProvider publicKey)
         {
-            _publicKey = publicKey ?? throw new InvalidOperationException("Private key is null");
+            _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
         }
 
         /// <summary>
