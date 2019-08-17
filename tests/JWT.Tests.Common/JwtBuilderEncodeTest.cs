@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using JWT.Algorithms;
@@ -32,6 +33,25 @@ namespace JWT.Tests.Common
 
             var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
             Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
+        }
+
+        [Fact]
+        public void Build_WithPayloadWithClaims()
+        {
+            var token = new JwtBuilder()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
+                .AddClaims(new Dictionary<string, object>
+                {
+                    {"key-1", "value-1"},
+                    {"key-2", "value-2"},
+                })
+                .Build();
+            Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+
+            var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
+            Assert.True(decodedToken.Contains("key-1") && decodedToken.Contains("value-1"));
+            Assert.True(decodedToken.Contains("key-2") && decodedToken.Contains("value-2"));
         }
 
         [Fact]
