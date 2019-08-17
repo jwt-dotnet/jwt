@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using JWT.Builder;
 using JWT.Serializers;
 using Xunit;
@@ -18,153 +19,253 @@ namespace JWT.Tests.Common
             var payload = new JwtBuilder()
                 .Decode(_sampleToken);
 
-            Assert.NotEmpty(payload);
+            payload.Should()
+                .NotBeEmpty("because the decoded token contains values and they should have been fetched");
         }
 
         [Fact]
         public void DecodeToken_WithoutToken_Should_Throw_Exception()
         {
-            Assert.Throws<ArgumentException>(() => new JwtBuilder()
-                                                 .Decode(null));
+            var builder = new JwtBuilder();
+
+            Action decodingANullJwt = ()
+                => builder.Decode(null);
+
+            decodingANullJwt.Should()
+                .Throw<ArgumentException>("because null is not a valid value for a token");
         }
 
         [Fact]
         public void DecodeToken_WithoutSerializer_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                           .WithSerializer(null)
-                                                           .Decode(_sampleToken));
+            var builder = new JwtBuilder();
+            var serializer = (IJsonSerializer) null;
+            const string token = _sampleToken;
+
+            Action decodingAJwtWithANullSerializer = ()
+                => builder.WithSerializer(serializer)
+                    .Decode(token);
+
+            decodingAJwtWithANullSerializer.Should()
+                .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
         }
 
         [Fact]
         public void DecodeToken_WithSerializer()
         {
-            var payload = new JwtBuilder()
-                          .WithSerializer(new JsonNetSerializer())
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            var serializer = new JsonNetSerializer();
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                .WithSerializer(serializer)
+                .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because the token should be correctly decoded and its data extracted");
         }
 
         [Fact]
         public void DecodeToken_WithoutUrlEncoder_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                           .WithUrlEncoder(null)
-                                                           .Decode(_sampleToken));
+            var builder = new JwtBuilder();
+            var urlEncoder = (IBase64UrlEncoder) null;
+            const string token = _sampleToken;
+
+            Action decodingAJwtWithANullEncoder = ()
+                => builder.WithUrlEncoder(urlEncoder)
+                    .Decode(token);
+
+            decodingAJwtWithANullEncoder.Should()
+                .Throw<InvalidOperationException>("because a token can't be decoded without a valid UrlEncoder");
         }
 
         [Fact]
         public void DecodeToken_WithUrlEncoder()
         {
-            var payload = new JwtBuilder()
-                          .WithUrlEncoder(new JwtBase64UrlEncoder())
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                          .WithUrlEncoder(urlEncoder)
+                          .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because the token should have been correctly decoded with the valid base 64 encoder");
         }
 
         [Fact]
         public void DecodeToken_WithoutTimeProvider_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                           .WithDateTimeProvider(null)
-                                                           .Decode(_sampleToken));
+            var builder = new JwtBuilder();
+            var dateTimeProvider = (IDateTimeProvider) null;
+            const string token = _sampleToken;
+
+            Action decodingAJwtWithANullDateTimeProvider = ()
+                => builder
+                    .WithDateTimeProvider(dateTimeProvider)
+                    .Decode(token);
+
+            decodingAJwtWithANullDateTimeProvider.Should()
+                .Throw<InvalidOperationException>("because a token can't be decoded without a valid DateTimeProvider");
         }
 
         [Fact]
         public void DecodeToken_WithDateTimeProvider()
         {
-            var payload = new JwtBuilder()
-                          .WithDateTimeProvider(new UtcDateTimeProvider())
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+
+            var payload = builder
+                          .WithDateTimeProvider(dateTimeProvider)
+                          .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because the decoding process must be successful with a valid DateTimeProvider");
         }
 
         [Fact]
         public void DecodeToken_WithoutValidator()
         {
-            var payload = new JwtBuilder()
-                          .WithValidator(null)
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            const string token = _sampleToken;
+            var validator = (IJwtValidator) null;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                          .WithValidator(validator)
+                          .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because a JWT should not necessary have a validator to be decoded");
         }
 
         [Fact]
         public void DecodeToken_WithExplicitValidator()
         {
-            var payload = new JwtBuilder()
-                          .WithValidator(new JwtValidator(new JsonNetSerializer(), new UtcDateTimeProvider()))
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            const string token = _sampleToken;
+            var validator = new JwtValidator(
+                new JsonNetSerializer(),
+                new UtcDateTimeProvider());
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                          .WithValidator(validator)
+                          .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because a JWT should be correctly decoded, even with a validator");
         }
 
         [Fact]
         public void DecodeToken_WithVerifySignature()
         {
-            var payload = new JwtBuilder()
-                          .WithSecret(_sampleSecret)
-                          .MustVerifySignature()
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            const string secret = _sampleSecret;
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                          .WithSecret(secret)
+                          .MustVerifySignature()
+                          .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
         }
 
         [Fact]
         public void DecodeToken_WithVerifySignature_MultipleSecrets()
         {
-            var payload = new JwtBuilder()
-                .WithSecret(_sampleSecrets)
-                .MustVerifySignature()
-                .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            var secrets = _sampleSecrets;
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                .WithSecret(secrets)
+                .MustVerifySignature()
+                .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
         }
 
         [Fact]
         public void DecodeToken_WithoutVerifySignature()
         {
-            var payload = new JwtBuilder()
-                          .DoNotVerifySignature()
-                          .Decode(_sampleToken);
+            var builder = new JwtBuilder();
+            const string token = _sampleToken;
 
-            Assert.NotEmpty(payload);
+            var payload = builder
+                .DoNotVerifySignature()
+                .Decode(token);
+
+            payload.Should()
+                .NotBeEmpty("because the token should have been decoded without errors if asked so");
         }
 
         [Fact]
         public void DecodeToken_ToDictionary()
         {
-            var payload = new JwtBuilder()
-                          .WithSecret(_sampleSecret)
-                          .MustVerifySignature()
-                          .Decode<Dictionary<string, string>>(_sampleToken);
+            var builder = new JwtBuilder();
+            const string secret = _sampleSecret;
+            const string token = _sampleToken;
 
-            Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
+            var payload = builder
+                          .WithSecret(secret)
+                          .MustVerifySignature()
+                          .Decode<Dictionary<string, string>>(token);
+
+            payload.Should()
+                .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
+
+            payload.Should()
+                .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
+
+            payload["claims1"].Should()
+                .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
 
         [Fact]
         public void DecodeToken_ToDictionary_MultipleSecrets()
         {
-            var payload = new JwtBuilder()
-                .WithSecret(_sampleSecrets)
+            var builder = new JwtBuilder();
+            var secrets = _sampleSecrets;
+            const string token = _sampleToken;
+
+            var payload = builder
+                .WithSecret(secrets)
                 .MustVerifySignature()
-                .Decode<Dictionary<string, string>>(_sampleToken);
+                .Decode<Dictionary<string, string>>(token);
 
-            Assert.True(payload.Count == 2 && payload["claim1"] == 0.ToString());
+            payload.Should()
+                .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
+
+            payload.Should()
+                .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
+
+            payload["claims1"].Should()
+                .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
-
 
         [Fact]
         public void DecodeToken_ToDictionary_WithoutSerializer_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                                           .WithSerializer(null)
-                                                           .WithSecret(_sampleSecret)
-                                                           .MustVerifySignature()
-                                                           .Decode<Dictionary<string, string>>(_sampleToken));
+            var builder = new JwtBuilder();
+            const string secret = _sampleSecret;
+            var serializer = (IJsonSerializer) null;
+            const string token = _sampleToken;
+
+            Action decodingAJwtWithANullSerializerInADict = ()
+                => builder
+                    .WithSerializer(serializer)
+                    .WithSecret(secret)
+                    .MustVerifySignature()
+                    .Decode<Dictionary<string, string>>(token);
+
+            decodingAJwtWithANullSerializerInADict.Should()
+                .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
         }
     }
 }

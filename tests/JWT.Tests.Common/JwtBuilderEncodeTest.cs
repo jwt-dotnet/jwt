@@ -43,8 +43,8 @@ namespace JWT.Tests.Common
                 .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
                 .AddClaims(new Dictionary<string, object>
                 {
-                    {"key-1", "value-1"},
-                    {"key-2", "value-2"},
+                    { "key-1", "value-1" },
+                    { "key-2", "value-2" }
                 })
                 .Build();
             Assert.True(token.Length > 0 && token.Split('.').Length == 3);
