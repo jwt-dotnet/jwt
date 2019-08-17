@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
 using JWT.Serializers;
@@ -58,6 +59,20 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder AddClaim(string name, string value) =>
             AddClaim(name, (object)value);
+
+        /// <summary>
+        /// Add several claims to the JWT
+        /// </summary>
+        /// <param name="claims">IDictionary of claims to be added</param>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder AddClaims(IDictionary<string, object> claims)
+        {
+            foreach (var entry in claims)
+            {
+                AddClaim(entry.Key, entry.Value);
+            }
+            return this;
+        }
 
         /// <summary>
         /// Adds well-known claim to the JWT.
