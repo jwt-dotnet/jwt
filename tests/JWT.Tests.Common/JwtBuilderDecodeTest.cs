@@ -223,7 +223,7 @@ namespace JWT.Tests.Common
             payload.Should()
                 .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
 
-            payload["claims1"].Should()
+            payload["claim1"].Should()
                 .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
 
@@ -245,7 +245,7 @@ namespace JWT.Tests.Common
             payload.Should()
                 .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
 
-            payload["claims1"].Should()
+            payload["claim1"].Should()
                 .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
 
