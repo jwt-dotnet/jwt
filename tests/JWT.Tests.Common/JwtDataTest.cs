@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using AutoFixture;
+using FluentAssertions;
 using JWT.Builder;
 using Xunit;
 
@@ -6,26 +8,21 @@ namespace JWT.Tests.Common
 {
     public class JwtDataTest
     {
+        private readonly Fixture _fixture = new Fixture();
+
         [Fact]
         public void JwtData_With_Ctor_Params()
         {
-            var headers = new Dictionary<string, object>
-            {
-                { "test", "header" }
-            };
-
-            var payload = new Dictionary<string, object>
-            {
-                { "test", "payload" }
-            };
+            var headers = _fixture.Create<Dictionary<string, object>>();
+            var payload = _fixture.Create<Dictionary<string, object>>();
 
             var jwtData = new JwtData(headers, payload);
 
-            Assert.Equal(jwtData.Header["test"], "header");
-            Assert.Equal(jwtData.Payload["test"], "payload");
+            jwtData.Header.Should()
+                .Contain(headers, "because the DTO's header must match the one provided");
 
-            jwtData.Payload.Add("payload01", "payload02");
-            Assert.Equal(jwtData.Payload["payload01"], "payload02");
+            jwtData.Payload.Should()
+                .Contain(payload, "because the DTO's payload must match the one provided");
         }
     }
 }
