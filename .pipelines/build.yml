@@ -8,8 +8,8 @@ variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  coreVersion: '2.2.106'
-  nugetVersion: '4.9.4'
+  coreVersion: '2.2.401'
+  nugetVersion: '5.2.0'
 
 steps:
 - task: DotNetCoreInstaller@0
