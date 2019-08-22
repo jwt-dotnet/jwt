@@ -17,18 +17,18 @@ steps:
   inputs:
       version: $(coreVersion)
 
+- task: NuGetCommand@2
+  displayName: 'Restore NuGet packages for .NET Framework'
+  inputs:
+    command: 'restore'
+    restoreSolution: $(solution)
+ 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
     
-- task: NuGetCommand@2
-  displayName: 'Restore NuGet packages for .NET Framework'
-  inputs:
-    command: 'restore'
-    restoreSolution: $(solution)
-
 - task: NuGetToolInstaller@0
   displayName: Install NuGet v$(nugetVersion)
   inputs:
