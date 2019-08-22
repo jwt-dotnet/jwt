@@ -22,6 +22,12 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
+    
+- task: NuGetCommand@2
+  displayName: 'Restore NuGet packages for .NET Framework'
+  inputs:
+    command: 'restore'
+    restoreSolution: $(solution)
 
 - task: NuGetToolInstaller@0
   displayName: Install NuGet v$(nugetVersion)
