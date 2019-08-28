@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net46;net472;netstandard1.3;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
@@ -13,13 +12,26 @@
   <PropertyGroup>
     <Company>Public Domain</Company>
     <Copyright>Public Domain</Copyright>
-    <Description>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</Description>
-    <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
+    <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
-    <PackageLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</PackageLicenseUrl>
+    <PackageTags>jwt;json</PackageTags>
+    <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression> <!-- creative commons zero 1.0 -->
+    <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/jwt-dotnet/jwt/releases</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- disable sourcelink on mono, to workaround https://github.com/dotnet/sourcelink/issues/155 -->
+    <EnableSourceLink Condition=" '$(OS)' != 'Windows_NT' AND '$(MSBuildRuntimeType)' != 'Core' ">false</EnableSourceLink>
+    <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>    
+    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl> 
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- Include PDB in the built .nupkg -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
     <Version>5.2.3</Version>
-    <PackageTags>jwt json</PackageTags>
     <FileVersion>5.0.0.0</FileVersion>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </PropertyGroup>
@@ -31,8 +43,8 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>bin\Release\$(TargetFramework)\JWT.xml</DocumentationFile>
     <OutputPath>bin\Release\</OutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,5 +55,13 @@
     <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(SourceLinkEnabled)' != 'false'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" /> 
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\LICENSE.txt" Pack="true" PackagePath="LICENSE" />
   </ItemGroup>
 </Project>
