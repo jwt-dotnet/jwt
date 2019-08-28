@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
+using AutoFixture;
+using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
@@ -9,32 +11,44 @@ namespace JWT.Tests.Common
 {
     public class JwtSecurityTest
     {
+        private readonly Fixture _fixture = new Fixture();
+
         [Fact]
         [Trait(TestCategory.Category, TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
+            var key = _fixture.Create<string>();
+            const string token = TestData.AlgorithmNoneToken;
+
             var serializer = new JsonNetSerializer();
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action action = () => decoder.Decode(TestData.AlgorithmNoneToken, "ABC", verify: true);
+            Action decodeJwtWithNoAlgorithm = ()
+                => decoder.Decode(token, key, verify: true);
 
-            Assert.Throws<ArgumentException>(action);
+            decodeJwtWithNoAlgorithm.Should()
+                .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
         [Fact]
         [Trait(TestCategory.Category, TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used_MultipleKeys()
         {
+            var keys = _fixture.Create<string[]>();
+            const string token = TestData.AlgorithmNoneToken;
+
             var serializer = new JsonNetSerializer();
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action action = () => decoder.Decode(TestData.AlgorithmNoneToken, new[] {"ABC", "XYZ"}, verify: true);
+            Action decodeJwtWithNoAlgorithm = ()
+                => decoder.Decode(token, keys, verify: true);
 
-            Assert.Throws<ArgumentException>(action);
+            decodeJwtWithNoAlgorithm.Should()
+                .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
         [Fact]
@@ -46,14 +60,17 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
 
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
+            const string key = TestData.ServerRsaPublicKey1;
 
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKey1, verify: true);
+            Action decodingAJwtWithHmaWhenRsaIsExpected = ()
+                => decoder.Decode(encodedToken, key, verify: true);
 
-            Assert.Throws<NotSupportedException>(action);
+            decodingAJwtWithHmaWhenRsaIsExpected.Should()
+                .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
         }
 
         [Fact]
@@ -70,9 +87,11 @@ namespace JWT.Tests.Common
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action action = () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
+            Action decodingAJwtWithRsaWhenHmaIsExpected = ()
+                => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
 
-            Assert.Throws<NotSupportedException>(action);
+            decodingAJwtWithRsaWhenHmaIsExpected.Should()
+                .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
         }
     }
 }

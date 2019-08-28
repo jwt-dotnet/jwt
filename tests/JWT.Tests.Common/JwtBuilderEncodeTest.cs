@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using AutoFixture;
+using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using Xunit;
@@ -10,85 +13,162 @@ namespace JWT.Tests.Common
 {
     public class JwtBuilderEncodeTest
     {
+        private readonly Fixture _fixture = new Fixture();
+
         [Fact]
         public void Build_Token()
         {
-            var token = new JwtBuilder()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
+            var algorithm = new HMACSHA256Algorithm();
+            var builder = new JwtBuilder();
+            var secret = _fixture.Create<string>();
+
+            var tokenBuilt = builder
+                .WithAlgorithm(algorithm)
+                .WithSecret(secret)
                 .Build();
-            Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+
+            tokenBuilt.Should()
+                .NotBeEmpty("because the token should contains some data");
+
+            tokenBuilt.Split('.').Should()
+                .HaveCount(3, "because the built token should have the three standard parts");
         }
 
         [Fact]
         public void Build_WithPayload()
         {
-            var testtime = DateTime.UtcNow.AddHours(5).ToString(CultureInfo.InvariantCulture);
-            var token = new JwtBuilder()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
-                .AddClaim(ClaimName.ExpirationTime, testtime)
-                .Build();
-            Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+            var algorithm = new HMACSHA256Algorithm();
+            var builder = new JwtBuilder();
+            const ClaimName claimKey = ClaimName.ExpirationTime;
+            var claimValue = DateTime.UtcNow
+                .AddHours(1)
+                .ToString(CultureInfo.InvariantCulture);
+            var secret = _fixture.Create<string>();
 
-            var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
-            Assert.True(decodedToken.Contains("exp") && decodedToken.Contains(testtime));
+            var tokenBuilt = builder
+                .WithAlgorithm(algorithm)
+                .WithSecret(secret)
+                .AddClaim(claimValue, claimKey)
+                .Build();
+
+            tokenBuilt.Should()
+                .NotBeEmpty("because the token should contains some data");
+
+            tokenBuilt.Split('.').Should()
+                .HaveCount(3, "because the built token should have the three standard parts");
         }
 
         [Fact]
         public void Build_WithPayloadWithClaims()
         {
-            var token = new JwtBuilder()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret("gsdhjfkhdfjklhjklgfsdhgfbsdgfvsdvfghjdjfgb")
-                .AddClaims(new Dictionary<string, object>
-                {
-                    { "key-1", "value-1" },
-                    { "key-2", "value-2" }
-                })
-                .Build();
-            Assert.True(token.Length > 0 && token.Split('.').Length == 3);
+            var algorithm = new HMACSHA256Algorithm();
+            var claims = new Dictionary<string, object>();
+            var builder = new JwtBuilder();
+            var secret = _fixture.Create<string>();
 
-            var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
-            Assert.True(decodedToken.Contains("key-1") && decodedToken.Contains("value-1"));
-            Assert.True(decodedToken.Contains("key-2") && decodedToken.Contains("value-2"));
+            var nbClaims = _fixture.Create<int>();
+            var claimKeys = new string[nbClaims];
+            var claimValues = new string[nbClaims];
+
+            for (var i = 0; i < nbClaims; ++i)
+            {
+                claimKeys[i] = _fixture.Create<string>();
+                claimValues[i] = _fixture.Create<string>();
+
+                claims.Add(claimKeys[i], claimValues[i]);
+            }
+
+            var tokenBuilt = builder
+                .WithAlgorithm(algorithm)
+                .WithSecret(secret)
+                .AddClaims(claims)
+                .Build();
+
+            var decodedToken = Encoding.UTF8.GetString(
+                new JwtBase64UrlEncoder()
+                    .Decode(tokenBuilt.Split('.')[1]));
+
+            tokenBuilt.Should()
+                .NotBeEmpty("because the token should contains some data");
+
+            tokenBuilt.Split('.').Should()
+                .HaveCount(3, "because the built token should have the three standard parts");
+
+            decodedToken.Should()
+                .ContainAll(
+                    claimKeys,
+                    "because all used keys should be retrieved in the token");
+
+            decodedToken.Should()
+                .ContainAll(
+                    claimValues,
+                    "because all values associated with the claims should be retrieved in the token");
         }
 
         [Fact]
         public void Build_WithoutDependencies_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                         .Build());
+            var builder = new JwtBuilder();
+
+            Action buildWithoutDependencies = ()
+                => builder.Build();
+
+            buildWithoutDependencies.Should()
+                .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
         }
 
         [Fact]
         public void Build_WithSymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                         .WithAlgorithm(new HMACSHA256Algorithm())
-                                         .Build());
+            var algorithm = _fixture.Create<RS256Algorithm>();
+            var builder = new JwtBuilder();
+
+            Action buildWithSecretAndSymmetricAlgorithm = ()
+                => builder.WithAlgorithm(algorithm).Build();
+
+            buildWithSecretAndSymmetricAlgorithm.Should()
+                .Throw<InvalidOperationException>(
+                    "because a JWT can't be built with a symmetric algorithm and without a secret");
         }
 
         [Fact]
         public void Build_WithAsymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
-            // TODO: add a test with an asymmetric algorithm
+            var algorithm = new HMACSHA256Algorithm();
+            var builder = new JwtBuilder();
+
+            Action buildWithSecretAndAsymmetricAlgorithm = ()
+                => builder.WithAlgorithm(algorithm).Build();
+
+            buildWithSecretAndAsymmetricAlgorithm.Should()
+                .Throw<InvalidOperationException>(
+                    "because a JWT can't be built with a asymmetric algorithm and without a secret");
         }
 
         [Fact]
         public void Build_WithoutAlgorithm_WithSecret_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                                         .WithSecret("fjhsdghflghlk")
-                                         .Build());
+            var builder = new JwtBuilder();
+            var secret = _fixture.Create<string>();
+
+            Action buildingJwtWithoutAlgorithm = ()
+                => builder.WithSecret(secret).Build();
+
+            buildingJwtWithoutAlgorithm.Should()
+                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
 
         [Fact]
         public void Build_WithMultipleSecrets_Should_Throw_Exception()
         {
-            Assert.Throws<InvalidOperationException>(() => new JwtBuilder()
-                .WithSecret(new []{ "fjhsdghflghlk", "wrouhsfjkghure"})
-                .Build());
+            var builder = new JwtBuilder();
+            var secrets = _fixture.Create<string[]>();
+
+            Action buildingJwtWithoutAlgorithm = ()
+                => builder.WithSecret(secrets).Build();
+
+            buildingJwtWithoutAlgorithm.Should()
+                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
     }
 }
