@@ -51,7 +51,7 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Framework test
+  displayName: Run .NET Framework tests
   inputs:
     command: 'test'
     projects: 'tests/**/JWT.Tests.NetFramework.csproj'
