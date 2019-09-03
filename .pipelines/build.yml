@@ -2,45 +2,42 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
 
 variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  coreVersion: '2.2.401'
+  coreVersion: '2.2.x'
   nugetVersion: '5.2.0'
 
 steps:
-- task: DotNetCoreInstaller@0
+- task: DotNetCoreInstaller@1
   displayName: Install .NET Core v$(coreVersion)
   inputs:
       version: $(coreVersion)
 
 - task: DotNetCoreCLI@2
-  displayName: 'Restore NuGet packages for .NET Core'
+  displayName: Restore NuGet packages for .NET Core
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
 
-- task: NuGetToolInstaller@0
-  displayName: Install NuGet v$(nugetVersion)
-  inputs:
-    versionSpec: $(nugetVersion)
-    checkLatest: true
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
 
 - task: NuGetCommand@2
-  displayName: 'Restore NuGet packages for .NET Framework'
+  displayName: Restore NuGet packages for .NET Framework
   inputs:
     command: 'restore'
     restoreSolution: $(solution)
 
 - task: DotNetCoreCLI@2
-  displayName: 'Build solution'
+  displayName: Build solution
   inputs:
     command: 'build'
     projects: '$(solution)'
-    arguments: '-c $(buildConfiguration)'
+    arguments: '-c $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: Run .NET Core tests
