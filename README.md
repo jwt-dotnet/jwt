@@ -16,6 +16,12 @@ Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can dow
 - .NET Standard 1.3
 - .NET Standard 2.0
 
+## License
+
+This project is licensed under Public Domain, see the [LICENSE](LICENSE.txt) file.
+
+However, the maintainer ([@abatishchev](https://github.com/abatishchev)) shares the values of [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
+
 ## Usage
 ### Creating (encoding) token
 
