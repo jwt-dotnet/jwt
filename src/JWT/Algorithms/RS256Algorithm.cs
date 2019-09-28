@@ -9,7 +9,7 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
-        private readonly RSACryptoServiceProvider _publicKey;
+        private readonly RSA _publicKey;
         private readonly RSA _privateKey;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="publicKey">The RSA service provider for verifying the data.</param>
         /// <param name="privateKey">The RSA key for signing the data.</param>
-        public RS256Algorithm(RSACryptoServiceProvider publicKey, RSA privateKey)
+        public RS256Algorithm(RSA publicKey, RSA privateKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
             _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
@@ -27,7 +27,7 @@ namespace JWT.Algorithms
         /// Creates an instance using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The RSA service provider for verifying the data.</param>
-        public RS256Algorithm(RSACryptoServiceProvider publicKey)
+        public RS256Algorithm(RSA publicKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
         }
