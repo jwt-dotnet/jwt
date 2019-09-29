@@ -42,7 +42,7 @@ namespace JWT.Tests.Common
             var serializer = (IJsonSerializer)null;
             const string token = _sampleToken;
 
-            Action decodeJwtWithNullSerializer 
+            Action decodeJwtWithNullSerializer =
                 () => builder.WithSerializer(serializer)
                              .Decode(token);
 
@@ -62,7 +62,7 @@ namespace JWT.Tests.Common
                 .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because the token should be correctly decoded and its data extracted");
+                   .NotBeEmpty("because the token should be correctly decoded and its data extracted");
         }
 
         [Fact]
