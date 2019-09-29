@@ -9,16 +9,11 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
-        /// <remarks>
-        /// See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
-        /// </remarks>
-        private static readonly HashAlgorithmName SHA256NoSign = new HashAlgorithmName("sha256NoSign");
-
         private readonly RSA _publicKey;
         private readonly RSA _privateKey;
 
         /// <summary>
-        /// Creates an instance using the provided pair of public and private keys.
+        /// Creates an instance of <see cref="RS256Algorithm" /> using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
@@ -29,7 +24,7 @@ namespace JWT.Algorithms
         }
 
         /// <summary>
-        /// Creates an instance using the provided pair of public and private keys.
+        /// Creates an instance of <see cref="RS256Algorithm" /> using the provided public key only.
         /// </summary>
         /// <remarks>
         /// An instance created using this constructor can only be used for verifying the data, not for signing it.
@@ -38,6 +33,7 @@ namespace JWT.Algorithms
         public RS256Algorithm(RSA publicKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
+            _privateKey = null;
         }
 
         /// <summary>
@@ -57,7 +53,7 @@ namespace JWT.Algorithms
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>
-            Sign(bytesToSign);
+            _privateKey is object ? Sign(bytesToSign) : throw new InvalidOperationException("Can't sign data without private key");
 
         /// <summary>
         /// Signs the provided bytes.
@@ -73,7 +69,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            _publicKey.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
+            _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
