@@ -18,8 +18,8 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance using the provided pair of public and private keys.
         /// </summary>
-        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
-        /// <param name="privateKey">The RSA key for signing the data.</param>
+        /// <param name="publicKey">The public key for verifying the data.</param>
+        /// <param name="privateKey">The private key for signing the data.</param>
         public RS256Algorithm(RSA publicKey, RSA privateKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
@@ -29,7 +29,10 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance using the provided pair of public and private keys.
         /// </summary>
-        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
+        /// <remarks>
+        /// An instance instantiated using this constrictor can only be used for verifying the data, not for signing it.
+        /// </remarks>
+        /// <param name="publicKey">The public key for verifying the data.</param>
         public RS256Algorithm(RSA publicKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
