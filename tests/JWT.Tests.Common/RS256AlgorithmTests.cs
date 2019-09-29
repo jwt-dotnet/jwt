@@ -1,5 +1,5 @@
 using System;
-using System.Security.Cryptogtaphy;
+using System.Security.Cryptography;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
