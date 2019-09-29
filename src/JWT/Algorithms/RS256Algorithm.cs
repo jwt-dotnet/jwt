@@ -30,7 +30,7 @@ namespace JWT.Algorithms
         /// Creates an instance using the provided pair of public and private keys.
         /// </summary>
         /// <remarks>
-        /// An instance instantiated using this constrictor can only be used for verifying the data, not for signing it.
+        /// An instance created using this constructor can only be used for verifying the data, not for signing it.
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
         public RS256Algorithm(RSA publicKey)
