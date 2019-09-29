@@ -16,7 +16,7 @@ namespace JWT.Tests.Common
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null()
         {
             var publicKey = _fixture.Create<RSA>();
-            var alg = new RS256Algorithm(rsa, null);
+            var alg = new RS256Algorithm(publicKey, null);
 
             var bytesToSign = Array.Empty<byte>();
 
