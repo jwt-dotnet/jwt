@@ -9,7 +9,7 @@ using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests.Common
 {
-    public class JwtValidatorTest
+    public class JwtValidatorTests
     {
         [Theory]
         [InlineData(null, null, null)]
