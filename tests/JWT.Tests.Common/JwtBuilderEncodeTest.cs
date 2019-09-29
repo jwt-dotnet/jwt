@@ -110,8 +110,8 @@ namespace JWT.Tests.Common
         {
             var builder = new JwtBuilder();
 
-            Action buildWithoutDependencies = ()
-                => builder.Build();
+            Action buildWithoutDependencies =
+                () => builder.Build();
 
             buildWithoutDependencies.Should()
                 .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
@@ -123,8 +123,8 @@ namespace JWT.Tests.Common
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
 
-            Action buildWithSecretAndAsymmetricAlgorithm = ()
-                => builder.WithAlgorithm(algorithm).Build();
+            Action buildWithSecretAndAsymmetricAlgorithm =
+                () => builder.WithAlgorithm(algorithm).Build();
 
             buildWithSecretAndSymmetricAlgorithm.Should()
                 .Throw<InvalidOperationException>("because a JWT can't be built with a symmetric algorithm and without a secret");
@@ -136,8 +136,8 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
             var secret = _fixture.Create<string>();
 
-            Action buildingJwtWithoutAlgorithm = ()
-                => builder.WithSecret(secret).Build();
+            Action buildingJwtWithoutAlgorithm =
+                () => builder.WithSecret(secret).Build();
 
             buildingJwtWithoutAlgorithm.Should()
                 .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
@@ -149,8 +149,8 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
             var secrets = _fixture.Create<string[]>();
 
-            Action buildingJwtWithoutAlgorithm = ()
-                => builder.WithSecret(secrets).Build();
+            Action buildingJwtWithoutAlgorithm =
+                () => builder.WithSecret(secrets).Build();
 
             buildingJwtWithoutAlgorithm.Should()
                 .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
