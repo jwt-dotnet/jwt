@@ -6,7 +6,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtDataTest
+    public class JwtDataTests
     {
         private readonly Fixture _fixture = new Fixture();
 
