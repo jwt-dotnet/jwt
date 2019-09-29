@@ -7,7 +7,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtBuilderDecodeTest
+    public class JwtBuilderDecodeTests
     {
         private const string _sampleToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
         private const string _sampleSecret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
