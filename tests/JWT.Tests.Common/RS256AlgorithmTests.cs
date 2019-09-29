@@ -24,5 +24,6 @@ namespace JWT.Tests.Common
 
             signWithoutPrivateKey
                 .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without a private key");
+        }
     }
 }
