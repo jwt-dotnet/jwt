@@ -17,7 +17,7 @@ namespace JWT.Tests.Common
             var publicKey = _fixture.Create<RSA>()
             var alg = new RS256Algorithm(rsa, null);
 
-            var bytesToSign
+            var bytesToSign = Array.Empty<byte>();
 
             Action signWithoutPrivateKey =
                 () => alg.Sign(null, bytesToSign);
