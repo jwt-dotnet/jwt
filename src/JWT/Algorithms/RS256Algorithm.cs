@@ -75,7 +75,7 @@ namespace JWT.Algorithms
             switch (_publicKey)
             {
                  case RSACryptoServiceProvider csp:
-                     return cps.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+                     return csp.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
                  case RSACng cng:
                      return cng.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
                  default:
