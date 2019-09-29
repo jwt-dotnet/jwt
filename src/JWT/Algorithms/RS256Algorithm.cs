@@ -9,7 +9,9 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
-        /// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
+        /// <remarks>
+        /// See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
+        /// </remarks>
         private static readonly HashAlgorithmName SHA256NoSign = new HashAlgorithmName("sha256NoSign");
 
         private readonly RSA _publicKey;
