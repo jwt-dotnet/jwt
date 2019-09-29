@@ -62,14 +62,10 @@ namespace JWT.Algorithms
         /// <summary>
         /// Verifies provided byte array with provided signature.
         /// </summary>
-        /// <remarks>
-        /// 2.16.840.1.101.3.4.2.1 is the object id for the sha256NoSign algorithm.
-        /// See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad for further details.
-        /// </remarks>
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+            _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
