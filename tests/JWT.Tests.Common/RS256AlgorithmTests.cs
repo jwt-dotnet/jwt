@@ -5,8 +5,6 @@ using FluentAssertions;
 using JWT.Algorithms;
 using Xunit;
 
-using static JWT.Internal.EncodingHelper;
-
 namespace JWT.Tests.Common
 {
     public class RS256AlgorithmTest
