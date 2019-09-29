@@ -7,7 +7,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class RS256AlgorithmTest
+    public class RS256AlgorithmTests
     {
         private readonly Fixture _fixture = new Fixture();
 
