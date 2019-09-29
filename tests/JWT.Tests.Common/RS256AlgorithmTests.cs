@@ -12,6 +12,30 @@ namespace JWT.Tests.Common
         private readonly Fixture _fixture = new Fixture();
 
         [Fact]
+        public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null()
+        {
+            var privateKey = _fixture.Create<RSACryptoServiceProvider>();
+
+            Action newWithoutPublicKey =
+                () => new RS256Algorithm(null, privateKey);
+
+            newWithoutPublicKey.Should()
+                               .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
+        }
+
+        [Fact]
+        public void Ctor_Should_Throw_Exception_When_PrivateKey_Is_Null()
+        {
+            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+
+            Action newWithoutPrivateKey =
+                () => new RS256Algorithm(publicKey);
+
+            newWithoutPrivateKey.Should()
+                                .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
+        }
+
+        [Fact]
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null()
         {
             var publicKey = _fixture.Create<RSACryptoServiceProvider>();
@@ -23,7 +47,7 @@ namespace JWT.Tests.Common
                 () => alg.Sign(null, bytesToSign);
 
             signWithoutPrivateKey.Should()
-                                 .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without a private key");
+                                 .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
         }
     }
 }
