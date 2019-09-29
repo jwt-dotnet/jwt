@@ -81,13 +81,13 @@ namespace JWT.Algorithms
 
         private static RSA GetPublicKey(X509Certificate2 cert)
         {
-            AsymmetricAlgorithm alg;
+            RSA alg;
 #if NETSTANDARD1_3
             alg = cert.GetRSAPublicKey();
 #else
             alg = cert.PublicKey.Key;
 #endif
-            return (RSA)alg;
+            return alg;
         }
     }
 }
