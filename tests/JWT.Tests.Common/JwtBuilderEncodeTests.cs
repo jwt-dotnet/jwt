@@ -11,7 +11,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtBuilderEncodeTest
+    public class JwtBuilderEncodeTests
     {
         private readonly Fixture _fixture = new Fixture();
 
