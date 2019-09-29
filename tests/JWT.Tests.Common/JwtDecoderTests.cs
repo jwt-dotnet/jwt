@@ -201,7 +201,7 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
-            Action encodeJwtWithWrongExpField
+            Action encodeJwtWithWrongExpField =
                 () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             encodeJwtWithWrongExpField.Should()
@@ -224,7 +224,7 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
-            Action encodeJwtWithWrongExpField
+            Action encodeJwtWithWrongExpField =
                 () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
 
             encodeJwtWithWrongExpField.Should()
