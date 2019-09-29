@@ -67,8 +67,18 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
-        public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            _publicKey.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
+        public bool Verify(byte[] bytesToSign, byte[] signature)
+        {
+            switch (_publicKey)
+            {
+                 case RSACryptoServiceProvider csp:
+                     return cps.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+                 case RSACng cng:
+                     return cng.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
+                 default:
+                     throw new ArgumentOutOfRangeException(); // TODO
+            }
+        }
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
@@ -81,13 +91,11 @@ namespace JWT.Algorithms
 
         private static RSA GetPublicKey(X509Certificate2 cert)
         {
-            RSA alg;
 #if NETSTANDARD1_3
-            alg = cert.GetRSAPublicKey();
+            return cert.GetRSAPublicKey();
 #else
-            alg = cert.PublicKey.Key;
+            return cert.PublicKey.Key;
 #endif
-            return alg;
         }
     }
 }
