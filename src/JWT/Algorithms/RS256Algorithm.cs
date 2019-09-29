@@ -72,16 +72,8 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
-        public bool Verify(byte[] bytesToSign, byte[] signature)
-        {
-            switch (_publicKey)
-            {
-                 case RSACryptoServiceProvider csp:
-                     return csp.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
-                 default:
-                     return _publicKey.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
-            }
-        }
+        public bool Verify(byte[] bytesToSign, byte[] signature) =>
+            _publicKey.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
