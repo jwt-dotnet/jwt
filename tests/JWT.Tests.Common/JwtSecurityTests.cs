@@ -9,7 +9,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtSecurityTest
+    public class JwtSecurityTests
     {
         private readonly Fixture _fixture = new Fixture();
 
