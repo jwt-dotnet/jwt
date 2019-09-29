@@ -28,8 +28,8 @@ namespace JWT.Tests.Common
         {
             var builder = new JwtBuilder();
 
-            Action decodingANullJwt = ()
-                => builder.Decode(null);
+            Action decodingANullJwt =
+                () => builder.Decode(null);
 
             decodingANullJwt.Should()
                 .Throw<ArgumentException>("because null is not a valid value for a token");
@@ -39,11 +39,11 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutSerializer_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
-            var serializer = (IJsonSerializer) null;
+            var serializer = (IJsonSerializer)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullSerializer = ()
-                => builder.WithSerializer(serializer)
+            Action decodingAJwtWithANullSerializer 
+                () => builder.WithSerializer(serializer)
                     .Decode(token);
 
             decodingAJwtWithANullSerializer.Should()
@@ -69,12 +69,12 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutUrlEncoder_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
-            var urlEncoder = (IBase64UrlEncoder) null;
+            var urlEncoder = (IBase64UrlEncoder)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullEncoder = ()
-                => builder.WithUrlEncoder(urlEncoder)
-                    .Decode(token);
+            Action decodingAJwtWithANullEncoder =
+               () => builder.WithUrlEncoder(urlEncoder)
+                            .Decode(token);
 
             decodingAJwtWithANullEncoder.Should()
                 .Throw<InvalidOperationException>("because a token can't be decoded without a valid UrlEncoder");
@@ -99,13 +99,13 @@ namespace JWT.Tests.Common
         public void DecodeToken_WithoutTimeProvider_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
-            var dateTimeProvider = (IDateTimeProvider) null;
+            var dateTimeProvider = (IDateTimeProvider)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullDateTimeProvider = ()
-                => builder
-                    .WithDateTimeProvider(dateTimeProvider)
-                    .Decode(token);
+            Action decodingAJwtWithANullDateTimeProvider =
+                () => builder
+                        .WithDateTimeProvider(dateTimeProvider)
+                        .Decode(token);
 
             decodingAJwtWithANullDateTimeProvider.Should()
                 .Throw<InvalidOperationException>("because a token can't be decoded without a valid DateTimeProvider");
@@ -132,7 +132,7 @@ namespace JWT.Tests.Common
         {
             var builder = new JwtBuilder();
             const string token = _sampleToken;
-            var validator = (IJwtValidator) null;
+            var validator = (IJwtValidator)null;
 
             var payload = builder
                           .WithValidator(validator)
@@ -254,17 +254,17 @@ namespace JWT.Tests.Common
         {
             var builder = new JwtBuilder();
             const string secret = _sampleSecret;
-            var serializer = (IJsonSerializer) null;
+            var serializer = (IJsonSerializer)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullSerializerInADict = ()
-                => builder
-                    .WithSerializer(serializer)
-                    .WithSecret(secret)
-                    .MustVerifySignature()
-                    .Decode<Dictionary<string, string>>(token);
+            Action decodeJwtWithANullSerializerInADict =
+                () => builder
+                        .WithSerializer(serializer)
+                        .WithSecret(secret)
+                        .MustVerifySignature()
+                        .Decode<Dictionary<string, string>>(token);
 
-            decodingAJwtWithANullSerializerInADict.Should()
+            decodeJwtWithANullSerializerInADict.Should()
                 .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
         }
     }
