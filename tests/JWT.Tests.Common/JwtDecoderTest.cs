@@ -46,7 +46,7 @@ namespace JWT.Tests.Common
             var expected = serializer.Serialize(toSerialize);
 
             actual.Should()
-                .Be(expected, "because the provided object should be correctly serialized in the token");
+                  .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject(token, key, verify: false);
 
             actual.Should()
-                .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
+                  .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
         }
 
         [Fact]
@@ -80,8 +80,7 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject(token, keys, verify: false);
 
             actual.Should()
-                .Equal(expected,
-                    "because the JWT should have been correctly deserialized to the correct object");
+                  .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
         }
 
         [Fact]
@@ -98,8 +97,7 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject<Customer>(token, key, verify: false);
 
             actual.Should()
-                .BeEquivalentTo(expected,
-                    "because the JWT should have been correctly deserialized to the same customer object");
+                  .BeEquivalentTo(expected, "because the JWT should have been correctly deserialized to the same customer object");
         }
 
         [Fact]
@@ -116,8 +114,7 @@ namespace JWT.Tests.Common
             var actual = decoder.DecodeToObject<Customer>(token, keys, verify: false);
 
             actual.Should()
-                .BeEquivalentTo(expected,
-                    "because the JWT should have been correctly deserialized to the same customer object");
+                  .BeEquivalentTo(expected, "because the JWT should have been correctly deserialized to the same customer object");
         }
 
         [Fact]
@@ -130,12 +127,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
-            Action decodingAnInvalidJwt = ()
-                => decoder.DecodeToObject<Customer>(badToken, key, verify: false);
+            Action decodeInvalidJwt =
+                () => decoder.DecodeToObject<Customer>(badToken, key, verify: false);
 
-            decodingAnInvalidJwt.Should()
-                .Throw<InvalidTokenPartsException>(
-                    "because the provided token does not contains the required three parts");
+            decodeInvalidJwt.Should()
+                            .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
         }
 
         [Fact]
@@ -148,12 +144,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, null, urlEncoder);
 
-            Action decodingAnInvalidJwtWithMultipleKeys = ()
-                => decoder.DecodeToObject<Customer>(badToken, keys, verify: false);
+            Action decodeInvalidJwtWithMultipleKeys =
+                () => decoder.DecodeToObject<Customer>(badToken, keys, verify: false);
 
-            decodingAnInvalidJwtWithMultipleKeys.Should()
-                .Throw<InvalidTokenPartsException>(
-                    "because the provided token does not contains the required three parts");
+            decodeInvalidJwtWithMultipleKeys.Should()
+                                            .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
         }
 
         [Fact]
@@ -167,12 +162,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action decodingAJwtWithWrongKey = ()
-                => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action decodeJwtWithWrongKey =
+                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            decodingAJwtWithWrongKey.Should()
-                .Throw<SignatureVerificationException>(
-                    "because providing the wrong key must raise an error when the signature is verified");
+            decodeJwtWithWrongKey.Should()
+                                 .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
         }
 
         [Fact]
@@ -186,12 +180,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action decodingAJwtWithWrongKey = ()
-                => decoder.DecodeToObject<Customer>(token, keys, verify: true);
+            Action decodeJwtWithWrongKey =
+                () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
 
-            decodingAJwtWithWrongKey.Should()
-                .Throw<SignatureVerificationException>(
-                    "because providing the wrong key must raise an error when the signature is verified");
+            decodeJwtWithWrongKey.Should()
+                                 .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
         }
 
         [Fact]
@@ -208,11 +201,11 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
-            Action encodingAJwtWithWrongExpField = ()
-                => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action encodeJwtWithWrongExpField
+                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            encodingAJwtWithWrongExpField.Should()
-                .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
+            encodeJwtWithWrongExpField.Should()
+                                      .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
         }
 
         [Fact]
@@ -231,11 +224,11 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
-            Action encodingAJwtWithWrongExpField = ()
-                => decoder.DecodeToObject<Customer>(token, keys, verify: true);
+            Action encodeJwtWithWrongExpField
+                () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
 
-            encodingAJwtWithWrongExpField.Should()
-                .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
+            encodeJwtWithWrongExpField.Should()
+                                      .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
         }
 
         [Fact]
@@ -252,13 +245,12 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key);
 
-            Action encodingAJwtWithNullExpField = ()
-                => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action encodeJwtWithNullExpField =
+                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            encodingAJwtWithNullExpField.Should()
-                .Throw<SignatureVerificationException>()
-                .WithMessage("Claim 'exp' must be a number.",
-                    "because the invalid 'exp' must result in an exception on decoding");
+            encodeJwtWithNullExpField.Should()
+                                     .Throw<SignatureVerificationException>()
+                                     .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
         [Fact]
@@ -277,13 +269,12 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key);
 
-            Action encodingAJwtWithNullExpField = ()
-                => decoder.DecodeToObject<Customer>(token, keys, verify: true);
+            Action encodeJwtWithNullExpField =
+                () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
 
-            encodingAJwtWithNullExpField.Should()
-                .Throw<SignatureVerificationException>()
-                .WithMessage("Claim 'exp' must be a number.",
-                    "because the invalid 'exp' must result in an exception on decoding");
+            encodeJwtWithNullExpField.Should()
+                                     .Throw<SignatureVerificationException>()
+                                     .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
         [Fact]
@@ -306,12 +297,11 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp }, key);
 
-            Action decodingAnExpiredJwt = ()
-                => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action decodeExpiredJwt =
+                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            decodingAnExpiredJwt.Should()
-                .Throw<TokenExpiredException>(
-                    "because decoding an expired token should raise an exception when verified");
+            decodeExpiredJwt.Should()
+                            .Throw<TokenExpiredException>("because decoding an expired token should raise an exception when verified");
         }
 
         [Fact]
@@ -335,7 +325,7 @@ namespace JWT.Tests.Common
             var actual = decoder.Decode(validToken, key, true);
 
             expected.Should()
-                .Be(actual, "because the token should be correctly decoded");
+                    .Be(actual, "because the token should be correctly decoded");
         }
 
         [Fact]
@@ -353,9 +343,11 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { nbf }, "ABC");
 
-            Action action = () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
+            Action decodeNotActiveJwt =
+                () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
 
-            Assert.Throws<SignatureVerificationException>(action);
+            decodeNotActiveJwt.Should()
+                              .Throw<SignatureVerificationException>();
         }
 
         [Fact]
@@ -372,13 +364,12 @@ namespace JWT.Tests.Common
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var token = encoder.Encode(new { nbf = (object)null }, key);
 
-            Action encodingAJwtWithNullExpField = ()
-                => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action encodeJwtWithNullExpField =
+                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            encodingAJwtWithNullExpField.Should()
-                .Throw<SignatureVerificationException>()
-                .WithMessage("Claim 'nbf' must be a number.",
-                    "because the invalid 'nbf' must result in an exception on decoding");
+            encodeJwtWithNullExpField.Should()
+                                     .Throw<SignatureVerificationException>()
+                                     .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
 
         [Fact]
