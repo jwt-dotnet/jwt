@@ -32,7 +32,7 @@ namespace JWT.Tests.Common
                 () => builder.Decode(null);
 
             decodingANullJwt.Should()
-                .Throw<ArgumentException>("because null is not a valid value for a token");
+                            .Throw<ArgumentException>("because null is not a valid value for a token");
         }
 
         [Fact]
@@ -42,12 +42,12 @@ namespace JWT.Tests.Common
             var serializer = (IJsonSerializer)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullSerializer 
+            Action decodeJwtWithNullSerializer 
                 () => builder.WithSerializer(serializer)
-                    .Decode(token);
+                             .Decode(token);
 
-            decodingAJwtWithANullSerializer.Should()
-                .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
+            decodeJwtWithNullSerializer.Should()
+                                       .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
         }
 
         [Fact]
@@ -72,12 +72,12 @@ namespace JWT.Tests.Common
             var urlEncoder = (IBase64UrlEncoder)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullEncoder =
+            Action decodeJwtWithNullEncoder =
                () => builder.WithUrlEncoder(urlEncoder)
                             .Decode(token);
 
-            decodingAJwtWithANullEncoder.Should()
-                .Throw<InvalidOperationException>("because a token can't be decoded without a valid UrlEncoder");
+            decodeJwtWithNullEncoder.Should()
+                                    .Throw<InvalidOperationException>("because a token can't be decoded without a valid UrlEncoder");
         }
 
         [Fact]
@@ -92,7 +92,7 @@ namespace JWT.Tests.Common
                           .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because the token should have been correctly decoded with the valid base 64 encoder");
+                   .NotBeEmpty("because the token should have been correctly decoded with the valid base 64 encoder");
         }
 
         [Fact]
@@ -102,13 +102,13 @@ namespace JWT.Tests.Common
             var dateTimeProvider = (IDateTimeProvider)null;
             const string token = _sampleToken;
 
-            Action decodingAJwtWithANullDateTimeProvider =
+            Action decodingJwtWithNullDateTimeProvider =
                 () => builder
                         .WithDateTimeProvider(dateTimeProvider)
                         .Decode(token);
 
-            decodingAJwtWithANullDateTimeProvider.Should()
-                .Throw<InvalidOperationException>("because a token can't be decoded without a valid DateTimeProvider");
+            decodingJwtWithNullDateTimeProvider.Should()
+                                               .Throw<InvalidOperationException>("because a token can't be decoded without a valid DateTimeProvider");
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace JWT.Tests.Common
                           .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because the decoding process must be successful with a valid DateTimeProvider");
+                   .NotBeEmpty("because the decoding process must be successful with a valid DateTimeProvider");
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace JWT.Tests.Common
                           .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because a JWT should not necessary have a validator to be decoded");
+                   .NotBeEmpty("because a JWT should not necessary have a validator to be decoded");
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace JWT.Tests.Common
                           .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because a JWT should be correctly decoded, even with a validator");
+                   .NotBeEmpty("because a JWT should be correctly decoded, even with a validator");
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace JWT.Tests.Common
                           .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
+                   .NotBeEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace JWT.Tests.Common
                 .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
+                   .NotBeEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
         }
 
         [Fact]
@@ -202,7 +202,7 @@ namespace JWT.Tests.Common
                 .Decode(token);
 
             payload.Should()
-                .NotBeEmpty("because the token should have been decoded without errors if asked so");
+                   .NotBeEmpty("because the token should have been decoded without errors if asked so");
         }
 
         [Fact]
@@ -218,13 +218,13 @@ namespace JWT.Tests.Common
                           .Decode<Dictionary<string, string>>(token);
 
             payload.Should()
-                .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
+                   .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
 
             payload.Should()
-                .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
+                   .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
 
             payload["claim1"].Should()
-                .Be(0.ToString(), "because the key of the first claim should give its original value");
+                             .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
 
         [Fact]
@@ -240,13 +240,13 @@ namespace JWT.Tests.Common
                 .Decode<Dictionary<string, string>>(token);
 
             payload.Should()
-                .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
+                   .BeOfType<Dictionary<string, string>>("because the result should be of the requested type");
 
             payload.Should()
-                .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
+                   .HaveCount(2, "because there is two encoded claims that should be resulting in two keys");
 
             payload["claim1"].Should()
-                .Be(0.ToString(), "because the key of the first claim should give its original value");
+                             .Be(0.ToString(), "because the key of the first claim should give its original value");
         }
 
         [Fact]
@@ -257,15 +257,15 @@ namespace JWT.Tests.Common
             var serializer = (IJsonSerializer)null;
             const string token = _sampleToken;
 
-            Action decodeJwtWithANullSerializerInADict =
+            Action decodeJwtWithNullSerializer =
                 () => builder
                         .WithSerializer(serializer)
                         .WithSecret(secret)
                         .MustVerifySignature()
                         .Decode<Dictionary<string, string>>(token);
 
-            decodeJwtWithANullSerializerInADict.Should()
-                .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
+            decodeJwtWithNullSerializer.Should()
+                                       .Throw<InvalidOperationException>("because a token can't be decoded without a valid serializer");
         }
     }
 }
