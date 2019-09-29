@@ -7,7 +7,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtEncoderTest
+    public class JwtEncoderTests
     {
         [Fact]
         public void Encode_Should_Encode_To_Token()
@@ -24,7 +24,7 @@ namespace JWT.Tests.Common
             var actual = encoder.Encode(toEncode, key);
 
             actual.Should()
-                .Be(token, "because the same data encoded with the same key must result in the same token");
+                  .Be(token, "because the same data encoded with the same key must result in the same token");
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace JWT.Tests.Common
             var actual = encoder.Encode(extraHeaders, toEncode, key);
 
             actual.Should()
-                .Be(token, "because the same data encoded with the same key must result in the same token");
+                  .Be(token, "because the same data encoded with the same key must result in the same token");
         }
     }
 }

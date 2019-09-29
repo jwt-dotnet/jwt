@@ -6,7 +6,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtDataTest
+    public class JwtDataTests
     {
         private readonly Fixture _fixture = new Fixture();
 
@@ -18,11 +18,13 @@ namespace JWT.Tests.Common
 
             var jwtData = new JwtData(headers, payload);
 
-            jwtData.Header.Should()
-                .Contain(headers, "because the DTO's header must match the one provided");
+            jwtData.Header
+                   .Should()
+                   .Contain(headers, "because the DTO's header must match the one provided");
 
-            jwtData.Payload.Should()
-                .Contain(payload, "because the DTO's payload must match the one provided");
+            jwtData.Payload
+                   .Should()
+                   .Contain(payload, "because the DTO's payload must match the one provided");
         }
     }
 }
