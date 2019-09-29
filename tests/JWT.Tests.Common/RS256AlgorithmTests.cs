@@ -20,7 +20,7 @@ namespace JWT.Tests.Common
                 () => new RS256Algorithm(null, privateKey);
 
             newWithoutPublicKey.Should()
-                               .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
+                               .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
         }
 
         [Fact]
