@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptogtaphy;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -23,8 +24,8 @@ namespace JWT.Tests.Common
             Action signWithoutPrivateKey =
                 () => alg.Sign(null, bytesToSign);
 
-            signWithoutPrivateKey
-                .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without a private key");
+            signWithoutPrivateKey.Should()
+                                 .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without a private key");
         }
     }
 }
