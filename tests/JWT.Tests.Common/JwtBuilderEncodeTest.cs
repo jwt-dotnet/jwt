@@ -123,7 +123,7 @@ namespace JWT.Tests.Common
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
 
-            Action buildWithSecretAndAsymmetricAlgorithm =
+            Action buildWithSecretAndSymmetricAlgorithm =
                 () => builder.WithAlgorithm(algorithm).Build();
 
             buildWithSecretAndSymmetricAlgorithm.Should()
