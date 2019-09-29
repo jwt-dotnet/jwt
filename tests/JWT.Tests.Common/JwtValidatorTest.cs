@@ -21,11 +21,11 @@ namespace JWT.Tests.Common
         {
             var jwtValidator = new JwtValidator(null, null);
 
-            Action validateJwtWithNullOrEmptyArgument = ()
-                => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+            Action validateJwtWithNullOrEmptyArgument =
+                () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
             validateJwtWithNullOrEmptyArgument.Should()
-                .Throw<ArgumentException>("because the JWT argument must not be null or empty");
+                                              .Throw<ArgumentException>("because the JWT argument must not be null or empty");
         }
 
         [Fact]
@@ -50,11 +50,11 @@ namespace JWT.Tests.Common
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
-            Action validateJwtWithBadSignature = ()
-                => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+            Action validateJwtWithBadSignature =
+                () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
             validateJwtWithBadSignature.Should()
-                .Throw<SignatureVerificationException>("because the signature does not match the crypto");
+                                       .Throw<SignatureVerificationException>("because the signature does not match the crypto");
         }
 
         [Fact]
@@ -93,10 +93,10 @@ namespace JWT.Tests.Common
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                .BeFalse("because the token should not have been validated");
+                   .BeFalse("because the token should not have been validated");
 
             ex.Should()
-                .NotBeNull("because an exception should have been thrown during the process");
+              .NotBeNull("because an exception should have been thrown during the process");
         }
 
         [Fact]
@@ -123,10 +123,10 @@ namespace JWT.Tests.Common
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                .BeFalse("because the token should not have been validated");
+                   .BeFalse("because the token should not have been validated");
 
             ex.Should()
-                .NotBeNull("because an exception should have been thrown during the process");
+              .NotBeNull("because an exception should have been thrown during the process");
         }
 
         [Fact]
@@ -152,10 +152,10 @@ namespace JWT.Tests.Common
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                .BeTrue("because the token should have been validated");
+                   .BeTrue("because the token should have been validated");
 
             ex.Should()
-                .BeNull("because a valid token verified should not raise any exception");
+              .BeNull("because a valid token verified should not raise any exception");
         }
     }
 }
