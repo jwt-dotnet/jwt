@@ -1,4 +1,5 @@
 using System;
+using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using Xunit;
