@@ -120,29 +120,14 @@ namespace JWT.Tests.Common
         [Fact]
         public void Build_WithSymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
-            var algorithm = _fixture.Create<RS256Algorithm>();
-            var builder = new JwtBuilder();
-
-            Action buildWithSecretAndSymmetricAlgorithm = ()
-                => builder.WithAlgorithm(algorithm).Build();
-
-            buildWithSecretAndSymmetricAlgorithm.Should()
-                .Throw<InvalidOperationException>(
-                    "because a JWT can't be built with a symmetric algorithm and without a secret");
-        }
-
-        [Fact]
-        public void Build_WithAsymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
-        {
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
 
             Action buildWithSecretAndAsymmetricAlgorithm = ()
                 => builder.WithAlgorithm(algorithm).Build();
 
-            buildWithSecretAndAsymmetricAlgorithm.Should()
-                .Throw<InvalidOperationException>(
-                    "because a JWT can't be built with a asymmetric algorithm and without a secret");
+            buildWithSecretAndSymmetricAlgorithm.Should()
+                .Throw<InvalidOperationException>("because a JWT can't be built with a symmetric algorithm and without a secret");
         }
 
         [Fact]
