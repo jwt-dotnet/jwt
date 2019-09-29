@@ -9,6 +9,9 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
+        /// https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad
+        private static readonly HashAlgorithmName SHA256NoSign = new HashAlgorithmName("sha256NoSign");
+
         private readonly RSA _publicKey;
         private readonly RSA _privateKey;
 
@@ -65,7 +68,7 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            _publicKey.VerifyData(bytesToSign, signature, nee HashAlgorithmName("SHA256nosign"), RSASignaturePadding.Pkcs1);
+            _publicKey.VerifyData(bytesToSign, signature, SHA256NoSign, RSASignaturePadding.Pkcs1);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
