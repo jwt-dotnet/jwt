@@ -24,11 +24,7 @@ namespace JWT.Algorithms
                 case JwtHashAlgorithm.RS256:
                 {
                     var certificate = _certFactory();
-#if NETSTANDARD1_3
-                    return new RS256Algorithm((RSACryptoServiceProvider)certificate.GetRSAPublicKey(), certificate.GetRSAPrivateKey());
-#else
-                    return new RS256Algorithm((RSACryptoServiceProvider)certificate.PublicKey.Key, (RSA)certificate.PrivateKey);
-#endif
+                    return new RS256Algorithm(certificate);
                 }
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
