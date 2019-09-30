@@ -11,7 +11,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtBuilderEncodeTest
+    public class JwtBuilderEncodeTests
     {
         private readonly Fixture _fixture = new Fixture();
 
@@ -28,10 +28,10 @@ namespace JWT.Tests.Common
                 .Build();
 
             tokenBuilt.Should()
-                .NotBeEmpty("because the token should contains some data");
+                      .NotBeEmpty("because the token should contains some data");
 
             tokenBuilt.Split('.').Should()
-                .HaveCount(3, "because the built token should have the three standard parts");
+                      .HaveCount(3, "because the built token should have the three standard parts");
         }
 
         [Fact]
@@ -41,8 +41,8 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
             const ClaimName claimKey = ClaimName.ExpirationTime;
             var claimValue = DateTime.UtcNow
-                .AddHours(1)
-                .ToString(CultureInfo.InvariantCulture);
+                                     .AddHours(1)
+                                     .ToString(CultureInfo.InvariantCulture);
             var secret = _fixture.Create<string>();
 
             var tokenBuilt = builder
@@ -52,10 +52,11 @@ namespace JWT.Tests.Common
                 .Build();
 
             tokenBuilt.Should()
-                .NotBeEmpty("because the token should contains some data");
+                      .NotBeEmpty("because the token should contains some data");
 
-            tokenBuilt.Split('.').Should()
-                .HaveCount(3, "because the built token should have the three standard parts");
+            tokenBuilt.Split('.')
+                      .Should()
+                      .HaveCount(3, "because the built token should have the three standard parts");
         }
 
         [Fact]
@@ -89,20 +90,17 @@ namespace JWT.Tests.Common
                     .Decode(tokenBuilt.Split('.')[1]));
 
             tokenBuilt.Should()
-                .NotBeEmpty("because the token should contains some data");
+                      .NotBeEmpty("because the token should contains some data");
 
-            tokenBuilt.Split('.').Should()
-                .HaveCount(3, "because the built token should have the three standard parts");
-
-            decodedToken.Should()
-                .ContainAll(
-                    claimKeys,
-                    "because all used keys should be retrieved in the token");
+            tokenBuilt.Split('.')
+                      .Should()
+                      .HaveCount(3, "because the built token should have the three standard parts");
 
             decodedToken.Should()
-                .ContainAll(
-                    claimValues,
-                    "because all values associated with the claims should be retrieved in the token");
+                        .ContainAll(claimKeys, "because all used keys should be retrieved in the token");
+
+            decodedToken.Should()
+                        .ContainAll(claimValues, "because all values associated with the claims should be retrieved in the token");
         }
 
         [Fact]
@@ -110,39 +108,24 @@ namespace JWT.Tests.Common
         {
             var builder = new JwtBuilder();
 
-            Action buildWithoutDependencies = ()
-                => builder.Build();
+            Action buildWithoutDependencies =
+                () => builder.Build();
 
             buildWithoutDependencies.Should()
-                .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
+                                    .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
         }
 
         [Fact]
         public void Build_WithSymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
-            var algorithm = _fixture.Create<RS256Algorithm>();
-            var builder = new JwtBuilder();
-
-            Action buildWithSecretAndSymmetricAlgorithm = ()
-                => builder.WithAlgorithm(algorithm).Build();
-
-            buildWithSecretAndSymmetricAlgorithm.Should()
-                .Throw<InvalidOperationException>(
-                    "because a JWT can't be built with a symmetric algorithm and without a secret");
-        }
-
-        [Fact]
-        public void Build_WithAsymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
-        {
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
 
-            Action buildWithSecretAndAsymmetricAlgorithm = ()
-                => builder.WithAlgorithm(algorithm).Build();
+            Action buildWithoutSecret =
+                () => builder.WithAlgorithm(algorithm).Build();
 
-            buildWithSecretAndAsymmetricAlgorithm.Should()
-                .Throw<InvalidOperationException>(
-                    "because a JWT can't be built with a asymmetric algorithm and without a secret");
+            buildWithoutSecret.Should()
+                              .Throw<InvalidOperationException>("because a JWT can't be built with a symmetric algorithm and without a secret");
         }
 
         [Fact]
@@ -151,11 +134,11 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
             var secret = _fixture.Create<string>();
 
-            Action buildingJwtWithoutAlgorithm = ()
-                => builder.WithSecret(secret).Build();
+            Action buildJwtWithoutAlgorithm =
+                () => builder.WithSecret(secret).Build();
 
-            buildingJwtWithoutAlgorithm.Should()
-                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+            buildJwtWithoutAlgorithm.Should()
+                                    .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
 
         [Fact]
@@ -164,11 +147,11 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
             var secrets = _fixture.Create<string[]>();
 
-            Action buildingJwtWithoutAlgorithm = ()
-                => builder.WithSecret(secrets).Build();
+            Action buildJwtWithoutAlgorithm =
+                () => builder.WithSecret(secrets).Build();
 
-            buildingJwtWithoutAlgorithm.Should()
-                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+            buildJwtWithoutAlgorithm.Should()
+                                    .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
     }
 }

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace JWT.Tests.Common
 {
-    public class JwtSecurityTest
+    public class JwtSecurityTests
     {
         private readonly Fixture _fixture = new Fixture();
 
@@ -25,11 +25,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action decodeJwtWithNoAlgorithm = ()
-                => decoder.Decode(token, key, verify: true);
+            Action decodeJwtWithNoAlgorithm =
+                () => decoder.Decode(token, key, verify: true);
 
             decodeJwtWithNoAlgorithm.Should()
-                .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
+                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
         [Fact]
@@ -44,11 +44,11 @@ namespace JWT.Tests.Common
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
 
-            Action decodeJwtWithNoAlgorithm = ()
-                => decoder.Decode(token, keys, verify: true);
+            Action decodeJwtWithNoAlgorithm =
+                () => decoder.Decode(token, keys, verify: true);
 
             decodeJwtWithNoAlgorithm.Should()
-                .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
+                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
         [Fact]
@@ -66,11 +66,11 @@ namespace JWT.Tests.Common
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action decodingAJwtWithHmaWhenRsaIsExpected = ()
-                => decoder.Decode(encodedToken, key, verify: true);
+            Action decodeJwtWithHmaWhenRsaIsExpected =
+                () => decoder.Decode(encodedToken, key, verify: true);
 
-            decodingAJwtWithHmaWhenRsaIsExpected.Should()
-                .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
+            decodeJwtWithHmaWhenRsaIsExpected.Should()
+                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
         }
 
         [Fact]
@@ -87,11 +87,11 @@ namespace JWT.Tests.Common
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
             var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
 
-            Action decodingAJwtWithRsaWhenHmaIsExpected = ()
-                => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
+            Action decodeJwtWithRsaWhenHmaIsExpected =
+                () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
 
-            decodingAJwtWithRsaWhenHmaIsExpected.Should()
-                .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
+            decodeJwtWithRsaWhenHmaIsExpected.Should()
+                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
         }
     }
 }

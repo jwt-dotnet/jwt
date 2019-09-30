@@ -9,27 +9,31 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class RS256Algorithm : IJwtAlgorithm
     {
-        private readonly RSACryptoServiceProvider _publicKey;
+        private readonly RSA _publicKey;
         private readonly RSA _privateKey;
 
         /// <summary>
-        /// Creates an instance using the provided pair of public and private keys.
+        /// Creates an instance of <see cref="RS256Algorithm" /> using the provided pair of public and private keys.
         /// </summary>
-        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
-        /// <param name="privateKey">The RSA key for signing the data.</param>
-        public RS256Algorithm(RSACryptoServiceProvider publicKey, RSA privateKey)
+        /// <param name="publicKey">The public key for verifying the data.</param>
+        /// <param name="privateKey">The private key for signing the data.</param>
+        public RS256Algorithm(RSA publicKey, RSA privateKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
             _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
         }
 
         /// <summary>
-        /// Creates an instance using the provided pair of public and private keys.
+        /// Creates an instance of <see cref="RS256Algorithm" /> using the provided public key only.
         /// </summary>
-        /// <param name="publicKey">The RSA service provider for verifying the data.</param>
-        public RS256Algorithm(RSACryptoServiceProvider publicKey)
+        /// <remarks>
+        /// An instance created using this constructor can only be used for verifying the data, not for signing it.
+        /// </remarks>
+        /// <param name="publicKey">The public key for verifying the data.</param>
+        public RS256Algorithm(RSA publicKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
+            _privateKey = null;
         }
 
         /// <summary>
@@ -49,7 +53,7 @@ namespace JWT.Algorithms
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>
-            Sign(bytesToSign);
+            _privateKey is object ? Sign(bytesToSign) : throw new InvalidOperationException("Can't sign data without private key");
 
         /// <summary>
         /// Signs the provided bytes.
@@ -62,14 +66,10 @@ namespace JWT.Algorithms
         /// <summary>
         /// Verifies provided byte array with provided signature.
         /// </summary>
-        /// <remarks>
-        /// 2.16.840.1.101.3.4.2.1 is the object id for the sha256NoSign algorithm.
-        /// See https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-gpnap/a48b02b2-2a10-4eb0-bed4-1807a6d2f5ad for further details.
-        /// </remarks>
         /// <param name="bytesToSign">The data to verify</param>
         /// <param name="signature">The signature to verify with</param>
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-            _publicKey.VerifyData(bytesToSign, "2.16.840.1.101.3.4.2.1", signature);
+            _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
@@ -80,15 +80,13 @@ namespace JWT.Algorithms
 #endif
         }
 
-        private static RSACryptoServiceProvider GetPublicKey(X509Certificate2 cert)
+        private static RSA GetPublicKey(X509Certificate2 cert)
         {
-            AsymmetricAlgorithm alg;
 #if NETSTANDARD1_3
-            alg = cert.GetRSAPublicKey();
+            return cert.GetRSAPublicKey();
 #else
-            alg = cert.PublicKey.Key;
+            return (RSA)cert.PublicKey.Key;
 #endif
-            return (RSACryptoServiceProvider)alg;
         }
     }
 }
