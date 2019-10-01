@@ -7,26 +7,35 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public sealed class RSAlgorithmFactory : HMACSHAAlgorithmFactory
     {
-        private readonly Func<X509Certificate2> _certFactory;
-        private readonly Func<RS256Algorithm> _createAlgorithmMethod;
+        private readonly Func<RS256Algorithm> _algFactory;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RSAlgorithmFactory"/> class
+        /// Creates an instance of the <see cref="RSAlgorithmFactory" /> class using the provided <see cref="X509Certificate2" />.
         /// </summary>
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
-        public RSAlgorithmFactory(Func<X509Certificate2> certFactory)
-        {
-            _certFactory = certFactory;
-            _createAlgorithmMethod = CreateWithCertificate;
-        }
+        public RSAlgorithmFactory(Func<X509Certificate2> certFactory) =>
+            _algFactory = CreateWithCertificate;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RSAlgorithmFactory"/> class
+        /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided public key only.
         /// </summary>
-        /// <param name="publicKey">The RSA service provider which will be used to instantiate <see cref="RS256Algorithm" /></param>
-        public RSAlgorithmFactory(RSACryptoServiceProvider publicKey) =>
-            _createAlgorithmMethod = () => new RS256Algorithm(publicKey);
-            
+        /// <remarks>
+        /// An instance of <see cref="RSAlgorithmFactory" /> created using this constructor can only be used for verifying the data, not for signing it.
+        /// </remarks>
+        /// <param name="publicKey">The public key for verifying the data.</param>
+        public RSAlgorithmFactory(RSA publicKey) =>
+            _algFactory = () => new RS256Algorithm(publicKey);
+
+        /// <summary>
+        /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided pair of public and private keys.
+        /// </summary>
+        /// <remarks>
+        /// An instance of <see cref="RSAlgorithmFactory" /> created using this constructor can only be used for verifying the data, not for signing it.
+        /// </remarks>
+        /// <param name="publicKey">The public key for verifying the data.</param>
+        /// <param name="privateKey">The private key for signing the data.</param>
+        public RSAlgorithmFactory(RSA publicKey, RSA privateKey) =>
+            _algFactory = () => new RS256Algorithm(publicKey, privateKey);
 
         /// <inheritdoc />
         public override IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
@@ -34,9 +43,7 @@ namespace JWT.Algorithms
             switch (algorithm)
             {
                 case JwtHashAlgorithm.RS256:
-                    {
-                        return _createAlgorithmMethod();
-                    }
+                    return _createAlgorithmMethod();
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
@@ -45,11 +52,7 @@ namespace JWT.Algorithms
         private RS256Algorithm CreateWithCertificate()
         {
             var certificate = _certFactory();
-#if NETSTANDARD1_3
-            return new RS256Algorithm((RSACryptoServiceProvider)certificate.GetRSAPublicKey(), certificate.GetRSAPrivateKey());
-#else
-            return new RS256Algorithm((RSACryptoServiceProvider)certificate.PublicKey.Key, (RSA)certificate.PrivateKey);
-#endif
+            return new RS256Algorithm(certificate);
         }
     }
 }
