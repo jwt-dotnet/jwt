@@ -42,4 +42,5 @@ namespace JWT.Algorithms
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
         }
+    }
 }
