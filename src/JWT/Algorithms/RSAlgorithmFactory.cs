@@ -26,9 +26,6 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided pair of public and private keys.
         /// </summary>
-        /// <remarks>
-        /// An instance of <see cref="RSAlgorithmFactory" /> created using this constructor can only be used for verifying the data, not for signing it.
-        /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
         public RSAlgorithmFactory(RSA publicKey, RSA privateKey) =>
