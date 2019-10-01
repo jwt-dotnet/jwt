@@ -14,7 +14,7 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
         public RSAlgorithmFactory(Func<X509Certificate2> certFactory) =>
-            _algFactory = CreateWithCertificate;
+            _algFactory = () =>new RS256Algorithm(certFactory());
 
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided public key only.
@@ -43,16 +43,9 @@ namespace JWT.Algorithms
             switch (algorithm)
             {
                 case JwtHashAlgorithm.RS256:
-                    return _createAlgorithmMethod();
+                    return _algFactory();
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
         }
-
-        private RS256Algorithm CreateWithCertificate()
-        {
-            var certificate = _certFactory();
-            return new RS256Algorithm(certificate);
-        }
-    }
 }
