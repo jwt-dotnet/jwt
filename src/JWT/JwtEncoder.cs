@@ -49,7 +49,7 @@ namespace JWT
 
             var segments = new List<string>(3);
 
-            var header = extraHeaders is null ? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase) : extraHeaders;
+            var header = extraHeaders is null ? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase) : new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
             header.Add("typ", "JWT");
             header.Add("alg", _algorithm.Name);
 
