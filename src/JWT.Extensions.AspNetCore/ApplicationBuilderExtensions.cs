@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Builder;
 namespace JWT
 {
     /// <summary>
-    /// Extension methods for <see cref="IApplicationBuilder"/> to add the JWT authentication/authorization middleware to the pipeline.
+    /// Extension methods for <see cref="IApplicationBuilder"/> to add the JWT authentication/authorization to the pipeline.
     /// </summary>
     public static class ApplicationBuilderExtensions
     {
         /// <summary>
-        /// Adds the <see cref="JwtMiddleware" /> to the specified <see cref="IApplicationBuilder" />, which enables authentication/authorization middleware using JWT.
+        /// Adds the <see cref="JwtMiddleware" /> to the specified <see cref="IApplicationBuilder" />, which enables authentication/authorization using JWT.
         /// </summary>
         /// <returns>
         /// The <see cref="IApplicationBuilder" />.
