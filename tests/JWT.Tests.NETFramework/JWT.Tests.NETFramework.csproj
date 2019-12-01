@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.props" Condition="Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.props')" />
+  <Import Project="..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.props" Condition="Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.props')" />
   <Import Project="..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.props" Condition="Exists('..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.props')" />
   <Import Project="..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.props" Condition="Exists('..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.props')" />
   <PropertyGroup>
@@ -125,10 +125,10 @@
     <Error Condition="!Exists('..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.targets'))" />
   </Target>
   <Import Project="..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\..\packages\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets')" />
   <Import Project="..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.targets" Condition="Exists('..\..\packages\Microsoft.CodeCoverage.16.4.0\build\netstandard1.0\Microsoft.CodeCoverage.targets')" />
-  <Import Project="..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.targets" Condition="Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.4.0\build\net40\Microsoft.NET.Test.Sdk.targets')" />
+  <Import Project="..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.targets" Condition="Exists('..\..\packages\Microsoft.NET.Test.Sdk.16.2.0\build\net40\Microsoft.NET.Test.Sdk.targets')" />
 </Project>
