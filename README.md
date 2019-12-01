@@ -7,8 +7,8 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## Avaliable packages
 
-1. [Jwt](#Jwt)
-2. [Jwt ASP.NET Core](#Jwt-ASPNET-Core)
+1. [Jwt.Net](#JwtNet)
+2. [Jwt.Net for ASP.NET Core](#JwtNet-ASPNET-Core)
 
 ## Supported .NET versions:
 
@@ -29,7 +29,7 @@ The following projects and their resulting packages are licensed under the MIT L
 
 In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of this repository also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
 
-### Jwt
+### Jwt.NET
 
 #### NuGet
 
@@ -218,7 +218,7 @@ JsonSerializer customJsonSerializer = new JsonSerializer
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
 
-### Jwt ASP.NET Core
+### Jwt.Net ASP.NET Core
 
 #### NuGet
 

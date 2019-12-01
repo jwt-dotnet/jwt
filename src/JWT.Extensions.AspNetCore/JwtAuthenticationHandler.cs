@@ -20,19 +20,17 @@ namespace JWT
 
         public JwtAuthenticationHandler(
             IJwtDecoder jwtDecoder,
-            IOptionsMonitor<JwtAuthenticationOptions> options,
-            ILoggerFactory logger,
-            UrlEncoder encoder,
+            IOptionsMonitor<JwtAuthenticationOptions> optionsMonitor,
+            ILoggerFactory loggerFactory,
+            UrlEncoder urlEncoder,
             ISystemClock clock)
-            : base(options, logger, encoder, clock) =>
+            : base(optionsMonitor, loggerFactory, urlEncoder, clock) =>
             _jwtDecoder = jwtDecoder;
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             string header = this.Context.Request.Headers[HeaderNames.Authorization];
-
             var result = GetAuthenticationResult(header);
-
             return Task.FromResult(result);
         }
 
@@ -59,7 +57,7 @@ namespace JWT
 
             try
             {
-                var dic = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Key, this.Options.Verify);
+                var dic = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Keys, this.Options.VerifySignature);
                 var claims = dic.Select(p => new Claim(p.Key, p.Value));
                 var identity = new ClaimsIdentity(claims);
 
