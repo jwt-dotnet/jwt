@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtBuilderEncodeTests
     {
         private readonly Fixture _fixture = new Fixture();
 
-        [Fact]
+        [TestMethod]
         public void Build_Token()
         {
             var algorithm = new HMACSHA256Algorithm();
@@ -34,7 +34,7 @@ namespace JWT.Tests.Common
                       .HaveCount(3, "because the built token should have the three standard parts");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithPayload()
         {
             var algorithm = new HMACSHA256Algorithm();
@@ -59,7 +59,7 @@ namespace JWT.Tests.Common
                       .HaveCount(3, "because the built token should have the three standard parts");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithPayloadWithClaims()
         {
             var algorithm = new HMACSHA256Algorithm();
@@ -103,7 +103,7 @@ namespace JWT.Tests.Common
                         .ContainAll(claimValues, "because all values associated with the claims should be retrieved in the token");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithoutDependencies_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
@@ -115,7 +115,7 @@ namespace JWT.Tests.Common
                                     .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithSymmetricAlgorithm_WithoutSecret_Should_Throw_Exception()
         {
             var algorithm = new HMACSHA256Algorithm();
@@ -128,7 +128,7 @@ namespace JWT.Tests.Common
                               .Throw<InvalidOperationException>("because a JWT can't be built with a symmetric algorithm and without a secret");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithoutAlgorithm_WithSecret_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
@@ -141,7 +141,7 @@ namespace JWT.Tests.Common
                                     .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
 
-        [Fact]
+        [TestMethod]
         public void Build_WithMultipleSecrets_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();

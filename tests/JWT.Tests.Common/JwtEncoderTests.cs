@@ -3,13 +3,14 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtEncoderTests
     {
-        [Fact]
+        [TestMethod]
         public void Encode_Should_Encode_To_Token()
         {
             const string key = "ABC";
@@ -27,7 +28,7 @@ namespace JWT.Tests.Common
                   .Be(token, "because the same data encoded with the same key must result in the same token");
         }
 
-        [Fact]
+        [TestMethod]
         public void Encode_Should_Encode_To_Token_With_Extra_Headers()
         {
             var extraHeaders = new Dictionary<string, object>
