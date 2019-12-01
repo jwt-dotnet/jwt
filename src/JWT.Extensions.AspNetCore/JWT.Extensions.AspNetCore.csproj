@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <Copyright>Copyright (c) Alexander Batishchev</Copyright>
-    <PackageDescription>ASP.NET Core intergration package fro Jwt.Net</PackageDescription>
+    <PackageDescription>ASP.NET Core intergration package for Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core</PackageTags>
     <PackageLicense>MIT</PackageLicense>
@@ -23,7 +23,7 @@
     <!-- Include PDB in the built .nupkg -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 
-    <Version>6.0.0</Version>
+    <Version>6.0.0-alpha1</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
@@ -42,8 +42,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
