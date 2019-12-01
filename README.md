@@ -7,10 +7,13 @@
 
 This library supports generating and decoding [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
-## Installation
-Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can download and compile it yourself.
+## Avaliable packages
+
+1. [Jwt](#Jwt)
+2. [Jwt ASP.NET Core](#JwtAspNetCore)
 
 ## Supported .NET versions:
+
 - .NET Framework 4.6.0
 - .NET Framework 4.7.2
 - .NET Standard 1.3
@@ -18,18 +21,18 @@ Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can dow
 
 ## License
 
-The following projects and their results packages are licensed under Public Domain, see the [LICENSE#Public Domain](LICENSE.CC0-1.0.md#Public Domain) file.
+The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public Domain](LICENSE.md#MIT) file.
 
 - JWT 
 
-The following projects and their results packages are licensed under the MIT License, see the [LICENSE#Public Domain](LICENSE.CC0-1.0.md#MIT) file.
+The following projects and their resulting packages are licensed under the MIT License, see the [LICENSE#MIT](LICENSE.md#MIT) file.
 
 - JWT.Extensions.AspNetCore
 
 In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of this repository also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
 
-## Usage
-### Creating (encoding) token
+### Jwt
+#### Creating (encoding) token
 
 ```c#
 var payload = new Dictionary<string, object>
@@ -48,7 +51,7 @@ var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
-### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
   var token = new JwtBuilder()
@@ -65,7 +68,7 @@ The output would be:
 
 >eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
 
-### Parsing (decoding) and verifying token
+#### Parsing (decoding) and verifying token
 
 ```c#
 const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
@@ -92,7 +95,7 @@ catch (SignatureVerificationException)
 }
 ```
 
-### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 try
@@ -124,7 +127,7 @@ var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret)
 Console.WriteLine(payload["claim2"]);
  ```
 
-### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 var payload = new JwtBuilder()
@@ -138,7 +141,7 @@ The output would be:
     
 >claim2-value
 
-### Set and validate token expiration
+#### Set and validate token expiration
 
 As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
@@ -158,7 +161,7 @@ var token = encoder.Encode(payload, secret);
 var json = decoder.Decode(token, secret); // throws TokenExpiredException
 ```
 
-### Custom JSON serializer
+#### Custom JSON serializer
 
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
@@ -186,7 +189,7 @@ IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 ```
 
-### Custom JSON serialization settings with the default JsonNetSerializer
+#### Custom JSON serialization settings with the default JsonNetSerializer
 
 As mentioned above, the default JSON serialization is done by `JsonNetSerializer`. You can define your own custom serialization settings as follows:
 
