@@ -31,6 +31,8 @@
     <Version>6.0.0</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <RootNamespace>JWT</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -45,6 +47,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+   <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
