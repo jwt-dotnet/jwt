@@ -18,15 +18,15 @@ Package is avaliable via [NuGet](https://nuget.org/packages/JWT). Or you can dow
 
 ## License
 
-The following projects and their results packages are licensed under Public Domain, see the [LICENSE.CC0-1.0.txt](LICENSE.CC0-1.0.txt) file.
+The following projects and their results packages are licensed under Public Domain, see the [LICENSE#Public Domain](LICENSE.CC0-1.0.md#Public Domain) file.
 
 - JWT 
 
-The following projects and their results packages are licensed under the MIT License, see the [LICENSE.MIT.txt](LICENSE.MIT.txt) file.
+The following projects and their results packages are licensed under the MIT License, see the [LICENSE#Public Domain](LICENSE.CC0-1.0.md#MIT) file.
 
 - JWT.Extensions.AspNetCore
 
-However, the maintainer ([@abatishchev](https://github.com/abatishchev)) shares the values of [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
+In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of this repository also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
 
 ## Usage
 ### Creating (encoding) token
