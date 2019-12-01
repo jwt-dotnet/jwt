@@ -3,17 +3,17 @@ using System;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
-using JWT.Tests.Common.Internal;
 using JWT.Tests.Common.Models;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtDecoderTests
     {
         private readonly Fixture _fixture = new Fixture();
 
-        [Fact]
+        [TestMethod]
         public void Decode_Should_Decode_Token_To_Json_Encoded_String()
         {
             var key = _fixture.Create<string>();
@@ -31,7 +31,7 @@ namespace JWT.Tests.Common
                 .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
-        [Fact]
+        [TestMethod]
         public void Decode_Should_Decode_Token_To_Json_Encoded_String_Multiple_Secrets()
         {
             var keys = _fixture.Create<string[]>();
@@ -49,7 +49,7 @@ namespace JWT.Tests.Common
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()
         {
             var expected = TestData.DictionaryPayload;
@@ -66,7 +66,7 @@ namespace JWT.Tests.Common
                   .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Secrets()
         {
             var expected = TestData.DictionaryPayload;
@@ -83,7 +83,7 @@ namespace JWT.Tests.Common
                   .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type()
         {
             var expected = TestData.Customer;
@@ -100,7 +100,7 @@ namespace JWT.Tests.Common
                   .BeEquivalentTo(expected, "because the JWT should have been correctly deserialized to the same customer object");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type_Multiple_Secrets()
         {
             var expected = TestData.Customer;
@@ -117,7 +117,7 @@ namespace JWT.Tests.Common
                   .BeEquivalentTo(expected, "because the JWT should have been correctly deserialized to the same customer object");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
         {
             const string badToken = TestData.MalformedToken;
@@ -134,7 +134,7 @@ namespace JWT.Tests.Common
                             .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_Multiple_Secrets()
         {
             const string badToken = TestData.MalformedToken;
@@ -151,7 +151,7 @@ namespace JWT.Tests.Common
                                             .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key()
         {
             const string token = TestData.Token;
@@ -169,7 +169,7 @@ namespace JWT.Tests.Common
                                  .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key_Multiple_Secrets()
         {
             const string token = TestData.Token;
@@ -187,7 +187,7 @@ namespace JWT.Tests.Common
                                  .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
             var key = _fixture.Create<string>();
@@ -208,7 +208,7 @@ namespace JWT.Tests.Common
                                       .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_MultipleKeys()
         {
             var key = _fixture.Create<string>();
@@ -231,7 +231,7 @@ namespace JWT.Tests.Common
                                       .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
         {
             var key = _fixture.Create<string>();
@@ -253,7 +253,7 @@ namespace JWT.Tests.Common
                                      .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_MultipleKeys()
         {
             var key = _fixture.Create<string>();
@@ -277,7 +277,7 @@ namespace JWT.Tests.Common
                                      .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
             var key = _fixture.Create<string>();
@@ -304,7 +304,7 @@ namespace JWT.Tests.Common
                             .Throw<TokenExpiredException>("because decoding an expired token should raise an exception when verified");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_DecodeToken_On_Exp_Claim_After_Year2038()
         {
             var key = _fixture.Create<string>();
@@ -328,7 +328,7 @@ namespace JWT.Tests.Common
                     .Be(actual, "because the token should be correctly decoded");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
         {
             var serializer = new JsonNetSerializer();
@@ -350,7 +350,7 @@ namespace JWT.Tests.Common
                               .Throw<SignatureVerificationException>();
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_NotBefore_Claim()
         {
             var key = _fixture.Create<string>();
@@ -372,7 +372,7 @@ namespace JWT.Tests.Common
                                      .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
 
-        [Fact]
+        [TestMethod]
         public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
         {
             var dateTimeProvider = new UtcDateTimeProvider();

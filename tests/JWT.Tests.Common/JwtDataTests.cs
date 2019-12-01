@@ -2,15 +2,16 @@
 using AutoFixture;
 using FluentAssertions;
 using JWT.Builder;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtDataTests
     {
         private readonly Fixture _fixture = new Fixture();
 
-        [Fact]
+        [TestMethod]
         public void JwtData_With_Ctor_Params()
         {
             var headers = _fixture.Create<Dictionary<string, object>>();

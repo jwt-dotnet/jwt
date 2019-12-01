@@ -3,20 +3,20 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
-using Xunit;
-
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtValidatorTests
     {
-        [Theory]
-        [InlineData(null, null, null)]
-        [InlineData("", null, null)]
-        [InlineData("{}", null, null)]
-        [InlineData("{}", TestData.Token, null)]
-        [InlineData("{}", TestData.Token, "")]
+        [DataTestMethod]
+        [DataRow(null, null, null)]
+        [DataRow("", null, null)]
+        [DataRow("{}", null, null)]
+        [DataRow("{}", TestData.Token, null)]
+        [DataRow("{}", TestData.Token, "")]
         public void Validate_Should_Throw_Exception_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
             var jwtValidator = new JwtValidator(null, null);
@@ -28,7 +28,7 @@ namespace JWT.Tests.Common
                                               .Throw<ArgumentException>("because the JWT argument must not be null or empty");
         }
 
-        [Fact]
+        [TestMethod]
         public void Validate_Should_Throw_Exception_When_Crypto_Does_Not_Match_Signature()
         {
             const string token = TestData.Token;
@@ -43,7 +43,7 @@ namespace JWT.Tests.Common
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = GetBytes(string.Concat(jwt.Header, ".", jwt.Payload));
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
             var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             ++signatureData[0]; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
@@ -57,7 +57,7 @@ namespace JWT.Tests.Common
                                        .Throw<SignatureVerificationException>("because the signature does not match the crypto");
         }
 
-        [Fact]
+        [TestMethod]
         public void Validate_Should_Not_Throw_Exception_When_Crypto_Matches_Signature()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -80,12 +80,12 @@ namespace JWT.Tests.Common
             jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
 
-        [Theory]
-        [InlineData(null, null, null)]
-        [InlineData("", null, null)]
-        [InlineData("{}", null, null)]
-        [InlineData("{}", TestData.Token, null)]
-        [InlineData("{}", TestData.Token, "")]
+        [DataTestMethod]
+        [DataRow(null, null, null)]
+        [DataRow("", null, null)]
+        [DataRow("{}", null, null)]
+        [DataRow("{}", TestData.Token, null)]
+        [DataRow("{}", TestData.Token, "")]
         public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
             var jwtValidator = new JwtValidator(null, null);
@@ -99,7 +99,7 @@ namespace JWT.Tests.Common
               .NotBeNull("because an exception should have been thrown during the process");
         }
 
-        [Fact]
+        [TestMethod]
         public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Crypto_Matches_Signature()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -114,7 +114,7 @@ namespace JWT.Tests.Common
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = GetBytes(string.Concat(jwt.Header, ".", jwt.Payload));
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
             var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             ++signatureData[0]; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
@@ -129,7 +129,7 @@ namespace JWT.Tests.Common
               .NotBeNull("because an exception should have been thrown during the process");
         }
 
-        [Fact]
+        [TestMethod]
         public void TryValidate_Should_Return_True_And_Exception_Null_When_Crypto_Matches_Signature()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -144,7 +144,7 @@ namespace JWT.Tests.Common
             var decodedCrypto = Convert.ToBase64String(crypto);
 
             var alg = new HMACSHA256Algorithm();
-            var bytesToSign = GetBytes(string.Concat(jwt.Header, ".", jwt.Payload));
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
             var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 

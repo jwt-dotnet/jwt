@@ -5,16 +5,17 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
+    [TestClass]
     public class JwtSecurityTests
     {
         private readonly Fixture _fixture = new Fixture();
 
-        [Fact]
-        [Trait(TestCategory.Category, TestCategory.Security)]
+        [TestMethod]
+        [TestCategory(TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
             var key = _fixture.Create<string>();
@@ -32,8 +33,8 @@ namespace JWT.Tests.Common
                                     .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
-        [Fact]
-        [Trait(TestCategory.Category, TestCategory.Security)]
+        [TestMethod]
+        [TestCategory(TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used_MultipleKeys()
         {
             var keys = _fixture.Create<string[]>();
@@ -51,8 +52,8 @@ namespace JWT.Tests.Common
                                     .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
         }
 
-        [Fact]
-        [Trait(TestCategory.Category, TestCategory.Security)]
+        [TestMethod]
+        [TestCategory(TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected()
         {
             var serializer = new JsonNetSerializer();
@@ -73,8 +74,8 @@ namespace JWT.Tests.Common
                                              .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
         }
 
-        [Fact]
-        [Trait(TestCategory.Category, TestCategory.Security)]
+        [TestMethod]
+        [TestCategory(TestCategory.Security)]
         public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected_MultipleKeys()
         {
             var serializer = new JsonNetSerializer();
