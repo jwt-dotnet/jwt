@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".pipelines", ".pipelines", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore", "src\JWT.Extensions.AspNetCore\JWT.Extensions.AspNetCore.csproj", "{3AC25D69-9863-45ED-A767-2809C46CB5A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore.Tests", "tests\JWT.Extensions.AspNetCore.Tests\JWT.Extensions.AspNetCore.Tests.csproj", "{319388E9-1529-46B2-A230-2B978BAC4649}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{3AC25D69-9863-45ED-A767-2809C46CB5A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AC25D69-9863-45ED-A767-2809C46CB5A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AC25D69-9863-45ED-A767-2809C46CB5A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{319388E9-1529-46B2-A230-2B978BAC4649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{319388E9-1529-46B2-A230-2B978BAC4649}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{319388E9-1529-46B2-A230-2B978BAC4649}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{319388E9-1529-46B2-A230-2B978BAC4649}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
