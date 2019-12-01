@@ -33,8 +33,8 @@ In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of t
 
 #### NuGet
 
-[![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT)
+[![NuGet](https://img.shields.io/nuget/v/JWT.svg)](https://www.nuget.org/packages/JWT)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.svg)](https://www.nuget.org/packages/JWT)
 
 #### Creating (encoding) token
 
@@ -222,8 +222,8 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 
 #### NuGet
 
-[![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
+[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 
 #### Registering middleware to validate JWT
 
