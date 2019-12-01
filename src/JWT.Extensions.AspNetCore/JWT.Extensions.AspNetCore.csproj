@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Company></Company>
     <Copyright>Copyright (c) Alexander Batishchev</Copyright>
     <PackageDescription>ASP.NET Core intergration package fro Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
