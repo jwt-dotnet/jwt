@@ -12,7 +12,7 @@ namespace JWT
     public static class ApplicationBuilderExtensions
     {
         /// <summary>
-        /// Adds the <see cref="JwtMiddleware" /> to the specified <see cref="IApplicationBuilder" />, which enables authentication/authorization using JWT.
+        /// Adds the <see cref="JwtAuthenticationMiddleware" /> to the specified <see cref="IApplicationBuilder" />, which enables authentication/authorization using JWT.
         /// </summary>
         /// <returns>
         /// The <see cref="IApplicationBuilder" />.
@@ -22,7 +22,7 @@ namespace JWT
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
 
-            return app.UseMiddleware<JwtMiddleware>();
+            return app.UseMiddleware<JwtAuthenticationMiddleware>();
         }
     }
 }
