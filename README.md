@@ -8,7 +8,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 ## Avaliable packages
 
 1. [Jwt](#Jwt)
-2. [Jwt ASP.NET Core](#Jwt-ASP.NET-Core)
+2. [Jwt ASP.NET Core](#Jwt-ASPNET-Core)
 
 ## Supported .NET versions:
 
@@ -224,3 +224,7 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 
 [![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
+
+#### Registering middleware to validate JWT
+
+TODO
