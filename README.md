@@ -1,6 +1,4 @@
-﻿[![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT)
-[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=7)
+﻿[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=7)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
@@ -10,7 +8,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 ## Avaliable packages
 
 1. [Jwt](#Jwt)
-2. [Jwt ASP.NET Core](#JwtAspNetCore)
+2. [Jwt ASP.NET Core](#Jwt-ASP.NET-Core)
 
 ## Supported .NET versions:
 
@@ -21,7 +19,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## License
 
-The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public Domain](LICENSE.md#MIT) file.
+The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#MIT) file.
 
 - JWT 
 
@@ -32,6 +30,12 @@ The following projects and their resulting packages are licensed under the MIT L
 In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of this repository also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
 
 ### Jwt
+
+#### NuGet
+
+[![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT)
+
 #### Creating (encoding) token
 
 ```c#
@@ -213,3 +217,10 @@ JsonSerializer customJsonSerializer = new JsonSerializer
 };
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
+
+### Jwt ASP.NET Core
+
+#### NuGet
+
+[![NuGet](https://img.shields.io/nuget/v/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/jwt.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
