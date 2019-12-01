@@ -2,24 +2,78 @@
 // Licensed under the MIT License. See License.md in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace JWT
 {
     public sealed class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {
-        public JwtAuthenticationHandler(IOptionsMonitor<JwtAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-            : base(options, logger, encoder, clock)
-        {
-        }
+        private readonly IJwtDecoder _jwtDecoder;
+
+        public JwtAuthenticationHandler(
+            IJwtDecoder jwtDecoder,
+            IOptionsMonitor<JwtAuthenticationOptions> options,
+            ILoggerFactory logger,
+            UrlEncoder encoder,
+            ISystemClock clock)
+            : base(options, logger, encoder, clock) =>
+            _jwtDecoder = jwtDecoder;
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            throw new NotImplementedException();
+            string header = this.Context.Request.Headers[HeaderNames.Authorization];
+
+            var result = GetAuthenticationResult(header);
+
+            return Task.FromResult(result);
+        }
+
+        private AuthenticateResult GetAuthenticationResult(string header)
+        {
+            if (String.IsNullOrEmpty(header))
+            {
+                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning no result");
+                return AuthenticateResult.NoResult();
+            }
+
+            if (!header.StartsWith(this.Scheme.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} scheme is not {this.Scheme.Name}, returning no result");
+                return AuthenticateResult.NoResult();
+            }
+
+            var token = header.Substring(this.Scheme.Name.Length).Trim();
+            if (String.IsNullOrEmpty(token))
+            {
+                this.Logger.LogInformation($"Token in header {nameof(HeaderNames.Authorization)} is empty, returning no result");
+                return AuthenticateResult.NoResult();
+            }
+
+            try
+            {
+                var dic = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Key, this.Options.Verify);
+                var claims = dic.Select(p => new Claim(p.Key, p.Value));
+                var identity = new ClaimsIdentity(claims);
+
+                var ticket = new AuthenticationTicket(
+                    new ClaimsPrincipal(identity),
+                    new AuthenticationProperties(),
+                    this.Scheme.Name);
+
+                return AuthenticateResult.Success(ticket);
+            }
+            catch (Exception ex)
+            {
+                return AuthenticateResult.Fail(ex);
+            }
         }
     }
 }

@@ -7,5 +7,8 @@ namespace JWT
 {
     public class JwtAuthenticationOptions : AuthenticationSchemeOptions
     {
+        public string Key { get; set; }
+
+        public bool Verify { get; set; } = true;
     }
 }
