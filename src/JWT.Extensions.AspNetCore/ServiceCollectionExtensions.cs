@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Alexander Batishchev. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md file in the repository root for license information.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +23,11 @@ namespace JWT
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
+
+            if (configureOptions == null)
+                throw new ArgumentNullException(nameof(configureOptions));
+
+            services.Configure(configureOptions);
 
             return services;
         }
