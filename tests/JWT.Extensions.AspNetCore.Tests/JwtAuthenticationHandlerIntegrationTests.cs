@@ -85,12 +85,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                         }
                     });
 
-            var server = new TestServer(builder)
-            {
-                BaseAddress = baseAddress
-            };
-
-            return server;
+            return new TestServer(builder);
         }
     }
 }
