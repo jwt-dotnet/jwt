@@ -1,5 +1,5 @@
 ﻿using System;
-using JWT.Providers;
+using JWT.Internal;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;

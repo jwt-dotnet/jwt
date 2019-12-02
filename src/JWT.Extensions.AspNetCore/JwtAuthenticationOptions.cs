@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Principal;
 using JWT.Algorithms;
-using JWT.Providers;
+using JWT.Internal;
 using Microsoft.AspNetCore.Authentication;
 
 namespace JWT

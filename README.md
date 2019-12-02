@@ -226,7 +226,7 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 [![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 
-#### Registering authentication handler to validate JWT
+#### Register authentication handler to validate JWT
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -234,13 +234,12 @@ public void ConfigureServices(IServiceCollection services)
     services.AddAuthentication(options =>
                  {
                      options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-
                      options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
                  })
             .AddJwt(options =>
                  {
-					// secret
-                    options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
+					 // secret
+					 options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
 					 // force JwtDecoder to throw exception if JWT signature is invalid
 					 options.VerifySignature = true;
@@ -253,7 +252,19 @@ public void Configure(IApplicationBuilder app)
 }
 ```
 
-#### Registering middleware to validate JWT
+#### Custom factories to produce Identity or AuthneticationTicket
+
+```c#
+options.IdentityFactory = dic => new ClaimsIdentity(
+    dic.Select(p => new Claim(p.Key, p.Value)));
+
+options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
+    new ClaimsPrincipal(identity),
+    new AuthenticationProperties(),
+    scheme.Name);
+```
+
+#### Register middleware to validate JWT
 
 ```c#
 app.UseJwtMiddleware();
@@ -269,7 +280,7 @@ app.UseJwtMiddleware();
 [![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
 
-#### Registering middleware to validate JWT
+#### Register middleware to validate JWT
 
 ```c#
 app.UseJwtMiddleware();
