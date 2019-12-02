@@ -11,7 +11,7 @@ namespace JWT.Tests.Common
     [TestClass]
     public class JwtDecoderTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
         public void Decode_Should_Decode_Token_To_Json_String()

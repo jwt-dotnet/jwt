@@ -10,7 +10,7 @@ namespace JWT.Tests.Common
     [TestClass]
     public class RS256AlgorithmTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null()

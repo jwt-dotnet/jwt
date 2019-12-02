@@ -12,7 +12,7 @@ namespace JWT.Tests.Common
     [TestClass]
     public class JwtSecurityTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
         [TestCategory("Security")]
@@ -30,7 +30,7 @@ namespace JWT.Tests.Common
                 () => decoder.Decode(token, key, verify: true);
 
             decodeJwtWithNoAlgorithm.Should()
-                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
+                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should throw exception");
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace JWT.Tests.Common
                 () => decoder.Decode(token, keys, verify: true);
 
             decodeJwtWithNoAlgorithm.Should()
-                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should raise an exception");
+                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should throw exception");
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace JWT.Tests.Common
                 () => decoder.Decode(encodedToken, key, verify: true);
 
             decodeJwtWithHmaWhenRsaIsExpected.Should()
-                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
+                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed on decoding");
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace JWT.Tests.Common
                 () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
 
             decodeJwtWithRsaWhenHmaIsExpected.Should()
-                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed another on decoding");
+                                             .Throw<NotSupportedException>("because an encryption algorithm can't be changed on decoding");
         }
     }
 }

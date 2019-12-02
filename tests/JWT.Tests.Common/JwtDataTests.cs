@@ -9,7 +9,7 @@ namespace JWT.Tests.Common
     [TestClass]
     public class JwtDataTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
         public void JwtData_With_Ctor_Params()

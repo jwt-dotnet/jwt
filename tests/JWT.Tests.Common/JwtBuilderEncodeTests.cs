@@ -13,7 +13,7 @@ namespace JWT.Tests.Common
     [TestClass]
     public class JwtBuilderEncodeTests
     {
-        private readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
         public void Build_Token()
