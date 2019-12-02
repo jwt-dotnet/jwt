@@ -15,7 +15,7 @@ namespace JWT
         /// <returns>
         /// The <see cref="IServiceCollection" />.
         /// </returns>
-        public static IServiceCollection AddJwt(this IServiceCollection services)
+        public static IServiceCollection AddJwtMiddleware(this IServiceCollection services)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -31,7 +31,7 @@ namespace JWT
         /// <returns>
         /// The <see cref="IServiceCollection" />.
         /// </returns>
-        public static IServiceCollection AddJwt(this IServiceCollection services, Action<JwtOptions> configureOptions)
+        public static IServiceCollection AddJwtMiddleware(this IServiceCollection services, Action<JwtOptions> configureOptions)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
