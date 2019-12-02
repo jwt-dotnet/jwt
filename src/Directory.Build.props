@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/jwt-dotnet/jwt/releases</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+</Project>
