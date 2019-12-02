@@ -123,16 +123,13 @@ namespace JWT.Extensions.AspNetCore.Tests
 
                         app.Use(async (context, next) =>
                         {
-                            var request = context.Request;
-                            var response = context.Response;
-
                             var authenticationResult = await context.AuthenticateAsync();
                             if (authenticationResult.Succeeded)
                             {
-                                response.StatusCode = (int)HttpStatusCode.OK;
-                                response.ContentType = new ContentType("text/json").MediaType;
+                                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                                context.Response.ContentType = new ContentType("text/json").MediaType;
 
-                                await response.WriteAsync("Hello");
+                                await context.Response.WriteAsync("Hello");
                             }
                             else
                             {
