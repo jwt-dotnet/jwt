@@ -227,24 +227,16 @@ namespace JWT
             if (key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
 
-            var crypto = _urlEncoder.Decode(jwt.Signature);
-            var decodedCrypto = Convert.ToBase64String(crypto);
+            void ValidateImpl(string payloadJson, string decodedCrypto, IJwtAlgorithm alg, byte[] bytesToSign)
+            {
+                var signatureData = alg.Sign(key, bytesToSign);
+                var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
-            var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
-            var payload = jwt.Payload;
-            var payloadJson = GetString(_urlEncoder.Decode(payload));
+            }
 
-            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", payload));
-
-            var algName = (string)headerData["alg"];
-            var alg = _algFactory.Create(algName);
-
-            var signatureData = alg.Sign(key, bytesToSign);
-            var decodedSignature = Convert.ToBase64String(signatureData);
-
-            _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+            Validate(jwt, ValidateImpl);
         }
 
         /// <summary>
@@ -264,6 +256,25 @@ namespace JWT
             if (keys.Count == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
+
+            void ValidateImpl(string payloadJson, string decodedCrypto, IJwtAlgorithm alg, byte[] bytesToSign)
+            {
+                var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
+                                            .Select(sd => Convert.ToBase64String(sd))
+                                            .ToArray();
+
+                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
+
+            }
+
+            Validate(jwt, ValidateImpl);
+        }
+
+        private void Validate(JwtParts jwt, Action<string, string, IJwtAlgorithm, byte[]> validate)
+        {
+            if (jwt is null)
+                throw new ArgumentNullException(nameof(jwt));
+
             var crypto = _urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
 
@@ -278,11 +289,9 @@ namespace JWT
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
 
-            var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                        .Select(sd => Convert.ToBase64String(sd))
-                                        .ToArray();
-            _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
+            validate(payloadJson, decodedCrypto, alg, bytesToSign);
         }
+
 
         private static bool AllKeysHaveValues(IEnumerable<byte[]> keys) =>
             keys.All(key => key.Any());
