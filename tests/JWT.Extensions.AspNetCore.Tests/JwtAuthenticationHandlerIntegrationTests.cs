@@ -1,7 +1,10 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using JWT.Tests.Common.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -17,11 +20,13 @@ namespace JWT.Extensions.AspNetCore.Tests
     [TestClass]
     public class JwtAuthenticationHandlerIntegrationTests
     {
-        private TestServer _server;
+        private static readonly Fixture _fixture = new Fixture();
+        private static TestServer _server;
+
         private HttpClient _client;
 
-        [TestInitialize]
-        public void TestInitialize()
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
         {
             var options = new JwtAuthenticationOptions
             {
@@ -29,6 +34,17 @@ namespace JWT.Extensions.AspNetCore.Tests
                 VerifySignature = true
             };
             _server = CreateServer(options);
+        }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            _server.Dispose();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
             _client = _server.CreateClient();
         }
 
@@ -36,15 +52,66 @@ namespace JWT.Extensions.AspNetCore.Tests
         public void TestCleanup()
         {
             _client.Dispose();
-            _server.Dispose();
         }
 
         [TestMethod]
         public async Task Request_Should_Return_Ok_When_Token_Is_Valid()
         {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                JwtAuthenticationDefaults.AuthenticationScheme,
+                TestData.Token);
+
+            // Act
             var response = await _client.GetAsync("https://example.com/");
 
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [TestMethod]
+        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Invalid()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                JwtAuthenticationDefaults.AuthenticationScheme,
+                _fixture.Create<string>());
+
+            // Act
+            var response = await _client.GetAsync("https://example.com/");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Empty()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                JwtAuthenticationDefaults.AuthenticationScheme,
+                String.Empty);
+
+            // Act
+            var response = await _client.GetAsync("https://example.com/");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public async Task Request_Should_Return_Unauthorized_When_AuthenticationScheme_Is_Invalid()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                _fixture.Create<string>(),
+                _fixture.Create<string>());
+
+            // Act
+            var response = await _client.GetAsync("https://example.com/");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
         private static TestServer CreateServer(JwtAuthenticationOptions configureOptions)
@@ -78,13 +145,12 @@ namespace JWT.Extensions.AspNetCore.Tests
                         services.AddAuthentication(
                                      options =>
                                      {
+                                         // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
                                          options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+
+                                         // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                                         options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
                                      })
-                                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAuthenticationDefaults.AuthenticationScheme, options =>
-                                 {
-                                     options.Keys = configureOptions.Keys;
-                                     options.VerifySignature = configureOptions.VerifySignature;
-                                 })
                                 .AddJwt(options =>
                                      {
                                          options.Keys = configureOptions.Keys;

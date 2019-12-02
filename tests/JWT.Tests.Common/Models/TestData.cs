@@ -4,7 +4,11 @@ namespace JWT.Tests.Common.Models
 {
     public static class TestData
     {
-        public static readonly Customer Customer = new Customer { FirstName = "Bob", Age = 37 };
+        public static readonly Customer Customer = new Customer
+        {
+            FirstName = "Bob",
+            Age = 37
+        };
 
         public const string Key = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public static string[] Keys = { Key };
