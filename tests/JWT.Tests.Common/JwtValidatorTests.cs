@@ -73,7 +73,7 @@ namespace JWT.Tests.Common
 
             var alg = new HMACSHA256Algorithm();
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
+            var signatureData = alg.Sign(GetBytes(TestData.Key), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
@@ -145,7 +145,7 @@ namespace JWT.Tests.Common
 
             var alg = new HMACSHA256Algorithm();
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
+            var signatureData = alg.Sign(GetBytes(TestData.Key), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);

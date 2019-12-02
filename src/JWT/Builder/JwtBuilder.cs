@@ -289,7 +289,7 @@ namespace JWT.Builder
 
         private void TryCreateValidator()
         {
-            if (_validator != null)
+            if (_validator is object)
                 return;
 
             if (_serializer is null)
@@ -331,10 +331,10 @@ namespace JWT.Builder
         /// Checks whether enough dependencies were supplied to build a new token.
         /// </summary>
         private bool CanBuild() =>
-            _algorithm != null &&
-            _serializer != null &&
-            _urlEncoder != null &&
-            _jwt.Payload != null &&
+            _algorithm is object &&
+            _serializer is object &&
+            _urlEncoder is object &&
+            _jwt.Payload is object &&
             (_algorithm.IsAsymmetric || HasOnlyOneSecret());
 
         /// <summary>
@@ -342,9 +342,9 @@ namespace JWT.Builder
         /// </summary>
         private bool CanDecode()
         {
-            if (_serializer != null &&
-                _dateTimeProvider != null &&
-                _urlEncoder != null)
+            if (_serializer is object &&
+                _dateTimeProvider is object &&
+                _urlEncoder is object)
             {
                 return !_verify || (_algorithm?.IsAsymmetric ?? true) || HasSecrets();
             }
@@ -356,13 +356,13 @@ namespace JWT.Builder
         /// Checks if any secret was supplied to use in token decoding
         /// </summary>
         private bool HasSecrets() =>
-            _secrets != null && _secrets.Length > 0;
+            _secrets is object && _secrets.Length > 0;
 
         /// <summary>
         /// Checks if there is only one secret was supplied for token encoding
         /// </summary>
         /// <returns></returns>
         private bool HasOnlyOneSecret() =>
-            _secrets != null && _secrets.Length == 1;
+            _secrets is object && _secrets.Length == 1;
     }
 }

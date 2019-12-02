@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Company>Public Domain</Company>
     <Copyright>Public Domain</Copyright>
     <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
@@ -32,6 +31,8 @@
     <Version>6.0.0-beta2</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <RootNamespace>JWT</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

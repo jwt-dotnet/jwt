@@ -13,9 +13,9 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void Encode_Should_Encode_To_Token()
         {
-            const string key = "ABC";
+            const string key = TestData.Key;
             var toEncode = TestData.Customer;
-            const string token = TestData.Token;
+            const string expected = TestData.Token;
 
             var algorithm = new HMACSHA256Algorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -25,7 +25,7 @@ namespace JWT.Tests.Common
             var actual = encoder.Encode(toEncode, key);
 
             actual.Should()
-                  .Be(token, "because the same data encoded with the same key must result in the same token");
+                  .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
 
         [TestMethod]
@@ -35,9 +35,9 @@ namespace JWT.Tests.Common
             {
                 { "foo", "bar" }
             };
-            const string key = "ABC";
+            const string key = TestData.Key;
             var toEncode = TestData.Customer;
-            const string token = TestData.ExtraHeadersToken;
+            const string expected = TestData.TokenWithExtraHeaders;
 
             var algorithm = new HMACSHA256Algorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -47,7 +47,7 @@ namespace JWT.Tests.Common
             var actual = encoder.Encode(extraHeaders, toEncode, key);
 
             actual.Should()
-                  .Be(token, "because the same data encoded with the same key must result in the same token");
+                  .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
     }
 }

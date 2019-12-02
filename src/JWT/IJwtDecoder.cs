@@ -12,6 +12,13 @@ namespace JWT
         /// <summary>
         /// Given a JWT, decodes it and return the JSON payload.
         /// </summary>
+        /// <param name="jwt">The JWT</param>
+        /// <returns>A string containing the JSON payload</returns>
+        string Decode(JwtParts jwt);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the JSON payload.
+        /// </summary>
         /// <param name="token">The JWT</param>
         /// <returns>A string containing the JSON payload</returns>
         string Decode(string token);
