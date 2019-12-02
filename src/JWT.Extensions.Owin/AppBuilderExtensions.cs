@@ -4,7 +4,7 @@ namespace JWT
 {
     public static class AppBuilderExtensions
     {
-        public static void UseClientCertificateAuthentication(this IAppBuilder appBuilder) =>
+        public static void UseJwtMiddleware(this IAppBuilder appBuilder) =>
             appBuilder.Use<JwtAuthenticationMiddleware>();
     }
 }
