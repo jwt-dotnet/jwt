@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -35,33 +33,28 @@ namespace JWT
         {
             if (String.IsNullOrEmpty(header))
             {
-                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning no result");
+                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
                 return AuthenticateResult.NoResult();
             }
 
             if (!header.StartsWith(this.Scheme.Name, StringComparison.OrdinalIgnoreCase))
             {
-                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} scheme is not {this.Scheme.Name}, returning no result");
+                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} scheme is not {this.Scheme.Name}, returning none");
                 return AuthenticateResult.NoResult();
             }
 
             var token = header.Substring(this.Scheme.Name.Length).Trim();
             if (String.IsNullOrEmpty(token))
             {
-                this.Logger.LogInformation($"Token in header {nameof(HeaderNames.Authorization)} is empty, returning no result");
+                this.Logger.LogInformation($"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
                 return AuthenticateResult.NoResult();
             }
 
             try
             {
                 var dic = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Keys, this.Options.VerifySignature);
-                var claims = dic.Select(p => new Claim(p.Key, p.Value));
-                var identity = new ClaimsIdentity(claims);
-
-                var ticket = new AuthenticationTicket(
-                    new ClaimsPrincipal(identity),
-                    new AuthenticationProperties(),
-                    this.Scheme.Name);
+                var identity = this.Options.IdentityFactory(dic);
+                var ticket = this.Options.TicketFactory(identity, this.Scheme);
 
                 this.Logger.LogInformation("Successfully decoded JWT, returning success");
                 return AuthenticateResult.Success(ticket);

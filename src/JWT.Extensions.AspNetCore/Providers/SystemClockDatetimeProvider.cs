@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication;
 
-namespace JWT
+namespace JWT.Providers
 {
     public sealed class SystemClockDatetimeProvider : IDateTimeProvider
     {
