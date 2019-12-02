@@ -238,7 +238,7 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secret
+                     // secrets
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
                      // force JwtDecoder to throw exception if JWT signature is invalid
