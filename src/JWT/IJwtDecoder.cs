@@ -50,7 +50,7 @@ namespace JWT
         /// <param name="keys">The keys bytes provided which one of them was used to sign the JWT</param>
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>A string containing the JSON payload</returns>
-        string Decode(string token, IReadOnlyCollection<byte[]> keys, bool verify);
+        string Decode(string token, byte[][] keys, bool verify);
 
         #endregion
 
@@ -104,7 +104,7 @@ namespace JWT
         /// <returns>An object representing the payload</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim</exception>
-        IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify);
+        IDictionary<string, object> DecodeToObject(string token, byte[][] keys, bool verify);
 
         #endregion
 
@@ -164,7 +164,7 @@ namespace JWT
         /// <returns>An object representing the payload</returns>
         /// <exception cref="SignatureVerificationException">Thrown if the verify parameter was true and the signature was NOT valid or if the JWT was signed with an unsupported algorithm</exception>
         /// <exception cref="TokenExpiredException">Thrown if the verify parameter was true and the token has an expired exp claim</exception>
-        T DecodeToObject<T>(string token, IReadOnlyCollection<byte[]> keys, bool verify);
+        T DecodeToObject<T>(string token, byte[][] keys, bool verify);
 
         #endregion
     }

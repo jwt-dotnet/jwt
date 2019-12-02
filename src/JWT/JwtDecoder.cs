@@ -98,13 +98,13 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public string Decode(string token, IReadOnlyCollection<byte[]> keys, bool verify)
+        public string Decode(string token, byte[][] keys, bool verify)
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
             if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (keys.Count == 0 || !AllKeysHaveValues(keys))
+            if (keys.Length == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
@@ -152,7 +152,7 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, IReadOnlyCollection<byte[]> keys, bool verify) =>
+        public IDictionary<string, object> DecodeToObject(string token, byte[][] keys, bool verify) =>
             DecodeToObject<Dictionary<string, object>>(token, keys, verify);
 
         /// <inheritdoc />
@@ -193,75 +193,38 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(string token, IReadOnlyCollection<byte[]> keys, bool verify)
+        public T DecodeToObject<T>(string token, byte[][] keys, bool verify)
         {
             var payload = Decode(token, keys, verify);
             return _jsonSerializer.Deserialize<T>(payload);
         }
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
         /// </summary>
         /// <param name="parts">The array representation of a JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(string[] parts, byte[] key) =>
+        public void Validate(string[] parts, params byte[] key) =>
             Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string)" />
-        /// </summary>
-        /// <param name="jwt">The JWT parts</param>
-        /// <param name="key">The key that was used to sign the JWT</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public void Validate(JwtParts jwt, byte[] key)
-        {
-            if (jwt is null)
-                throw new ArgumentNullException(nameof(jwt));
-            if (key is null)
-                throw new ArgumentNullException(nameof(key));
-            if (key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
-
-            var crypto = _urlEncoder.Decode(jwt.Signature);
-            var decodedCrypto = Convert.ToBase64String(crypto);
-
-            var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
-            var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
-
-            var payload = jwt.Payload;
-            var payloadJson = GetString(_urlEncoder.Decode(payload));
-
-            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", payload));
-
-            var algName = (string)headerData["alg"];
-            var alg = _algFactory.Create(algName);
-
-            var signatureData = alg.Sign(key, bytesToSign);
-            var decodedSignature = Convert.ToBase64String(signatureData);
-
-            _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
-        }
-
-        /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string[])" />
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
         /// </summary>
         /// <param name="jwt">The JWT parts</param>
         /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(JwtParts jwt, IReadOnlyCollection<byte[]> keys)
+        public void Validate(JwtParts jwt, params byte[][] keys)
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
             if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (keys.Count == 0 || !AllKeysHaveValues(keys))
+            if (keys.Length == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
@@ -281,6 +244,7 @@ namespace JWT
             var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
                                         .Select(sd => Convert.ToBase64String(sd))
                                         .ToArray();
+
             _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
         }
 
