@@ -9,6 +9,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 1. [Jwt.Net](#JwtNet)
 2. [Jwt.Net for ASP.NET Core](#JwtNet-ASPNET-Core)
+3. [Jwt.Net for Owin](#JwtNet-OWIN)
 
 ## Supported .NET versions:
 
@@ -225,6 +226,53 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 [![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 
+#### Registering authentication handler to validate JWT
+
+```c#
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication(options =>
+                 {
+                     options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+
+                     options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                 })
+            .AddJwt(options =>
+                 {
+					// secret
+                    options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
+                     
+					 // force JwtDecoder to throw exception if JWT signature is invalid
+					 options.VerifySignature = true;
+                 });
+}
+
+public void Configure(IApplicationBuilder app)
+{
+    app.UseAuthentication();
+}
+```
+
 #### Registering middleware to validate JWT
 
-TODO
+```c#
+app.UseJwtMiddleware();
+```
+
+**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.
+
+
+### Jwt.Net OWIN
+
+#### NuGet
+
+[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
+
+#### Registering middleware to validate JWT
+
+```c#
+app.UseJwtMiddleware();
+```
+
+**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.

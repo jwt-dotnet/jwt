@@ -13,7 +13,7 @@ namespace JWT
 
         public async Task Invoke(HttpContext context)
         {
-            throw new NotImplementedException("TODO");
+            throw new NotImplementedException("TBD");
 
             await _next.Invoke(context);
         }

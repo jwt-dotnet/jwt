@@ -13,7 +13,7 @@ namespace JWT
 
         public override async Task Invoke(IOwinContext context)
         {
-            throw new NotImplementedException("TODO");
+            throw new NotImplementedException("TBD");
 
             await this.Next.Invoke(context);
         }
