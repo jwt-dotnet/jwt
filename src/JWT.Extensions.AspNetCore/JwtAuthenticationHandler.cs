@@ -63,10 +63,12 @@ namespace JWT
                     new AuthenticationProperties(),
                     this.Scheme.Name);
 
+                this.Logger.LogInformation("Successfully decoded JWT, returning success");
                 return AuthenticateResult.Success(ticket);
             }
             catch (Exception ex)
             {
+                this.Logger.LogError(ex, $"Error decoding JWT: {ex.Message}, returning failure");
                 return AuthenticateResult.Fail(ex);
             }
         }
