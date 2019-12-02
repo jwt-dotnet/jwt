@@ -44,7 +44,7 @@ namespace JWT.Tests.Common
 
             var alg = new HMACSHA256Algorithm();
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
+            var signatureData = alg.Sign(GetBytes(TestData.Key), bytesToSign);
             ++signatureData[0]; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
 
@@ -115,7 +115,7 @@ namespace JWT.Tests.Common
 
             var alg = new HMACSHA256Algorithm();
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
-            var signatureData = alg.Sign(GetBytes("ABC"), bytesToSign);
+            var signatureData = alg.Sign(GetBytes(TestData.Key), bytesToSign);
             ++signatureData[0]; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
 

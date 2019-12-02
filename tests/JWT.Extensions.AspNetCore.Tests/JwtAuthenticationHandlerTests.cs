@@ -1,5 +1,8 @@
-﻿using System.Text.Encodings.Web;
+﻿using System;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
@@ -16,10 +19,86 @@ namespace JWT.Extensions.AspNetCore.Tests
     [TestClass]
     public class JwtAuthenticationHandlerTests
     {
+        private static readonly Fixture _fixture = new Fixture();
+
         [TestMethod]
-        public async Task HandleAuthenticateAsync_Should_Return_AuthenticateResult_Success()
+        public async Task HandleAuthenticateAsync_Should_Return_Success_When_Token_Is_Valid()
         {
             // Arrange
+            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.Token}";
+            var handler = await CreateHandler(header);
+
+            // Act
+            var result = await handler.AuthenticateAsync();
+
+            // Assert
+            result.Succeeded.Should().BeTrue();
+            result.Ticket.Should().NotBeNull();
+            result.Failure.Should().BeNull();
+
+            result.Principal.Should().NotBeNull().And.BeOfType<ClaimsPrincipal>();
+            result.Principal.Identity.Should().NotBeNull().And.BeOfType<ClaimsIdentity>();
+        }
+
+        [TestMethod]
+        public async Task HandleAuthenticateAsync_Should_Return_None_When_Token_Is_Empty()
+        {
+            // Arrange
+            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {String.Empty}";
+            var handler = await CreateHandler(header);
+
+            // Act
+            var result = await handler.AuthenticateAsync();
+
+            // Assert
+            result.None.Should().BeTrue();
+            result.Succeeded.Should().BeFalse();
+            result.Failure.Should().BeNull();
+
+            result.Ticket.Should().BeNull();
+            result.Principal.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task HandleAuthenticateAsync_Should_Return_Fail_When_Token_Is_Invalid()
+        {
+            // Arrange
+            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenWithIncorrectSignature}";
+            var handler = await CreateHandler(header);
+
+            // Act
+            var result = await handler.AuthenticateAsync();
+
+            // Assert
+            result.None.Should().BeFalse();
+            result.Succeeded.Should().BeFalse();
+            result.Failure.Should().NotBeNull();
+
+            result.Ticket.Should().BeNull();
+            result.Principal.Should().BeNull();
+        }
+
+        [TestMethod]
+        public async Task HandleAuthenticateAsync_Should_Return_None_When_AuthenticationScheme_Is_Invalid()
+        {
+            // Arrange
+            var header = $"{_fixture.Create<string>()} {_fixture.Create<string>()}";
+            var handler = await CreateHandler(header);
+
+            // Act
+            var result = await handler.AuthenticateAsync();
+
+            // Assert
+            result.None.Should().BeTrue();
+            result.Succeeded.Should().BeFalse();
+            result.Failure.Should().BeNull();
+
+            result.Ticket.Should().BeNull();
+            result.Principal.Should().BeNull();
+        }
+
+        private static async Task<JwtAuthenticationHandler> CreateHandler(string header)
+        {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -47,18 +126,13 @@ namespace JWT.Extensions.AspNetCore.Tests
                 {
                     Headers =
                     {
-                        { HeaderNames.Authorization, $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.Token}" }
+                        { HeaderNames.Authorization, header }
                     }
                 }
             };
 
             await handler.InitializeAsync(scheme, context);
-
-            // Act
-            var result = await handler.AuthenticateAsync();
-
-            // Assert
-            result.Succeeded.Should().BeTrue();
+            return handler;
         }
     }
 }

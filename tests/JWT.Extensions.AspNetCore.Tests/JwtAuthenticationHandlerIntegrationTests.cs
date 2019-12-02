@@ -70,12 +70,12 @@ namespace JWT.Extensions.AspNetCore.Tests
         }
 
         [TestMethod]
-        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Invalid()
+        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Empty()
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 JwtAuthenticationDefaults.AuthenticationScheme,
-                _fixture.Create<string>());
+                String.Empty);
 
             // Act
             var response = await _client.GetAsync("https://example.com/");
@@ -85,12 +85,12 @@ namespace JWT.Extensions.AspNetCore.Tests
         }
 
         [TestMethod]
-        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Empty()
+        public async Task Request_Should_Return_Unauthorized_When_Token_Is_Invalid()
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 JwtAuthenticationDefaults.AuthenticationScheme,
-                String.Empty);
+                TestData.TokenWithIncorrectSignature);
 
             // Act
             var response = await _client.GetAsync("https://example.com/");

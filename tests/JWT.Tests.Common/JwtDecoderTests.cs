@@ -132,7 +132,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
         {
-            const string badToken = TestData.MalformedToken;
+            const string badToken = TestData.TokenWithoutHeader;
             const string key = TestData.Key;
 
             var serializer = new JsonNetSerializer();
@@ -149,7 +149,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_Multiple_Secrets()
         {
-            const string badToken = TestData.MalformedToken;
+            const string badToken = TestData.TokenWithoutHeader;
             const string key = TestData.Key;
 
             var serializer = new JsonNetSerializer();
@@ -349,10 +349,10 @@ namespace JWT.Tests.Common
             var nbf = UnixEpoch.GetSecondsSince(now.AddHours(1));
 
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
-            var token = encoder.Encode(new { nbf }, "ABC");
+            var token = encoder.Encode(new { nbf }, TestData.Key);
 
             Action decodeNotActiveJwt =
-                () => decoder.DecodeToObject<Customer>(token, "ABC", verify: true);
+                () => decoder.DecodeToObject<Customer>(token, TestData.Key, verify: true);
 
             decodeNotActiveJwt.Should()
                               .Throw<SignatureVerificationException>();
