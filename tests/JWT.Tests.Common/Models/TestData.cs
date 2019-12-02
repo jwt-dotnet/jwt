@@ -7,6 +7,7 @@ namespace JWT.Tests.Common.Models
         public static readonly Customer Customer = new Customer { FirstName = "Bob", Age = 37 };
 
         public const string Key = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+        public static string[] Keys = { Key };
 
         public const string Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.oj1ROhq6SyGDG3C0WIPe8wDuMJjA47uKwXCHkxl6Zy0";
         public const string MalformedToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.cr0xw8c_HKzhFBMQrseSPGoJ0NPlRp_3BKzP96jwBdY";

@@ -25,7 +25,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         {
             var options = new JwtAuthenticationOptions
             {
-                Keys = new[] { TestData.Key },
+                Keys = TestData.Keys,
                 VerifySignature = true
             };
             _server = CreateServer(options);
@@ -65,7 +65,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                                 response.StatusCode = (int)HttpStatusCode.OK;
                                 response.ContentType = new ContentType("text/json").MediaType;
 
-                                await response.WriteAsync("HELO");
+                                await response.WriteAsync("Hello");
                             }
                             else
                             {
@@ -75,12 +75,21 @@ namespace JWT.Extensions.AspNetCore.Tests
                     })
                 .ConfigureServices(services =>
                     {
-                        services.AddAuthentication(JwtAuthenticationDefaults.AuthenticationScheme)
-                                .AddJwt(options =>
+                        services.AddAuthentication(
+                                     options =>
+                                     {
+                                         options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                     })
+                                .AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(JwtAuthenticationDefaults.AuthenticationScheme, options =>
                                  {
                                      options.Keys = configureOptions.Keys;
                                      options.VerifySignature = configureOptions.VerifySignature;
-                                 });
+                                 })
+                                .AddJwt(options =>
+                                     {
+                                         options.Keys = configureOptions.Keys;
+                                         options.VerifySignature = configureOptions.VerifySignature;
+                                     });
                     });
 
             return new TestServer(builder);
