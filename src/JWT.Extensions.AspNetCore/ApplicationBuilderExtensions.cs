@@ -14,7 +14,7 @@ namespace JWT
         /// <returns>
         /// The <see cref="IApplicationBuilder" />.
         /// </returns>
-        public static IApplicationBuilder UseJwt(this IApplicationBuilder app)
+        public static IApplicationBuilder UseJwtMiddleware(this IApplicationBuilder app)
         {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
