@@ -1,7 +1,4 @@
-﻿// Copyright (c) Alexander Batishchev. All rights reserved.
-// Licensed under the MIT License. See License.md in the project root for license information.
-
-namespace JWT
+﻿namespace JWT
 {
     /// <summary>
     /// Default values related to Jwt authentication/authorization
