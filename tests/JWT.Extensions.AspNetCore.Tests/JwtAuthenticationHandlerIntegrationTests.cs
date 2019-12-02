@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using FluentAssertions;
+using JWT.Tests.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,12 @@ namespace JWT.Extensions.AspNetCore.Tests
         [TestInitialize]
         public void TestInitialize()
         {
-            _server = CreateServer();
+            var options = new JwtAuthenticationOptions
+            {
+                Keys = new[] { TestData.Key },
+                VerifySignature = true
+            };
+            _server = CreateServer(options);
             _client = _server.CreateClient();
         }
 
@@ -41,7 +47,7 @@ namespace JWT.Extensions.AspNetCore.Tests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        private static TestServer CreateServer(JwtAuthenticationOptions configureOptions = null)
+        private static TestServer CreateServer(JwtAuthenticationOptions configureOptions)
         {
             var builder = new WebHostBuilder()
                 .Configure(app =>
@@ -69,20 +75,12 @@ namespace JWT.Extensions.AspNetCore.Tests
                     })
                 .ConfigureServices(services =>
                     {
-                        if (configureOptions != null)
-                        {
-                            services.AddAuthentication(JwtAuthenticationDefaults.AuthenticationScheme)
-                                    .AddJwt(options =>
-                                        {
-                                            options.Keys = configureOptions.Keys;
-                                            options.VerifySignature = configureOptions.VerifySignature;
-                                        });
-                        }
-                        else
-                        {
-                            services.AddAuthentication(JwtAuthenticationDefaults.AuthenticationScheme)
-                                    .AddJwt();
-                        }
+                        services.AddAuthentication(JwtAuthenticationDefaults.AuthenticationScheme)
+                                .AddJwt(options =>
+                                 {
+                                     options.Keys = configureOptions.Keys;
+                                     options.VerifySignature = configureOptions.VerifySignature;
+                                 });
                     });
 
             return new TestServer(builder);
