@@ -44,12 +44,12 @@ namespace JWT.Extensions.AspNetCore.Tests
             var context = new DefaultHttpContext
             {
                 Request =
-            {
-                Headers =
                 {
-                    { HeaderNames.Authorization, $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.Token}" }
+                    Headers =
+                    {
+                        { HeaderNames.Authorization, $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.Token}" }
+                    }
                 }
-            }
             };
 
             await handler.InitializeAsync(scheme, context);
