@@ -292,7 +292,6 @@ namespace JWT
             validate(payloadJson, decodedCrypto, alg, bytesToSign);
         }
 
-
         private static bool AllKeysHaveValues(IEnumerable<byte[]> keys) =>
             keys.All(key => key.Any());
     }
