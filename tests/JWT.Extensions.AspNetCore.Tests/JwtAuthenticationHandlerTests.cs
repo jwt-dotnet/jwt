@@ -1,7 +1,4 @@
-﻿// Copyright (c) Alexander Batishchev. All rights reserved.
-// Licensed under the MIT License. See License.md in the project root for license information.
-
-using System.Text.Encodings.Web;
+﻿using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;

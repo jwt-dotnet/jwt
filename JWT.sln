@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin", "src\JWT.Extensions.Owin\JWT.Extensions.Owin.csproj", "{D3001A7C-5C10-4393-8713-F8C899F91A4A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin.Tests", "tests\JWT.Extensions.Owin.Tests\JWT.Extensions.Owin.Tests.csproj", "{4B65AB99-C173-4B8E-B535-95008F4B4328}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{D3001A7C-5C10-4393-8713-F8C899F91A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3001A7C-5C10-4393-8713-F8C899F91A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3001A7C-5C10-4393-8713-F8C899F91A4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B65AB99-C173-4B8E-B535-95008F4B4328}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B65AB99-C173-4B8E-B535-95008F4B4328}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B65AB99-C173-4B8E-B535-95008F4B4328}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B65AB99-C173-4B8E-B535-95008F4B4328}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
