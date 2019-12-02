@@ -30,7 +30,7 @@ namespace JWT.Tests.Common
             var expected = serializer.Serialize(toSerialize);
 
             actual.Should()
-                  .Be(expected, "because the provided object should be correctly serialized in the token");
+                .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
         [TestMethod]
