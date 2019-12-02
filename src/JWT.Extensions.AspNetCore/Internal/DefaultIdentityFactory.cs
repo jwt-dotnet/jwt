@@ -3,9 +3,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace JWT.Providers
+namespace JWT.Internal
 {
-    public static class DefaultIdentityFactory
+    internal static class DefaultIdentityFactory
     {
         /// <summary>
         /// Creates user's identity from user's claims

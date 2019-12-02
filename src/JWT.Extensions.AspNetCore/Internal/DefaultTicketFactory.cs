@@ -2,9 +2,9 @@
 using System.Security.Principal;
 using Microsoft.AspNetCore.Authentication;
 
-namespace JWT.Providers
+namespace JWT.Internal
 {
-    public static class DefaultTicketFactory
+    internal static class DefaultTicketFactory
     {
         /// <summary>
         /// Creates user's <see cref="AuthenticationTicket" /> from user's <see cref="IIdentity" /> and current <see cref="AuthenticationScheme" />
