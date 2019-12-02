@@ -28,17 +28,7 @@ namespace JWT
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
-        public void Validate(string payloadJson, string decodedCrypto, string decodedSignature)
-        {
-            var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
-            if (ex != null)
-                throw ex;
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="SignatureVerificationException" />
-        public void Validate(string payloadJson, string decodedCrypto, string[] decodedSignatures)
+        public void Validate(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
             var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignatures);
             if (ex != null)
@@ -130,7 +120,7 @@ namespace JWT
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        private static Exception ValidateExpClaim(IDictionary<string, object> payloadData, double secondsSinceEpoch)
+        private static Exception ValidateExpClaim(IReadOnlyDictionary<string, object> payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("exp", out var expObj))
                 return null;

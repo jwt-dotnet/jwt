@@ -23,7 +23,7 @@ namespace JWT
         /// <summary>
         /// The payload.
         /// </summary>
-        public IDictionary<string, object> PayloadData
+        public IReadOnlyDictionary<string, object> PayloadData
         {
             get => GetOrDefault<Dictionary<string, object>>(PayloadDataKey);
             internal set => this.Data.Add(PayloadDataKey, value);

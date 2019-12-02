@@ -200,18 +200,18 @@ namespace JWT
         }
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(String,String,String)" />
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
         /// </summary>
         /// <param name="parts">The array representation of a JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(string[] parts, byte[] key) =>
+        public void Validate(string[] parts, params byte[] key) =>
             Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate(string,string,string[])" />
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
         /// </summary>
         /// <param name="jwt">The JWT parts</param>
         /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
@@ -226,7 +226,6 @@ namespace JWT
                 throw new ArgumentNullException(nameof(keys));
             if (keys.Length == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
-
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
             var decodedCrypto = Convert.ToBase64String(crypto);
