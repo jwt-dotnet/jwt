@@ -15,7 +15,7 @@ namespace JWT.Tests.Common
         private readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
-        [TestCategory(TestCategory.Security)]
+        [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
             var key = _fixture.Create<string>();
@@ -34,7 +34,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        [TestCategory(TestCategory.Security)]
+        [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used_MultipleKeys()
         {
             var keys = _fixture.Create<string[]>();
@@ -53,7 +53,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        [TestCategory(TestCategory.Security)]
+        [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected()
         {
             var serializer = new JsonNetSerializer();
@@ -75,7 +75,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        [TestCategory(TestCategory.Security)]
+        [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected_MultipleKeys()
         {
             var serializer = new JsonNetSerializer();
