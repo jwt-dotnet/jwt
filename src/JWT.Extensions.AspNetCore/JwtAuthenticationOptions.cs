@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Principal;
-using JWT.Algorithms;
 using JWT.Internal;
 using Microsoft.AspNetCore.Authentication;
 
@@ -10,15 +9,16 @@ namespace JWT
     public class JwtAuthenticationOptions : AuthenticationSchemeOptions
     {
         /// <summary>
-        /// The keys provided which one of them was used to sign the JWT.
+        /// The keys used to sign the JWT.
         /// </summary>
         /// <remarks>
-        /// This property is optional when <see cref="RS256Algorithm" /> is used.
+        /// <list type="bullet">Plain-text secret for HMACSHA algorithms.</list>
+        /// <list type="bullet">Public Key for RS algorithms.</list>
         /// </remarks>
         public string[] Keys { get; set; }
 
         /// <summary>
-        /// The flag whether to verify the signature or not. The default value is <see cref="Boolean.TrueString" />.
+        /// The flag whether to verify the signature or not. The default value is <see langword="true" />.
         /// </summary>
         public bool VerifySignature { get; set; } = true;
 
