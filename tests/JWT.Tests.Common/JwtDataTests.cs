@@ -21,11 +21,11 @@ namespace JWT.Tests.Common
 
             jwtData.Header
                    .Should()
-                   .Contain(headers, "because the DTO's header must match the one provided");
+                   .Contain(headers, "because header must match the one provided");
 
             jwtData.Payload
                    .Should()
-                   .Contain(payload, "because the DTO's payload must match the one provided");
+                   .Contain(payload, "because payload must match the one provided");
         }
     }
 }

@@ -52,8 +52,13 @@ namespace JWT.Algorithms
         public bool IsAsymmetric => true;
 
         /// <inheritdoc />
-        public byte[] Sign(byte[] key, byte[] bytesToSign) =>
-            _privateKey is object ? Sign(bytesToSign) : throw new InvalidOperationException("Can't sign data without private key");
+        public byte[] Sign(byte[] key, byte[] bytesToSign)
+        {
+            if (_privateKey is null)
+                throw new InvalidOperationException("Can't sign data without private key");
+
+            return Sign(bytesToSign);
+        }
 
         /// <summary>
         /// Signs the provided bytes.

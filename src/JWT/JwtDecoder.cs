@@ -48,6 +48,17 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
+        public string Decode(JwtParts jwt)
+        {
+            var decoded = _urlEncoder.Decode(jwt.Payload);
+            return GetString(decoded);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public string Decode(string token)
         {
             var payload = new JwtParts(token).Payload;
@@ -107,12 +118,14 @@ namespace JWT
             if (keys.Length == 0 || !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
+            var jwt = new JwtParts(token);
+
             if (verify)
             {
-                Validate(new JwtParts(token), keys);
+                Validate(jwt, keys);
             }
 
-            return Decode(token);
+            return Decode(jwt);
         }
 
         /// <inheritdoc />

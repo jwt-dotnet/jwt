@@ -31,7 +31,7 @@ namespace JWT
         public void Validate(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
             var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignatures);
-            if (ex != null)
+            if (ex is object)
                 throw ex;
         }
 

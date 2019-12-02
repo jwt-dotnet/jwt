@@ -19,7 +19,7 @@ namespace JWT.Tests.Common
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
         {
             var key = _fixture.Create<string>();
-            const string token = TestData.AlgorithmNoneToken;
+            const string token = TestData.TokenWithoutAlgorithm;
 
             var serializer = new JsonNetSerializer();
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -38,7 +38,7 @@ namespace JWT.Tests.Common
         public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used_MultipleKeys()
         {
             var keys = _fixture.Create<string[]>();
-            const string token = TestData.AlgorithmNoneToken;
+            const string token = TestData.TokenWithoutAlgorithm;
 
             var serializer = new JsonNetSerializer();
             var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
