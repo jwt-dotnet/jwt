@@ -73,24 +73,7 @@ namespace JWT
             return ex is null;
         }
 
-        private Exception GetValidationException(string payloadJson, string decodedCrypto, string decodedSignature)
-        {
-            if (String.IsNullOrWhiteSpace(payloadJson))
-                return new ArgumentException(nameof(payloadJson));
-
-            if (String.IsNullOrWhiteSpace(decodedCrypto))
-                return new ArgumentException(nameof(decodedCrypto));
-
-            if (String.IsNullOrWhiteSpace(decodedSignature))
-                return new ArgumentException(nameof(decodedSignature));
-
-            if (!CompareCryptoWithSignature(decodedCrypto, decodedSignature))
-                return new SignatureVerificationException(decodedCrypto, decodedSignature);
-
-            return GetValidationException(payloadJson);
-        }
-
-        private Exception GetValidationException(string payloadJson, string decodedCrypto, string[] decodedSignatures)
+        private Exception GetValidationException(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
             if (String.IsNullOrWhiteSpace(payloadJson))
                 return new ArgumentException(nameof(payloadJson));
@@ -123,7 +106,7 @@ namespace JWT
         private static bool IsAnySignatureValid(string decodedCrypto, IEnumerable<string> decodedSignatures) =>
             decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
 
-        /// <remarks>In the future this method can be opened for extension so made protected virtual</remarks>
+        /// <remarks>In the future this method can be opened for extension thus made protected virtual</remarks>
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
         {
             if (decodedCrypto.Length != decodedSignature.Length)

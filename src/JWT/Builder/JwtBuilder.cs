@@ -303,10 +303,13 @@ namespace JWT.Builder
         private void EnsureCanBuild()
         {
             if (!CanBuild())
-                throw new InvalidOperationException("Can't build a token. Check if you have call all of the followng methods:\r\n" +
-                                                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
-                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
-                                                    $"-{nameof(WithUrlEncoder)}.");
+            {
+                throw new InvalidOperationException(
+                    "Can't build a token. Check if you have call all of the following methods:" +Environment.NewLine +
+                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
+                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithUrlEncoder)}.");
+            }
 
             if (!HasOnlyOneSecret())
                 throw new InvalidOperationException("You can't provide more than one secret to use for encoding.");
@@ -315,10 +318,13 @@ namespace JWT.Builder
         private void EnsureCanDecode()
         {
             if (!CanDecode())
-                throw new InvalidOperationException("Can't decode a token. Check if you have call all of the following methods:" + Environment.NewLine +
-                                                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
-                                                    $"-{nameof(WithValidator)}" + Environment.NewLine +
-                                                    $"-{nameof(WithUrlEncoder)}.");
+            {
+                throw new InvalidOperationException(
+                    "Can't decode a token. Check if you have call all of the following methods:" + Environment.NewLine +
+                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithValidator)}" + Environment.NewLine +
+                    $"-{nameof(WithUrlEncoder)}.");
+            }
         }
 
         /// <summary>
