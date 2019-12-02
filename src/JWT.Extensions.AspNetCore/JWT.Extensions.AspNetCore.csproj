@@ -5,24 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Copyright>Copyright (c) Alexander Batishchev</Copyright>
+    <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
     <PackageDescription>ASP.NET Core intergration package for Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core</PackageTags>
     <PackageLicense>MIT</PackageLicense>
-    <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/jwt-dotnet/jwt/releases</PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-
-    <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>
-    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Include PDB in the built .nupkg -->
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-
     <Version>6.0.0-alpha1</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>

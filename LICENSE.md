@@ -1,5 +1,3 @@
-JWT for .NET
-
 # Public Domain
 
 Written by John Sheehan (http://john-sheehan.com)
@@ -12,7 +10,7 @@ For more information, please visit: http://creativecommons.org/publicdomain/zero
 
 # MIT
 
-Copyright (c) 2019 JWT for .NET Maintainers and Contributors.
+Copyright (c) 2019 Jwt.Net Maintainers and Contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

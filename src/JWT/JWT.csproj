@@ -15,19 +15,6 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <PackageProjectUrl>https://github.com/jwt-dotnet/jwt</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/jwt-dotnet/jwt/releases</PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-
-    <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>
-    <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- Include PDB in the built .nupkg -->
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-
     <Version>6.0.0-beta2</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
