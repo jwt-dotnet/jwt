@@ -30,7 +30,7 @@ namespace JWT
 
         /// <inheritdoc />
         public string Encode(object payload, string key) =>
-            Encode(null, payload, key != null ? GetBytes(key) : null);
+            Encode(null, payload, key is object ? GetBytes(key) : null);
 
         /// <inheritdoc />
         public string Encode(object payload, byte[] key) =>
