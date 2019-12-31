@@ -39,10 +39,18 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
-        /// <param name="cert">The certificate having both public and private keys.</param>
+        /// <param name="cert">The certificate having a public key and an optional private key.</param>
         public RS256Algorithm(X509Certificate2 cert)
-            : this(GetPublicKey(cert), GetPrivateKey(cert))
         {
+            if (cert is null)
+            {
+                throw new ArgumentNullException(nameof(cert));
+            }
+
+            _publicKey = GetPublicKey(cert) ?? throw new Exception("Certificate's PublicKey cannot be null.");
+
+            // Optional / can be null.
+            _privateKey = GetPrivateKey(cert);
         }
 
         /// <inheritdoc />
