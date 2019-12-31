@@ -67,12 +67,13 @@ namespace JWT.Tests.Common
         [DataTestMethod]
         [DataRow(TestData.ServerRsaPublicKey1)]
         [DataRow(TestData.ServerRsaPublicKey2)]
-        public void Ctor_Should_Not_Throw_Exception_When_PublicCertificate_Has_No_PrivateKey(string publicKey)
+        public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(string publicKey)
         {
             var bytes = Encoding.ASCII.GetBytes(publicKey);
             var certificate = new X509Certificate2(bytes);
 
             var algorithm = new RS256Algorithm(certificate);
+
             algorithm.Should().NotBeNull();
         }
     }
