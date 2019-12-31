@@ -1,8 +1,11 @@
 using System;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
@@ -49,6 +52,29 @@ namespace JWT.Tests.Common
 
             signWithoutPrivateKey.Should()
                                  .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
+        }
+
+        [TestMethod]
+        public void Ctor_Should_Not_Throw_Exception_When_PublicKeyHasNoPrivateKey()
+        {
+            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+
+            var algorithm = new RS256Algorithm(publicKey);
+
+            algorithm.Should().NotBeNull();
+        }
+
+        [DataTestMethod]
+        [DataRow(TestData.ServerRsaPublicKey1)]
+        [DataRow(TestData.ServerRsaPublicKey2)]
+        public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(string publicKey)
+        {
+            var bytes = Encoding.ASCII.GetBytes(publicKey);
+            var certificate = new X509Certificate2(bytes);
+
+            var algorithm = new RS256Algorithm(certificate);
+
+            algorithm.Should().NotBeNull();
         }
     }
 }
