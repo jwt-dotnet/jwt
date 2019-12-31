@@ -42,14 +42,7 @@ namespace JWT.Algorithms
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
         public RS256Algorithm(X509Certificate2 cert)
         {
-            if (cert is null)
-            {
-                throw new ArgumentNullException(nameof(cert));
-            }
-
             _publicKey = GetPublicKey(cert) ?? throw new Exception("Certificate's PublicKey cannot be null.");
-
-            // Optional / can be null.
             _privateKey = GetPrivateKey(cert);
         }
 
@@ -86,6 +79,9 @@ namespace JWT.Algorithms
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
         {
+            if (cert is null)
+                throw new ArgumentNullException(nameof(cert));
+
 #if NETSTANDARD1_3
             return cert.GetRSAPrivateKey();
 #else
@@ -95,6 +91,9 @@ namespace JWT.Algorithms
 
         private static RSA GetPublicKey(X509Certificate2 cert)
         {
+            if (cert is null)
+                throw new ArgumentNullException(nameof(cert));
+
 #if NETSTANDARD1_3
             return cert.GetRSAPublicKey();
 #else
