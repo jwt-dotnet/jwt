@@ -6,7 +6,7 @@
     <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <EnableSourceLink>true</<EnableSourceLink>
+    <EnableSourceLink>true</EnableSourceLink>
     <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
