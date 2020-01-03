@@ -45,9 +45,9 @@ steps:
     command: 'test'
     projects: 'tests/**/JWT.Tests.Core.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
-    testRunner: VSTest
+    testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
-    testResultsFormat: 'xUnit'
+    testResultsFormat: 'VSTest'
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
@@ -56,9 +56,9 @@ steps:
     command: 'test'
     projects: 'tests/**/JWT.Tests.NetFramework.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
-    testRunner: VSTest
+    testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
-    testResultsFormat: 'xUnit'
+    testResultsFormat: 'VSTest'
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
