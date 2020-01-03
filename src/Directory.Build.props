@@ -6,7 +6,7 @@
     <RepositoryUrl>https://github.com/jwt-dotnet/jwt</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
-    <EnableSourceControlManagerQueries>$(EnableSourceLink)</EnableSourceControlManagerQueries>
+    <EnableSourceControlManagerQueries>true</EnableSourceControlManagerQueries>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
