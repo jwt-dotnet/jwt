@@ -169,6 +169,7 @@ namespace JWT.Builder
             return this;
         }
 
+
         /// <summary>
         /// Sets certificate secret.
         /// </summary>
@@ -182,6 +183,7 @@ namespace JWT.Builder
             return this;
         }
 
+
         /// <summary>
         /// Sets certificate secret.
         /// </summary>
@@ -192,6 +194,16 @@ namespace JWT.Builder
         public JwtBuilder WithSecret(params byte[][] secrets)
         {
             _secrets = secrets;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets JWT algorithm factory.
+        /// </summary>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithAlgorithmFactory(IJwtAlgorithmFacyory algFactory)
+        {
+            _algFactory = algFactory;
             return this;
         }
 
