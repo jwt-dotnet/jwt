@@ -7,18 +7,18 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class DelegateAlgorithmFactory : IAlgorithmFactory
     {
-        private readonly Func<IAlgorithm> _algFactory;
+        private readonly Func<IJwtAlgorithm> _algFactory;
 
         public DelegateAlgorithmFactory(Func<IAlgorithm> algFactory) =>
             _algFactory = algFactory;
 
-        public DelegateAlgorithmFactory(IAlgorithm algorithm)
+        public DelegateAlgorithmFactory(IJwtAlgorithm algorithm)
             : this(() => algorithm)
         {
         }
 
         /// <inheritdoc />
-        public IJwtAlgorithm Create(IAlgorithm algorithm) =>
+        public IJwtAlgorithm Create(IJwtAlgorithm algorithm) =>
             _algFactory();
     }
 }
