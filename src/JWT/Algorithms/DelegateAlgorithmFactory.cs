@@ -16,7 +16,7 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public IJwtAlgorithm Create(IAlgorithm algorithm)
+        public IJwtAlgorithm Create(IAlgorithm algorithm) =>
             _algFactory();
     }
 }
