@@ -23,6 +23,18 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="jwtValidator">The Jwt validator</param>
         /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="algFactory">The Algorithm</param>
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithm algorithm)
+            : this(jsonSerializer, jwtValidator, urlEncoder, new DelegateAlgorithmFactory(algorithm))
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtDecoder" />
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="jwtValidator">The Jwt validator</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder</param>
         /// <param name="algFactory">The Algorithm Factory</param>
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
         {
