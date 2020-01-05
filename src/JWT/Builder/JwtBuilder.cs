@@ -23,6 +23,7 @@ namespace JWT.Builder
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
 
+        private IJwtAlgorithmFacyory _algFactory;
         private IJwtAlgorithm _algorithm;
         private byte[][] _secrets;
         private bool _verify;
@@ -284,7 +285,7 @@ namespace JWT.Builder
 
             EnsureCanDecode();
 
-            _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder);
+            _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algFactory);
         }
 
         private void TryCreateValidator()
