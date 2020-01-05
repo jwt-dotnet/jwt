@@ -9,7 +9,7 @@ namespace JWT.Algorithms
     {
         private readonly Func<IJwtAlgorithm> _algFactory;
 
-        public DelegateAlgorithmFactory(Func<IAlgorithm> algFactory) =>
+        public DelegateAlgorithmFactory(Func<IJwtAlgorithm> algFactory) =>
             _algFactory = algFactory;
 
         public DelegateAlgorithmFactory(IJwtAlgorithm algorithm)
