@@ -2,10 +2,10 @@ namespace JWT.Algorithms
 {
     /// <summary>
     /// Implements <see href="IAlgorithmFactory" /> by returning the supplied algorithm.
-    /// <summary>
+    /// </summary>
     public sealed class DelegateAlgorithmFactory : IAlgorithmFactory
     {
-        private readonly Func<IAlgorithm> _algFactory
+        private readonly Func<IAlgorithm> _algFactory;
 
         public DelegateAlgorithmFactory(Func<IAlgorithm> algFactory) =>
             _algFactory = algFactory;
