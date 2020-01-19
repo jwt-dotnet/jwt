@@ -323,7 +323,7 @@ namespace JWT.Builder
             if (!CanEncode())
             {
                 throw new InvalidOperationException(
-                    "Can't build a token. Check if you have call all of the following methods:" + Environment.NewLine +
+                    "Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine +
                     $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
                     $"-{nameof(WithSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
@@ -349,7 +349,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Checks whether enough dependencies were supplied to build a new token.
+        /// Checks whether enough dependencies were supplied to encode a new token.
         /// </summary>
         private bool CanEncode() =>
             _algorithm is object &&
