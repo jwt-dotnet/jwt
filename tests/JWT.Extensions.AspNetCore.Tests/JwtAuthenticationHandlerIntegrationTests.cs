@@ -6,6 +6,7 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using JWT.Algorithms;
 using JWT.Tests.Common.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -30,7 +31,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         {
             var options = new JwtAuthenticationOptions
             {
-                Keys = TestData.Keys,
+                Keys = TestData.Secrets,
                 VerifySignature = true
             };
             _server = CreateServer(options);
@@ -138,21 +139,23 @@ namespace JWT.Extensions.AspNetCore.Tests
                         });
                     })
                 .ConfigureServices(services =>
-                    {
-                        services.AddAuthentication(options =>
-                                     {
+                          {
+                              services.AddSingleton<IAlgorithmFactory, HMACSHAAlgorithmFactory>();
+
+                              services.AddAuthentication(options =>
+                                           {
                                          // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
                                          options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
                                          // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
                                          options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-                                     })
-                                .AddJwt(options =>
-                                     {
-                                         options.Keys = configureOptions.Keys;
-                                         options.VerifySignature = configureOptions.VerifySignature;
-                                     });
-                    });
+                                           })
+                                      .AddJwt(options =>
+                                           {
+                                               options.Keys = configureOptions.Keys;
+                                               options.VerifySignature = configureOptions.VerifySignature;
+                                           });
+                          });
 
             return new TestServer(builder);
         }

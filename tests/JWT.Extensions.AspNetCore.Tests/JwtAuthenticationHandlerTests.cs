@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -103,11 +104,11 @@ namespace JWT.Extensions.AspNetCore.Tests
             var dateTimeProvider = new UtcDateTimeProvider();
             var urlEncoder = new JwtBase64UrlEncoder();
             var jwtValidator = new JwtValidator(serializer, dateTimeProvider);
-            var decoder = new JwtDecoder(serializer, jwtValidator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, jwtValidator, urlEncoder, new HMACSHA256Algorithm());
 
             var options = new JwtAuthenticationOptions
             {
-                Keys = TestData.Keys,
+                Keys = TestData.Secrets,
                 VerifySignature = true
             };
             var optionsMonitor = new Mock<IOptionsMonitor<JwtAuthenticationOptions>>();

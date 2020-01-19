@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using JWT.Algorithms;
 
 namespace JWT.Tests.Common.Models
 {
@@ -6,15 +9,17 @@ namespace JWT.Tests.Common.Models
     {
         public static readonly Customer Customer = new Customer
         {
-            FirstName = "Bob",
-            Age = 37
+            FirstName = "Jesus",
+            Age = 33
         };
 
-        public const string Key = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-        public static string[] Keys = { Key };
+        public const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+        public const string Secret2 = "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT";
 
-        public const string Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.oj1ROhq6SyGDG3C0WIPe8wDuMJjA47uKwXCHkxl6Zy0";
-        public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.VF9vc9PtqmlRLzrjAoVzYyN6L1IGnRvXT7wY8dxN3_4";
+        public static string[] Secrets = { Secret, Secret2 };
+
+        public const string Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
+        public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.QQJaPxDE6E7l-zC-LKTbEgPfId5FDvowRKww1o6jdwU";
         public const string TokenWithIncorrectSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
         public const string TokenWithoutHeader = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.oj1ROhq6SyGDG3C0WIPe8wDuMJjA47uKwXCHkxl6Zy0";
@@ -22,8 +27,8 @@ namespace JWT.Tests.Common.Models
 
         public static readonly IDictionary<string, object> DictionaryPayload = new Dictionary<string, object>
         {
-            { "FirstName", "Bob" },
-            { "Age", 37 }
+            { nameof(Customer.FirstName), Customer.FirstName },
+            { nameof(Customer.Age), Customer.Age },
         };
 
         public static readonly string[] ServerRsaPublicKeys = { ServerRsaPublicKey1, ServerRsaPublicKey2 };
@@ -74,5 +79,11 @@ namespace JWT.Tests.Common.Models
             + "YouEKIpRSnxeRi45LX0ouRgTmwT/8xr6VxVKe1eToMJ85f/7FXewWR+W1dIN+NXi"
             + "MzhzkzbNqAeDkg=="
             + "-----END PRIVATE KEY-----";
+
+        public static readonly IJwtAlgorithm HMACSHA256Algorithm = new HMACSHA256Algorithm();
+
+        public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
+            new X509Certificate2(
+                Encoding.ASCII.GetBytes(ServerRsaPublicKey1)));
     }
 }

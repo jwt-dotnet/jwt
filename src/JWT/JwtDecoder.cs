@@ -23,8 +23,9 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="jwtValidator">The Jwt validator</param>
         /// <param name="urlEncoder">The Base64 URL Encoder</param>
-        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder)
-            : this(jsonSerializer, jwtValidator, urlEncoder, new HMACSHAAlgorithmFactory())
+        /// <param name="algorithm">The Algorithm</param>
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IJwtAlgorithm algorithm)
+            : this(jsonSerializer, jwtValidator, urlEncoder, new DelegateAlgorithmFactory(algorithm))
         {
         }
 
