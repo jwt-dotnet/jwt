@@ -1,7 +1,6 @@
 using AutoFixture;
 using System;
 using FluentAssertions;
-using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +23,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, key, verify: true);
             var expected = serializer.Serialize(toSerialize);
@@ -44,7 +43,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, new[] { key }, verify: true);
             var expected = serializer.Serialize(toSerialize);
@@ -64,7 +63,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.DecodeToObject(token, key, verify: true);
 
@@ -83,7 +82,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.DecodeToObject(token, new[] { key }, verify: true);
 
@@ -102,7 +101,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.DecodeToObject<Customer>(token, key, verify: true);
 
@@ -121,7 +120,7 @@ namespace JWT.Tests.Common
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.DecodeToObject<Customer>(token, new[] { key }, verify: true);
 
@@ -137,7 +136,7 @@ namespace JWT.Tests.Common
 
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+            var decoder = new JwtDecoder(serializer, null, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeInvalidJwt =
                 () => decoder.DecodeToObject<Customer>(badToken, key, verify: true);
@@ -154,7 +153,7 @@ namespace JWT.Tests.Common
 
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, null, urlEncoder);
+            var decoder = new JwtDecoder(serializer, null, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeInvalidJwtWithMultipleKeys =
                 () => decoder.DecodeToObject<Customer>(badToken, new[] { key }, verify: true);
@@ -170,9 +169,9 @@ namespace JWT.Tests.Common
             var key = _fixture.Create<string>();
 
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeJwtWithWrongKey =
                 () => decoder.DecodeToObject<Customer>(token, key, verify: true);
@@ -188,9 +187,9 @@ namespace JWT.Tests.Common
             var keys = _fixture.Create<string[]>();
 
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeJwtWithWrongKey =
                 () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
@@ -208,9 +207,9 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
             Action encodeJwtWithWrongExpField =
@@ -229,9 +228,9 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
             Action encodeJwtWithWrongExpField =
@@ -250,9 +249,9 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key);
 
             Action encodeJwtWithNullExpField =
@@ -272,9 +271,9 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key);
 
             Action encodeJwtWithNullExpField =
@@ -291,18 +290,17 @@ namespace JWT.Tests.Common
             const string key = TestData.Key;
             const int timeDelta = -1;
 
-            var algorithm = new HMACSHA256Algorithm();
             var dateTimeProvider = new UtcDateTimeProvider();
             var serializer = new JsonNetSerializer();
 
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var now = dateTimeProvider.GetNow();
             var exp = UnixEpoch.GetSecondsSince(now.AddHours(timeDelta));
 
-            var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp }, key);
 
             Action decodeExpiredJwt =
@@ -320,13 +318,13 @@ namespace JWT.Tests.Common
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             // Why 2038? See https://en.wikipedia.org/wiki/Year_2038_problem
             var post2038 = new DateTime(2038, 1, 19, 3, 14, 8, DateTimeKind.Utc);
             var exp = (post2038 - new DateTime(1970, 1, 1)).TotalSeconds;
             var payload = new { exp };
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var validToken = encoder.Encode(payload, key);
 
             var expected = serializer.Serialize(payload);
@@ -341,14 +339,14 @@ namespace JWT.Tests.Common
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validTor = new JwtValidator(serializer, dateTimeProvider);
+            var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var now = dateTimeProvider.GetNow();
             var nbf = UnixEpoch.GetSecondsSince(now.AddHours(1));
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { nbf }, TestData.Key);
 
             Action decodeNotActiveJwt =
@@ -367,9 +365,9 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { nbf = (object)null }, key);
 
             Action encodeJwtWithNullExpField =
@@ -390,12 +388,12 @@ namespace JWT.Tests.Common
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var now = dateTimeProvider.GetNow();
             var nbf = UnixEpoch.GetSecondsSince(now);
 
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { nbf }, key);
 
             decoder.DecodeToObject<Customer>(token, key, verify: true);

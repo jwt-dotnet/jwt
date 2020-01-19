@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using JWT.Algorithms;
 
 namespace JWT.Tests.Common.Models
 {
@@ -74,5 +77,11 @@ namespace JWT.Tests.Common.Models
             + "YouEKIpRSnxeRi45LX0ouRgTmwT/8xr6VxVKe1eToMJ85f/7FXewWR+W1dIN+NXi"
             + "MzhzkzbNqAeDkg=="
             + "-----END PRIVATE KEY-----";
+
+        public static readonly IJwtAlgorithm HMACSHA256Algorithm = new HMACSHA256Algorithm();
+
+        public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
+            new X509Certificate2(
+                Encoding.ASCII.GetBytes(ServerRsaPublicKey1)));
     }
 }

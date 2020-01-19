@@ -25,7 +25,7 @@ namespace JWT.Tests.Common
             var tokenBuilt = builder
                 .WithAlgorithm(algorithm)
                 .WithSecret(secret)
-                .Build();
+                .Encode();
 
             tokenBuilt.Should()
                       .NotBeEmpty("because the token should contains some data");
@@ -49,7 +49,7 @@ namespace JWT.Tests.Common
                 .WithAlgorithm(algorithm)
                 .WithSecret(secret)
                 .AddClaim(claimValue, claimKey)
-                .Build();
+                .Encode();
 
             tokenBuilt.Should()
                       .NotBeEmpty("because the token should contains some data");
@@ -83,7 +83,7 @@ namespace JWT.Tests.Common
                 .WithAlgorithm(algorithm)
                 .WithSecret(secret)
                 .AddClaims(claims)
-                .Build();
+                .Encode();
 
             var decodedToken = Encoding.UTF8.GetString(
                 new JwtBase64UrlEncoder()
@@ -109,7 +109,7 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
 
             Action buildWithoutDependencies =
-                () => builder.Build();
+                () => builder.Encode();
 
             buildWithoutDependencies.Should()
                                     .Throw<InvalidOperationException>("because a JWT can't be built without dependencies");
@@ -122,7 +122,7 @@ namespace JWT.Tests.Common
             var builder = new JwtBuilder();
 
             Action buildWithoutSecret =
-                () => builder.WithAlgorithm(algorithm).Build();
+                () => builder.WithAlgorithm(algorithm).Encode();
 
             buildWithoutSecret.Should()
                               .Throw<InvalidOperationException>("because a JWT can't be built with a symmetric algorithm and without a secret");
@@ -135,7 +135,7 @@ namespace JWT.Tests.Common
             var secret = _fixture.Create<string>();
 
             Action buildJwtWithoutAlgorithm =
-                () => builder.WithSecret(secret).Build();
+                () => builder.WithSecret(secret).Encode();
 
             buildJwtWithoutAlgorithm.Should()
                                     .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
@@ -148,7 +148,7 @@ namespace JWT.Tests.Common
             var secrets = _fixture.Create<string[]>();
 
             Action buildJwtWithoutAlgorithm =
-                () => builder.WithSecret(secrets).Build();
+                () => builder.WithSecret(secrets).Encode();
 
             buildJwtWithoutAlgorithm.Should()
                                     .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");

@@ -3,7 +3,7 @@ using System;
 namespace JWT.Algorithms
 {
     /// <summary>
-    /// Implements <see href="IAlgorithmFactory" /> by returning the supplied algorithm.
+    /// Implements <see href="IAlgorithmFactory" /> by returning the supplied algorithm by ignoring parameters.
     /// </summary>
     public sealed class DelegateAlgorithmFactory : IAlgorithmFactory
     {
@@ -18,7 +18,11 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public IJwtAlgorithm Create() =>
+        public IJwtAlgorithm Create(string algorithmName) =>
+            _algFactory();
+
+        /// <inheritdoc />
+        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm) =>
             _algFactory();
     }
 }

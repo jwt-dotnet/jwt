@@ -16,15 +16,15 @@ namespace JWT.Tests.Common
 
         [TestMethod]
         [TestCategory("Security")]
-        public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used()
+        public void Decode_Should_Throw_Exception_When_Jwt_Contains_No_Algorithm()
         {
             var key = _fixture.Create<string>();
             const string token = TestData.TokenWithoutAlgorithm;
 
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, new HMACSHAAlgorithmFactory());
 
             Action decodeJwtWithNoAlgorithm =
                 () => decoder.Decode(token, key, verify: true);
@@ -35,37 +35,37 @@ namespace JWT.Tests.Common
 
         [TestMethod]
         [TestCategory("Security")]
-        public void Decode_Should_Throw_Exception_When_Non_Algorithm_Was_Used_MultipleKeys()
+        public void Decode_Should_Throw_Exception_When_Jwt_Contains_Multiple_Keys()
         {
             var keys = _fixture.Create<string[]>();
             const string token = TestData.TokenWithoutAlgorithm;
 
             var serializer = new JsonNetSerializer();
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, new HMACSHAAlgorithmFactory());
 
-            Action decodeJwtWithNoAlgorithm =
+            Action decodeJwtWithMultipleKeys =
                 () => decoder.Decode(token, keys, verify: true);
 
-            decodeJwtWithNoAlgorithm.Should()
-                                    .Throw<ArgumentException>("because the decoding of a JWT without algorithm should throw exception");
+            decodeJwtWithMultipleKeys.Should()
+                                     .Throw<ArgumentException>("because the decoding of a JWT without algorithm should throw exception");
         }
 
         [TestMethod]
         [TestCategory("Security")]
-        public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected()
+        public void Decode_Should_Throw_Exception_When_Jwt_Contains_HMA_Algorithm_But_RSA_Was_Expected()
         {
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
 
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
             const string key = TestData.ServerRsaPublicKey1;
 
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algFactory);
 
             Action decodeJwtWithHmaWhenRsaIsExpected =
                 () => decoder.Decode(encodedToken, key, verify: true);
@@ -76,17 +76,17 @@ namespace JWT.Tests.Common
 
         [TestMethod]
         [TestCategory("Security")]
-        public void Decode_Should_Throw_Exception_When_HMA_Algorithm_Is_Used_But_RSA_Was_Expected_MultipleKeys()
+        public void Decode_Should_Throw_Exception_When_Jwt_Contains_HMA_Algorithm_But_RSA_Was_Expected_With_Multiple_Keys()
         {
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
 
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
 
-            var validTor = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
-            var decoder = new JwtDecoder(serializer, validTor, urlEncoder, algFactory);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algFactory);
 
             Action decodeJwtWithRsaWhenHmaIsExpected =
                 () => decoder.Decode(encodedToken, TestData.ServerRsaPublicKeys, verify: true);
