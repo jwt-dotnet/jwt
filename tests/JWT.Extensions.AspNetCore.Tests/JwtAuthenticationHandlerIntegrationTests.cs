@@ -31,7 +31,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         {
             var options = new JwtAuthenticationOptions
             {
-                Keys = TestData.Keys,
+                Keys = TestData.Secrets,
                 VerifySignature = true
             };
             _server = CreateServer(options);

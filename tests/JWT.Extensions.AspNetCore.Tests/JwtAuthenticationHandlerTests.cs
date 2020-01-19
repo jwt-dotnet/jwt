@@ -108,7 +108,7 @@ namespace JWT.Extensions.AspNetCore.Tests
 
             var options = new JwtAuthenticationOptions
             {
-                Keys = TestData.Keys,
+                Keys = TestData.Secrets,
                 VerifySignature = true
             };
             var optionsMonitor = new Mock<IOptionsMonitor<JwtAuthenticationOptions>>();

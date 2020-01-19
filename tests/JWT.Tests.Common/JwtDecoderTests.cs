@@ -15,7 +15,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void Decode_Should_Decode_Token_To_Json_String()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
             var toSerialize = TestData.Customer;
 
@@ -35,7 +35,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void Decode_Should_Decode_Token_To_Json_String_Multiple_Secrets()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
             var toSerialize = TestData.Customer;
 
@@ -56,7 +56,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()
         {
             var expected = TestData.DictionaryPayload;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
 
             var serializer = new JsonNetSerializer();
@@ -75,7 +75,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Secrets()
         {
             var expected = TestData.DictionaryPayload;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
 
             var serializer = new JsonNetSerializer();
@@ -94,7 +94,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type()
         {
             var expected = TestData.Customer;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
 
             var serializer = new JsonNetSerializer();
@@ -113,7 +113,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type_Multiple_Secrets()
         {
             var expected = TestData.Customer;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const string token = TestData.Token;
 
             var serializer = new JsonNetSerializer();
@@ -132,7 +132,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token()
         {
             const string badToken = TestData.TokenWithoutHeader;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -149,7 +149,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_Multiple_Secrets()
         {
             const string badToken = TestData.TokenWithoutHeader;
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -201,7 +201,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -222,7 +222,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_MultipleKeys()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -243,7 +243,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -265,7 +265,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_MultipleKeys()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -287,7 +287,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Expired_Claim()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             const int timeDelta = -1;
 
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -313,7 +313,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_DecodeToken_On_Exp_Claim_After_Year2038()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             var dateTimeProvider = new UtcDateTimeProvider();
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, dateTimeProvider);
@@ -347,10 +347,10 @@ namespace JWT.Tests.Common
             var nbf = UnixEpoch.GetSecondsSince(now.AddHours(1));
 
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(new { nbf }, TestData.Key);
+            var token = encoder.Encode(new { nbf }, TestData.Secret);
 
             Action decodeNotActiveJwt =
-                () => decoder.DecodeToObject<Customer>(token, TestData.Key, verify: true);
+                () => decoder.DecodeToObject<Customer>(token, TestData.Secret, verify: true);
 
             decodeNotActiveJwt.Should()
                               .Throw<SignatureVerificationException>();
@@ -359,7 +359,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_NotBefore_Claim()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -382,7 +382,7 @@ namespace JWT.Tests.Common
         public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
         {
             var dateTimeProvider = new UtcDateTimeProvider();
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());

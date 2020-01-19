@@ -13,7 +13,7 @@ namespace JWT.Tests.Common
         [TestMethod]
         public void Encode_Should_Encode_To_Token()
         {
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             var toEncode = TestData.Customer;
             const string expected = TestData.Token;
 
@@ -35,7 +35,7 @@ namespace JWT.Tests.Common
             {
                 { "foo", "bar" }
             };
-            const string key = TestData.Key;
+            const string key = TestData.Secret;
             var toEncode = TestData.Customer;
             const string expected = TestData.TokenWithExtraHeaders;
 
