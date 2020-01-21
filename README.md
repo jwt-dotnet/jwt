@@ -20,7 +20,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## License
 
-The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#MIT) file.
+The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#Public-Domain) file.
 
 - JWT 
 
