@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
 using JWT.Serializers;
@@ -34,7 +33,7 @@ namespace JWT.Builder
         /// <param name="name">Well-known header name</param>
         /// <param name="value">The value you want give to the header</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder AddHeader(HeaderName name, string value)
+        public JwtBuilder AddHeader(HeaderName name, object value)
         {
             _jwt.Header.Add(name.GetHeaderName(), value);
             return this;
@@ -51,38 +50,6 @@ namespace JWT.Builder
             _jwt.Payload.Add(name, value);
             return this;
         }
-
-        /// <summary>
-        /// Add string claim to the JWT.
-        /// </summary>
-        /// <param name="name">Claim name</param>
-        /// <param name="value">Claim value</param>
-        /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(string name, string value) =>
-            AddClaim(name, (object)value);
-
-        /// <summary>
-        /// Add several claims to the JWT
-        /// </summary>
-        /// <param name="claims">IDictionary of claims to be added</param>
-        /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaims(IDictionary<string, object> claims)
-        {
-            foreach (var entry in claims)
-            {
-                AddClaim(entry.Key, entry.Value);
-            }
-            return this;
-        }
-
-        /// <summary>
-        /// Adds well-known claim to the JWT.
-        /// </summary>
-        /// <param name="name">Well-known claim name</param>
-        /// <param name="value">Claim value</param>
-        /// <returns>Current builder instance</returns>
-        public JwtBuilder AddClaim(ClaimName name, string value) =>
-            AddClaim(name.GetPublicClaimName(), value);
 
         /// <summary>
         /// Sets JWT serializer.
