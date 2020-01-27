@@ -13,8 +13,5 @@ namespace JWT
 
         public static double GetSecondsSince(DateTimeOffset time) =>
             Math.Round((time - Value).TotalSeconds);
-
-        public static string GetSecondsSinceAsString(DateTimeOffset time) =>
-            GetSecondsSince(time).ToString(CultureInfo.InvariantCulture);
     }
 }
