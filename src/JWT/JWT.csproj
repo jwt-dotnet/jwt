@@ -16,8 +16,8 @@
     <PackageTags>jwt;json</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
     <Version>6.0.1</Version>
-    <FileVersion>6.0.1.0</FileVersion>
-    <AssemblyVersion>6.0.1.0</AssemblyVersion>
+    <FileVersion>6.0.0.0</FileVersion>
+    <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
