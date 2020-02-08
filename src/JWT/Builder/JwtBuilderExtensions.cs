@@ -28,7 +28,7 @@ namespace JWT.Builder
         /// <summary>
         /// Adds several claims to the JWT
         /// </summary>
-        public static JwtBuilder AddClaims(this JwtBuilder builder, IDictionary<string, object> claims) =>
+        public static JwtBuilder AddClaims(this JwtBuilder builder, IEnumerable<KeyValuePair<string, object>> claims) =>
             claims.Aggregate(builder, (b, p) => b.AddClaim(p.Key, p.Value));
 
         public static JwtBuilder ExpirationTime(this JwtBuilder builder, DateTime time) =>
