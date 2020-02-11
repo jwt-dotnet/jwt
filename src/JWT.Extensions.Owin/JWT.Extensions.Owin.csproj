@@ -15,8 +15,6 @@
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\JwtStrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
