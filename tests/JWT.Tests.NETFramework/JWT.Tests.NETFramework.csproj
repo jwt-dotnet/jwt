@@ -102,7 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="JwtStrongNameKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
