@@ -10,7 +10,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core</PackageTags>
     <PackageLicense>MIT</PackageLicense>
-    <Version>6.0.0-alpha1</Version>
+    <Version>6.0.0-alpha2</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
