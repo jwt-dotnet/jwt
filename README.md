@@ -85,7 +85,8 @@ try
     IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder);
+    IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+    IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
     
     var json = decoder.Decode(token, secret, verify: true);
     Console.WriteLine(json);
