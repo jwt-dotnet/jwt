@@ -8,18 +8,21 @@ variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  nugetVersion: '5.4.0'
 
 steps:
-- task: DotNetCoreInstaller@1
-  displayName: Install .NET Core 2.2.x
+- task: UseDotNet@2
+  displayName: 'Use .NET Core Core 2.2.x'
   inputs:
-      version: '2.2.x'
+    packageType: sdk
+    version: '2.2.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
-- task: DotNetCoreInstaller@1
-  displayName: Install .NET Core 3.1.x
+- task: UseDotNet@2
+  displayName: 'Use .NET Core Core 3.1.x'
   inputs:
-      version: '3.1.x'
+    packageType: sdk
+    version: '3.1.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet packages for .NET Core
