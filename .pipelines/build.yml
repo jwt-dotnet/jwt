@@ -43,7 +43,7 @@ steps:
   displayName: Run .NET Core tests
   inputs:
     command: 'test'
-    projects: 'tests/**/JWT.Tests.Core.csproj'
+    projects: 'tests/JWT.Tests.Core*/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
@@ -54,7 +54,7 @@ steps:
   displayName: Run .NET Framework tests
   inputs:
     command: 'test'
-    projects: 'tests/**/JWT.Tests.NetFramework.csproj'
+    projects: 'tests/JWT.Tests.NETFramework/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
