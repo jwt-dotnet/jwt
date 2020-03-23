@@ -265,8 +265,8 @@ namespace JWT.Builder
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algorithm);
             else if (_algFactory is object)
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algFactory);
-
-            throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call either {nameof(WithAlgorithm)} or {nameof(WithAlgorithmFactory)}.");
+            else
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call either {nameof(WithAlgorithm)} or {nameof(WithAlgorithmFactory)}.");
         }
 
         private void TryCreateValidator()
