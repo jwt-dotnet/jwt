@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
@@ -12,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace JWT.Tests.Common
 {
     [TestClass]
-    public class JwtBuilderEncodeTests
+    public partial class JwtBuilderEncodeTests
     {
         private static readonly Fixture _fixture = new Fixture();
 
@@ -27,48 +29,6 @@ namespace JWT.Tests.Common
                                .WithSecret(secret)
                                .Encode();
 
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
-            token.Split('.')
-                 .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
-        }
-
-        [TestMethod]
-        public void Encode_With_Certificate()
-        {
-            var algorithm = TestData.RS256Algorithm;
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(algorithm)
-                               .AddClaim("exp", DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds())
-                               .AddClaim("name", TestData.Customer.FirstName)
-                               .AddClaim("iss", "test")
-                               .Encode();
-
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
-            token.Split('.')
-                 .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
-        }
-
-        [TestMethod]
-        public void Encode_With_CertificateFactory()
-        {
-            var algFactory = new DelegateAlgorithmFactory(TestData.RS256Algorithm);
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithmFactory(algFactory)
-                               .AddClaim("exp", DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds())
-                               .AddClaim("name", TestData.Customer.FirstName)
-                               .AddClaim("iss", "test")
-                               .Encode();
-
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')

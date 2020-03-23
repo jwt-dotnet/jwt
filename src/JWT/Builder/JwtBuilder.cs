@@ -240,7 +240,7 @@ namespace JWT.Builder
 
         private void TryCreateEncoder()
         {
-            if (_algorithm is null)
+            if (_algorithm is null && _algFactory is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
             if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
@@ -290,7 +290,7 @@ namespace JWT.Builder
             if (!CanEncode())
                 throw new InvalidOperationException("Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine + $"-{nameof(WithAlgorithm)}" + Environment.NewLine + $"-{nameof(WithSerializer)}" + Environment.NewLine + $"-{nameof(WithUrlEncoder)}.");
 
-            if (!_algorithm.IsAsymmetric && !HasOnlyOneSecret())
+            if (_algorithm is object && !_algorithm.IsAsymmetric && !HasOnlyOneSecret())
                 throw new InvalidOperationException("You can't provide more than one secret to use for encoding.");
         }
 
@@ -313,11 +313,10 @@ namespace JWT.Builder
         /// Checks whether enough dependencies were supplied to encode a new token.
         /// </summary>
         private bool CanEncode() =>
-            (_algorithm is object || _algFactory is object) &&
+            (_algorithm is object && (_algorithm.IsAsymmetric || HasOnlyOneSecret()) || _algFactory is object) &&
             _serializer is object &&
             _urlEncoder is object &&
-            _jwt.Payload is object &&
-            (_algorithm.IsAsymmetric || HasOnlyOneSecret());
+            _jwt.Payload is object;
 
         /// <summary>
         /// Checks whether enough dependencies were supplied to decode a token.
