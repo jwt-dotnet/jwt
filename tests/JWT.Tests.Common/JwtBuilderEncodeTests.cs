@@ -14,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace JWT.Tests.Common
 {
     [TestClass]
-    public partial class JwtBuilderEncodeTests
+    public class JwtBuilderEncodeTests
     {
         private static readonly Fixture _fixture = new Fixture();
 

@@ -9,9 +9,10 @@ using JWT.Builder;
 using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Core3
 {
-    public partial class JwtBuilderEncodeTests
+    [TestClass]
+    public class JwtBuilderEndToEndTests
     {
         [TestMethod]
         public void Encode_and_Decode_With_Certificate()
@@ -45,7 +46,6 @@ namespace JWT.Tests.Common
                  .HaveCount(3, "because the built token should have the three standard parts");
 
             var jwt = builder.WithAlgorithm(algorithm)
-                             .WithSecret(TestData.ServerRsaPublicKey2)
                              .MustVerifySignature()
                              .Decode<Dictionary<string, object>>(token);
 
