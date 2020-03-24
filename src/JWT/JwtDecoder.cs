@@ -220,8 +220,19 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public void Validate(string[] parts, params byte[] key) =>
+        public void Validate(string[] parts, byte[] key) =>
             Validate(new JwtParts(parts), key);
+
+        /// <summary>
+        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
+        /// </summary>
+        /// <param name="parts">The array representation of a JWT</param>
+        /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
+        public void Validate(string[] parts, params byte[][] keys) =>
+            Validate(new JwtParts(parts), keys);
 
         /// <summary>
         /// Prepares data before calling <see cref="IJwtValidator.Validate" />
