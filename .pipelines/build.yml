@@ -8,14 +8,21 @@ variables:
   solution: 'JWT.sln'
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
-  coreVersion: '2.2.x'
-  nugetVersion: '5.2.0'
 
 steps:
-- task: DotNetCoreInstaller@1
-  displayName: Install .NET Core v$(coreVersion)
+- task: UseDotNet@2
+  displayName: 'Use .NET Core Core 2.2.x'
   inputs:
-      version: $(coreVersion)
+    packageType: sdk
+    version: '2.2.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core Core 3.1.x'
+  inputs:
+    packageType: sdk
+    version: '3.1.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: DotNetCoreCLI@2
   displayName: Restore NuGet packages for .NET Core
@@ -43,7 +50,7 @@ steps:
   displayName: Run .NET Core tests
   inputs:
     command: 'test'
-    projects: 'tests/**/JWT.Tests.Core.csproj'
+    projects: 'tests/JWT.Tests.Core*/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
@@ -54,7 +61,7 @@ steps:
   displayName: Run .NET Framework tests
   inputs:
     command: 'test'
-    projects: 'tests/**/JWT.Tests.NetFramework.csproj'
+    projects: 'tests/JWT.Tests.NETFramework/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'

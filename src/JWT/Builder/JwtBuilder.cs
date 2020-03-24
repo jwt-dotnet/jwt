@@ -198,7 +198,7 @@ namespace JWT.Builder
         /// </summary>
         /// <returns>The generated JWT</returns>
         /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
-        [Obsolete("Please use " + nameof(Encode) + " instead")]
+        [Obsolete("Please use " + nameof(Encode) + " instead", error: true)]
         public string Build() =>
             Encode();
 
@@ -211,7 +211,7 @@ namespace JWT.Builder
         {
             EnsureCanEncode();
 
-            return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets[0]);
+            return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets?[0]);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace JWT.Builder
 
         private void TryCreateEncoder()
         {
-            if (_algorithm is null)
+            if (_algorithm is null && _algFactory is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
             if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
@@ -288,15 +288,9 @@ namespace JWT.Builder
                 TryCreateEncoder();
 
             if (!CanEncode())
-            {
-                throw new InvalidOperationException(
-                    "Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine +
-                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
-                    $"-{nameof(WithUrlEncoder)}.");
-            }
+                throw new InvalidOperationException("Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine + $"-{nameof(WithAlgorithm)}" + Environment.NewLine + $"-{nameof(WithSerializer)}" + Environment.NewLine + $"-{nameof(WithUrlEncoder)}.");
 
-            if (!HasOnlyOneSecret())
+            if (_algorithm is object && !_algorithm.IsAsymmetric && !HasOnlyOneSecret())
                 throw new InvalidOperationException("You can't provide more than one secret to use for encoding.");
         }
 
@@ -319,11 +313,10 @@ namespace JWT.Builder
         /// Checks whether enough dependencies were supplied to encode a new token.
         /// </summary>
         private bool CanEncode() =>
-            _algorithm is object &&
+            (_algorithm is object && (_algorithm.IsAsymmetric || HasOnlyOneSecret()) || _algFactory is object) &&
             _serializer is object &&
             _urlEncoder is object &&
-            _jwt.Payload is object &&
-            (_algorithm.IsAsymmetric || HasOnlyOneSecret());
+            _jwt.Payload is object;
 
         /// <summary>
         /// Checks whether enough dependencies were supplied to decode a token.
@@ -340,7 +333,6 @@ namespace JWT.Builder
         /// <summary>
         /// Checks if there is only one secret was supplied for token encoding
         /// </summary>
-        /// <returns></returns>
         private bool HasOnlyOneSecret() =>
             _secrets is object && _secrets.Length == 1;
     }
