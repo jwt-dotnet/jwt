@@ -6,7 +6,7 @@ using JWT.Serializers;
 using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Common.Builder
 {
     [TestClass]
     public class JwtBuilderDecodeTests

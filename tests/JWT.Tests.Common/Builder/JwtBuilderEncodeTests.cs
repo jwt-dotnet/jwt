@@ -8,7 +8,7 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.NETFramework
 {
     [TestClass]
     public class JwtBuilderEncodeTests
@@ -151,4 +151,5 @@ namespace JWT.Tests.Common
                   .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
     }
+}  }
 }
