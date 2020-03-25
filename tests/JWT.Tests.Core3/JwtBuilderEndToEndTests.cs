@@ -9,9 +9,10 @@ using JWT.Builder;
 using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests.Core3
 {
-    public partial class JwtBuilderEncodeTests
+    [TestClass]
+    public class JwtBuilderEndToEndTests
     {
         [TestMethod]
         public void Encode_and_Decode_With_Certificate()
@@ -19,12 +20,11 @@ namespace JWT.Tests.Common
             using var rsa = RSA.Create();
             rsa.FromXmlString(TestData.ServerRsaPrivateKey);
 
-            using var pubOnly = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
-            using var pubPrivEphemeral = pubOnly.CopyWithPrivateKey(rsa);
-            using var cert = new X509Certificate2(pubPrivEphemeral.Export(X509ContentType.Pfx));
+            using var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
+            using var certPubPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
 
             var builder = new JwtBuilder();
-            var algorithm = new RS256Algorithm(cert);
+            var algorithm = new RS256Algorithm(certPubPriv);
 
             const string iss = "test";
             var exp = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
@@ -45,7 +45,6 @@ namespace JWT.Tests.Common
                  .HaveCount(3, "because the built token should have the three standard parts");
 
             var jwt = builder.WithAlgorithm(algorithm)
-                             .WithSecret(TestData.ServerRsaPublicKey2)
                              .MustVerifySignature()
                              .Decode<Dictionary<string, object>>(token);
 

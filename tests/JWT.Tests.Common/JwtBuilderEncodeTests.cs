@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
-using JWT.Tests.Common.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
 {
     [TestClass]
-    public partial class JwtBuilderEncodeTests
+    public class JwtBuilderEncodeTests
     {
         private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
-        public void Encode_With_Secret()
+        public void Encode_With_Secret_Should_Return_Token()
         {
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
@@ -37,7 +34,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void Encode_With_Secret_And_Payload()
+        public void Encode_With_Secret_And_Payload_Should_Return_Token()
         {
             var algorithm = new HMACSHA256Algorithm();
             var builder = new JwtBuilder();
@@ -60,7 +57,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void Encode_With_PayloadWithClaims()
+        public void Encode_With_PayloadWithClaims_Should_Return_Token()
         {
             var algorithm = new HMACSHA256Algorithm();
             var claims = new Dictionary<string, object>();
