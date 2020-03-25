@@ -151,5 +151,4 @@ namespace JWT.Tests.NETFramework
                   .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
     }
-}  }
 }

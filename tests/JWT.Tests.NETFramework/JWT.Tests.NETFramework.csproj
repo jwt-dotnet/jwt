@@ -8,7 +8,7 @@
     <ProjectGuid>{88E1DB97-3507-4D8C-9B3D-715DE2F9E414}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JWT.Tests.NETFramework</RootNamespace>
+    <RootNamespace>JWT.Tests</RootNamespace>
     <AssemblyName>JWT.Tests.NETFramework</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

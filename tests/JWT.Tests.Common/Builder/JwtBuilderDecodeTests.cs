@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Builder;
 using JWT.Serializers;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common.Builder
+namespace JWT.Tests.Builder
 {
     [TestClass]
     public class JwtBuilderDecodeTests

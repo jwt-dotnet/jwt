@@ -6,7 +6,7 @@ using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;

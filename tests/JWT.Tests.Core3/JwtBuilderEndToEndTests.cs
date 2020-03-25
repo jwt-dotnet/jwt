@@ -6,10 +6,10 @@ using System.Text;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Core3
+namespace JWT.Tests
 {
     [TestClass]
     public class JwtBuilderEndToEndTests

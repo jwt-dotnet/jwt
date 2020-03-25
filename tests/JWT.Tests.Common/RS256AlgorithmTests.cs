@@ -5,7 +5,7 @@ using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common
