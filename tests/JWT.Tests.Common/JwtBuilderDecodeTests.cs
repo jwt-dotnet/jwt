@@ -12,7 +12,7 @@ namespace JWT.Tests.Common
     public class JwtBuilderDecodeTests
     {
         [TestMethod]
-        public void DecodeToken()
+        public void Decode_Should_Return_Token()
         {
             var builder = new JwtBuilder();
 
@@ -24,34 +24,34 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutAlgorithm_Should_Throw_Exception()
+        public void Decode_Without_Algorithm_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodingWithoutAlgorithm =
+            Action action =
                 () => builder.WithAlgorithm(null)
                              .Decode(TestData.Token);
 
-            decodingWithoutAlgorithm.Should()
-                                    .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid algorithm");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid algorithm");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutAlgorithmFactory_Should_Throw_Exception()
+        public void Decode_Without_AlgorithmFactory_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodingWithoutAlgorithm =
+            Action action =
                 () => builder.WithAlgorithm(null)
                              .WithAlgorithmFactory(null)
                              .Decode(TestData.Token);
 
-            decodingWithoutAlgorithm.Should()
-                                    .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid algorithm or algorithm factory");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid algorithm or algorithm factory");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutToken_Should_Throw_Exception()
+        public void Decode_Without_Token_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
@@ -60,24 +60,24 @@ namespace JWT.Tests.Common
                              .Decode(null);
 
             decodingANullJwt.Should()
-                            .Throw<ArgumentException>("because null is not a valid value for a TestData.Token");
+                            .Throw<ArgumentException>("because null is not valid value for token");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutSerializer_Should_Throw_Exception()
+        public void Decode_Without_Serializer_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodeJwtWithNullSerializer =
+            Action action =
                 () => builder.WithSerializer(null)
                              .Decode(TestData.Token);
 
-            decodeJwtWithNullSerializer.Should()
-                                       .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid serializer");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
         }
 
         [TestMethod]
-        public void DecodeToken_WithSerializer()
+        public void Decode_With_Serializer_Should_Return_Token()
         {
             var builder = new JwtBuilder();
             var serializer = new JsonNetSerializer();
@@ -87,25 +87,25 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because the TestData.Token should be correctly decoded and its data extracted");
+                   .NotBeEmpty("because token should be correctly decoded and its data extracted");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutUrlEncoder_Should_Throw_Exception()
+        public void Decode_Without_UrlEncoder_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodeJwtWithNullEncoder =
+            Action action =
                 () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
                              .WithUrlEncoder(null)
                              .Decode(TestData.Token);
 
-            decodeJwtWithNullEncoder.Should()
-                                    .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid UrlEncoder");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid UrlEncoder");
         }
 
         [TestMethod]
-        public void DecodeToken_WithUrlEncoder()
+        public void Decode_With_UrlEncoder_Should_Return_Token()
         {
             var builder = new JwtBuilder();
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -115,25 +115,25 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because the TestData.Token should have been correctly decoded with the valid base 64 encoder");
+                   .NotBeEmpty("because token should have been correctly decoded with the valid base 64 encoder");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutTimeProvider_Should_Throw_Exception()
+        public void Decode_Without_TimeProvider_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodingJwtWithNullDateTimeProvider =
+            Action action =
                 () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
                              .WithDateTimeProvider(null)
                              .Decode(TestData.Token);
 
-            decodingJwtWithNullDateTimeProvider.Should()
-                                               .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid DateTimeProvider");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid DateTimeProvider");
         }
 
         [TestMethod]
-        public void DecodeToken_WithDateTimeProvider()
+        public void Decode_With_DateTimeProvider_Should_Return_Token()
         {
             var builder = new JwtBuilder();
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -144,11 +144,11 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because the decoding process must be successful with a valid DateTimeProvider");
+                   .NotBeEmpty("because the decoding process must be successful with valid DateTimeProvider");
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutValidator()
+        public void Decode_Without_Validator_Should_Return_Token()
         {
             var builder = new JwtBuilder();
 
@@ -157,11 +157,11 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because a JWT should not necessary have a validator to be decoded");
+                   .NotBeEmpty("because a JWT should not necessary have validator to be decoded");
         }
 
         [TestMethod]
-        public void DecodeToken_WithExplicitValidator()
+        public void Decode_With_ExplicitValidator_Should_Return_Token()
         {
             var builder = new JwtBuilder();
             var validator = new JwtValidator(
@@ -173,11 +173,11 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because a JWT should be correctly decoded, even with a validator");
+                   .NotBeEmpty("because a JWT should be correctly decoded, even with validator");
         }
 
         [TestMethod]
-        public void DecodeToken_WithVerifySignature()
+        public void Decode_With_VerifySignature_Should_Return_Token()
         {
             var builder = new JwtBuilder();
 
@@ -191,7 +191,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void DecodeToken_WithVerifySignature_MultipleSecrets()
+        public void Decode_With_VerifySignature_With_Multiple_Secrets_Should_Return_Token()
         {
             var builder = new JwtBuilder();
 
@@ -205,7 +205,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void DecodeToken_WithoutVerifySignature()
+        public void Decode_Without_VerifySignature_Should_Return_Token()
         {
             var builder = new JwtBuilder();
 
@@ -214,11 +214,25 @@ namespace JWT.Tests.Common
                                  .Decode(TestData.Token);
 
             payload.Should()
-                   .NotBeEmpty("because the TestData.Token should have been decoded without errors if asked so");
+                   .NotBeEmpty("because token should have been decoded without errors");
         }
 
         [TestMethod]
-        public void DecodeToken_ToDictionary()
+        public void Decode_With_VerifySignature_Without_PrivateKey_Should_Throw_Exception()
+        {
+            var builder = new JwtBuilder();
+
+            Action action =
+                () => builder.WithAlgorithm(TestData.RS256Algorithm)
+                             .MustVerifySignature()
+                             .Decode(TestData.Token);
+
+            action.Should()
+                  .Throw<InvalidOperationException>("because validating signature requires private key");
+        }
+
+        [TestMethod]
+        public void Decode_To_Dictionary_Should_Return_Dictionary()
         {
             var builder = new JwtBuilder();
 
@@ -234,7 +248,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void DecodeToken_ToDictionary_MultipleSecrets()
+        public void Decode_ToDictionary_With_Multiple_Secrets_Should_Return_Dictionary()
         {
             var builder = new JwtBuilder();
 
@@ -250,7 +264,7 @@ namespace JWT.Tests.Common
         }
 
         [TestMethod]
-        public void DecodeToken_ToObject_MultipleSecrets()
+        public void Decode_ToObject_With_Multiple_Secrets_Should_Return_Object()
         {
             var builder = new JwtBuilder();
 
@@ -263,21 +277,20 @@ namespace JWT.Tests.Common
             payload.Age.Should().Be(33);
         }
 
-
         [TestMethod]
-        public void DecodeToken_ToDictionary_WithoutSerializer_Should_Throw_Exception()
+        public void Decode_ToDictionary_Without_Serializer_Should_Throw_Exception()
         {
             var builder = new JwtBuilder();
 
-            Action decodeJwtWithNullSerializer =
+            Action action =
                 () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
                              .WithSerializer(null)
                              .WithSecret(TestData.Secret)
                              .MustVerifySignature()
                              .Decode<Dictionary<string, string>>(TestData.Token);
 
-            decodeJwtWithNullSerializer.Should()
-                                       .Throw<InvalidOperationException>("because a TestData.Token can't be decoded without a valid serializer");
+            action.Should()
+                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
         }
     }
 }
