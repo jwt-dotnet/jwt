@@ -2,18 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>JWT.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\JWT.Tests.Common\JwtBuilderDecodeTests.cs" Link="JwtBuilderDecodeTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtBuilderEncodeTests.cs" Link="JwtBuilderEncodeTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtDataTests.cs" Link="JwtDataTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtDecoderTests.cs" Link="JwtDecoderTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtEncoderTests.cs" Link="JwtEncoderTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtSecurityTests.cs" Link="JwtSecurityTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\JwtValidatorTests.cs" Link="JwtValidatorTests.cs" />
-    <Compile Include="..\JWT.Tests.Common\RS256AlgorithmTests.cs" Link="RS256AlgorithmTests.cs" />
- </ItemGroup>
+    <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.11.0" />

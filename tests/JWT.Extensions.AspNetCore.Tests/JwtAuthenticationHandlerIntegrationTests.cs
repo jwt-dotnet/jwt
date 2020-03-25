@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

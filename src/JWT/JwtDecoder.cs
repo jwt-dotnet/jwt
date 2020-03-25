@@ -115,7 +115,7 @@ namespace JWT
         {
             if (String.IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
-            if (keys is object && (keys.Length == 0 || !AllKeysHaveValues(keys)))
+            if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var jwt = new JwtParts(token);
@@ -246,7 +246,7 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (keys is object && (keys.Length == 0 || !AllKeysHaveValues(keys)))
+            if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var crypto = _urlEncoder.Decode(jwt.Signature);
@@ -263,22 +263,30 @@ namespace JWT
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
 
-            if (keys is object)
+            if (alg.IsAsymmetric)
+            {
+                var bytesSigned = alg.Sign(null, bytesToSign);
+                var decodedSignature = Convert.ToBase64String(bytesSigned);
+                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+            }
+            else
             {
                 var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
                                             .Select(sd => Convert.ToBase64String(sd))
                                             .ToArray();
                 _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
             }
-            else
-            {
-                var bytesSigned = alg.Sign(null, bytesToSign);
-                var decodedSignature = Convert.ToBase64String(bytesSigned);
-                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
-            }
         }
 
-        private static bool AllKeysHaveValues(IEnumerable<byte[]> keys) =>
-            keys.All(key => key.Any());
+        private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys)
+        {
+            if (keys is null)
+                return true;
+
+            if (keys.Count == 0)
+                return false;
+
+            return keys.All(key => key.Any());
+        }
     }
 }

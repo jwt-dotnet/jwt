@@ -3,7 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using JWT.Algorithms;
 
-namespace JWT.Tests.Common.Models
+namespace JWT.Tests.Models
 {
     public static class TestData
     {

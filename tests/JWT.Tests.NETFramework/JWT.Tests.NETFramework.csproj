@@ -8,7 +8,7 @@
     <ProjectGuid>{88E1DB97-3507-4D8C-9B3D-715DE2F9E414}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JWT.Tests.NETFramework</RootNamespace>
+    <RootNamespace>JWT.Tests</RootNamespace>
     <AssemblyName>JWT.Tests.NETFramework</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -73,31 +73,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\JWT.Tests.Common\JwtBuilderDecodeTests.cs">
-      <Link>JwtBuilderDecodeTests.cs</Link>
+    <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtBuilderEncodeTests.cs">
-      <Link>JwtBuilderEncodeTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtDataTests.cs">
-      <Link>JwtDataTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtDecoderTests.cs">
-      <Link>JwtDecoderTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtEncoderTests.cs">
-      <Link>JwtEncoderTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtSecurityTests.cs">
-      <Link>JwtSecurityTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\JwtValidatorTests.cs">
-      <Link>JwtValidatorTests.cs</Link>
-    </Compile>
-    <Compile Include="..\JWT.Tests.Common\RS256AlgorithmTests.cs">
-      <Link>RS256AlgorithmTests.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

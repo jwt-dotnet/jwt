@@ -1,4 +1,4 @@
-﻿namespace JWT.Tests.Common.Models
+﻿namespace JWT.Tests.Models
 {
     public class Customer
     {

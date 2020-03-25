@@ -2,7 +2,7 @@
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Serializers;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static JWT.Internal.EncodingHelper;
 

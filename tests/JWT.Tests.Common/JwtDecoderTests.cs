@@ -2,7 +2,7 @@ using AutoFixture;
 using System;
 using FluentAssertions;
 using JWT.Serializers;
-using JWT.Tests.Common.Models;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Common

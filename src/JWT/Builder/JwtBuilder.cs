@@ -289,9 +289,6 @@ namespace JWT.Builder
 
             if (!CanEncode())
                 throw new InvalidOperationException("Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine + $"-{nameof(WithAlgorithm)}" + Environment.NewLine + $"-{nameof(WithSerializer)}" + Environment.NewLine + $"-{nameof(WithUrlEncoder)}.");
-
-            if (_algorithm is object && !_algorithm.IsAsymmetric && !HasOnlyOneSecret())
-                throw new InvalidOperationException("You can't provide more than one secret to use for encoding.");
         }
 
         private void EnsureCanDecode()
@@ -313,7 +310,7 @@ namespace JWT.Builder
         /// Checks whether enough dependencies were supplied to encode a new token.
         /// </summary>
         private bool CanEncode() =>
-            (_algorithm is object && (_algorithm.IsAsymmetric || HasOnlyOneSecret()) || _algFactory is object) &&
+            (_algorithm is object || _algFactory is object) &&
             _serializer is object &&
             _urlEncoder is object &&
             _jwt.Payload is object;
@@ -321,19 +318,15 @@ namespace JWT.Builder
         /// <summary>
         /// Checks whether enough dependencies were supplied to decode a token.
         /// </summary>
-        private bool CanDecode() =>
-            !_verify || (_algorithm?.IsAsymmetric ?? true) || HasSecrets();
+        private bool CanDecode()
+        {
+            if (_urlEncoder is null)
+                return false;
 
-        /// <summary>
-        /// Checks if any secret was supplied to use in token decoding
-        /// </summary>
-        private bool HasSecrets() =>
-            _secrets is object && _secrets.Length > 0;
+            if (_verify)
+                return _algorithm is object || _algFactory is object;
 
-        /// <summary>
-        /// Checks if there is only one secret was supplied for token encoding
-        /// </summary>
-        private bool HasOnlyOneSecret() =>
-            _secrets is object && _secrets.Length == 1;
+            return true;
+        }
     }
 }
