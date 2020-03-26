@@ -249,15 +249,13 @@ namespace JWT
             if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
-            var crypto = _urlEncoder.Decode(jwt.Signature);
-            var decodedCrypto = Convert.ToBase64String(crypto);
+            var signature = _urlEncoder.Decode(jwt.Signature);
+            var decodedSignature = Convert.ToBase64String(signature);
 
             var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
 
             var payload = jwt.Payload;
-            var payloadJson = GetString(_urlEncoder.Decode(payload));
-
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", payload));
 
             var algName = (string)headerData["alg"];
@@ -265,16 +263,15 @@ namespace JWT
 
             if (alg.IsAsymmetric)
             {
-                var bytesSigned = alg.Sign(null, bytesToSign);
-                var decodedSignature = Convert.ToBase64String(bytesSigned);
-                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+                ((RS256Algorithm)alg).Verify(bytesToSign, signature);
             }
             else
             {
+                var decodedPayload = GetString(_urlEncoder.Decode(payload));
                 var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                            .Select(sd => Convert.ToBase64String(sd))
-                                            .ToArray();
-                _jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignatures);
+                                        .Select(sd => Convert.ToBase64String(sd))
+                                        .ToArray();
+                _jwtValidator.Validate(decodedPayload, decodedSignature, decodedSignatures);
             }
         }
 
