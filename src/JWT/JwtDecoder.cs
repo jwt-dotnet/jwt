@@ -61,10 +61,22 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
+        public string DecodeHeader(string token)
+        {
+            var header = new JwtParts(token).Header;
+            var decoded = _urlEncoder.Decode(header);
+            return GetString(decoded);
+        }
+
+        /// <inheritdoc />
+        public T DecodeHeader<T>(string token)
+        {
+            var header = DecodeHeader(token);
+            return _jsonSerializer.Deserialize<T>(header);
+        }
+
+        /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public string Decode(JwtParts jwt)
         {
             if (jwt is null)
@@ -75,10 +87,6 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public string Decode(string token)
         {
             var payload = new JwtParts(token).Payload;
@@ -88,24 +96,7 @@ namespace JWT
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public string Decode(string token, string key, bool verify) =>
-            Decode(token, GetBytes(key), verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public string Decode(string token, string[] keys, bool verify) =>
-            Decode(token, GetBytes(keys), verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public string Decode(string token, byte[] key, bool verify)
         {
             if (String.IsNullOrWhiteSpace(token))
@@ -129,7 +120,6 @@ namespace JWT
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public string Decode(string token, byte[][] keys, bool verify)
         {
             if (String.IsNullOrWhiteSpace(token))
@@ -151,50 +141,6 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token) =>
-            DecodeToObject<Dictionary<string, object>>(token);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, string key, bool verify) =>
-            DecodeToObject(token, GetBytes(key), verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, string[] keys, bool verify) =>
-            DecodeToObject(token, GetBytes(keys), verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify) =>
-            DecodeToObject<Dictionary<string, object>>(token, key, verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public IDictionary<string, object> DecodeToObject(string token, byte[][] keys, bool verify) =>
-            DecodeToObject<Dictionary<string, object>>(token, keys, verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token)
         {
             var payload = Decode(token);
@@ -202,21 +148,6 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(string token, string key, bool verify) =>
-            DecodeToObject<T>(token, GetBytes(key), verify);
-
-        public T DecodeToObject<T>(string token, string[] keys, bool verify) =>
-            DecodeToObject<T>(token, GetBytes(keys), verify);
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token, byte[] key, bool verify)
         {
             var payload = Decode(token, key, verify);
@@ -224,10 +155,6 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
         public T DecodeToObject<T>(string token, byte[][] keys, bool verify)
         {
             var payload = Decode(token, keys, verify);

@@ -30,6 +30,7 @@ namespace JWT.Tests
             var exp = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
 
             var token = builder.WithAlgorithm(algorithm)
+                               .AddHeader(HeaderName.KeyId, certPub.Thumbprint)
                                .AddClaim("iss", iss)
                                .AddClaim("exp", exp)
                                .AddClaim("name", TestData.Customer.FirstName)

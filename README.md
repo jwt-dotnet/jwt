@@ -56,7 +56,7 @@ var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
-#### Or using the fluent builder API
+##### Or using the fluent builder API
 
 ```c#
   var token = new JwtBuilder()
@@ -82,7 +82,7 @@ const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
-    IDateTimeProvider provider = new UtcDateTimeProvider();
+    var provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
     IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
@@ -101,7 +101,7 @@ catch (SignatureVerificationException)
 }
 ```
 
-#### Or using the fluent builder API
+##### Or using the fluent builder API
 
 ```c#
 try
@@ -133,7 +133,7 @@ var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret)
 Console.WriteLine(payload["claim2"]);
  ```
 
-#### Or using the fluent builder API
+##### Or using the fluent builder API
 
 ```c#
 var payload = new JwtBuilder()
@@ -151,8 +151,8 @@ The output would be:
 
 As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
 
-```csharp
-IDateTimeProvider provider = new UtcDateTimeProvider();
+```c#
+var provider = new UtcDateTimeProvider();
 var now = provider.GetNow();
 
 var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
@@ -165,6 +165,32 @@ const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 var token = encoder.Encode(payload, secret);
 
 var json = decoder.Decode(token, secret); // throws TokenExpiredException
+```
+
+#### Parsing (decoding) token header
+
+```c#
+var serializer = new JsonNetSerializer();
+var urlEncoder = new JwtBase64UrlEncoder();
+var decoder = new JwtDecoder(serializer, urlEncoder);
+
+JwtHeader header = decoder.DecodeHeader<JwtHeader>(token);
+
+var typ = header.Type; // JWT
+var alg = header.Algorithm; // RS256
+var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
+```
+
+##### Or using the fluent builder API
+
+```c#
+var builder = new JwtBuilder();
+
+JwtHeader header = builder.DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+
+var typ = header.Type; // JWT
+var alg = header.Algorithm; // RS256
+var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 ```
 
 #### Custom JSON serializer

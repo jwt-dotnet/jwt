@@ -194,15 +194,6 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Builds a token using the supplied dependencies.
-        /// </summary>
-        /// <returns>The generated JWT</returns>
-        /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
-        [Obsolete("Please use " + nameof(Encode) + " instead", error: true)] // TODO: remove in 7.0
-        public string Build() =>
-            Encode();
-
-        /// <summary>
         /// Encodes a token using the supplied dependencies.
         /// </summary>
         /// <returns>The generated JWT</returns>
@@ -224,6 +215,28 @@ namespace JWT.Builder
             EnsureCanDecode();
 
             return _verify ? _decoder.Decode(token, _secrets, _verify) : _decoder.Decode(token);
+        }
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        public string DecodeHeader(string token)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeHeader(token);
+        }
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        public T DecodeHeader<T>(string token)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeHeader<T>(token);
         }
 
         /// <summary>
