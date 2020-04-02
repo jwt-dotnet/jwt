@@ -135,8 +135,10 @@ namespace JWT.Tests.Common
             const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, null, urlEncoder, TestData.HMACSHA256Algorithm);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeInvalidJwt =
                 () => decoder.DecodeToObject<Customer>(badToken, key, verify: true);
@@ -152,8 +154,10 @@ namespace JWT.Tests.Common
             const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, null, urlEncoder, TestData.HMACSHA256Algorithm);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             Action decodeInvalidJwtWithMultipleKeys =
                 () => decoder.DecodeToObject<Customer>(badToken, new[] { key }, verify: true);

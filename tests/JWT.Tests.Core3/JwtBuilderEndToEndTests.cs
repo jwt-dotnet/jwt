@@ -45,6 +45,7 @@ namespace JWT.Tests
                  .HaveCount(3, "because the built token should have the three standard parts");
 
             var jwt = builder.WithAlgorithm(algorithm)
+                             .WithSecret(TestData.ServerRsaPublicKey2)
                              .MustVerifySignature()
                              .Decode<Dictionary<string, object>>(token);
 

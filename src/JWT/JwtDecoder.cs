@@ -20,13 +20,16 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtDecoder" />
         /// </summary>
+        /// <remarks>
+        /// This overload supplies no <see cref="IJwtValidator" /> and no <see cref="IAlgorithmFactory" /> so the resulting decoder cannot be used for signature validation.
+        /// </remarks>
         /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="jwtValidator">The Jwt validator</param>
         /// <param name="urlEncoder">The Base64 URL Encoder</param>
-        /// <param name="algorithm">The Algorithm</param>
-        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IJwtAlgorithm algorithm)
-            : this(jsonSerializer, jwtValidator, urlEncoder, new DelegateAlgorithmFactory(algorithm))
+        /// <exception cref="ArgumentNullException" />
+        public JwtDecoder(IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
+            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            _urlEncoder = urlEncoder ?? throw new ArgumentNullException(nameof(urlEncoder));
         }
 
         /// <summary>
@@ -36,12 +39,25 @@ namespace JWT
         /// <param name="jwtValidator">The Jwt validator</param>
         /// <param name="urlEncoder">The Base64 URL Encoder</param>
         /// <param name="algFactory">The Algorithm Factory</param>
+        /// <exception cref="ArgumentNullException" />
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
+            : this(jsonSerializer, urlEncoder)
         {
-            _jsonSerializer = jsonSerializer;
-            _jwtValidator = jwtValidator;
-            _urlEncoder = urlEncoder;
-            _algFactory = algFactory;
+            _jwtValidator = jwtValidator ?? throw new ArgumentNullException(nameof(jwtValidator));
+            _algFactory = algFactory ?? throw new ArgumentNullException(nameof(algFactory));
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtDecoder" />
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="jwtValidator">The Jwt validator</param>
+        /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="algorithm">The Algorithm</param>
+        /// <exception cref="ArgumentNullException" />
+        public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IJwtAlgorithm algorithm)
+            : this(jsonSerializer, jwtValidator, urlEncoder, new DelegateAlgorithmFactory(algorithm))
+        {
         }
 
         /// <inheritdoc />
@@ -101,6 +117,9 @@ namespace JWT
 
             if (verify)
             {
+                if (_jwtValidator is null || _algFactory is null)
+                    throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
+
                 Validate(jwt, key);
             }
 
@@ -122,6 +141,9 @@ namespace JWT
 
             if (verify)
             {
+                if (_jwtValidator is null || _algFactory is null)
+                    throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
+
                 Validate(jwt, keys);
             }
 
@@ -250,7 +272,6 @@ namespace JWT
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             var signature = _urlEncoder.Decode(jwt.Signature);
-            var decodedSignature = Convert.ToBase64String(signature);
 
             var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
             var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
@@ -261,17 +282,21 @@ namespace JWT
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
 
+            // TODO: add back
+            /*
             if (alg.IsAsymmetric)
             {
                 ((RS256Algorithm)alg).Verify(bytesToSign, signature);
             }
             else
+            */
             {
                 var decodedPayload = GetString(_urlEncoder.Decode(payload));
+                var decodedCrypto = Convert.ToBase64String(signature);
                 var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                        .Select(sd => Convert.ToBase64String(sd))
-                                        .ToArray();
-                _jwtValidator.Validate(decodedPayload, decodedSignature, decodedSignatures);
+                                            .Select(sd => Convert.ToBase64String(sd))
+                                            .ToArray();
+                _jwtValidator.Validate(decodedPayload, decodedCrypto, decodedSignatures);
             }
         }
 

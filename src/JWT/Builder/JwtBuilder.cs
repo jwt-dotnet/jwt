@@ -256,8 +256,6 @@ namespace JWT.Builder
 
             if (_serializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
-            if (_validator is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithValidator)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
@@ -265,8 +263,8 @@ namespace JWT.Builder
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algorithm);
             else if (_algFactory is object)
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algFactory);
-            else
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call either {nameof(WithAlgorithm)} or {nameof(WithAlgorithmFactory)}.");
+            else if (!_verify)
+                _decoder = new JwtDecoder(_serializer, _urlEncoder);
         }
 
         private void TryCreateValidator()
@@ -288,7 +286,13 @@ namespace JWT.Builder
                 TryCreateEncoder();
 
             if (!CanEncode())
-                throw new InvalidOperationException("Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine + $"-{nameof(WithAlgorithm)}" + Environment.NewLine + $"-{nameof(WithSerializer)}" + Environment.NewLine + $"-{nameof(WithUrlEncoder)}.");
+            {
+                throw new InvalidOperationException(
+                    "Can't encode a token. Check if you have call all of the following methods:" + Environment.NewLine +
+                    $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
+                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithUrlEncoder)}.");
+            }
         }
 
         private void EnsureCanDecode()
@@ -324,7 +328,7 @@ namespace JWT.Builder
                 return false;
 
             if (_verify)
-                return _algorithm is object || _algFactory is object;
+                return _validator is object && (_algorithm is object || _algFactory is object);
 
             return true;
         }
