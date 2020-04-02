@@ -65,6 +65,38 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
+        public string DecodeHeader(string token)
+        {
+            var header = new JwtParts(token).Header;
+            var decoded = _urlEncoder.Decode(header);
+            return GetString(decoded);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
+        public IDictionary<string, string> DecodeHeaderToObject(string token) =>
+            DecodeHeaderToObject<Dictionary<string, string>>(token);
+
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
+        public T DecodeHeaderToObject<T>(string token)
+        {
+            var header = DecodeHeader(token);
+            return _jsonSerializer.Deserialize<T>(header);
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
         public string Decode(JwtParts jwt)
         {
             if (jwt is null)
