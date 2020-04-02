@@ -1,11 +1,11 @@
-using AutoFixture;
 using System;
+using AutoFixture;
 using FluentAssertions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests
 {
     [TestClass]
     public class JwtDecoderTests

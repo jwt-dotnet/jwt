@@ -5,7 +5,7 @@ using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests
 {
     [TestClass]
     public class JwtEncoderTests

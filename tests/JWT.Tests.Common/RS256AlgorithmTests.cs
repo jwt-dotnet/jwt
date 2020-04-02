@@ -8,7 +8,7 @@ using JWT.Algorithms;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests
 {
     [TestClass]
     public class RS256AlgorithmTests
@@ -20,11 +20,11 @@ namespace JWT.Tests.Common
         {
             var privateKey = _fixture.Create<RSACryptoServiceProvider>();
 
-            Action newWithoutPublicKey =
+            Action action =
                 () => new RS256Algorithm(null, privateKey);
 
-            newWithoutPublicKey.Should()
-                               .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
+            action.Should()
+                  .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
         }
 
         [TestMethod]
@@ -32,11 +32,11 @@ namespace JWT.Tests.Common
         {
             var publicKey = _fixture.Create<RSACryptoServiceProvider>();
 
-            Action newWithoutPrivateKey =
+            Action action =
                 () => new RS256Algorithm(publicKey, null);
 
-            newWithoutPrivateKey.Should()
-                                .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
+            action.Should()
+                  .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
         }
 
         [TestMethod]
@@ -47,11 +47,11 @@ namespace JWT.Tests.Common
 
             var bytesToSign = Array.Empty<byte>();
 
-            Action signWithoutPrivateKey =
+            Action action =
                 () => alg.Sign(null, bytesToSign);
 
-            signWithoutPrivateKey.Should()
-                                 .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
+            action.Should()
+                  .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
         }
 
         [TestMethod]
@@ -74,7 +74,8 @@ namespace JWT.Tests.Common
 
             var algorithm = new RS256Algorithm(certificate);
 
-            algorithm.Should().NotBeNull();
+            algorithm.Should()
+                     .NotBeNull();
         }
     }
 }

@@ -4,7 +4,7 @@ using FluentAssertions;
 using JWT.Builder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests
 {
     [TestClass]
     public class JwtDataTests

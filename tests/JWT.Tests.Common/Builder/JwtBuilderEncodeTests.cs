@@ -8,7 +8,7 @@ using JWT.Algorithms;
 using JWT.Builder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests
+namespace JWT.Tests.Builder
 {
     [TestClass]
     public class JwtBuilderEncodeTests

@@ -6,7 +6,7 @@ using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static JWT.Internal.EncodingHelper;
 
-namespace JWT.Tests.Common
+namespace JWT.Tests
 {
     [TestClass]
     public class JwtValidatorTests
