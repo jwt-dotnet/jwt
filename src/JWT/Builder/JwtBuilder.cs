@@ -198,7 +198,7 @@ namespace JWT.Builder
         /// </summary>
         /// <returns>The generated JWT</returns>
         /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
-        [Obsolete("Please use " + nameof(Encode) + " instead", error: true)]
+        [Obsolete("Please use " + nameof(Encode) + " instead", error: true)] // TODO: remove in 7.0
         public string Build() =>
             Encode();
 
