@@ -20,7 +20,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because the decoded TestData.Token contains values and they should have been fetched");
+                 .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
         }
 
         [TestMethod]
@@ -43,13 +43,40 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
 
             Action action =
-                () => builder.WithAlgorithm(null)
-                             .WithAlgorithmFactory(null)
+                () => builder.WithAlgorithmFactory(null)
                              .MustVerifySignature()
                              .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid algorithm or algorithm factory");
+        }
+
+        [TestMethod]
+        public void Decode_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
+        {
+            var builder = new JwtBuilder();
+
+            var token = builder.WithAlgorithm(null)
+                               .WithValidator(null)
+                               .DoNotVerifySignature()
+                               .Decode(TestData.Token);
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the decoding process without validating signature must be successful without validator and algorithm");
+        }
+
+        [TestMethod]
+        public void Decode_Without_VerifySignature_And_Without_AlgorithmFactory_Should_Return_Token()
+        {
+            var builder = new JwtBuilder();
+
+            var token = builder.WithAlgorithmFactory(null)
+                               .WithValidator(null)
+                               .DoNotVerifySignature()
+                               .Decode(TestData.Token);
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the decoding process without validating signature must be successful without validator and algorithm factory");
         }
 
         [TestMethod]
@@ -89,7 +116,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because token should be correctly decoded and its data extracted");
+                   .NotBeNullOrEmpty("because token should be correctly decoded and its data extracted");
         }
 
         [TestMethod]
@@ -117,7 +144,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because token should have been correctly decoded with the valid base 64 encoder");
+                   .NotBeNullOrEmpty("because token should have been correctly decoded with the valid base64 encoder");
         }
 
         [TestMethod]
@@ -146,7 +173,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because the decoding process must be successful with valid DateTimeProvider");
+                   .NotBeNullOrEmpty("because the decoding process must be successful with valid DateTimeProvider");
         }
 
         [TestMethod]
@@ -159,7 +186,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because a JWT should not necessary have validator to be decoded");
+                   .NotBeNullOrEmpty("because a JWT should not necessary have validator to be decoded");
         }
 
         [TestMethod]
@@ -175,7 +202,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because a JWT should be correctly decoded, even with validator");
+                   .NotBeNullOrEmpty("because a JWT should be correctly decoded, even with validator");
         }
 
         [TestMethod]
@@ -189,7 +216,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
+                   .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
         }
 
         [TestMethod]
@@ -203,7 +230,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
+                   .NotBeNullOrEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
         }
 
         [TestMethod]
@@ -261,7 +288,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeEmpty("because token should have been decoded without errors");
+                   .NotBeNullOrEmpty("because token should have been decoded without errors");
         }
 
         [Ignore] // TODO: add back
@@ -275,7 +302,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                 .NotBeEmpty("because token should have been decoded without errors");
+                 .NotBeNullOrEmpty("because token should have been decoded without errors");
         }
 
         [TestMethod]

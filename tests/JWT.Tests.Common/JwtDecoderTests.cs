@@ -13,11 +13,11 @@ namespace JWT.Tests
         private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
-        public void Decode_Should_Decode_Token_To_Json_String()
+        public void Decode_With_Single_Key_Should_Return_Token()
         {
             const string key = TestData.Secret;
             const string token = TestData.Token;
-            var toSerialize = TestData.Customer;
+            var payload = TestData.Customer;
 
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -26,18 +26,18 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, key, verify: true);
-            var expected = serializer.Serialize(toSerialize);
+            var expected = serializer.Serialize(payload);
 
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
         [TestMethod]
-        public void Decode_Should_Decode_Token_To_Json_String_Multiple_Secrets()
+        public void Decode_With_Multiple_Secrets_Should_Return_Token()
         {
             const string key = TestData.Secret;
             const string token = TestData.Token;
-            var toSerialize = TestData.Customer;
+            var payload = TestData.Customer;
 
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -46,12 +46,29 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, new[] { key }, verify: true);
-            var expected = serializer.Serialize(toSerialize);
+            var expected = serializer.Serialize(payload);
 
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
 
+        [TestMethod]
+        public void Decode_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
+        {
+            const string token = TestData.Token;
+            var payload = TestData.Customer;
+
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var decoder = new JwtDecoder(serializer, urlEncoder);
+
+            var actual = decoder.Decode(token);
+            var expected = serializer.Serialize(payload);
+
+            actual.Should()
+                  .Be(expected, "because the provided object should be correctly serialized in the token");
+        }
         [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()
         {
