@@ -13,7 +13,21 @@ namespace JWT.Tests
         private static readonly Fixture _fixture = new Fixture();
 
         [TestMethod]
-        public void Decode_With_Single_Key_Should_Return_Token()
+        public void DecodeHeader_Should_Return_Header()
+        {
+            const string token = TestData.Token;
+
+            var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.RS256Algorithm);
+
+            var actual = decoder.DecodeHeader(token);
+        }
+
+        [TestMethod]
+        public void Decode_Should_Decode_Token_To_Json_String()
         {
             const string key = TestData.Secret;
             const string token = TestData.Token;
