@@ -69,7 +69,7 @@ namespace JWT
         }
 
         /// <inheritdoc />
-        public T DecodeHeaderToObject<T>(string token)
+        public T DecodeHeader<T>(string token)
         {
             var header = DecodeHeader(token);
             return _jsonSerializer.Deserialize<T>(header);

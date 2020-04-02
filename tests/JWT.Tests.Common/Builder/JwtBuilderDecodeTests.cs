@@ -11,6 +11,58 @@ namespace JWT.Tests.Builder
     [TestClass]
     public class JwtBuilderDecodeTests
     {
+
+        [TestMethod]
+        public void DecodeHeader_Should_Return_Header()
+        {
+            var builder = new JwtBuilder();
+
+            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .DecodeHeader(TestData.TokenByAsymmetricAlgorithm);
+
+            header.Should()
+                  .NotBeNullOrEmpty("because decoding header should be possible without validator or algorithm");
+        }
+
+        [TestMethod]
+        public void DecodeHeader_To_JwtHeader_Should_Return_Header()
+        {
+            var builder = new JwtBuilder();
+
+            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+
+            header.Should()
+                  .NotBeNull("because decoding header should be possible without validator or algorithm");
+
+            header.Type
+                  .Should()
+                  .Be("JWT");
+            header.Algorithm
+                  .Should()
+                  .Be("RS256");
+            header.KeyId
+                  .Should()
+                  .Be(TestData.ServerRsaPublicThumbprint1);
+        }
+
+        [TestMethod]
+        public void DecodeHeader_To_Dictionary_Should_Return_Header()
+        {
+            var builder = new JwtBuilder();
+
+            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .DecodeHeader<Dictionary<string, string>>(TestData.TokenByAsymmetricAlgorithm);
+
+            header.Should()
+                 .NotBeNull("because decoding header should be possible without validator or algorithm");
+
+            header.Should()
+                 .Contain("typ", "JWT")
+                 .And.Contain("alg", "RS256")
+                 .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
+        }
+
         [TestMethod]
         public void Decode_Should_Return_Token()
         {

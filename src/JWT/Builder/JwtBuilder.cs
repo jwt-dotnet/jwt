@@ -218,6 +218,28 @@ namespace JWT.Builder
         }
 
         /// <summary>
+        /// Given a JWT, decodes it and return the header.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        public string DecodeHeader(string token)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeHeader(token);
+        }
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        public T DecodeHeader<T>(string token)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeHeader<T>(token);
+        }
+
+        /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
         /// <param name="token">The JWT</param>

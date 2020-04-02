@@ -23,55 +23,10 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
-            var actual = decoder.DecodeHeader(token);
+            var header = decoder.DecodeHeader(token);
 
-            actual.Should()
+            header.Should()
                   .NotBeNullOrEmpty("because decoding header should be possible without validator or algorithm");
-        }
-
-        [TestMethod]
-        public void DecodeHeaderToObject_Should_Return_Header()
-        {
-            const string token = TestData.TokenByAsymmetricAlgorithm;
-
-            var serializer = new JsonNetSerializer();
-            var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, urlEncoder);
-
-            var actual = decoder.DecodeHeaderToObject(token);
-
-            actual.Should()
-                  .NotBeNull("because decoding header should be possible without validator or algorithm");
-
-            actual.Should()
-                  .Contain("typ", "JWT")
-                  .And.Contain("alg", "RS256")
-                  .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
-        }
-
-        [TestMethod]
-        public void DecodeHeaderToJwtHeader_Should_Return_Header()
-        {
-            const string token = TestData.TokenByAsymmetricAlgorithm;
-
-            var serializer = new JsonNetSerializer();
-            var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, urlEncoder);
-
-            var actual = decoder.DecodeHeaderToObject<JwtHeader>(token);
-
-            actual.Should()
-                  .NotBeNull("because decoding header should be possible without validator or algorithm");
-
-            actual.Type
-                  .Should()
-                  .Be("JWT");
-            actual.Algorithm
-                  .Should()
-                  .Be("RS256");
-            actual.KeyId
-                  .Should()
-                  .Be(TestData.ServerRsaPublicThumbprint1);
         }
 
         [TestMethod]
@@ -83,12 +38,57 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
-            var actual = decoder.DecodeHeaderToObject<Dictionary<string, string>>(token);
+            var header = decoder.DecodeHeaderToDictionary(token);
 
-            actual.Should()
+            header.Should()
                   .NotBeNull("because decoding header should be possible without validator or algorithm");
 
-            actual.Should()
+            header.Should()
+                  .Contain("typ", "JWT")
+                  .And.Contain("alg", "RS256")
+                  .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
+        }
+
+        [TestMethod]
+        public void DecodeHeader_To_JwtHeader_Should_Return_Header()
+        {
+            const string token = TestData.TokenByAsymmetricAlgorithm;
+
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, urlEncoder);
+
+            var header = decoder.DecodeHeader<JwtHeader>(token);
+
+            header.Should()
+                  .NotBeNull("because decoding header should be possible without validator or algorithm");
+
+            header.Type
+                  .Should()
+                  .Be("JWT");
+            header.Algorithm
+                  .Should()
+                  .Be("RS256");
+            header.KeyId
+                  .Should()
+                  .Be(TestData.ServerRsaPublicThumbprint1);
+        }
+
+        [TestMethod]
+        public void DecodeHeader_To_Dictionary_Should_Return_Header()
+        {
+            const string token = TestData.TokenByAsymmetricAlgorithm;
+
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, urlEncoder);
+
+            var header = decoder.DecodeHeader<Dictionary<string, string>>(token);
+
+            header.Should()
+                  .NotBeNull("because decoding header should be possible without validator or algorithm");
+
+            header.Should()
                   .Contain("typ", "JWT")
                   .And.Contain("alg", "RS256")
                   .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
