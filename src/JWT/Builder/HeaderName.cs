@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace JWT.Builder
 {
     /// <summary>
-    /// All predefined headers specified by RFC 7515, see https://tools.ietf.org/html/rfc7515
+    /// All predefined parameter names specified by RFC 7515, see https://tools.ietf.org/html/rfc7515
     /// </summary>
     public enum HeaderName
     {
@@ -17,6 +17,15 @@ namespace JWT.Builder
         Algorithm,
 
         [Description("kid")]
-        KeyId
+        KeyId,
+
+        [Description("x5u")]
+        X5u,
+
+        [Description("x5c")]
+        X5c,
+
+        [Description("x5t")]
+        X5t
     }
 }
