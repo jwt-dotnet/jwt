@@ -80,7 +80,6 @@ namespace JWT
         public IDictionary<string, string> DecodeHeaderToObject(string token) =>
             DecodeHeaderToObject<Dictionary<string, string>>(token);
 
-
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
