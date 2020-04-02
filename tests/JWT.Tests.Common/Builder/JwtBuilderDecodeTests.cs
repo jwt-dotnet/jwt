@@ -29,8 +29,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+            var header = builder.DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
                   .NotBeNull("because decoding header should be possible without validator or algorithm");
