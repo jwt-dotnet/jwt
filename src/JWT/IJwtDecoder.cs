@@ -7,24 +7,46 @@ namespace JWT
     /// </summary>
     public interface IJwtDecoder
     {
+        #region DecodeHeader
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        string DecodeHeader(string token);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header as an dictionary.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        IDictionary<string, string> DecodeHeaderToObject(string token);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the header as an object.
+        /// </summary>
+        /// <param name="token">The JWT</param>
+        T DecodeHeaderToObject<T>(string token);
+
+        #endregion
+
         #region Decode
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="jwt">The JWT</param>
         /// <returns>A string containing the JSON payload</returns>
         string Decode(JwtParts jwt);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <returns>A string containing the JSON payload</returns>
         string Decode(string token);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
@@ -33,7 +55,7 @@ namespace JWT
         string Decode(string token, string key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
@@ -42,7 +64,7 @@ namespace JWT
         string Decode(string token, string[] keys, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="key">The key bytes that were used to sign the JWT</param>
@@ -51,7 +73,7 @@ namespace JWT
         string Decode(string token, byte[] key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the JSON payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="keys">The keys bytes provided which one of them was used to sign the JWT</param>
@@ -63,14 +85,14 @@ namespace JWT
 
         #region IDictionary<string, object> DecodeToObject
         /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as a dictionary.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <returns>An object representing the payload</returns>
         IDictionary<string, object> DecodeToObject(string token);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an dictionary.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
@@ -81,7 +103,7 @@ namespace JWT
         IDictionary<string, object> DecodeToObject(string token, string key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an dictionary.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="keys">The key which one of them was used to sign the JWT</param>
@@ -92,7 +114,7 @@ namespace JWT
         IDictionary<string, object> DecodeToObject(string token, string[] keys, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an dictionary.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
@@ -103,7 +125,7 @@ namespace JWT
         IDictionary<string, object> DecodeToObject(string token, byte[] key, bool verify);
 
         /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
+        /// Given a JWT, decodes it and return the payload as an dictionary.
         /// </summary>
         /// <param name="token">The JWT</param>
         /// <param name="keys">The key which one of them was used to sign the JWT</param>
