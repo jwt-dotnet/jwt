@@ -342,7 +342,6 @@ namespace JWT.Tests.Builder
                    .NotBeNullOrEmpty("because token should have been decoded without errors");
         }
 
-        [Ignore] // TODO: add back
         [TestMethod]
         public void Decode_With_VerifySignature_Without_PrivateKey_Should_Return_Token()
         {
@@ -363,12 +362,11 @@ namespace JWT.Tests.Builder
 
             Action action =
                 () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .WithSecret(TestData.ServerRsaPublicKey2)
                              .MustVerifySignature()
                              .Decode(TestData.Token);
 
             action.Should()
-                  .Throw<InvalidOperationException>("because validating signature requires private key");
+                  .Throw<SignatureVerificationException>("because validating signature requires private key");
         }
 
         [TestMethod]
