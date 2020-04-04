@@ -28,9 +28,9 @@ namespace JWT
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
-        public void Validate(string decodedPayload, string decodedCrypto, params string[] decodedSignatures)
+        public void Validate(string decodedPayload, string signature, params string[] decodedSignatures)
         {
-            var ex = GetValidationException(decodedPayload, decodedCrypto, decodedSignatures);
+            var ex = GetValidationException(decodedPayload, signature, decodedSignatures);
             if (ex is object)
                 throw ex;
         }
@@ -47,17 +47,17 @@ namespace JWT
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
-        public bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex)
+        public bool TryValidate(string payloadJson, string signature, string decodedSignature, out Exception ex)
         {
-            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            ex = GetValidationException(payloadJson, signature, decodedSignature);
             return ex is null;
         }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
-        public bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex)
+        public bool TryValidate(string payloadJson, string signature, string[] decodedSignature, out Exception ex)
         {
-            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            ex = GetValidationException(payloadJson, signature, decodedSignature);
             return ex is null;
         }
 
@@ -111,7 +111,7 @@ namespace JWT
         private static bool IsAnySignatureValid(string decodedCrypto, IEnumerable<string> decodedSignatures) =>
             decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
 
-        /// <remarks>In the future this method can be opened for extension thus made protected virtual</remarks>
+        /// <remarks>In the future this method can be opened for extension hence made protected virtual</remarks>
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
         {
             if (decodedCrypto.Length != decodedSignature.Length)

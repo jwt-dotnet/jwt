@@ -215,13 +215,16 @@ namespace JWT
                 _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, signature);
             }
             else
-
             {
-                var decodedCrypto = Convert.ToBase64String(signature);
-                var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                            .Select(sd => Convert.ToBase64String(sd))
-                                            .ToArray();
-                _jwtValidator.Validate(decodedPayload, decodedCrypto, decodedSignatures);
+                // the signature on the token, with the leading =
+                var rawSignature = Convert.ToBase64String(signature);
+
+                // the signatures re-created by the algorithm, with the leading =
+                var recreatedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
+                                              .Select(sd => Convert.ToBase64String(sd))
+                                              .ToArray();
+
+                _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
             }
         }
 
