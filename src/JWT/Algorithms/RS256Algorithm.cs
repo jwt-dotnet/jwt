@@ -7,7 +7,7 @@ namespace JWT.Algorithms
     /// <summary>
     /// RSASSA-PKCS1-v1_5 using SHA-256
     /// </summary>
-    public sealed class RS256Algorithm : IJwtAlgorithm
+    public sealed class RS256Algorithm : IAsymmetricAlgorithm
     {
         private readonly RSA _publicKey;
         private readonly RSA _privateKey;
@@ -50,9 +50,6 @@ namespace JWT.Algorithms
         public string Name => JwtHashAlgorithm.RS256.ToString();
 
         /// <inheritdoc />
-        public bool IsAsymmetric => true;
-
-        /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
             if (_privateKey is null)
@@ -69,11 +66,7 @@ namespace JWT.Algorithms
         public byte[] Sign(byte[] bytesToSign) =>
             _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-        /// <summary>
-        /// Verifies provided byte array with provided signature.
-        /// </summary>
-        /// <param name="bytesToSign">The data to verify</param>
-        /// <param name="signature">The signature to verify with</param>
+        /// <inheritdoc />
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
             _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
