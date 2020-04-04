@@ -28,17 +28,17 @@ namespace JWT
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
-        public void Validate(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
+        public void Validate(string decodedPayload, string decodedCrypto, params string[] decodedSignatures)
         {
-            var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignatures);
+            var ex = GetValidationException(decodedPayload, decodedCrypto, decodedSignatures);
             if (ex is object)
                 throw ex;
         }
 
         /// <inheritdoc />
-        public void Validate(string payloadJson, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
+        public void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
         {
-            var ex = GetValidationException(alg, payloadJson, bytesToSign, decodedSignature);
+            var ex = GetValidationException(alg, decodedPayload, bytesToSign, decodedSignature);
             if (ex is object)
                 throw ex;
         }
