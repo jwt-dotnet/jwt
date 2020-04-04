@@ -61,15 +61,8 @@ namespace JWT
             return ex is null;
         }
 
-        /// <summary>
-        /// Given the JWT, verifies its signatures correctness without throwing an exception but returning it instead.
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
-        /// <param name="alg">The asymmetric algorithm to validate with</param>
-        /// <param name="bytesToSign">The header and payload bytes to validate</param>
-        /// <param name="decodedSignature">The decodedSignatures to validate with</param>
-        /// <param name="ex">Validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
         public bool TryValidate(string payloadJson, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature, out Exception ex)
         {
             ex = GetValidationException(alg, payloadJson, bytesToSign, decodedSignature);
@@ -97,6 +90,9 @@ namespace JWT
 
         private Exception GetValidationException(string payloadJson)
         {
+            if (string.IsNullOrEmpty(payloadJson))
+                throw new ArgumentException(nameof(payloadJson));
+
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();

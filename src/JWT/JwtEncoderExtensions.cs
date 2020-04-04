@@ -13,6 +13,7 @@ namespace JWT
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
+        /// <param name="encoder">The encoder instance</param>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON)</param>
         /// <param name="key">The key used to sign the token</param>
         /// <returns>The generated JWT</returns>
@@ -23,6 +24,7 @@ namespace JWT
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.
         /// </summary>
+        /// <param name="encoder">The encoder instance</param>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON)</param>
         /// <param name="key">The key used to sign the token</param>
         /// <returns>The generated JWT</returns>
@@ -33,6 +35,7 @@ namespace JWT
         /// <summary>
         /// Creates a JWT given a set of arbitrary extra headers, a payload, the signing key, and the algorithm to use.
         /// </summary>
+        /// <param name="encoder">The encoder instance</param>
         /// <param name="extraHeaders">An arbitrary set of extra headers. Will be augmented with the standard "typ" and "alg" headers</param>
         /// <param name="payload">An arbitrary payload (must be serializable to JSON)</param>
         /// <param name="key">The key bytes used to sign the token</param>
