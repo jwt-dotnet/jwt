@@ -44,9 +44,11 @@ namespace JWT.Tests
                   .NotBeNull("because decoding header should be possible without validator or algorithm");
 
             header.Should()
-                  .Contain("typ", "JWT")
-                  .And.Contain("alg", "RS256")
-                  .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
+                  .Contain("typ", "JWT");
+            header.Should()
+                  .Contain("alg", "RS256");
+            header.Should()
+                  .Contain("kid", TestData.ServerRsaPublicThumbprint1);
         }
 
         [TestMethod]
