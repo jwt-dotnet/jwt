@@ -39,7 +39,7 @@ namespace JWT
         /// <param name="signature">Decoded body</param>
         /// <param name="decodedSignature">The signature to validate with</param>
         /// <param name="ex">The resulting validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        /// <returns>Returns <c>true</c> if exception is JWT is valid and exception is null, otherwise false</returns>
         bool TryValidate(string payloadJson, string signature, string decodedSignature, out Exception ex);
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace JWT
         /// <param name="signature">Decoded body</param>
         /// <param name="decodedSignature">The signatures to validate with</param>
         /// <param name="ex">The resulting validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        /// <returns>Returns <c>true</c> if exception is JWT is valid and exception is null, otherwise false</returns>
         bool TryValidate(string payloadJson, string signature, string[] decodedSignature, out Exception ex);
     }
 }
