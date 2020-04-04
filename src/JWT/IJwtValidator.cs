@@ -1,4 +1,5 @@
-﻿using JWT.Algorithms;
+﻿using System;
+using JWT.Algorithms;
 
 namespace JWT
 {
@@ -30,5 +31,25 @@ namespace JWT
         /// <exception cref="SignatureVerificationException">The decodedSignatures is invalid</exception>
         /// <exception cref="TokenExpiredException">The token has expired</exception>
         void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature);
+
+        /// <summary>
+        /// Given the JWT, verifies its signature correctness without throwing an exception but returning it instead.
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signature</param>
+        /// <param name="ex">Validation exception, if any</param>
+        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex);
+
+        /// <summary>
+        /// Given the JWT, verifies its signatures correctness without throwing an exception but returning it instead.
+        /// </summary>
+        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
+        /// <param name="decodedCrypto">Decoded body</param>
+        /// <param name="decodedSignature">Decoded signatures</param>
+        /// <param name="ex">Validation exception, if any</param>
+        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex);
     }
 }

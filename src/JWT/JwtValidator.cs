@@ -36,6 +36,8 @@ namespace JWT
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="SignatureVerificationException" />
         public void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
         {
             var ex = GetValidationException(alg, decodedPayload, bytesToSign, decodedSignature);
@@ -43,28 +45,16 @@ namespace JWT
                 throw ex;
         }
 
-        /// <summary>
-        /// Given the JWT, verifies its signature correctness without throwing an exception but returning it instead.
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
-        /// <param name="decodedCrypto">Decoded body</param>
-        /// <param name="decodedSignature">Decoded signature</param>
-        /// <param name="ex">Validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
         public bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex)
         {
             ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
             return ex is null;
         }
 
-        /// <summary>
-        /// Given the JWT, verifies its signatures correctness without throwing an exception but returning it instead.
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
-        /// <param name="decodedCrypto">Decoded body</param>
-        /// <param name="decodedSignature">Decoded signatures</param>
-        /// <param name="ex">Validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
         public bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex)
         {
             ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
