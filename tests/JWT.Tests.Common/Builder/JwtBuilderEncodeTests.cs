@@ -30,7 +30,7 @@ namespace JWT.Tests.Builder
                  .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')
                  .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
+                 .HaveCount(3, "because the token should consist of three parts");
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace JWT.Tests.Builder
 
             token.Split('.')
                  .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
+                 .HaveCount(3, "because the token should consist of three parts");
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace JWT.Tests.Builder
 
             token.Split('.')
                  .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
+                 .HaveCount(3, "because the token should consist of three parts");
 
             decodedToken.Should()
                         .ContainAll(claimKeys, "because all used keys should be retrieved in the token");

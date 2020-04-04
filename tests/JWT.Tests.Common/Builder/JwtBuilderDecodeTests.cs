@@ -54,12 +54,12 @@ namespace JWT.Tests.Builder
                                 .DecodeHeader<Dictionary<string, string>>(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
-                 .NotBeNull("because decoding header should be possible without validator or algorithm");
+                  .NotBeNull("because decoding header should be possible without validator or algorithm");
 
             header.Should()
-                 .Contain("typ", "JWT")
-                 .And.Contain("alg", "RS256")
-                 .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
+                  .Contain("typ", "JWT")
+                  .And.Contain("alg", "RS256")
+                  .And.Contain("kid", TestData.ServerRsaPublicThumbprint1);
         }
 
         [TestMethod]
@@ -340,33 +340,6 @@ namespace JWT.Tests.Builder
 
             token.Should()
                    .NotBeNullOrEmpty("because token should have been decoded without errors");
-        }
-
-        [TestMethod]
-        public void Decode_With_VerifySignature_Without_PrivateKey_Should_Return_Token()
-        {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .MustVerifySignature()
-                               .Decode(TestData.Token);
-
-            token.Should()
-                 .NotBeNullOrEmpty("because token should have been decoded without errors");
-        }
-
-        [TestMethod]
-        public void Decode_With_VerifySignature_Without_PrivateKey_Should_Throw_Exception()
-        {
-            var builder = new JwtBuilder();
-
-            Action action =
-                () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
-
-            action.Should()
-                  .Throw<SignatureVerificationException>("because validating signature requires private key");
         }
 
         [TestMethod]

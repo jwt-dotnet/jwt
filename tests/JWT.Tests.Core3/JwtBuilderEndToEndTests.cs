@@ -39,11 +39,13 @@ namespace JWT.Tests
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')
                  .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
+                 .HaveCount(3, "because the token should consist of three parts");
+
+            var header = builder.WithAlgorithm(algorithm)
+                                .MustVerifySignature()
+                                .DecodeHeader<JwtHeader>(token);
 
             var jwt = builder.WithAlgorithm(algorithm)
                              .MustVerifySignature()
