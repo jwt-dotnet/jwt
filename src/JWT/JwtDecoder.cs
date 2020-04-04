@@ -208,17 +208,15 @@ namespace JWT
 
             var algName = (string)headerData["alg"];
             var alg = _algFactory.Create(algName);
+            var decodedPayload = GetString(_urlEncoder.Decode(payload));
 
-            // TODO: add back
-            /*
-            if (alg.IsAsymmetric)
+            if (alg is IAsymmetricAlgorithm asymmAlg)
             {
-                ((RS256Algorithm)alg).Verify(bytesToSign, signature);
+                _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, signature);
             }
             else
-            */
+
             {
-                var decodedPayload = GetString(_urlEncoder.Decode(payload));
                 var decodedCrypto = Convert.ToBase64String(signature);
                 var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
                                             .Select(sd => Convert.ToBase64String(sd))
