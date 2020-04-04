@@ -17,7 +17,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var header = builder.WithAlgorithm(TestData.RS256Algorithm)
                                 .DecodeHeader(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
@@ -50,7 +50,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var header = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var header = builder.WithAlgorithm(TestData.RS256Algorithm)
                                 .DecodeHeader<Dictionary<string, string>>(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
@@ -67,7 +67,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .Decode(TestData.Token);
 
             token.Should()
@@ -136,7 +136,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
 
             Action decodingANullJwt =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                () => builder.WithAlgorithm(TestData.RS256Algorithm)
                              .Decode(null);
 
             decodingANullJwt.Should()
@@ -162,7 +162,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
             var serializer = new JsonNetSerializer();
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .WithSerializer(serializer)
                                .Decode(TestData.Token);
 
@@ -176,7 +176,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
 
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                () => builder.WithAlgorithm(TestData.RS256Algorithm)
                              .WithUrlEncoder(null)
                              .Decode(TestData.Token);
 
@@ -190,7 +190,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
             var urlEncoder = new JwtBase64UrlEncoder();
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .WithUrlEncoder(urlEncoder)
                                .Decode(TestData.Token);
 
@@ -204,7 +204,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
 
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                () => builder.WithAlgorithm(TestData.RS256Algorithm)
                              .WithDateTimeProvider(null)
                              .Decode(TestData.Token);
 
@@ -220,7 +220,7 @@ namespace JWT.Tests.Builder
 
 
             var token = builder.WithDateTimeProvider(dateTimeProvider)
-                               .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                               .WithAlgorithm(TestData.RS256Algorithm)
                                .Decode(TestData.Token);
 
             token.Should()
@@ -232,7 +232,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .WithValidator(null)
                                .Decode(TestData.Token);
 
@@ -248,7 +248,7 @@ namespace JWT.Tests.Builder
                 new JsonNetSerializer(),
                 new UtcDateTimeProvider());
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .WithValidator(validator)
                                .Decode(TestData.Token);
 
@@ -257,7 +257,7 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_With_VerifySignature_Should_Return_Token()
+        public void Decode_With_VerifySignature_Should_Return_Token_When_Algorithm_Is_Symmetric()
         {
             var builder = new JwtBuilder();
 
@@ -271,6 +271,19 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
+        public void Decode_With_VerifySignature_Should_Return_Token_When_Algorithm_Is_Asymmetric()
+        {
+            var builder = new JwtBuilder();
+
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
+                               .MustVerifySignature()
+                               .Decode(TestData.TokenByAsymmetricAlgorithm);
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
+        }
+
+        [TestMethod]
         public void Decode_With_VerifySignature_With_Multiple_Secrets_Should_Return_Token()
         {
             var builder = new JwtBuilder();
@@ -281,7 +294,7 @@ namespace JWT.Tests.Builder
                                .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeNullOrEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
+                 .NotBeNullOrEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
         }
 
         [TestMethod]
@@ -334,7 +347,7 @@ namespace JWT.Tests.Builder
         {
             var builder = new JwtBuilder();
 
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
                                .DoNotVerifySignature()
                                .Decode(TestData.Token);
 
@@ -343,19 +356,36 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_To_Dictionary_Should_Return_Dictionary()
+        public void Decode_To_Dictionary_Should_Return_Dictionary_When_Algorithm_Is_Symmetric()
         {
             var builder = new JwtBuilder();
 
             var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
                                .WithSecret(TestData.Secret)
                                .MustVerifySignature()
-                               .Decode<Dictionary<string, string>>(TestData.Token);
+                               .Decode<Dictionary<string, object>>(TestData.Token);
 
             token.Should()
                    .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
                    .And.Contain("FirstName", "Jesus")
-                   .And.Contain("Age", 33.ToString());
+                   .And.Contain("Age", 33);
+        }
+
+        [TestMethod]
+        public void Decode_To_Dictionary_Should_Return_Dictionary_When_Algorithm_Is_Asymmetric()
+        {
+            var builder = new JwtBuilder();
+
+            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
+                               .MustVerifySignature()
+                               .Decode<Dictionary<string, object>>(TestData.TokenByAsymmetricAlgorithm);
+
+            token.Should()
+                 .HaveCount(4, "because there are so many encoded claims that should be resulting in so many keys")
+                 .And.Contain(nameof(Customer.FirstName), "Jesus")
+                 .And.Contain(nameof(Customer.Age), 33)
+                 .And.Contain("iss", "test")
+                 .And.ContainKey("exp");
         }
 
         [TestMethod]
@@ -366,12 +396,12 @@ namespace JWT.Tests.Builder
             var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
                                .WithSecret(TestData.Secrets)
                                .MustVerifySignature()
-                               .Decode<Dictionary<string, string>>(TestData.Token);
+                               .Decode<Dictionary<string, object>>(TestData.Token);
 
             token.Should()
                    .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
                    .And.Contain("FirstName", "Jesus")
-                   .And.Contain("Age", 33.ToString());
+                   .And.Contain("Age", 33);
         }
 
         [TestMethod]
@@ -394,7 +424,7 @@ namespace JWT.Tests.Builder
             var builder = new JwtBuilder();
 
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
+                () => builder.WithAlgorithm(TestData.RS256Algorithm)
                              .WithSerializer(null)
                              .WithSecret(TestData.Secret)
                              .MustVerifySignature()

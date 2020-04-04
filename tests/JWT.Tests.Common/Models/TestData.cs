@@ -25,7 +25,7 @@ namespace JWT.Tests.Models
         public const string TokenWithoutHeader = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.oj1ROhq6SyGDG3C0WIPe8wDuMJjA47uKwXCHkxl6Zy0";
         public const string TokenWithoutAlgorithm = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJGaXJzdE5hbWUiOiJCb2IiLCJBZ2UiOjM3fQ.ANY";
 
-        public const string TokenByAsymmetricAlgorithm = "eyJraWQiOiJDRkFFQUUyRDY1MEE2Q0E5ODYyNTc1REU1NDM3MUVBOTgwNjQzODQ5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJ0ZXN0IiwiZXhwIjoxNTg1ODUwOTA1LCJuYW1lIjoiSmVzdXMiLCJhZ2UiOjMzfQ.fHYUpSmkBltvJwmeAM7bcjCEl3i4YQwxMvqLc-HAGvY0WjD747vLqotLegi1q9nZLIdmhesVmXAd2iiMxEi3mDL9WCeYC7qG3GfY2HyTtRlh4DY32txc4oN8m4TXKuR9bcpyz_Ucq6uNim-hPywq1btKRhf38e24fCaLWfvL_x7-Pp3RFnf38eEsRWEdsZ_H3DOmKnvDAteON6rzxNnVtTBgX9KMraQvJFflV2DmF3umV0tRJ-kq0QRyqXWMiqPUCFpnk-Ji6EfBNnnA65TNQmJ-8rVFg8_NXKiLtis4S8Au8lE3T4Yuz2bdRjSSkM1UbvulS1mPw5ChVNjtuRDCKg";
+        public const string TokenByAsymmetricAlgorithm = "eyJraWQiOiJDRkFFQUUyRDY1MEE2Q0E5ODYyNTc1REU1NDM3MUVBOTgwNjQzODQ5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJ0ZXN0IiwiZXhwIjoyMTQ3NDgzNjQ4LCJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.ZeGfWN3kBHZLiSh4jzzn6kx7F6lNu5OsowZW0Sv-_wpSgQO2_QXFUPLx23wm4J9rjMGQlSksEtCLd_X3iiBOBLbxAUWzdj59iJIAh485unZj12sBJ7KHDVsOMc6DcSJdwRo9S9yiJ_RJ57R-dn4uRdZTBXBZHrrmb35UjaAG6hFfu5d1Ap4ZjLxqDJGl0Wo4j5l6vR8HFpmiFHvqPQ4apjqkBGnitJ7oghbeRX0SIVNSkXbBDp3i9pC-hxzs2oHZC9ys0rJlfpxLls3MV4oQbQ7m6W9MrwwsdObJHI7PiTNfObLKdgySi6WkQS7rwXVz0DqRa8TXv8_USkvhsyGLMQ";
 
         public static readonly IDictionary<string, object> DictionaryPayload = new Dictionary<string, object>
         {
@@ -45,6 +45,6 @@ namespace JWT.Tests.Models
 
         public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
             new X509Certificate2(
-                Encoding.ASCII.GetBytes(ServerRsaPublicKey1)));
+                Encoding.ASCII.GetBytes(ServerRsaPublicKey2)));
     }
 }

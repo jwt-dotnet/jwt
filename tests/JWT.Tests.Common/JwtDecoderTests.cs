@@ -214,7 +214,6 @@ namespace JWT.Tests
         [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_Multiple_Secrets()
         {
-            var expected = TestData.Customer;
             const string key = TestData.Secret;
             const string token = TestData.Token;
 
@@ -227,7 +226,7 @@ namespace JWT.Tests
             var actual = decoder.DecodeToObject<Customer>(token, new[] { key }, verify: true);
 
             actual.Should()
-                  .BeEquivalentTo(expected, "because the JWT should have been correctly deserialized to the same customer object");
+                  .BeEquivalentTo(TestData.Customer, "because the JWT should have been correctly deserialized to the same customer object");
         }
 
         [TestMethod]
@@ -409,11 +408,11 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp }, key);
 
-            Action decodeExpiredJwt =
+            Action action =
                 () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
-            decodeExpiredJwt.Should()
-                            .Throw<TokenExpiredException>("because decoding an expired token should raise an exception when verified");
+            action.Should()
+                  .Throw<TokenExpiredException>("because decoding an expired token should raise an exception when verified");
         }
 
         [TestMethod]
@@ -427,8 +426,7 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             // Why 2038? See https://en.wikipedia.org/wiki/Year_2038_problem
-            var post2038 = new DateTime(2038, 1, 19, 3, 14, 8, DateTimeKind.Utc);
-            var exp = (post2038 - new DateTime(1970, 1, 1)).TotalSeconds;
+            var exp = new DateTimeOffset(2038, 1, 19, 3, 14, 8, 0, TimeSpan.Zero).ToUnixTimeSeconds();
             var payload = new { exp };
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var validToken = encoder.Encode(payload, key);
@@ -463,6 +461,30 @@ namespace JWT.Tests
         }
 
         [TestMethod]
+        public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
+        {
+            var dateTimeProvider = new UtcDateTimeProvider();
+            const string key = TestData.Secret;
+
+            var serializer = new JsonNetSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
+
+            var now = dateTimeProvider.GetNow();
+            var nbf = UnixEpoch.GetSecondsSince(now);
+
+            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
+            var token = encoder.Encode(new { nbf }, key);
+
+            var dic = decoder.DecodeToObject<Dictionary<string, object>>(token, key, verify: true);
+
+            dic.Should()
+               .Contain("nbf", nbf);
+        }
+
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Null_NotBefore_Claim()
         {
             const string key = TestData.Secret;
@@ -482,27 +504,6 @@ namespace JWT.Tests
             action.Should()
                   .Throw<SignatureVerificationException>()
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
-        }
-
-        [TestMethod]
-        public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
-        {
-            var dateTimeProvider = new UtcDateTimeProvider();
-            const string key = TestData.Secret;
-
-            var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-
-            var urlEncoder = new JwtBase64UrlEncoder();
-            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
-
-            var now = dateTimeProvider.GetNow();
-            var nbf = UnixEpoch.GetSecondsSince(now);
-
-            var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(new { nbf }, key);
-
-            decoder.DecodeToObject<Customer>(token, key, verify: true);
         }
     }
 }
