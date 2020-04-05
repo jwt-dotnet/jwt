@@ -21,5 +21,8 @@ namespace JWT.Algorithms
     {
         public static IJwtAlgorithm Create(this IAlgorithmFactory factory, string algorithmName) =>
             factory.Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
+
+        public static IJwtAlgorithm Create(this IAlgorithmFactory factory, JwtDecoderContext context) =>
+            factory.Create(context.Header.Algorithm);
     }
 }

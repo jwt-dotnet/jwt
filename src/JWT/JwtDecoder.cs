@@ -212,7 +212,7 @@ namespace JWT
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
 
             var header = DecodeHeader<JwtHeader>(jwt);
-            var alg = _algFactory.Create(header.Algorithm);
+            var alg = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
 
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
 
