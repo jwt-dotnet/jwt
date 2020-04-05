@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace JWT.Algorithms
+﻿namespace JWT.Algorithms
 {
     /// <summary>
     /// Provides IJwtAlgorithms.
@@ -10,19 +8,7 @@ namespace JWT.Algorithms
         /// <summary>
         /// Creates an AlgorithmFactory using the provided algorithm enum.
         /// </summary>
-        /// <param name="algorithm">The enum value of the algorithm</param>
-        IJwtAlgorithm Create(JwtHashAlgorithm algorithm);
-    }
-
-    /// <summary>
-    /// Extension methods for <seealso cref="IAlgorithmFactory" />
-    ///</summary>
-    public static class AlgorithmFactoryExtensions
-    {
-        public static IJwtAlgorithm Create(this IAlgorithmFactory factory, string algorithmName) =>
-            factory.Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
-
-        public static IJwtAlgorithm Create(this IAlgorithmFactory factory, JwtDecoderContext context) =>
-            factory.Create(context.Header.Algorithm);
+        /// <param name="context">The captured context during validation of JWT inside <see cref="JwtDecoder"/></param>
+        IJwtAlgorithm Create(JwtDecoderContext context);
     }
 }

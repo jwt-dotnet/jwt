@@ -29,7 +29,7 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public IJwtAlgorithm Create(JwtHashAlgorithm algorithm) =>
+        public IJwtAlgorithm Create(JwtDecoderContext context) =>
             _algFactory();
     }
 }

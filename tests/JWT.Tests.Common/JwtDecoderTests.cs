@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
+using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace JWT.Tests
 {
@@ -111,8 +113,8 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, key, verify: true);
-            var expected = serializer.Serialize(payload);
 
+            var expected = serializer.Serialize(payload);
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
@@ -131,10 +133,31 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var actual = decoder.Decode(token, new[] { key }, verify: true);
-            var expected = serializer.Serialize(payload);
 
+            var expected = serializer.Serialize(payload);
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
+        }
+
+        [TestMethod]
+        public void Decode_Should_Call_Custom_AlgorithmFactory()
+        {
+            const string token = TestData.TokenByAsymmetricAlgorithm;
+
+            var factory = new Mock<IAlgorithmFactory>();
+            factory.Setup(f => f.Create(It.IsAny<JwtDecoderContext>()))
+                   .Returns(TestData.RS256Algorithm)
+                   .Verifiable("because custom algorithm factory must be called");
+
+            var serializer = new JsonNetSerializer();
+            var dateTimeProvider = new UtcDateTimeProvider();
+            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, factory.Object);
+
+            decoder.Decode(token, (byte[][])null, verify: true);
+
+            factory.VerifyAll();
         }
 
         [TestMethod]

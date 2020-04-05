@@ -31,15 +31,14 @@ namespace JWT.Algorithms
         public RSAlgorithmFactory(RSA publicKey, RSA privateKey) =>
             _algFactory = () => new RS256Algorithm(publicKey, privateKey);
 
-        /// <inheritdoc />
-        public override IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
+        protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
             switch (algorithm)
             {
-                case JwtHashAlgorithm.RS256:
+                case JwtAlgorithmName.RS256:
                     return _algFactory();
                 default:
-                    throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtHashAlgorithm), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
+                    throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
         }
     }
