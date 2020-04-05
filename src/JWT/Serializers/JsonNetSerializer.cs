@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace JWT.Serializers
 {
@@ -29,11 +29,21 @@ namespace JWT.Serializers
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
 
         /// <inheritdoc />
-        public string Serialize(object obj) =>
-            JObject.FromObject(obj, _serializer).ToString(_serializer.Formatting, _serializer.Converters.ToArray());
+        public string Serialize(object obj)
+        {
+            var sb = new StringBuilder();
+            using var stringWriter = new StringWriter(sb);
+            using var jsonWriter = new JsonTextWriter(stringWriter);
+            _serializer.Serialize(jsonWriter, obj);
+            return sb.ToString();
+        }
 
         /// <inheritdoc />
-        public T Deserialize<T>(string json) =>
-            JObject.Parse(json).ToObject<T>(_serializer);
+        public T Deserialize<T>(string json)
+        {
+            using var stringReader = new StringReader(json);
+            using var jsonReader = new JsonTextReader(stringReader);
+            return _serializer.Deserialize<T>(jsonReader);
+        }
     }
 }
