@@ -6,10 +6,6 @@ namespace JWT.Algorithms
     public class HMACSHAAlgorithmFactory : IAlgorithmFactory
     {
         /// <inheritdoc />
-        public IJwtAlgorithm Create(string algorithmName) =>
-            Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
-
-        /// <inheritdoc />
         public virtual IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
         {
             switch (algorithm)
