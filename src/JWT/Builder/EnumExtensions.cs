@@ -20,7 +20,7 @@ namespace JWT.Builder
         /// <summary>
         /// Gets the value of the <see cref="DescriptionAttribute" /> from the object.
         /// </summary>
-        private static string GetDescription(object value) =>
+        private static string GetDescription<T>(T value) =>
             value.GetType()
                  .GetField(value.ToString())
                  .GetCustomAttribute<DescriptionAttribute>()
