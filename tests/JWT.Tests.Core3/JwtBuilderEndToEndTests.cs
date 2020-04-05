@@ -27,33 +27,42 @@ namespace JWT.Tests
             var algorithm = new RS256Algorithm(certPubPriv);
 
             const string iss = "test";
-            var exp = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeSeconds();
+            var exp = new DateTimeOffset(2038, 1, 19, 3, 14, 8, 0, TimeSpan.Zero).ToUnixTimeSeconds();
 
             var token = builder.WithAlgorithm(algorithm)
                                .AddHeader(HeaderName.KeyId, certPub.Thumbprint)
                                .AddClaim("iss", iss)
                                .AddClaim("exp", exp)
-                               .AddClaim("name", TestData.Customer.FirstName)
-                               .AddClaim("age", TestData.Customer.Age)
+                               .AddClaim(nameof(Customer.FirstName), TestData.Customer.FirstName)
+                               .AddClaim(nameof(Customer.Age), TestData.Customer.Age)
                                .Encode();
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
-            token.Should()
-                 .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')
                  .Should()
-                 .HaveCount(3, "because the built token should have the three standard parts");
+                 .HaveCount(3, "because the token should consist of three parts");
+
+            var header = builder.DecodeHeader<JwtHeader>(token);
+
+            header.Type
+                  .Should()
+                  .Be("JWT");
+            header.Algorithm
+                  .Should()
+                  .Be("RS256");
+            header.KeyId
+                  .Should()
+                  .Be(TestData.ServerRsaPublicThumbprint1);
 
             var jwt = builder.WithAlgorithm(algorithm)
-                             .WithSecret(TestData.ServerRsaPublicKey2) // TODO: remove in the future
                              .MustVerifySignature()
                              .Decode<Dictionary<string, object>>(token);
 
             jwt["iss"].Should().Be(iss);
             jwt["exp"].Should().Be(exp);
-            jwt["name"].Should().Be(TestData.Customer.FirstName);
-            jwt["age"].Should().Be(TestData.Customer.Age);
+            jwt[nameof(Customer.FirstName)].Should().Be(TestData.Customer.FirstName);
+            jwt[nameof(Customer.Age)].Should().Be(TestData.Customer.Age);
         }
     }
 }

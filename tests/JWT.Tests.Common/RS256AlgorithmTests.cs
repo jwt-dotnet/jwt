@@ -54,19 +54,8 @@ namespace JWT.Tests
                   .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
         }
 
-        [TestMethod]
-        public void Ctor_Should_Not_Throw_Exception_When_PublicKeyHasNoPrivateKey()
-        {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
-
-            var algorithm = new RS256Algorithm(publicKey);
-
-            algorithm.Should().NotBeNull();
-        }
-
         [DataTestMethod]
         [DataRow(TestData.ServerRsaPublicKey1)]
-        [DataRow(TestData.ServerRsaPublicKey2)]
         public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(string publicKey)
         {
             var bytes = Encoding.ASCII.GetBytes(publicKey);

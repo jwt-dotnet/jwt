@@ -16,10 +16,5 @@ namespace JWT.Algorithms
         /// Gets algorithm name.
         /// </summary>
         string Name { get; }
-
-        /// <summary>
-        /// Indicates whether algorithm is asymmetric or not.
-        /// </summary>
-        bool IsAsymmetric { get; }
     }
 }

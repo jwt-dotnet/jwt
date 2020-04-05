@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using JWT.Algorithms;
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT
@@ -28,49 +28,49 @@ namespace JWT
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
-        public void Validate(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
+        public void Validate(string decodedPayload, string signature, params string[] decodedSignatures)
         {
-            var ex = GetValidationException(payloadJson, decodedCrypto, decodedSignatures);
+            var ex = GetValidationException(decodedPayload, signature, decodedSignatures);
             if (ex is object)
                 throw ex;
         }
 
-        /// <summary>
-        /// Given the JWT, verifies its signature correctness without throwing an exception but returning it instead
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
-        /// <param name="decodedCrypto">Decoded body</param>
-        /// <param name="decodedSignature">Decoded signature</param>
-        /// <param name="ex">Validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
-        public bool TryValidate(string payloadJson, string decodedCrypto, string decodedSignature, out Exception ex)
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="SignatureVerificationException" />
+        public void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
         {
-            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            var ex = GetValidationException(alg, decodedPayload, bytesToSign, decodedSignature);
+            if (ex is object)
+                throw ex;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        public bool TryValidate(string payloadJson, string signature, string decodedSignature, out Exception ex)
+        {
+            ex = GetValidationException(payloadJson, signature, decodedSignature);
             return ex is null;
         }
 
-        /// <summary>
-        /// Given the JWT, verifies its signatures correctness without throwing an exception but returning it instead
-        /// </summary>
-        /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>
-        /// <param name="decodedCrypto">Decoded body</param>
-        /// <param name="decodedSignature">Decoded signatures</param>
-        /// <param name="ex">Validation exception, if any</param>
-        /// <returns>True if exception is JWT is valid and exception is null, otherwise false</returns>
-        public bool TryValidate(string payloadJson, string decodedCrypto, string[] decodedSignature, out Exception ex)
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        public bool TryValidate(string payloadJson, string signature, string[] decodedSignature, out Exception ex)
         {
-            ex = GetValidationException(payloadJson, decodedCrypto, decodedSignature);
+            ex = GetValidationException(payloadJson, signature, decodedSignature);
+            return ex is null;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        public bool TryValidate(string payloadJson, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature, out Exception ex)
+        {
+            ex = GetValidationException(alg, payloadJson, bytesToSign, decodedSignature);
             return ex is null;
         }
 
         private Exception GetValidationException(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
-            if (String.IsNullOrWhiteSpace(payloadJson))
-                return new ArgumentException(nameof(payloadJson));
-
-            if (String.IsNullOrWhiteSpace(decodedCrypto))
-                return new ArgumentException(nameof(decodedCrypto));
-
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
                 return new ArgumentException(nameof(decodedSignatures));
 
@@ -80,8 +80,19 @@ namespace JWT
             return GetValidationException(payloadJson);
         }
 
+        private Exception GetValidationException(IAsymmetricAlgorithm alg, string payloadJson, byte[] bytesToSign, byte[] decodedSignature)
+        {
+            if (!alg.Verify(bytesToSign, decodedSignature))
+                return new SignatureVerificationException("The signature is invalid according to the validation procedure.");
+
+            return GetValidationException(payloadJson);
+        }
+
         private Exception GetValidationException(string payloadJson)
         {
+            if (string.IsNullOrEmpty(payloadJson))
+                throw new ArgumentException(nameof(payloadJson));
+
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);
 
             var now = _dateTimeProvider.GetNow();
@@ -96,7 +107,7 @@ namespace JWT
         private static bool IsAnySignatureValid(string decodedCrypto, IEnumerable<string> decodedSignatures) =>
             decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
 
-        /// <remarks>In the future this method can be opened for extension thus made protected virtual</remarks>
+        /// <remarks>In the future this method can be opened for extension hence made protected virtual</remarks>
         private static bool CompareCryptoWithSignature(string decodedCrypto, string decodedSignature)
         {
             if (decodedCrypto.Length != decodedSignature.Length)

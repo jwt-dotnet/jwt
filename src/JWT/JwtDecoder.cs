@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
-
+using JWT.Builder;
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT
@@ -198,32 +198,30 @@ namespace JWT
             if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
-            var signature = _urlEncoder.Decode(jwt.Signature);
+            var decodedHeader = GetString(_urlEncoder.Decode(jwt.Header));
+            var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
+            var decodedSignature = _urlEncoder.Decode(jwt.Signature);
 
-            var headerJson = GetString(_urlEncoder.Decode(jwt.Header));
-            var headerData = _jsonSerializer.Deserialize<Dictionary<string, object>>(headerJson);
+            var header = _jsonSerializer.Deserialize<JwtHeader>(decodedHeader);
+            var alg = _algFactory.Create(header.Algorithm);
 
-            var payload = jwt.Payload;
-            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", payload));
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
 
-            var algName = (string)headerData["alg"];
-            var alg = _algFactory.Create(algName);
-
-            // TODO: add back
-            /*
-            if (alg.IsAsymmetric)
+            if (alg is IAsymmetricAlgorithm asymmAlg)
             {
-                ((RS256Algorithm)alg).Verify(bytesToSign, signature);
+                _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
             }
             else
-            */
             {
-                var decodedPayload = GetString(_urlEncoder.Decode(payload));
-                var decodedCrypto = Convert.ToBase64String(signature);
-                var decodedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                            .Select(sd => Convert.ToBase64String(sd))
-                                            .ToArray();
-                _jwtValidator.Validate(decodedPayload, decodedCrypto, decodedSignatures);
+                // the signature on the token, with the leading =
+                var rawSignature = Convert.ToBase64String(decodedSignature);
+
+                // the signatures re-created by the algorithm, with the leading =
+                var recreatedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
+                                              .Select(sd => Convert.ToBase64String(sd))
+                                              .ToArray();
+
+                _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
             }
         }
 

@@ -34,7 +34,7 @@ namespace JWT
         {
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
-            if (!_algorithm.IsAsymmetric && key is null)
+            if (!_algorithm.IsAsymmetric() && key is null)
                 throw new ArgumentNullException(nameof(key));
 
             var segments = new List<string>(3);
