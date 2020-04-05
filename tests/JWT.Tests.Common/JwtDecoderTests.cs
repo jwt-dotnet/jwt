@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Builder;
+using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

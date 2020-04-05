@@ -1,9 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests
@@ -50,11 +52,11 @@ namespace JWT.Tests
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
-            Action validateJwtWithBadSignature =
+            Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
-            validateJwtWithBadSignature.Should()
-                                       .Throw<SignatureVerificationException>("because the signature does not match the crypto");
+            action.Should()
+                  .Throw<SignatureVerificationException>("because the signature does not match the crypto");
         }
 
         [TestMethod]

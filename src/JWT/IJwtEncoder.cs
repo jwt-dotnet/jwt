@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT
