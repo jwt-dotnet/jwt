@@ -23,11 +23,11 @@ namespace JWT.Tests
         {
             var jwtValidator = new JwtValidator(null, null);
 
-            Action validateJwtWithNullOrEmptyArgument =
+            Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
-            validateJwtWithNullOrEmptyArgument.Should()
-                                              .Throw<ArgumentException>("because the JWT argument must not be null or empty");
+            action.Should()
+                  .Throw<ArgumentException>("because the JWT argument must not be null or empty");
         }
 
         [TestMethod]
