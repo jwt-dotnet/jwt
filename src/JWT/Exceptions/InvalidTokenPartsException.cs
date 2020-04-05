@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JWT
+namespace JWT.Exceptions
 {
     /// <summary>
     /// Represents an exception thrown when when a token doesn't consist of 3 delimited by dot parts.

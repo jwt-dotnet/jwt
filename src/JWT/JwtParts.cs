@@ -1,4 +1,5 @@
 ﻿using System;
+using JWT.Exceptions;
 
 namespace JWT
 {
