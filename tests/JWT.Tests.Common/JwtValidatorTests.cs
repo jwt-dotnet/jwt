@@ -56,7 +56,7 @@ namespace JWT.Tests
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
             action.Should()
-                  .Throw<SignatureVerificationException>("because signature is invalid);
+                  .Throw<SignatureVerificationException>("because signature is invalid");
         }
 
         [TestMethod]
