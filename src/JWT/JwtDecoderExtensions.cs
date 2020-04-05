@@ -12,6 +12,9 @@ namespace JWT
     {
         #region DecodeHeader
 
+        public static T DecodeHeader<T>(this IJwtDecoder decoder, string token) =>
+            decoder.DecodeHeader<T>(new JwtParts(token));
+
         public static IDictionary<string, string> DecodeHeaderToDictionary(this IJwtDecoder decoder, string token) =>
             decoder.DecodeHeader<Dictionary<string, string>>(token);
 

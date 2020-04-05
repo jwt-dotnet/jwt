@@ -16,8 +16,8 @@
         /// <summary>
         /// Given a JWT, decodes it and return the header as an object.
         /// </summary>
-        /// <param name="token">The JWT</param>
-        T DecodeHeader<T>(string token);
+        /// <param name="jwt">The JWT</param>
+        T DecodeHeader<T>(JwtParts jwt);
 
         #endregion
 
