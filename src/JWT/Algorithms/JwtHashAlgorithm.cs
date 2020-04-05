@@ -1,4 +1,4 @@
-﻿namespace JWT
+namespace JWT.Algorithms
 {
     /// <summary>
     /// Enum representing the various Jwt Hash Algorithms.
