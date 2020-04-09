@@ -6,22 +6,24 @@ namespace JWT.Algorithms
     public class HMACSHAAlgorithmFactory : IAlgorithmFactory
     {
         /// <inheritdoc />
-        public IJwtAlgorithm Create(string algorithmName) =>
-            Create((JwtHashAlgorithm)Enum.Parse(typeof(JwtHashAlgorithm), algorithmName));
+        public virtual IJwtAlgorithm Create(JwtDecoderContext context)
+        {
+            var algorithmName = (JwtAlgorithmName)Enum.Parse(typeof(JwtAlgorithmName), context.Header.Algorithm);
+            return Create(algorithmName);
+        }
 
-        /// <inheritdoc />
-        public virtual IJwtAlgorithm Create(JwtHashAlgorithm algorithm)
+        protected virtual IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
             switch (algorithm)
             {
-                case JwtHashAlgorithm.HS256:
+                case JwtAlgorithmName.HS256:
                     return new HMACSHA256Algorithm();
-                case JwtHashAlgorithm.HS384:
+                case JwtAlgorithmName.HS384:
                     return new HMACSHA384Algorithm();
-                case JwtHashAlgorithm.HS512:
+                case JwtAlgorithmName.HS512:
                     return new HMACSHA512Algorithm();
-                case JwtHashAlgorithm.RS256:
-                    throw new NotSupportedException($"For algorithm {nameof(JwtHashAlgorithm.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
+                case JwtAlgorithmName.RS256:
+                    throw new NotSupportedException($"For algorithm {nameof(JwtAlgorithmName.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
                 default:
                     throw new NotSupportedException($"Algorithm {algorithm} is not supported.");
             }

@@ -1,9 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests
@@ -21,15 +23,15 @@ namespace JWT.Tests
         {
             var jwtValidator = new JwtValidator(null, null);
 
-            Action validateJwtWithNullOrEmptyArgument =
+            Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
-            validateJwtWithNullOrEmptyArgument.Should()
-                                              .Throw<ArgumentException>("because the JWT argument must not be null or empty");
+            action.Should()
+                  .Throw<ArgumentException>("because the JWT argument must not be null or empty");
         }
 
         [TestMethod]
-        public void Validate_Should_Throw_Exception_When_Crypto_Does_Not_Match_Signature()
+        public void Validate_Should_Throw_Exception_When_Signature_Is_Invalid()
         {
             const string token = TestData.Token;
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -50,11 +52,11 @@ namespace JWT.Tests
 
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
-            Action validateJwtWithBadSignature =
+            Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
 
-            validateJwtWithBadSignature.Should()
-                                       .Throw<SignatureVerificationException>("because the signature does not match the crypto");
+            action.Should()
+                  .Throw<SignatureVerificationException>("because signature is invalid");
         }
 
         [TestMethod]
@@ -93,14 +95,14 @@ namespace JWT.Tests
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                   .BeFalse("because the token should not have been validated");
+                   .BeFalse("because token should be invalid");
 
             ex.Should()
-              .NotBeNull("because an exception should have been thrown during the process");
+              .NotBeNull("because invalid token should thrown exception");
         }
 
         [TestMethod]
-        public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Crypto_Matches_Signature()
+        public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Signature_Is_Not_Valid()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
             var jsonNetSerializer = new JsonNetSerializer();
@@ -123,14 +125,14 @@ namespace JWT.Tests
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                   .BeFalse("because the token should not have been validated");
+                   .BeFalse("because token should be invalid");
 
             ex.Should()
-              .NotBeNull("because an exception should have been thrown during the process");
+              .NotBeNull("because invalid token should thrown exception");
         }
 
         [TestMethod]
-        public void TryValidate_Should_Return_True_And_Exception_Null_When_Crypto_Matches_Signature()
+        public void TryValidate_Should_Return_True_And_Exception_Null_When_Crypto_Signature_Is_Valid()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
             var jsonNetSerializer = new JsonNetSerializer();
@@ -152,10 +154,10 @@ namespace JWT.Tests
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
-                   .BeTrue("because the token should have been validated");
+                   .BeTrue("because token should be valid");
 
             ex.Should()
-              .BeNull("because a valid token verified should not raise any exception");
+              .BeNull("because valid token should not throw exception");
         }
     }
 }

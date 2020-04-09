@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
+using JWT.Exceptions;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT
@@ -90,7 +92,7 @@ namespace JWT
 
         private Exception GetValidationException(string payloadJson)
         {
-            if (string.IsNullOrEmpty(payloadJson))
+            if (String.IsNullOrEmpty(payloadJson))
                 throw new ArgumentException(nameof(payloadJson));
 
             var payloadData = _jsonSerializer.Deserialize<Dictionary<string, object>>(payloadJson);

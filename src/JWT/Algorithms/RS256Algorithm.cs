@@ -47,7 +47,7 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public string Name => JwtHashAlgorithm.RS256.ToString();
+        public string Name => JwtAlgorithmName.RS256.ToString();
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)

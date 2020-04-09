@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
 using JWT.Builder;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT
@@ -61,18 +62,27 @@ namespace JWT
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
         public string DecodeHeader(string token)
         {
+            if (String.IsNullOrEmpty(token))
+                throw new ArgumentException(nameof(token));
+
             var header = new JwtParts(token).Header;
             var decoded = _urlEncoder.Decode(header);
             return GetString(decoded);
         }
 
         /// <inheritdoc />
-        public T DecodeHeader<T>(string token)
+        /// <exception cref="ArgumentNullException" />
+        public T DecodeHeader<T>(JwtParts jwt)
         {
-            var header = DecodeHeader(token);
-            return _jsonSerializer.Deserialize<T>(header);
+            if (jwt is null)
+                throw new ArgumentNullException(nameof(jwt));
+
+            var decodedHeader = _urlEncoder.Decode(jwt.Header);
+            var stringHeader = GetString(decodedHeader);
+            return _jsonSerializer.Deserialize<T>(stringHeader);
         }
 
         /// <inheritdoc />
@@ -162,7 +172,7 @@ namespace JWT
         }
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
+        /// Prepares data before calling <see cref="IJwtValidator" />
         /// </summary>
         /// <param name="parts">The array representation of a JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
@@ -173,7 +183,7 @@ namespace JWT
             Validate(new JwtParts(parts), key);
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
+        /// Prepares data before calling <see cref="IJwtValidator" />
         /// </summary>
         /// <param name="parts">The array representation of a JWT</param>
         /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
@@ -184,7 +194,7 @@ namespace JWT
             Validate(new JwtParts(parts), keys);
 
         /// <summary>
-        /// Prepares data before calling <see cref="IJwtValidator.Validate" />
+        /// Prepares data before calling <see cref="IJwtValidator" />
         /// </summary>
         /// <param name="jwt">The JWT parts</param>
         /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
@@ -198,12 +208,11 @@ namespace JWT
             if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
-            var decodedHeader = GetString(_urlEncoder.Decode(jwt.Header));
             var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
 
-            var header = _jsonSerializer.Deserialize<JwtHeader>(decodedHeader);
-            var alg = _algFactory.Create(header.Algorithm);
+            var header = DecodeHeader<JwtHeader>(jwt);
+            var alg = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
 
             var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
 

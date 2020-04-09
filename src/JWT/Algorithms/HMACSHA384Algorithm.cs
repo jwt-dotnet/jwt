@@ -15,6 +15,6 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public string Name => JwtHashAlgorithm.HS384.ToString();
+        public string Name => JwtAlgorithmName.HS384.ToString();
     }
 }

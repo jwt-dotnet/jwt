@@ -6,15 +6,9 @@
     public interface IAlgorithmFactory
     {
         /// <summary>
-        /// Creates an AlgorithmFactory using the provided algorithm name.
-        /// </summary>
-        /// <param name="algorithmName">The name of the algorithm</param>
-        IJwtAlgorithm Create(string algorithmName);
-
-        /// <summary>
         /// Creates an AlgorithmFactory using the provided algorithm enum.
         /// </summary>
-        /// <param name="algorithm">The enum value of the algorithm</param>
-        IJwtAlgorithm Create(JwtHashAlgorithm algorithm);
+        /// <param name="context">The captured context during validation of JWT inside <see cref="JwtDecoder"/></param>
+        IJwtAlgorithm Create(JwtDecoderContext context);
     }
 }

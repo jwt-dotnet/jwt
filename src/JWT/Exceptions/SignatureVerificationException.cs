@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JWT
+namespace JWT.Exceptions
 {
     /// <summary>
     /// Represents an exception thrown when a signature validation fails.

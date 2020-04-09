@@ -1,5 +1,6 @@
 ﻿using System;
 using JWT.Algorithms;
+using JWT.Exceptions;
 
 namespace JWT
 {
