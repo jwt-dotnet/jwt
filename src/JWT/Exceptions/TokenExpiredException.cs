@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#if NET35
+using IPayloadData = System.Collections.Generic.IDictionary<string, object>;
+#else
+using IPayloadData = System.Collections.Generic.IReadOnlyDictionary<string, object>;
+#endif
+
 namespace JWT.Exceptions
 {
     /// <summary>
@@ -23,7 +29,7 @@ namespace JWT.Exceptions
         /// <summary>
         /// The payload.
         /// </summary>
-        public IReadOnlyDictionary<string, object> PayloadData
+        public IPayloadData PayloadData
         {
             get => GetOrDefault<Dictionary<string, object>>(PayloadDataKey);
             internal set => this.Data.Add(PayloadDataKey, value);

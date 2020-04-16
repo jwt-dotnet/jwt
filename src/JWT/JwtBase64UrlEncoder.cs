@@ -1,4 +1,5 @@
 using System;
+using JWT.Internal;
 
 namespace JWT
 {
@@ -29,7 +30,7 @@ namespace JWT
         /// <exception cref="FormatException" />
         public byte[] Decode(string input)
         {
-            if (String.IsNullOrWhiteSpace(input))
+            if (StringHelper.IsNullOrWhiteSpace(input))
                 throw new ArgumentException(nameof(input));
 
             var output = input;
