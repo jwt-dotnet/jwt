@@ -27,8 +27,9 @@ The following projects and their resulting packages are licensed under Public Do
 The following projects and their resulting packages are licensed under the MIT License, see the [LICENSE#MIT](LICENSE.md#MIT) file.
 
 - JWT.Extensions.AspNetCore
+- JWT.Extensions.Owin
 
-In addition the maintainer ([@abatishchev](https://github.com/abatishchev)) of this repository also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/1/1/license.txt).
+In addition, the maintainer of this repository ([@abatishchev](https://github.com/abatishchev)) also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/2/1/license.html).
 
 ### Jwt.NET
 
