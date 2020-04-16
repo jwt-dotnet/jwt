@@ -58,10 +58,21 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Framework tests
+  displayName: Run .NET Framework 4.* tests
   inputs:
     command: 'test'
     projects: 'tests/JWT.Tests.NETFramework/*.csproj'
+    arguments: ' -c $(buildConfiguration) --no-build --no-restore'
+    testRunner: 'VSTest'
+    testResultsFiles: '**/*.trx'
+    testResultsFormat: 'VSTest'
+    failTaskOnFailedTests: true
+
+- task: DotNetCoreCLI@2
+  displayName: Run .NET Framework 3.5 tests
+  inputs:
+    command: 'test'
+    projects: 'tests/JWT.Tests.Net35/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
