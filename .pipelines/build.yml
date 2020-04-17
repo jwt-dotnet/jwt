@@ -47,10 +47,10 @@ steps:
     arguments: '-c $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Core tests
+  displayName: Run .NET Framework tests
   inputs:
     command: 'test'
-    projects: 'tests/JWT.Tests.Core*/*.csproj'
+    projects: 'tests/JWT.Tests.Net*/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
@@ -58,10 +58,10 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Framework tests
+  displayName: Run .NET Core tests
   inputs:
     command: 'test'
-    projects: 'tests/JWT.Tests.Net*/*.csproj'
+    projects: 'tests/JWT.Tests.Core*/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'

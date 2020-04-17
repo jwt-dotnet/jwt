@@ -21,9 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JWT\JWT.csproj">
-      <SetTargetFramework>TargetFramework=net35</SetTargetFramework>
-    </ProjectReference>
+    <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
 
