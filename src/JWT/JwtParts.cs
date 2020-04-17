@@ -1,6 +1,11 @@
 ﻿using System;
 using JWT.Exceptions;
-using JWT.Internal;
+
+#if NET35
+using static JWT.Compatibility.String;
+#else
+using static System.String;
+#endif
 
 namespace JWT
 {
@@ -17,7 +22,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         public JwtParts(string token)
         {
-            if (StringHelper.IsNullOrWhiteSpace(token))
+            if (IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
 
             var parts = token.Split('.');
