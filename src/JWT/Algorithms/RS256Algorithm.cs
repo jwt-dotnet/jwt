@@ -64,16 +64,16 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The bytes to sign.</param>
         /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign) =>
-#if NET35
-            ((RSACryptoServiceProvider)_privateKey).SignData(bytesToSign, "SHA256");
+#if NET35 || NET40
+            ((RSACryptoServiceProvider)_privateKey).SignData(bytesToSign, HashAlgorithmName.SHA256);
 #else
             _privateKey.SignData(bytesToSign, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 #endif
 
         /// <inheritdoc />
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
-#if NET35
-            ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, "SHA256", signature);
+#if NET35 || NET40
+            ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, HashAlgorithmName.SHA256, signature);
 #else
             _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 #endif
