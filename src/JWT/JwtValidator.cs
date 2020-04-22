@@ -9,7 +9,6 @@ using IReadOnlyPayloadDictionary = System.Collections.Generic.IDictionary<string
 #else
 using IReadOnlyPayloadDictionary = System.Collections.Generic.IReadOnlyDictionary<string, object>;
 #endif
-
 using static JWT.Internal.EncodingHelper;
 #if NET35
 using static JWT.Compatibility.String;
