@@ -5,6 +5,7 @@ using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests
