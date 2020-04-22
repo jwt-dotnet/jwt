@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Text;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Tests
 {
@@ -158,11 +158,5 @@ namespace JWT.Tests
             ex.Should()
               .BeNull("because valid token should not throw exception");
         }
-
-        private static string GetString(byte[] bytes) =>
-            Encoding.UTF8.GetString(bytes);
-
-        private static byte[] GetBytes(string input) =>
-            Encoding.UTF8.GetBytes(input);
     }
 }
