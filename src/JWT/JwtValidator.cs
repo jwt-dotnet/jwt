@@ -4,7 +4,17 @@ using System.Linq;
 using JWT.Algorithms;
 using JWT.Exceptions;
 
+#if NET35 || NET40
+using IReadOnlyPayloadDictionary = System.Collections.Generic.IDictionary<string, object>;
+#else
+using IReadOnlyPayloadDictionary = System.Collections.Generic.IReadOnlyDictionary<string, object>;
+#endif
 using static JWT.Internal.EncodingHelper;
+#if NET35
+using static JWT.Compatibility.String;
+#else
+using static System.String;
+#endif
 
 namespace JWT
 {
@@ -104,7 +114,7 @@ namespace JWT
         }
 
         private static bool AreAllDecodedSignaturesNullOrWhiteSpace(IEnumerable<string> decodedSignatures) =>
-            decodedSignatures.All(sgn => String.IsNullOrWhiteSpace(sgn));
+            decodedSignatures.All(sgn => IsNullOrWhiteSpace(sgn));
 
         private static bool IsAnySignatureValid(string decodedCrypto, IEnumerable<string> decodedSignatures) =>
             decodedSignatures.Any(decodedSignature => CompareCryptoWithSignature(decodedCrypto, decodedSignature));
@@ -133,7 +143,7 @@ namespace JWT
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        private static Exception ValidateExpClaim(IReadOnlyDictionary<string, object> payloadData, double secondsSinceEpoch)
+        private static Exception ValidateExpClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("exp", out var expObj))
                 return null;
@@ -168,7 +178,7 @@ namespace JWT
         /// </summary>
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.5</remarks>
         /// <exception cref="SignatureVerificationException" />
-        private static Exception ValidateNbfClaim(IReadOnlyDictionary<string, object> payloadData, double secondsSinceEpoch)
+        private static Exception ValidateNbfClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("nbf", out var nbfObj))
                 return null;

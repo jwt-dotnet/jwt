@@ -5,6 +5,11 @@ using JWT.Algorithms;
 using JWT.Builder;
 
 using static JWT.Internal.EncodingHelper;
+#if NET35
+using static JWT.Compatibility.String;
+#else
+using static System.String;
+#endif
 
 namespace JWT
 {
@@ -109,7 +114,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         public string Decode(string token, byte[] key, bool verify)
         {
-            if (String.IsNullOrWhiteSpace(token))
+            if (IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
             if (key is object && key.Length == 0)
                 throw new ArgumentOutOfRangeException(nameof(key));
@@ -132,7 +137,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         public string Decode(string token, byte[][] keys, bool verify)
         {
-            if (String.IsNullOrWhiteSpace(token))
+            if (IsNullOrWhiteSpace(token))
                 throw new ArgumentException(nameof(token));
             if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
@@ -234,7 +239,7 @@ namespace JWT
             }
         }
 
-        private static bool AllKeysHaveValues(IReadOnlyCollection<byte[]> keys)
+        private static bool AllKeysHaveValues(ICollection<byte[]> keys)
         {
             if (keys is null)
                 return true;
