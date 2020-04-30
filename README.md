@@ -105,22 +105,22 @@ catch (SignatureVerificationException)
 ##### Or using the fluent builder API
 
 ```c#
-try
-{
-    var json = new JwtBuilder()
-        .WithSecret(secret)
+var json = new JwtBuilder()
+        .WithAlgorithm(algorithm) // symmetric
+        .WithSecret(secret)
         .MustVerifySignature()
         .Decode(token);                    
-    Console.WriteLine(json);
-}
-catch (TokenExpiredException)
-{
-    Console.WriteLine("Token has expired");
-}
-catch (SignatureVerificationException)
-{
-    Console.WriteLine("Token has invalid signature");
-}
+Console.WriteLine(json);
+```
+
+or
+
+```c#
+var json = new JwtBuilder()
+        .WithAlgorithm(algorithm) // asymmetric
+        .MustVerifySignature()
+        .Decode(token);                    
+Console.WriteLine(json);
 ```
 
 The output would be:
@@ -138,7 +138,18 @@ Console.WriteLine(payload["claim2"]);
 
 ```c#
 var payload = new JwtBuilder()
+        .WithAlgorithm(algorithm) // symmetric
         .WithSecret(secret)
+        .MustVerifySignature()
+        .Decode<IDictionary<string, object>>(token);     
+Console.WriteLine(payload["claim2"]);
+```
+
+and
+
+```c#
+var payload = new JwtBuilder()
+        .WithAlgorithm(algorithm) // asymmetric
         .MustVerifySignature()
         .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
