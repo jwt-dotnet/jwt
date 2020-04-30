@@ -48,7 +48,7 @@ var payload = new Dictionary<string, object>
 };
 const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
 IJsonSerializer serializer = new JsonNetSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
@@ -61,7 +61,7 @@ Console.WriteLine(token);
 
 ```c#
   var token = new JwtBuilder()
-      .WithAlgorithm(new HMACSHA256Algorithm())
+      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
       .WithSecret(secret)
       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
       .AddClaim("claim2", "claim2-value")
@@ -86,7 +86,7 @@ try
     var provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-    IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+    IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
     IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
     
     var json = decoder.Decode(token, secret, verify: true);
@@ -106,7 +106,7 @@ catch (SignatureVerificationException)
 
 ```c#
 var json = new JwtBuilder()
-        .WithAlgorithm(algorithm) // symmetric
+        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
         .WithSecret(secret)
         .MustVerifySignature()
         .Decode(token);                    
@@ -117,7 +117,7 @@ or
 
 ```c#
 var json = new JwtBuilder()
-        .WithAlgorithm(algorithm) // asymmetric
+        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
         .MustVerifySignature()
         .Decode(token);                    
 Console.WriteLine(json);
@@ -138,7 +138,7 @@ Console.WriteLine(payload["claim2"]);
 
 ```c#
 var payload = new JwtBuilder()
-        .WithAlgorithm(algorithm) // symmetric
+        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
         .WithSecret(secret)
         .MustVerifySignature()
         .Decode<IDictionary<string, object>>(token);     
@@ -149,7 +149,7 @@ and
 
 ```c#
 var payload = new JwtBuilder()
-        .WithAlgorithm(algorithm) // asymmetric
+        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
         .MustVerifySignature()
         .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
