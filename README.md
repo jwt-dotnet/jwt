@@ -227,7 +227,7 @@ public class CustomJsonSerializer : IJsonSerializer
 And then pass this serializer to JwtEncoder constructor:
 
 ```c#
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
+IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
 IJsonSerializer serializer = new CustomJsonSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
