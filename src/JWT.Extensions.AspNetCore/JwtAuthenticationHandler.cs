@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -11,7 +12,41 @@ namespace JWT
 {
     public sealed class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {
+        private static readonly Action<ILogger, Exception> _logMissingHeader;
+        private static readonly Action<ILogger, string, string, Exception> _logIncorrectScheme;
+        private static readonly Action<ILogger, Exception> _logEmptyHeader;
+        private static readonly Action<ILogger, AuthenticationTicket, Exception> _logSuccessfulTicket;
+        private static readonly Action<ILogger, string, Exception> _logFailedTicket;
+
         private readonly IJwtDecoder _jwtDecoder;
+
+        static JwtAuthenticationHandler()
+        {
+            _logMissingHeader = LoggerMessage.Define(
+                eventId: new EventId(10, "ControllerMethodCalled"),
+                logLevel: LogLevel.Information,
+                formatString: $"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
+
+            _logIncorrectScheme = LoggerMessage.Define<string, string>(
+                eventId: new EventId(11, "ControllerMethodCalled"),
+                logLevel: LogLevel.Information,
+                formatString: $"Header {nameof(HeaderNames.Authorization)} scheme is {{0}}, expected {{1}}, returning none");
+
+            _logEmptyHeader = LoggerMessage.Define(
+                eventId: new EventId(12, "ControllerMethodCalled"),
+                logLevel: LogLevel.Information,
+                formatString: $"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
+
+            _logSuccessfulTicket = LoggerMessage.Define<AuthenticationTicket>(
+                eventId: new EventId(1, "ControllerMethodCalled"),
+                logLevel: LogLevel.Information,
+                formatString: "Successfully decoded JWT, returning success");
+
+            _logFailedTicket = LoggerMessage.Define<string>(
+                eventId: new EventId(2, "ControllerMethodCalled"),
+                logLevel: LogLevel.Information,
+                formatString: "Error decoding JWT: {0}, returning failure");
+        }
 
         public JwtAuthenticationHandler(
             IJwtDecoder jwtDecoder,
@@ -22,9 +57,39 @@ namespace JWT
             : base(optionsMonitor, loggerFactory, urlEncoder, clock) =>
             _jwtDecoder = jwtDecoder;
 
+        public static AuthenticateResult OnMissingHeader(ILogger logger)
+        {
+            _logMissingHeader(logger, null);
+            return AuthenticateResult.NoResult();
+        }
+
+        public static AuthenticateResult OnIncorrectScheme(ILogger logger, string actualScheme, string expectedScheme)
+        {
+            _logIncorrectScheme(logger, actualScheme, expectedScheme, null);
+            return AuthenticateResult.NoResult();
+        }
+
+        public static AuthenticateResult OnEmptyHeader(ILogger logger, string header)
+        {
+            _logEmptyHeader(logger, null);
+            return AuthenticateResult.NoResult();
+        }
+
+        public static AuthenticateResult OnSuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
+        {
+            _logSuccessfulTicket(logger, ticket, null);
+            return AuthenticateResult.Success(ticket);
+        }
+
+        public static AuthenticateResult OnFailedTicket(ILogger logger, Exception ex)
+        {
+            _logFailedTicket(logger, ex.Message, ex);
+            return AuthenticateResult.Fail(ex);
+        }
+
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            string header = this.Context.Request.Headers[HeaderNames.Authorization];
+            var header = this.Context.Request.Headers[HeaderNames.Authorization];
             var result = GetAuthenticationResult(header);
             return Task.FromResult(result);
         }
@@ -32,23 +97,14 @@ namespace JWT
         private AuthenticateResult GetAuthenticationResult(string header)
         {
             if (String.IsNullOrEmpty(header))
-            {
-                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
-                return AuthenticateResult.NoResult();
-            }
+                return this.Options.OnMissingHeader(this.Logger);
 
             if (!header.StartsWith(this.Scheme.Name, StringComparison.OrdinalIgnoreCase))
-            {
-                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} scheme is not {this.Scheme.Name}, returning none");
-                return AuthenticateResult.NoResult();
-            }
+                return this.Options.OnIncorrectScheme(this.Logger, header.Split(' ').FirstOrDefault(), this.Scheme.Name);
 
             var token = header.Substring(this.Scheme.Name.Length).Trim();
             if (String.IsNullOrEmpty(token))
-            {
-                this.Logger.LogInformation($"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
-                return AuthenticateResult.NoResult();
-            }
+                return this.Options.OnEmptyHeader(this.Logger, header);
 
             try
             {
@@ -56,13 +112,11 @@ namespace JWT
                 var identity = this.Options.IdentityFactory(dic);
                 var ticket = this.Options.TicketFactory(identity, this.Scheme);
 
-                this.Logger.LogInformation("Successfully decoded JWT, returning success");
-                return AuthenticateResult.Success(ticket);
+                return this.Options.OnSuccessfulTicket(this.Logger, ticket);
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex, $"Error decoding JWT: {ex.Message}, returning failure");
-                return AuthenticateResult.Fail(ex);
+                return this.Options.OnFailedTicket(this.Logger, ex);
             }
         }
     }
