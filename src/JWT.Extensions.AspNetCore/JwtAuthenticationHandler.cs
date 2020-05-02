@@ -33,7 +33,7 @@ namespace JWT
         {
             if (String.IsNullOrEmpty(header))
             {
-                this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
+                return this.Options.OnEmptyHeader(this.Logger, header)
                 return AuthenticateResult.NoResult();
             }
 
