@@ -22,6 +22,12 @@ namespace JWT
             : base(optionsMonitor, loggerFactory, urlEncoder, clock) =>
             _jwtDecoder = jwtDecoder;
 
+        public static AuthenticateRwsult OnEmptyHeader(ILogger logger, string header)
+        {
+            logger.LogEmptyHeader(this.Logger.LogInformation($"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
+            return AuthenticateResult.NoResult();
+         }
+
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             string header = this.Context.Request.Headers[HeaderNames.Authorization];
