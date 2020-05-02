@@ -22,6 +22,8 @@ namespace JWT
         /// </summary>
         public bool VerifySignature { get; set; } = true;
 
+        public Func<ILogger, string, AuthenticationResult> OnEmptyHeader { get; set; } = JwtAuthenticationHandler.OnEmptyHeader;
+
         /// <summary>
         /// Creates user's <see cref="IIdentity" /> from <see cref="IDictionary{String,String}" /> of user's claims
         /// </summary>
