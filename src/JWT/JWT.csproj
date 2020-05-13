@@ -18,7 +18,7 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <Version>7.1.0</Version>
+    <Version>7.2.0</Version>
     <FileVersion>7.0.0.0</FileVersion>
     <AssemblyVersion>7.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
