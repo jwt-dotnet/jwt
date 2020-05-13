@@ -1,6 +1,5 @@
 ﻿using System;
 using JWT.Algorithms;
-using JWT.Exceptions;
 
 namespace JWT
 {
@@ -15,8 +14,6 @@ namespace JWT
         /// <param name="decodedPayload">>An arbitrary payload (already serialized to JSON)</param>
         /// <param name="signature">Decoded body</param>
         /// <param name="decodedSignatures">The signatures to validate with</param>
-        /// <exception cref="SignatureVerificationException">The decodedSignatures is invalid</exception>
-        /// <exception cref="TokenExpiredException">The token has expired</exception>
         void Validate(string decodedPayload, string signature, params string[] decodedSignatures);
 
         /// <summary>
@@ -29,8 +26,6 @@ namespace JWT
         /// <param name="alg">The asymmetric algorithm to validate with</param>
         /// <param name="bytesToSign">The header and payload bytes to validate</param>
         /// <param name="decodedSignature">The signature to validate with</param>
-        /// <exception cref="SignatureVerificationException">The decodedSignatures is invalid</exception>
-        /// <exception cref="TokenExpiredException">The token has expired</exception>
         void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature);
 
         /// <summary>

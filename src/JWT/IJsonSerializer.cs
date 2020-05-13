@@ -17,7 +17,7 @@
         /// </summary>
         /// <typeparam name="T">type of object</typeparam>
         /// <param name="json">JSON string</param>
-        /// <returns>typed object</returns>
+        /// <returns>Strongly-typed object</returns>
         T Deserialize<T>(string json);
     }
 }
