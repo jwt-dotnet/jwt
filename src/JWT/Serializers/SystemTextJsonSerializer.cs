@@ -1,12 +1,14 @@
 ﻿#if SYSTEMTEXTJSON
+
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using JWT;
+
+
 namespace JWT.Serializers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text.Json;
-    using JWT;
-
-    public class SystemTextJsonSerializer : IJsonSerializer
+    public sealed class SystemTextJsonSerializer : IJsonSerializer
     {
         public string Serialize(object obj)
         {
@@ -50,7 +52,8 @@ namespace JWT.Serializers
                     }
                 }
 
-                if (ndata is T obj) return obj;
+                if (ndata is T obj)
+                    return obj;
             }
 
             return data;
