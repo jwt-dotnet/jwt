@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using JWT;
 
 namespace JWT.Serializers
 {
@@ -18,12 +17,18 @@ namespace JWT.Serializers
         {
             var data = JsonSerializer.Deserialize<T>(json);
 
-            if (!(data is Dictionary<string, JsonElement> odata)) return data;
+            // when deserializing a Dictionary<string, object>
+            // System.Text.Json create JsonElement objects for every value of the dictionary
+            // but application will expect to have native basic types (not a JsonElement class)
+            if (!(data is Dictionary<string, object> odata)) return data;
 
+            // we need to create another dictionary and fill it with the real values
+            // only basic types are supported (no complex object allowed, throw a NotSupportedException in these cases)
+            // number always converted to long (int64) basic type
             var ndata = new Dictionary<string, object>();
             foreach (var key in odata.Keys)
             {
-                var value = odata[key];
+                var value = (JsonElement)odata[key];
                 switch (value.ValueKind)
                 {
                     case JsonValueKind.String:
@@ -42,6 +47,7 @@ namespace JWT.Serializers
                     case JsonValueKind.Object:
                     case JsonValueKind.Array:
                     case JsonValueKind.Null:
+                    default:
                         throw new NotSupportedException(nameof(value.ValueKind));
                 }
             }
