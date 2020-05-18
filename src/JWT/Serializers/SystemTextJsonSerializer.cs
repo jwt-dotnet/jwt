@@ -8,10 +8,8 @@ namespace JWT.Serializers
 {
     public sealed class SystemTextJsonSerializer : IJsonSerializer
     {
-        public string Serialize(object obj)
-        {
-            return JsonSerializer.Serialize(obj);
-        }
+        public string Serialize(object obj) =>
+            JsonSerializer.Serialize(obj);
 
         public T Deserialize<T>(string json)
         {
@@ -20,7 +18,8 @@ namespace JWT.Serializers
             // when deserializing a Dictionary<string, object>
             // System.Text.Json create JsonElement objects for every value of the dictionary
             // but application will expect to have native basic types (not a JsonElement class)
-            if (!(data is Dictionary<string, object> odata)) return data;
+            if (!(data is Dictionary<string, object> odata))
+                return data;
 
             // we need to create another dictionary and fill it with the real values
             // only basic types are supported (no complex object allowed, throw a NotSupportedException in these cases)
