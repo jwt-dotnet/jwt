@@ -39,9 +39,9 @@ namespace JWT
 
             var segments = new List<string>(3);
 
-            var header = extraHeaders is null
-                ? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
-                : new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
+            var header = extraHeaders is null ?
+                new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase) :
+                new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
             
             if (!header.ContainsKey("typ"))
                 header.Add("typ", "JWT");
