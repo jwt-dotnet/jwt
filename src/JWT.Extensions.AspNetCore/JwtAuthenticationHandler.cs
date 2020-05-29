@@ -15,7 +15,7 @@ namespace JWT
         private static readonly Action<ILogger, Exception> _logMissingHeader;
         private static readonly Action<ILogger, string, string, Exception> _logIncorrectScheme;
         private static readonly Action<ILogger, Exception> _logEmptyHeader;
-        private static readonly Action<ILogger, AuthenticationTicket, Exception> _logSuccessfulTicket;
+        private static readonly Action<ILogger, Exception> _logSuccessfulTicket;
         private static readonly Action<ILogger, string, Exception> _logFailedTicket;
 
         private readonly IJwtDecoder _jwtDecoder;
@@ -23,29 +23,29 @@ namespace JWT
         static JwtAuthenticationHandler()
         {
             _logMissingHeader = LoggerMessage.Define(
-                eventId: new EventId(10, "ControllerMethodCalled"),
-                logLevel: LogLevel.Information,
-                formatString: $"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
+                LogLevel.Information,
+                new EventId(10, "ControllerMethodCalled"),
+                $"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
 
             _logIncorrectScheme = LoggerMessage.Define<string, string>(
-                eventId: new EventId(11, "ControllerMethodCalled"),
-                logLevel: LogLevel.Information,
-                formatString: $"Header {nameof(HeaderNames.Authorization)} scheme is {{0}}, expected {{1}}, returning none");
+                LogLevel.Information,
+                new EventId(11, "ControllerMethodCalled"),
+                $"Header {nameof(HeaderNames.Authorization)} scheme is {{0}}, expected {{1}}, returning none");
 
             _logEmptyHeader = LoggerMessage.Define(
-                eventId: new EventId(12, "ControllerMethodCalled"),
-                logLevel: LogLevel.Information,
-                formatString: $"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
+                LogLevel.Information,
+                new EventId(12, "ControllerMethodCalled"),
+                $"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
 
-            _logSuccessfulTicket = LoggerMessage.Define<AuthenticationTicket>(
-                eventId: new EventId(1, "ControllerMethodCalled"),
-                logLevel: LogLevel.Information,
-                formatString: "Successfully decoded JWT, returning success");
+            _logSuccessfulTicket = LoggerMessage.Define(
+                LogLevel.Information,
+                new EventId(1, "ControllerMethodCalled"),
+                "Successfully decoded JWT, returning success");
 
             _logFailedTicket = LoggerMessage.Define<string>(
-                eventId: new EventId(2, "ControllerMethodCalled"),
-                logLevel: LogLevel.Information,
-                formatString: "Error decoding JWT: {0}, returning failure");
+                LogLevel.Information,
+                new EventId(2, "ControllerMethodCalled"),
+                "Error decoding JWT: {0}, returning failure");
         }
 
         public JwtAuthenticationHandler(
@@ -77,7 +77,7 @@ namespace JWT
 
         public static AuthenticateResult OnSuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
         {
-            _logSuccessfulTicket(logger, ticket, null);
+            _logSuccessfulTicket(logger, null);
             return AuthenticateResult.Success(ticket);
         }
 
