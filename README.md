@@ -29,8 +29,6 @@ The following projects and their resulting packages are licensed under the MIT L
 - JWT.Extensions.AspNetCore
 - JWT.Extensions.Owin
 
-In addition, the maintainer of this repository ([@abatishchev](https://github.com/abatishchev)) also shares the values of the [Hippocratic License](https://firstdonoharm.dev/version/2/1/license.html).
-
 ### Jwt.NET
 
 #### NuGet
