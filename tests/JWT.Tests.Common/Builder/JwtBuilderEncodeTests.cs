@@ -81,7 +81,8 @@ namespace JWT.Tests.Builder
                                .AddClaims(claims)
                                .Encode();
 
-            var decodedToken = Encoding.UTF8.GetString(new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
+            var decodedToken = new UTF8Encoding(false).GetString(
+                new JwtBase64UrlEncoder().Decode(token.Split('.')[1]));
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
