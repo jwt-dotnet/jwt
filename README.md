@@ -7,7 +7,9 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 # Sponsor
 
-[<img alt="Auth0 logo" src="https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg" width="200">](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth)
+| | |
+| ------------- | ------------- |
+| [<img alt="Auth0 logo" src="https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg" width="200">](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth) | If you want to quickly add secure token-based authentication to your .NET projects, feel free to check Auth0's free plan at [auth0.com/developers](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth).  |
 
 Want to support the project too? Pleaes visit [my Patreon page](https://www.patreon.com/abatishchev).
 
