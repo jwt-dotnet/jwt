@@ -7,8 +7,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 # Sponsor
 
-[![Auth0 logo](https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg)](https://auth0.com/developers?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth)
-<!-- .element height="25px" width="25px" -->
+<img alt="Auth0 logo" src="https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg" width="200">
 
 Want to support the project too? Pleaes visit [my Patreon page](https://www.patreon.com/abatishchev).
 
