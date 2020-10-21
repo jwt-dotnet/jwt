@@ -1,9 +1,16 @@
-﻿[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=7)
+[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=7)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
 This library supports generating and decoding [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
+
+# Sponsor
+
+[![Auth0 logo](https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg)](https://auth0.com/developers?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth)
+<!-- .element height="25px" width="25px" -->
+
+Want to support the project too? Pleaes visit [my Patreon page](https://www.patreon.com/abatishchev).
 
 ## Avaliable packages
 
