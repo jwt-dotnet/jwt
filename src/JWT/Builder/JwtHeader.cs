@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace JWT.Builder
 {
@@ -23,7 +23,7 @@ namespace JWT.Builder
         public string X5u { get; set; }
 
         [JsonProperty("x5c")]
-        public string X5c { get; set; }
+        public string[] X5c { get; set; }
 
         [JsonProperty("x5t")]
         public string X5t { get; set; }
