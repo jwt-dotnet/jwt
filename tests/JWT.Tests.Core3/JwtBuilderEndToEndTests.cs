@@ -31,6 +31,7 @@ namespace JWT.Tests
 
             var token = builder.WithAlgorithm(algorithm)
                                .AddHeader(HeaderName.KeyId, certPub.Thumbprint)
+                               .AddHeader(HeaderName.X5c, new List<string>() { Convert.ToBase64String(certPub.Export(X509ContentType.Cert)) })
                                .AddClaim("iss", iss)
                                .AddClaim("exp", exp)
                                .AddClaim(nameof(Customer.FirstName), TestData.Customer.FirstName)
