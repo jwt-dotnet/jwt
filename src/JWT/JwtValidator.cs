@@ -25,6 +25,7 @@ namespace JWT
     {
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly int _timeMargin;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
@@ -32,9 +33,21 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
+            : this(jsonSerializer, dateTimeProvider, 0)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
         {
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
+            _timeMargin = timeMargin;
         }
 
         /// <inheritdoc />
@@ -143,7 +156,7 @@ namespace JWT
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        private static Exception ValidateExpClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
+        private Exception ValidateExpClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("exp", out var expObj))
                 return null;
@@ -161,7 +174,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'exp' must be a number.");
             }
 
-            if (secondsSinceEpoch >= expValue)
+            if (secondsSinceEpoch - _timeMargin >= expValue)
             {
                 return new TokenExpiredException("Token has expired.")
                 {
@@ -178,7 +191,7 @@ namespace JWT
         /// </summary>
         /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.5</remarks>
         /// <exception cref="SignatureVerificationException" />
-        private static Exception ValidateNbfClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
+        private Exception ValidateNbfClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
         {
             if (!payloadData.TryGetValue("nbf", out var nbfObj))
                 return null;
@@ -196,7 +209,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'nbf' must be a number.");
             }
 
-            if (secondsSinceEpoch < nbfValue)
+            if (secondsSinceEpoch + _timeMargin < nbfValue)
             {
                 return new SignatureVerificationException("Token is not yet valid.");
             }
