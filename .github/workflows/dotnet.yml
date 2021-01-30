@@ -1,12 +1,6 @@
 name: 'Build'
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  pull_request_target:
-    branches: [ main ]
+on: [push, pull_request_target]
 
 jobs:
   build:
