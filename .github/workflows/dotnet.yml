@@ -1,9 +1,10 @@
 name: 'Build'
 
 on:
-  pull_request_target:
   pull_request:
-    branches: [ main ]
+  pull_request_target:
+  workflow_dispatch:
+  push:
 
 jobs:
   build:
