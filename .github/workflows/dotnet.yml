@@ -13,7 +13,7 @@ jobs:
       - name: 'Run Build'
         uses: Azure/pipelines@v1
         with:
-          azure-devops-project-url: 'https://dev.azure.com/abatishchev/OpenSource/'
+          azure-devops-project-url: https://dev.azure.com/abatishchev/OpenSource/
           azure-pipeline-name: 'Jwt.Net-CI'
           # Paste personal access token of the user as value of secret variable:AZURE_DEVOPS_TOKEN
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
