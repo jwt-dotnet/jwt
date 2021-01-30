@@ -7,9 +7,9 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public sealed class RSAlgorithmFactory : HMACSHAAlgorithmFactory
     {
-        private readonly RSA _privateKey;
-        private readonly RSA _publicKey;
         private readonly Func<X509Certificate2> _certFactory;
+        private readonly RSA _publicKey;
+        private readonly RSA _privateKey;
 
         /// <summary>
         /// Creates an instance of the <see cref="RSAlgorithmFactory" /> class using the provided <see cref="X509Certificate2" />.
@@ -17,7 +17,7 @@ namespace JWT.Algorithms
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
         public RSAlgorithmFactory(Func<X509Certificate2> certFactory)
         {
-            _certFactory = certFactory;
+            _certFactory = certFactory ?? throw new ArgumentNullException(nameof(certFactory));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace JWT.Algorithms
         /// <param name="publicKey">The public key for verifying the data.</param>
         public RSAlgorithmFactory(RSA publicKey)
         {
-            _publicKey = publicKey;
+            _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
         }
 
         /// <summary>
@@ -35,9 +35,9 @@ namespace JWT.Algorithms
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
         public RSAlgorithmFactory(RSA publicKey, RSA privateKey)
+            : this(publicKey)
         {
-            _publicKey = publicKey;
-            _privateKey = privateKey;
+            _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
         }
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
@@ -57,15 +57,15 @@ namespace JWT.Algorithms
 
         private RS256Algorithm CreateRS256Algorithm()
         {
-            if (_certFactory != null)
+            if (_certFactory is object)
             {
                 return new RS256Algorithm(_certFactory());
             }
-            if (_publicKey != null && _privateKey != null)
+            if (_publicKey is object && _privateKey is object)
             {
                 return new RS256Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey != null)
+            if (_publicKey is object)
             {
                 return new RS256Algorithm(_publicKey);
             }
@@ -75,15 +75,15 @@ namespace JWT.Algorithms
 
         private RS384Algorithm CreateRS384Algorithm()
         {
-            if (_certFactory != null)
+            if (_certFactory is object)
             {
                 return new RS384Algorithm(_certFactory());
             }
-            if (_publicKey != null && _privateKey != null)
+            if (_publicKey is object && _privateKey is object)
             {
                 return new RS384Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey != null)
+            if (_publicKey is object)
             {
                 return new RS384Algorithm(_publicKey);
             }
@@ -93,15 +93,15 @@ namespace JWT.Algorithms
 
         private RS512Algorithm CreateRS512Algorithm()
         {
-            if (_certFactory != null)
+            if (_certFactory is object)
             {
                 return new RS512Algorithm(_certFactory());
             }
-            if (_publicKey != null && _privateKey != null)
+            if (_publicKey is object && _privateKey is object)
             {
                 return new RS512Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey != null)
+            if (_publicKey is object)
             {
                 return new RS512Algorithm(_publicKey);
             }
