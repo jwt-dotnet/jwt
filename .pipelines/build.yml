@@ -1,6 +1,4 @@
 trigger:
-- master
-  batch: true
   branches:
     include:
     - 'main'
