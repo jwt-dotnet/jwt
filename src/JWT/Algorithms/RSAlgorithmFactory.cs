@@ -7,39 +7,86 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public sealed class RSAlgorithmFactory : HMACSHAAlgorithmFactory
     {
-        private readonly Func<RS256Algorithm> _algFactory;
+        private readonly RSA _privateKey;
+        private readonly RSA _publicKey;
+        private readonly Func<X509Certificate2> _certFactory;
 
         /// <summary>
         /// Creates an instance of the <see cref="RSAlgorithmFactory" /> class using the provided <see cref="X509Certificate2" />.
         /// </summary>
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
-        public RSAlgorithmFactory(Func<X509Certificate2> certFactory) =>
-            _algFactory = () => new RS256Algorithm(certFactory());
+        public RSAlgorithmFactory(Func<X509Certificate2> certFactory)
+        {
+            _certFactory = certFactory;
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided public key only.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
-        public RSAlgorithmFactory(RSA publicKey) =>
-            _algFactory = () => new RS256Algorithm(publicKey);
+        public RSAlgorithmFactory(RSA publicKey)
+        {
+            _publicKey = publicKey;
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
-        public RSAlgorithmFactory(RSA publicKey, RSA privateKey) =>
-            _algFactory = () => new RS256Algorithm(publicKey, privateKey);
+        public RSAlgorithmFactory(RSA publicKey, RSA privateKey)
+        {
+            _publicKey = publicKey;
+            _privateKey = privateKey;
+        }
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
             switch (algorithm)
             {
                 case JwtAlgorithmName.RS256:
-                    return _algFactory();
+                    return CreateRS256Algorithm();
+                case JwtAlgorithmName.RS384:
+                    return CreateRS384Algorithm();
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
+        }
+
+        private RS256Algorithm CreateRS256Algorithm()
+        {
+            if (_certFactory != null)
+            {
+                return new RS256Algorithm(_certFactory());
+            }
+            if (_publicKey != null && _privateKey != null)
+            {
+                return new RS256Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey != null)
+            {
+                return new RS256Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+
+        private RS384Algorithm CreateRS384Algorithm()
+        {
+            if (_certFactory != null)
+            {
+                return new RS384Algorithm(_certFactory());
+            }
+            if (_publicKey != null && _privateKey != null)
+            {
+                return new RS384Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey != null)
+            {
+                return new RS384Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
         }
     }
 }
