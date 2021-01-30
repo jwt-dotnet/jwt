@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
       - uses: Azure/pipelines@v1
         with:
           azure-devops-project-url: 'https://dev.azure.com/abatishchev/OpenSource/'
