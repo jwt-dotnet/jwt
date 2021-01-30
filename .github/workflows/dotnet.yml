@@ -3,12 +3,13 @@ name: 'Build'
 on:
   push:
     branches: [ main ]
-  pull_request:
+  pull_request_target:
     branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: build
     steps:
       - name: 'Run Build'
         uses: Azure/pipelines@v1
