@@ -3,7 +3,6 @@ name: 'Build'
 on:
   pull_request:
   pull_request_target:
-  workflow_dispatch:
   push:
 
 jobs:
@@ -18,10 +17,6 @@ jobs:
           # ref: ${{ github.event.pull_request.head.ref }}
           # ref: refs/pull/${{ github.event.pull_request.number }}/merge
           ref: refs/pull/${{ github.event.pull_request.number }}/head
-
-      - name: Checkout the head commit of the branch
-        if: ${{ github.event_name != 'pull_request_target' }}
-        uses: actions/checkout@v2
 
       - name: 'Run Build'
         uses: Azure/pipelines@v1
