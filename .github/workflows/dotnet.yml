@@ -1,6 +1,7 @@
 name: 'Build'
 
 on:
+  pull_request:
   pull_request_target:
   push:
 
@@ -8,11 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the merged commit from PR and base branch
-        uses: actions/checkout@v2
-        with:
-          ref: refs/pull/${{ github.event.pull_request.number }}/head
-
       - name: 'Run Build'
         uses: Azure/pipelines@v1
         with:
