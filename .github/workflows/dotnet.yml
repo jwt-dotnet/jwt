@@ -1,0 +1,19 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Run Build'
+        uses: Azure/pipelines@v1
+        with:
+          azure-devops-project-url: https://dev.azure.com/abatishchev/OpenSource
+          azure-pipeline-name: 'Jwt.Net-CI'
+          # Paste personal access token of the user as value of secret variable:AZURE_DEVOPS_TOKEN
+          azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
