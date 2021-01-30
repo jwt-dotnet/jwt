@@ -1,10 +1,7 @@
 trigger:
-  batch: true
   branches:
     include:
     - 'main'
-
-pr: none
 
 pool:
   vmImage: 'windows-latest'
