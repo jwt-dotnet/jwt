@@ -40,9 +40,9 @@ namespace JWT.Algorithms
         public override string Name => JwtAlgorithmName.RS384.ToString();
 
 #if NET35 || NET40
-        protected override string HashAlgorithm => HashAlgorithmName.SHA384;
+        protected override string HashAlgorithmInternal => HashAlgorithmName.SHA384;
 #else
-        protected override HashAlgorithmName HashAlgorithm => HashAlgorithmName.SHA384;
+        protected override HashAlgorithmName HashAlgorithmInternal => HashAlgorithmName.SHA384;
 #endif
     }
 }

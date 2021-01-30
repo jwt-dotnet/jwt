@@ -40,9 +40,9 @@ namespace JWT.Algorithms
         public override string Name => JwtAlgorithmName.RS512.ToString();
 
 #if NET35 || NET40
-        protected override string HashAlgorithm => HashAlgorithmName.SHA512;
+        protected override string HashAlgorithmInternal => HashAlgorithmName.SHA512;
 #else
-        protected override HashAlgorithmName HashAlgorithm => HashAlgorithmName.SHA512;
+        protected override HashAlgorithmName HashAlgorithmInternal => HashAlgorithmName.SHA512;
 #endif
     }
 }
