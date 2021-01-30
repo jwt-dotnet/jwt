@@ -66,5 +66,16 @@ namespace JWT.Tests.Algorithms
             algorithm.Should()
                      .NotBeNull();
         }
+
+        [TestMethod]
+        public void Name_Should_be_RS256()
+        {
+            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var alg = new RS256Algorithm(publicKey);
+
+            alg.Name
+                .Should()
+                .Be(JwtAlgorithmName.RS256.ToString());
+        }
     }
 }
