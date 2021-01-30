@@ -13,7 +13,8 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
-        public RS384Algorithm(RSA publicKey, RSA privateKey) : base(publicKey, privateKey)
+        public RS384Algorithm(RSA publicKey, RSA privateKey)
+            : base(publicKey, privateKey)
         {
         }
 
@@ -24,7 +25,8 @@ namespace JWT.Algorithms
         /// An instance created using this constructor can only be used for verifying the data, not for signing it.
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
-        public RS384Algorithm(RSA publicKey) : base(publicKey)
+        public RS384Algorithm(RSA publicKey)
+            : base(publicKey)
         {
         }
 
@@ -32,7 +34,8 @@ namespace JWT.Algorithms
         /// Creates an instance using the provided certificate.
         /// </summary>
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
-        public RS384Algorithm(X509Certificate2 cert) : base(cert)
+        public RS384Algorithm(X509Certificate2 cert)
+            : base(cert)
         {
         }
 
