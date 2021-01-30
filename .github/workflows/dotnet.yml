@@ -10,6 +10,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout the merged commit from PR and base branch
+        if: github.event_name == 'pull_request_target'
+        uses: actions/checkout@v2
+        with:
+          # repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # ref: ${{ github.event.pull_request.head.ref }}
+          # ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+
+      - name: Checkout the head commit of the branch
+        if: ${{ github.event_name != 'pull_request_target' }}
+        uses: actions/checkout@v2
+
       - name: 'Run Build'
         uses: Azure/pipelines@v1
         with:
