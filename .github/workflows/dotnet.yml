@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: Azure/pipelines@v1
+      - name: 'Run Build'
+        uses: Azure/pipelines@v1
         with:
           azure-devops-project-url: 'https://dev.azure.com/abatishchev/OpenSource/'
           azure-pipeline-name: 'Jwt.Net-CI'
