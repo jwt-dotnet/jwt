@@ -47,10 +47,7 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public abstract string Name
-        {
-            get;
-        }
+        public abstract string Name { get; }
 
         public string HashAlgorithm =>
 #if NET35 || NET40
@@ -59,14 +56,13 @@ namespace JWT.Algorithms
             HashAlgorithmInternal.Name;
 #endif
 
+        protected abstract
 #if NET35 || NET40
-        protected abstract string HashAlgorithmInternal
+        string
 #else
-        protected abstract HashAlgorithmName HashAlgorithmInternal
+        HashAlgorithmName HashAlgorithmInternal
 #endif
-        {
-            get;
-        }
+        HashAlgorithmInternal { get; }
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
