@@ -17,9 +17,8 @@ namespace JWT.Tests.Algorithms
             var publicKey = _fixture.Create<RSACryptoServiceProvider>();
             var alg = new RS512Algorithm(publicKey);
 
-            alg.Name
-                .Should()
-                .Be(JwtAlgorithmName.RS512.ToString());
+            alg.Name.Should()
+                    .Be(JwtAlgorithmName.RS512.ToString());
         }
 
         [TestMethod]
@@ -28,9 +27,8 @@ namespace JWT.Tests.Algorithms
             var publicKey = _fixture.Create<RSACryptoServiceProvider>();
             var alg = new RS512Algorithm(publicKey);
 
-            alg.HashAlgorithm
-                .Should()
-                .Be("SHA512");
+            alg.HashAlgorithm.Should()
+                             .Be("SHA512");
         }
     }
 }
