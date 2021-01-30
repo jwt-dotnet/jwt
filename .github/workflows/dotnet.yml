@@ -3,7 +3,6 @@ name: 'Build'
 on:
   pull_request_target:
     branches: [ main ]
-    types: [ opened, synchronize, reopened]
   
 jobs:
   build:
