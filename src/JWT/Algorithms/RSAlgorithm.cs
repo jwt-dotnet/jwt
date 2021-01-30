@@ -60,7 +60,7 @@ namespace JWT.Algorithms
 #if NET35 || NET40
         string
 #else
-        HashAlgorithmName HashAlgorithmInternal
+        HashAlgorithmName
 #endif
         HashAlgorithmInternal { get; }
 
