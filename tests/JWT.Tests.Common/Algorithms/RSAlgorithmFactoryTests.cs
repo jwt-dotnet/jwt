@@ -26,9 +26,8 @@ namespace JWT.Tests.Algorithms
             };
             var alg = factory.Create(context);
 
-            alg
-                .Should()
-                .BeOfType<RS256Algorithm>("because Create should return an instance of RS256Algorithm when the algorithm name in the header is 'RS256'");
+            alg.Should()
+               .BeOfType<RS256Algorithm>("because Create should return an instance of RS256Algorithm when the algorithm name in the header is 'RS256'");
         }
 
         [TestMethod]
@@ -45,9 +44,8 @@ namespace JWT.Tests.Algorithms
             };
             var alg = factory.Create(context);
 
-            alg
-                .Should()
-                .BeOfType<RS384Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
+            alg.Should()
+               .BeOfType<RS384Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
         }
 
         [TestMethod]
@@ -64,9 +62,8 @@ namespace JWT.Tests.Algorithms
             };
             var alg = factory.Create(context);
 
-            alg
-                .Should()
-                .BeOfType<RS512Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
+            alg.Should()
+               .BeOfType<RS512Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
         }
     }
 }
