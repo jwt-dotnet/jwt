@@ -16,5 +16,12 @@ namespace JWT.Algorithms
 
         /// <inheritdoc />
         public string Name => JwtAlgorithmName.HS384.ToString();
+
+        public string HashAlgorithm =>
+#if NET35 || NET40
+            HashAlgorithmName.SHA384;
+#else
+            HashAlgorithmName.SHA384.Name;
+#endif
     }
 }
