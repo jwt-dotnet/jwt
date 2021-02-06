@@ -57,6 +57,14 @@ namespace JWT.Algorithms
                     return CreateES384Algorithm();
                 case JwtAlgorithmName.ES512:
                     return CreateES512Algorithm();
+                case JwtAlgorithmName.HS256:
+                case JwtAlgorithmName.HS384:
+                case JwtAlgorithmName.HS512:
+                    throw new NotSupportedException($"For algorithm {algorithm} please use an instance of {nameof(HMACSHAAlgorithmFactory)}");
+                case JwtAlgorithmName.RS256:
+                case JwtAlgorithmName.RS384:
+                case JwtAlgorithmName.RS512:
+                    throw new NotSupportedException($"For algorithm {algorithm} please use an instance of {nameof(RSAlgorithmFactory)}");
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
