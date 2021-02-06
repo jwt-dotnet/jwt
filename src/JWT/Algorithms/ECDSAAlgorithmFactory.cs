@@ -46,9 +46,7 @@ namespace JWT.Algorithms
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
-#if !NETSTANDARD2_0
-            throw new NotImplementedException("ECDSA algorithms are only supported when targeting .NET Standard 2.0");
-#else
+#if NETSTANDARD2_0
             switch (algorithm)
             {
                 case JwtAlgorithmName.ES256:
@@ -68,6 +66,8 @@ namespace JWT.Algorithms
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
+#else
+            throw new NotImplementedException("ECDSA algorithms are only supported when targeting .NET Standard 2.0");
 #endif
         }
 
