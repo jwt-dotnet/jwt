@@ -62,7 +62,7 @@ namespace JWT.Tests.Algorithms
             var algorithm = new ES256Algorithm(certificate);
 
             algorithm.Should()
-                .NotBeNull();
+                     .NotBeNull();
         }
 
         [TestMethod]
