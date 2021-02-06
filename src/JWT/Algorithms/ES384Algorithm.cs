@@ -7,26 +7,26 @@ namespace JWT.Algorithms
     /// <summary>
     /// ECDSA P-384 using SHA-384
     /// </summary>
-    public sealed class ECDSA384Algorithm : ECDSAAlgorithm
+    public sealed class ES384Algorithm : ECDSAAlgorithm
     {
         /// <summary>
-        /// Creates an instance of <see cref="ECDSA384Algorithm" /> using the provided pair of public and private keys.
+        /// Creates an instance of <see cref="ES384Algorithm" /> using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
-        public ECDSA384Algorithm(ECDsa publicKey, ECDsa privateKey)
+        public ES384Algorithm(ECDsa publicKey, ECDsa privateKey)
             : base(publicKey, privateKey)
         {
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="ECDSA384Algorithm" /> using the provided public key only.
+        /// Creates an instance of <see cref="ES384Algorithm" /> using the provided public key only.
         /// </summary>
         /// <remarks>
         /// An instance created using this constructor can only be used for verifying the data, not for signing it.
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
-        public ECDSA384Algorithm(ECDsa publicKey)
+        public ES384Algorithm(ECDsa publicKey)
             : base(publicKey)
         {
         }
@@ -35,7 +35,7 @@ namespace JWT.Algorithms
         /// Creates an instance using the provided certificate.
         /// </summary>
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
-        public ECDSA384Algorithm(X509Certificate2 cert)
+        public ES384Algorithm(X509Certificate2 cert)
             : base(cert)
         {
         }

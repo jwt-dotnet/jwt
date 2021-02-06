@@ -32,7 +32,7 @@ namespace JWT.Tests.Algorithms
         }
 
         [TestMethod]
-        public void Create_Should_Return_Instance_Of_ECDSA384Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES384_And_Targeting_NetStandard20()
+        public void Create_Should_Return_Instance_Of_ES384Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES384_And_Targeting_NetStandard20()
         {
             var publicKey = ECDsa.Create();
             var factory = new ECDSAAlgorithmFactory(publicKey);
@@ -46,7 +46,7 @@ namespace JWT.Tests.Algorithms
             var alg = factory.Create(context);
 
             alg.Should()
-                .BeOfType<ECDSA384Algorithm>("because Create should return an instance of ECDSA384Algorithm when the algorithm name in the header is 'ES384'");
+                .BeOfType<ES384Algorithm>("because Create should return an instance of ES384Algorithm when the algorithm name in the header is 'ES384'");
         }
 #else
         [TestMethod]
