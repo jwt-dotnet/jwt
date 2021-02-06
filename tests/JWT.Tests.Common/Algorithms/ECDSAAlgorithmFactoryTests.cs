@@ -45,7 +45,7 @@ namespace JWT.Tests.Algorithms
             var alg = factory.Create(context);
 
             alg.Should()
-                .BeOfType<ES384Algorithm>("because Create should return an instance of ES384Algorithm when the algorithm name in the header is 'ES384'");
+               .BeOfType<ES384Algorithm>("because Create should return an instance of ES384Algorithm when the algorithm name in the header is 'ES384'");
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace JWT.Tests.Algorithms
             var alg = factory.Create(context);
 
             alg.Should()
-                .BeOfType<ES512Algorithm>("because Create should return an instance of ES512Algorithm when the algorithm name in the header is 'ES512'");
+               .BeOfType<ES512Algorithm>("because Create should return an instance of ES512Algorithm when the algorithm name in the header is 'ES512'");
         }
 #else
         [TestMethod]
@@ -80,7 +80,8 @@ namespace JWT.Tests.Algorithms
             };
 
             factory.Invoking(f => f.Create(context))
-                .Should().Throw<NotImplementedException>("because ECDSA algorithms are only supported when targeting .NET Standard 2.0");
+                   .Should()
+                   .Throw<NotImplementedException>("because ECDSA algorithms are only supported when targeting .NET Standard 2.0");
         }
 #endif
     }
