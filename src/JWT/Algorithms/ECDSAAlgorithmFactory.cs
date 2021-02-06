@@ -52,7 +52,7 @@ namespace JWT.Algorithms
             switch (algorithm)
             {
                 case JwtAlgorithmName.ES256:
-                    return CreateECDSA256Algorithm();
+                    return CreateES256Algorithm();
                 case JwtAlgorithmName.ES384:
                     return CreateECDSA384Algorithm();
                 default:
@@ -62,19 +62,19 @@ namespace JWT.Algorithms
         }
 
 #if NETSTANDARD2_0
-        private IJwtAlgorithm CreateECDSA256Algorithm()
+        private IJwtAlgorithm CreateES256Algorithm()
         {
             if (_certFactory is object)
             {
-                return new ECDSA256Algorithm(_certFactory());
+                return new ES256Algorithm(_certFactory());
             }
             if (_publicKey is object && _privateKey is object)
             {
-                return new ECDSA256Algorithm(_publicKey, _privateKey);
+                return new ES256Algorithm(_publicKey, _privateKey);
             }
             if (_publicKey is object)
             {
-                return new ECDSA256Algorithm(_publicKey);
+                return new ES256Algorithm(_publicKey);
             }
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");

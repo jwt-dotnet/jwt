@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace JWT.Tests.Algorithms
 {
     [TestClass]
-    public class ECDSA256AlgorithmTests
+    public class ES256AlgorithmTests
     {
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null()
@@ -19,7 +19,7 @@ namespace JWT.Tests.Algorithms
             var privateKey = ECDsa.Create();
 
             Action action =
-                () => new ECDSA256Algorithm(null, privateKey);
+                () => new ES256Algorithm(null, privateKey);
 
             action.Should()
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
@@ -31,7 +31,7 @@ namespace JWT.Tests.Algorithms
             var publicKey = ECDsa.Create();
 
             Action action =
-                () => new ECDSA256Algorithm(publicKey, null);
+                () => new ES256Algorithm(publicKey, null);
 
             action.Should()
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
@@ -41,7 +41,7 @@ namespace JWT.Tests.Algorithms
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null()
         {
             var publicKey = ECDsa.Create();
-            var alg = new ECDSA256Algorithm(publicKey);
+            var alg = new ES256Algorithm(publicKey);
 
             var bytesToSign = Array.Empty<byte>();
 
@@ -59,7 +59,7 @@ namespace JWT.Tests.Algorithms
             var bytes = Encoding.ASCII.GetBytes(publicKey);
             var certificate = new X509Certificate2(bytes);
 
-            var algorithm = new ECDSA256Algorithm(certificate);
+            var algorithm = new ES256Algorithm(certificate);
 
             algorithm.Should()
                 .NotBeNull();
@@ -69,7 +69,7 @@ namespace JWT.Tests.Algorithms
         public void Name_Should_Be_ES256()
         {
             var publicKey = ECDsa.Create();
-            var alg = new ECDSA256Algorithm(publicKey);
+            var alg = new ES256Algorithm(publicKey);
 
             alg.Name.Should()
                     .Be(JwtAlgorithmName.ES256.ToString());
@@ -79,7 +79,7 @@ namespace JWT.Tests.Algorithms
         public void HashAlgorithm_Should_Be_SHA256()
         {
             var publicKey = ECDsa.Create();
-            var alg = new ECDSA256Algorithm(publicKey);
+            var alg = new ES256Algorithm(publicKey);
 
             alg.HashAlgorithm.Should()
                              .Be("SHA256");
