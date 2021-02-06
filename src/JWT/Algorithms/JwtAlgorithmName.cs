@@ -33,6 +33,11 @@ namespace JWT.Algorithms
         /// <summary>
         /// RSASSA-PKCS1-v1_5 using SHA-512
         /// </summary>
-        RS512
+        RS512,
+
+        /// <summary>
+        /// ECDSA P-256 using SHA-256
+        /// </summary>
+        ES256
     }
 }
