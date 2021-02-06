@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace JWT.Algorithms
 {
     /// <summary>
-    /// ECDSA P-384 using SHA-384
+    /// ECDSA using SHA-384 hash algorithm
     /// </summary>
     public sealed class ES384Algorithm : ECDSAAlgorithm
     {

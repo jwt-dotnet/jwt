@@ -6,7 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace JWT.Algorithms
 {
     /// <summary>
-    /// Abstract base class for all ECDSA P-256 algorithms
+    /// Abstract base class for all ECDSA algorithms
     /// </summary>
     public abstract class ECDSAAlgorithm : IAsymmetricAlgorithm
     {
