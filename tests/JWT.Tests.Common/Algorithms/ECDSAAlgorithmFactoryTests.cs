@@ -1,7 +1,6 @@
 using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -47,6 +46,24 @@ namespace JWT.Tests.Algorithms
 
             alg.Should()
                 .BeOfType<ES384Algorithm>("because Create should return an instance of ES384Algorithm when the algorithm name in the header is 'ES384'");
+        }
+
+        [TestMethod]
+        public void Create_Should_Return_Instance_Of_ES512Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES512_And_Targeting_NetStandard20()
+        {
+            var publicKey = ECDsa.Create();
+            var factory = new ECDSAAlgorithmFactory(publicKey);
+            var context = new JwtDecoderContext
+            {
+                Header = new JwtHeader
+                {
+                    Algorithm = JwtAlgorithmName.ES512.ToString()
+                }
+            };
+            var alg = factory.Create(context);
+
+            alg.Should()
+                .BeOfType<ES512Algorithm>("because Create should return an instance of ES512Algorithm when the algorithm name in the header is 'ES512'");
         }
 #else
         [TestMethod]

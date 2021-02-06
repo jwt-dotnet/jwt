@@ -43,6 +43,11 @@ namespace JWT.Algorithms
         /// <summary>
         /// ECDSA using SHA-384
         /// </summary>
-        ES384
+        ES384,
+
+        /// <summary>
+        /// ECDSA using SHA-512
+        /// </summary>
+        ES512
     }
 }

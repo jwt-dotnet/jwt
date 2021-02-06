@@ -55,6 +55,8 @@ namespace JWT.Algorithms
                     return CreateES256Algorithm();
                 case JwtAlgorithmName.ES384:
                     return CreateES384Algorithm();
+                case JwtAlgorithmName.ES512:
+                    return CreateES512Algorithm();
                 default:
                     throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
@@ -93,6 +95,24 @@ namespace JWT.Algorithms
             if (_publicKey is object)
             {
                 return new ES384Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+
+        private IJwtAlgorithm CreateES512Algorithm()
+        {
+            if (_certFactory is object)
+            {
+                return new ES512Algorithm(_certFactory());
+            }
+            if (_publicKey is object && _privateKey is object)
+            {
+                return new ES512Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey is object)
+            {
+                return new ES512Algorithm(_publicKey);
             }
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
