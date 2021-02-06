@@ -8,6 +8,7 @@ namespace JWT.Algorithms
     public sealed class ECDSAAlgorithmFactory : HMACSHAAlgorithmFactory
     {
         private readonly Func<X509Certificate2> _certFactory;
+
 #if NETSTANDARD2_0
         private readonly ECDsa _publicKey;
         private readonly ECDsa _privateKey;
