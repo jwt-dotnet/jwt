@@ -23,7 +23,13 @@ namespace JWT.Algorithms
                 case JwtAlgorithmName.HS512:
                     return new HMACSHA512Algorithm();
                 case JwtAlgorithmName.RS256:
-                    throw new NotSupportedException($"For algorithm {nameof(JwtAlgorithmName.RS256)} please create custom factory by implementing {nameof(IAlgorithmFactory)}");
+                case JwtAlgorithmName.RS384:
+                case JwtAlgorithmName.RS512:
+                    throw new NotSupportedException($"For algorithm {algorithm} please use an instance of {nameof(RSAlgorithmFactory)}");
+                case JwtAlgorithmName.ES256:
+                case JwtAlgorithmName.ES384:
+                case JwtAlgorithmName.ES512:
+                    throw new NotSupportedException($"For algorithm {algorithm} please use an instance of {nameof(ECDSAAlgorithmFactory)}");
                 default:
                     throw new NotSupportedException($"Algorithm {algorithm} is not supported.");
             }
