@@ -298,7 +298,7 @@ public void Configure(IApplicationBuilder app)
 }
 ```
 
-#### Custom factories to produce Identity or AuthneticationTicket
+#### Custom factories to produce Identity or AuthenticationTicket
 
 ```c#
 options.IdentityFactory = dic => new ClaimsIdentity(
