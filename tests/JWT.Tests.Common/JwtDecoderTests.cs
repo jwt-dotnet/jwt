@@ -333,7 +333,8 @@ namespace JWT.Tests
             const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider(), jwtClaimValidation);
 
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
@@ -354,7 +355,8 @@ namespace JWT.Tests
             const string key = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
-            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider(), jwtClaimValidation);
 
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
@@ -422,7 +424,8 @@ namespace JWT.Tests
             var dateTimeProvider = new UtcDateTimeProvider();
             var serializer = new JsonNetSerializer();
 
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var validator = new JwtValidator(serializer, dateTimeProvider, jwtClaimValidation);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
@@ -467,7 +470,8 @@ namespace JWT.Tests
         {
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
-            var validator = new JwtValidator(serializer, dateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var validator = new JwtValidator(serializer, dateTimeProvider, jwtClaimValidation);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 

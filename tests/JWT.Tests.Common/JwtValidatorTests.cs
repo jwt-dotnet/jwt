@@ -122,7 +122,8 @@ namespace JWT.Tests
             ++signatureData[0]; // malformed signature
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -151,7 +152,8 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -180,7 +182,8 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -241,7 +244,8 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -270,7 +274,8 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
+            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -331,7 +336,8 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
