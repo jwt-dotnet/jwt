@@ -67,12 +67,12 @@ Console.WriteLine(token);
 ##### Or using the fluent builder API
 
 ```c#
-  var token = new JwtBuilder()
-      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-      .WithSecret(secret)
-      .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-      .AddClaim("claim2", "claim2-value")
-      .Encode();
+var token = JwtBuilder.Create()
+                      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                      .WithSecret(secret)
+                      .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                      .AddClaim("claim2", "claim2-value")
+                      .Encode();
 
 Console.WriteLine(token);
 ```
@@ -112,21 +112,21 @@ catch (SignatureVerificationException)
 ##### Or using the fluent builder API
 
 ```c#
-var json = new JwtBuilder()
-        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-        .WithSecret(secret)
-        .MustVerifySignature()
-        .Decode(token);                    
+var json = JwtBuilder.Create()
+                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                     .WithSecret(secret)
+                     .MustVerifySignature()
+                     .Decode(token);                    
 Console.WriteLine(json);
 ```
 
 or
 
 ```c#
-var json = new JwtBuilder()
-        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
-        .MustVerifySignature()
-        .Decode(token);                    
+var json = JwtBuilder.Create()
+                     .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
+                     .MustVerifySignature()
+                     .Decode(token);                    
 Console.WriteLine(json);
 ```
 
@@ -144,21 +144,21 @@ Console.WriteLine(payload["claim2"]);
 ##### Or using the fluent builder API
 
 ```c#
-var payload = new JwtBuilder()
-        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-        .WithSecret(secret)
-        .MustVerifySignature()
-        .Decode<IDictionary<string, object>>(token);     
+var payload = JwtBuilder.Create()
+                        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                        .WithSecret(secret)
+                        .MustVerifySignature()
+                        .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
 ```
 
 and
 
 ```c#
-var payload = new JwtBuilder()
-        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
-        .MustVerifySignature()
-        .Decode<IDictionary<string, object>>(token);     
+var payload = JwtBuilder.Create()
+                        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
+                        .MustVerifySignature()
+                        .Decode<IDictionary<string, object>>(token);     
 Console.WriteLine(payload["claim2"]);
 ```
 
@@ -203,9 +203,8 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 ##### Or using the fluent builder API
 
 ```c#
-var builder = new JwtBuilder();
-
-JwtHeader header = builder.DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+JwtHeader header = JwtBuilder.Create()
+                             .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
 
 var typ = header.Type; // JWT
 var alg = header.Algorithm; // RS256
