@@ -23,7 +23,7 @@ namespace JWT.Tests
             using var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
             using var certPubPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
 
-            var builder = new JwtBuilder();
+            var builder = JwtBuilder.Create();
             var algorithm = new RS256Algorithm(certPubPriv);
 
             const string iss = "test";

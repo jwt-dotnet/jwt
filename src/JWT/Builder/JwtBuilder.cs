@@ -28,6 +28,12 @@ namespace JWT.Builder
         private bool _verify;
 
         /// <summary>
+        /// Creates a new instance of instance <see cref="JwtBuilder" />
+        /// </summary>
+        public static JwtBuilder Create() =>
+            new JwtBuilder();
+
+        /// <summary>
         /// Add header to the JWT.
         /// </summary>
         /// <param name="name">Well-known header name</param>
