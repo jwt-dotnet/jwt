@@ -12,7 +12,7 @@ namespace JWT.Algorithms
     {
         private readonly ECDsa _publicKey;
         private readonly ECDsa _privateKey;
-         
+
         /// <summary>
         /// Creates an instance of <see cref="ECDSAAlgorithm" /> using the provided pair of public and private keys.
         /// </summary>
@@ -51,9 +51,7 @@ namespace JWT.Algorithms
         public abstract string Name { get; }
 
         /// <inheritdoc />
-        public string HashAlgorithm => HashAlgorithmInternal.Name;
-
-        protected abstract HashAlgorithmName HashAlgorithmInternal { get; }
+        public abstract HashAlgorithmName HashAlgorithmName { get; }
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
@@ -70,11 +68,11 @@ namespace JWT.Algorithms
         /// <param name="bytesToSign">The bytes to sign.</param>
         /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign)
-            => _privateKey.SignData(bytesToSign, HashAlgorithmInternal);
+            => _privateKey.SignData(bytesToSign, this.HashAlgorithmName);
 
         /// <inheritdoc />
         public bool Verify(byte[] bytesToSign, byte[] signature)
-            => _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmInternal);
+            => _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
 
         private static ECDsa GetPrivateKey(X509Certificate2 cert)
         {

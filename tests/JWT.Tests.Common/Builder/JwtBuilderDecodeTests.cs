@@ -11,14 +11,12 @@ namespace JWT.Tests.Builder
     [TestClass]
     public class JwtBuilderDecodeTests
     {
-
         [TestMethod]
         public void DecodeHeader_Should_Return_Header()
         {
-            var builder = new JwtBuilder();
-
-            var header = builder.WithAlgorithm(TestData.RS256Algorithm)
-                                .DecodeHeader(TestData.TokenByAsymmetricAlgorithm);
+            var header = JwtBuilder.Create()
+                                   .WithAlgorithm(TestData.RS256Algorithm)
+                                   .DecodeHeader(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
                   .NotBeNullOrEmpty("because decoding header should be possible without validator or algorithm");
@@ -27,9 +25,8 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void DecodeHeader_To_JwtHeader_Should_Return_Header()
         {
-            var builder = new JwtBuilder();
-
-            var header = builder.DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+            var header = JwtBuilder.Create()
+                                   .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
                   .NotBeNull("because decoding header should be possible without validator or algorithm");
@@ -48,10 +45,9 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void DecodeHeader_To_Dictionary_Should_Return_Header()
         {
-            var builder = new JwtBuilder();
-
-            var header = builder.WithAlgorithm(TestData.RS256Algorithm)
-                                .DecodeHeader<Dictionary<string, string>>(TestData.TokenByAsymmetricAlgorithm);
+            var header = JwtBuilder.Create()
+                                   .WithAlgorithm(TestData.RS256Algorithm)
+                                   .DecodeHeader<Dictionary<string, string>>(TestData.TokenByAsymmetricAlgorithm);
 
             header.Should()
                   .NotBeNull("because decoding header should be possible without validator or algorithm");
@@ -65,10 +61,9 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .Decode(TestData.Token);
 
             token.Should()
                  .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
@@ -77,12 +72,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_And_Without_Algorithm_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(null)
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(null)
+                                .MustVerifySignature()
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid algorithm");
@@ -91,12 +85,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_And_Without_AlgorithmFactory_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithmFactory(null)
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithmFactory(null)
+                                .MustVerifySignature()
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid algorithm or algorithm factory");
@@ -105,12 +98,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(null)
-                               .WithValidator(null)
-                               .DoNotVerifySignature()
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(null)
+                                  .WithValidator(null)
+                                  .DoNotVerifySignature()
+                                  .Decode(TestData.Token);
 
             token.Should()
                  .NotBeNullOrEmpty("because the decoding process without validating signature must be successful without validator and algorithm");
@@ -119,12 +111,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_VerifySignature_And_Without_AlgorithmFactory_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithmFactory(null)
-                               .WithValidator(null)
-                               .DoNotVerifySignature()
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithmFactory(null)
+                                  .WithValidator(null)
+                                  .DoNotVerifySignature()
+                                  .Decode(TestData.Token);
 
             token.Should()
                  .NotBeNullOrEmpty("because the decoding process without validating signature must be successful without validator and algorithm factory");
@@ -133,24 +124,22 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_Token_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
+            Action action =
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.RS256Algorithm)
+                                .Decode(null);
 
-            Action decodingANullJwt =
-                () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .Decode(null);
-
-            decodingANullJwt.Should()
-                            .Throw<ArgumentException>("because null is not valid value for token");
+            action.Should()
+                   .Throw<ArgumentException>("because null is not valid value for token");
         }
 
         [TestMethod]
         public void Decode_Without_Serializer_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithSerializer(null)
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithSerializer(null)
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
@@ -159,26 +148,25 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_Serializer_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
             var serializer = new JsonNetSerializer();
 
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .WithSerializer(serializer)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .WithSerializer(serializer)
+                                  .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeNullOrEmpty("because token should be correctly decoded and its data extracted");
+                 .NotBeNullOrEmpty("because token should be correctly decoded and its data extracted");
         }
 
         [TestMethod]
         public void Decode_Without_UrlEncoder_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .WithUrlEncoder(null)
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.RS256Algorithm)
+                                .WithUrlEncoder(null)
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid UrlEncoder");
@@ -187,12 +175,12 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_UrlEncoder_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
             var urlEncoder = new JwtBase64UrlEncoder();
 
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .WithUrlEncoder(urlEncoder)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .WithUrlEncoder(urlEncoder)
+                                  .Decode(TestData.Token);
 
             token.Should()
                    .NotBeNullOrEmpty("because token should have been correctly decoded with the valid base64 encoder");
@@ -201,12 +189,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_TimeProvider_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .WithDateTimeProvider(null)
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.RS256Algorithm)
+                                .WithDateTimeProvider(null)
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid DateTimeProvider");
@@ -215,13 +202,13 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_DateTimeProvider_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
             var dateTimeProvider = new UtcDateTimeProvider();
 
 
-            var token = builder.WithDateTimeProvider(dateTimeProvider)
-                               .WithAlgorithm(TestData.RS256Algorithm)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithDateTimeProvider(dateTimeProvider)
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .Decode(TestData.Token);
 
             token.Should()
                    .NotBeNullOrEmpty("because the decoding process must be successful with valid DateTimeProvider");
@@ -230,11 +217,10 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_Validator_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .WithValidator(null)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .WithValidator(null)
+                                  .Decode(TestData.Token);
 
             token.Should()
                    .NotBeNullOrEmpty("because a JWT should not necessary have validator to be decoded");
@@ -243,14 +229,14 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_ExplicitValidator_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
             var validator = new JwtValidator(
                 new JsonNetSerializer(),
                 new UtcDateTimeProvider());
 
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .WithValidator(validator)
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .WithValidator(validator)
+                                  .Decode(TestData.Token);
 
             token.Should()
                    .NotBeNullOrEmpty("because a JWT should be correctly decoded, even with validator");
@@ -259,12 +245,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_Should_Return_Token_When_Algorithm_Is_Symmetric()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                               .WithSecret(TestData.Secret)
-                               .MustVerifySignature()
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secret)
+                                  .MustVerifySignature()
+                                  .Decode(TestData.Token);
 
             token.Should()
                    .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
@@ -273,11 +258,10 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_Should_Return_Token_When_Algorithm_Is_Asymmetric()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .MustVerifySignature()
-                               .Decode(TestData.TokenByAsymmetricAlgorithm);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .MustVerifySignature()
+                                  .Decode(TestData.TokenByAsymmetricAlgorithm);
 
             token.Should()
                  .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
@@ -286,12 +270,11 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_With_Multiple_Secrets_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                               .WithSecret(TestData.Secrets)
-                               .MustVerifySignature()
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secrets)
+                                  .MustVerifySignature()
+                                  .Decode(TestData.Token);
 
             token.Should()
                  .NotBeNullOrEmpty("because one of the provided signatures must have been verified successfully and the JWT correctly decoded");
@@ -300,13 +283,12 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_With_Multiple_String_Secrets_Empty_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                             .WithSecret(new string[0])
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .WithSecret(new string[0])
+                                .MustVerifySignature()
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<ArgumentOutOfRangeException>("because secret can't be empty");
@@ -315,13 +297,12 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_With_Multiple_Byte_Secrets_Empty_All_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                             .WithSecret(new byte[0])
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .WithSecret(new byte[0])
+                                .MustVerifySignature()
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<ArgumentOutOfRangeException>("because secrets can't be empty");
@@ -330,13 +311,12 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_With_VerifySignature_With_Byte_Multiple_Secrets_Empty_One_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                             .WithSecret(new byte[0], new byte[1])
-                             .MustVerifySignature()
-                             .Decode(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                .WithSecret(new byte[0], new byte[1])
+                                .MustVerifySignature()
+                                .Decode(TestData.Token);
 
             action.Should()
                   .Throw<ArgumentOutOfRangeException>("because secrets can't be empty");
@@ -345,40 +325,37 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Without_VerifySignature_Should_Return_Token()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .DoNotVerifySignature()
-                               .Decode(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .DoNotVerifySignature()
+                                  .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeNullOrEmpty("because token should have been decoded without errors");
+                 .NotBeNullOrEmpty("because token should have been decoded without errors");
         }
 
         [TestMethod]
         public void Decode_To_Dictionary_Should_Return_Dictionary_When_Algorithm_Is_Symmetric()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                               .WithSecret(TestData.Secret)
-                               .MustVerifySignature()
-                               .Decode<Dictionary<string, object>>(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secret)
+                                  .MustVerifySignature()
+                                  .Decode<Dictionary<string, object>>(TestData.Token);
 
             token.Should()
-                   .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
-                   .And.Contain("FirstName", "Jesus")
-                   .And.Contain("Age", 33);
+                 .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
+                 .And.Contain("FirstName", "Jesus")
+                 .And.Contain("Age", 33);
         }
 
         [TestMethod]
         public void Decode_To_Dictionary_Should_Return_Dictionary_When_Algorithm_Is_Asymmetric()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.RS256Algorithm)
-                               .MustVerifySignature()
-                               .Decode<Dictionary<string, object>>(TestData.TokenByAsymmetricAlgorithm);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.RS256Algorithm)
+                                  .MustVerifySignature()
+                                  .Decode<Dictionary<string, object>>(TestData.TokenByAsymmetricAlgorithm);
 
             token.Should()
                  .HaveCount(4, "because there are so many encoded claims that should be resulting in so many keys")
@@ -391,28 +368,26 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_ToDictionary_With_Multiple_Secrets_Should_Return_Dictionary()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                               .WithSecret(TestData.Secrets)
-                               .MustVerifySignature()
-                               .Decode<Dictionary<string, object>>(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secrets)
+                                  .MustVerifySignature()
+                                  .Decode<Dictionary<string, object>>(TestData.Token);
 
             token.Should()
-                   .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
-                   .And.Contain("FirstName", "Jesus")
-                   .And.Contain("Age", 33);
+                 .HaveCount(2, "because there is two encoded claims that should be resulting in two keys")
+                 .And.Contain("FirstName", "Jesus")
+                 .And.Contain("Age", 33);
         }
 
         [TestMethod]
         public void Decode_ToObject_With_Multiple_Secrets_Should_Return_Object()
         {
-            var builder = new JwtBuilder();
-
-            var token = builder.WithAlgorithm(TestData.HMACSHA256Algorithm)
-                               .WithSecret(TestData.Secrets)
-                               .MustVerifySignature()
-                               .Decode<Customer>(TestData.Token);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secrets)
+                                  .MustVerifySignature()
+                                  .Decode<Customer>(TestData.Token);
 
             token.FirstName.Should().Be("Jesus");
             token.Age.Should().Be(33);
@@ -421,14 +396,13 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_ToDictionary_Without_Serializer_Should_Throw_Exception()
         {
-            var builder = new JwtBuilder();
-
             Action action =
-                () => builder.WithAlgorithm(TestData.RS256Algorithm)
-                             .WithSerializer(null)
-                             .WithSecret(TestData.Secret)
-                             .MustVerifySignature()
-                             .Decode<Dictionary<string, string>>(TestData.Token);
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(TestData.RS256Algorithm)
+                                .WithSerializer(null)
+                                .WithSecret(TestData.Secret)
+                                .MustVerifySignature()
+                                .Decode<Dictionary<string, string>>(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
