@@ -70,7 +70,7 @@ namespace JWT.Algorithms
 #if NET35 || NET40
             ((RSACryptoServiceProvider)_privateKey).SignData(bytesToSign, this.HashAlgorithmName);
 #else
-            _privateKey.SignData(bytesToSign, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
+            _privateKey.SignData(bytesToSign, this.HashAlgorithmName.Name, RSASignaturePadding.Pkcs1);
 #endif
 
         /// <inheritdoc />
@@ -78,7 +78,7 @@ namespace JWT.Algorithms
 #if NET35 || NET40
             ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, this.HashAlgorithmName, signature);
 #else
-            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
+            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName.Name, RSASignaturePadding.Pkcs1);
 #endif
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
