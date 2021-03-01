@@ -178,7 +178,7 @@ namespace JWT
             ExpireValidator = DefaultExpireValidator;
             IssuedAtValidator = DefaultIssuedAtValidator;
             NotBeforeValidator = DefaultNotBeforeValidator;
-            IssuerValidator = SubjectValidator = (_, _) => null;
+            IssuerValidator = SubjectValidator = (a, b) => null;
             //AudienceValidator = (_, _) => null;
         }
     }

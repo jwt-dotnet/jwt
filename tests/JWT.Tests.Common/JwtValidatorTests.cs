@@ -152,7 +152,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtClaimValidation = new JwtClaimValidation();
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
@@ -244,7 +244,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, ExpireMustExist = true, NotBeforeMustExist = false};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
@@ -274,7 +274,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtClaimValidation = new JwtClaimValidation {ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtClaimValidation = new JwtClaimValidation {NotBeforeMustExist = true};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
@@ -336,7 +336,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, ExpireMustExist = true, NotBeforeMustExist = true};
+            var jwtClaimValidation = new JwtClaimValidation {TimeMargin = 1, NotBeforeMustExist = true};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, jwtClaimValidation);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
