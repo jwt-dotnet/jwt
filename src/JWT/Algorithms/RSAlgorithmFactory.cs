@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace JWT.Algorithms
 {
     /// <inheritdoc />
-    public sealed class RSAlgorithmFactory : HMACSHAAlgorithmFactory
+    public sealed class RSAlgorithmFactory : JwtAlgorithmFactory
     {
         private readonly Func<X509Certificate2> _certFactory;
         private readonly RSA _publicKey;
