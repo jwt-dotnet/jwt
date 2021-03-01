@@ -9,6 +9,11 @@ namespace JWT
     public interface IJwtValidator
     {
         /// <summary>
+        /// Get claim validation information
+        /// </summary>
+        JwtClaimValidation ClaimValidation { get; }
+
+        /// <summary>
         /// Given the JWT, verifies its signature correctness.
         /// </summary>
         /// <param name="decodedPayload">>An arbitrary payload (already serialized to JSON)</param>

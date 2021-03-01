@@ -388,7 +388,7 @@ namespace JWT.Tests
 
             action.Should()
                   .Throw<SignatureVerificationException>()
-                  .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
+                  .WithMessage("Claim 'exp' must have a value.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
         [TestMethod]
@@ -410,7 +410,7 @@ namespace JWT.Tests
 
             action.Should()
                   .Throw<SignatureVerificationException>()
-                  .WithMessage("Claim 'exp' must be a number.", "because the invalid 'exp' must result in an exception on decoding");
+                  .WithMessage("Claim 'exp' must have a value.", "because the invalid 'exp' must result in an exception on decoding");
         }
 
         [TestMethod]
@@ -527,7 +527,7 @@ namespace JWT.Tests
 
             action.Should()
                   .Throw<SignatureVerificationException>()
-                  .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
+                  .WithMessage("Claim 'nbf' must have a value.", "because the invalid 'nbf' must result in an exception on decoding");
         }
     }
 }
