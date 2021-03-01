@@ -25,7 +25,7 @@ steps:
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: DotNetCoreCLI@2
-  displayName: Restore NuGet packages for .NET Core
+  displayName: 'Restore NuGet packages for .NET Core'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
@@ -34,20 +34,20 @@ steps:
   displayName: 'Install NuGet'
 
 - task: NuGetCommand@2
-  displayName: Restore NuGet packages for .NET Framework
+  displayName: 'Restore NuGet packages for .NET Framework'
   inputs:
     command: 'restore'
     restoreSolution: $(solution)
 
 - task: DotNetCoreCLI@2
-  displayName: Build solution
+  displayName: 'Build solution'
   inputs:
     command: 'build'
     projects: '$(solution)'
     arguments: '-c $(buildConfiguration) --no-restore'
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Core tests
+  displayName: 'Run .NET Core tests'
   inputs:
     command: 'test'
     projects: 'tests/JWT.Tests.Core*/*.csproj'
@@ -58,7 +58,7 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: Run .NET Framework tests
+  displayName: 'Run .NET Framework tests'
   inputs:
     command: 'test'
     projects: 'tests/JWT.Tests.Net*/*.csproj'
@@ -69,7 +69,7 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: Package NuGet package
+  displayName: 'Create NuGet package'
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'
@@ -77,4 +77,4 @@ steps:
     nobuild: true
 
 - task: PublishBuildArtifacts@1
-  displayName: Publish build artifacts
+  displayName: 'Publish build artifacts'
