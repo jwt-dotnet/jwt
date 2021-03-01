@@ -7,12 +7,11 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public sealed class ECDSAAlgorithmFactory : HMACSHAAlgorithmFactory
     {
+#if NETSTANDARD2_0
         private readonly Func<X509Certificate2> _certFactory;
 
-#if NETSTANDARD2_0
         private readonly ECDsa _publicKey;
         private readonly ECDsa _privateKey;
-#endif
 
         /// <summary>
         /// Creates an instance of the <see cref="ECDSAAlgorithmFactory" /> class using the provided <see cref="X509Certificate2" />.
@@ -23,7 +22,6 @@ namespace JWT.Algorithms
             _certFactory = certFactory ?? throw new ArgumentNullException(nameof(certFactory));
         }
 
-#if NETSTANDARD2_0
         /// <summary>
         /// Creates an instance of <see cref="ECDSAAlgorithmFactory"/> using the provided public key only.
         /// </summary>
