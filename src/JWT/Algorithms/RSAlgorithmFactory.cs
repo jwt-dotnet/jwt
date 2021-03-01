@@ -15,19 +15,15 @@ namespace JWT.Algorithms
         /// Creates an instance of the <see cref="RSAlgorithmFactory" /> class using the provided <see cref="X509Certificate2" />.
         /// </summary>
         /// <param name="certFactory">Func that returns <see cref="X509Certificate2" /> which will be used to instantiate <see cref="RS256Algorithm" /></param>
-        public RSAlgorithmFactory(Func<X509Certificate2> certFactory)
-        {
+        public RSAlgorithmFactory(Func<X509Certificate2> certFactory) =>
             _certFactory = certFactory ?? throw new ArgumentNullException(nameof(certFactory));
-        }
 
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided public key only.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
-        public RSAlgorithmFactory(RSA publicKey)
-        {
+        public RSAlgorithmFactory(RSA publicKey) =>
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
-        }
 
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithmFactory"/> using the provided pair of public and private keys.
@@ -35,10 +31,8 @@ namespace JWT.Algorithms
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
         public RSAlgorithmFactory(RSA publicKey, RSA privateKey)
-            : this(publicKey)
-        {
+            : this(publicKey) =>
             _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
-        }
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
