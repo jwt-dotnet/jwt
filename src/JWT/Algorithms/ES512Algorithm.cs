@@ -43,7 +43,8 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public override string Name => JwtAlgorithmName.ES512.ToString();
 
-        protected override HashAlgorithmName HashAlgorithmInternal => HashAlgorithmName.SHA512;
+        /// <inheritdoc />
+        public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA512;
     }
 }
 #endif
