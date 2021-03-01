@@ -5,23 +5,14 @@ namespace JWT.Algorithms
     /// <summary>
     /// HMAC using SHA-384
     /// </summary>
-    public sealed class HMACSHA384Algorithm : IJwtAlgorithm
+    public sealed class HMACSHA384Algorithm : HMACSHAAlgorithm
     {
         /// <inheritdoc />
-        public byte[] Sign(byte[] key, byte[] bytesToSign)
-        {
-            using var sha = new HMACSHA384(key);
-            return sha.ComputeHash(bytesToSign);
-        }
+        public override string Name => JwtAlgorithmName.HS384.ToString();
 
         /// <inheritdoc />
-        public string Name => JwtAlgorithmName.HS384.ToString();
+        public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA384;
 
-        public string HashAlgorithm =>
-#if NET35 || NET40
-            HashAlgorithmName.SHA384;
-#else
-            HashAlgorithmName.SHA384.Name;
-#endif
+        protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA512(key);
     }
 }
