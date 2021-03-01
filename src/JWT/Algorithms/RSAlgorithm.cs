@@ -49,20 +49,8 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public abstract string Name { get; }
 
-        public string HashAlgorithm =>
-#if NET35 || NET40
-            HashAlgorithmInternal;
-#else
-            HashAlgorithmInternal.Name;
-#endif
-
-        protected abstract
-#if NET35 || NET40
-        string
-#else
-        HashAlgorithmName
-#endif
-        HashAlgorithmInternal { get; }
+        /// <inheritdoc />
+        public abstract HashAlgorithmName HashAlgorithmName { get; }
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
@@ -80,17 +68,17 @@ namespace JWT.Algorithms
         /// <returns>The signed bytes.</returns>
         public byte[] Sign(byte[] bytesToSign) =>
 #if NET35 || NET40
-            ((RSACryptoServiceProvider)_privateKey).SignData(bytesToSign, this.HashAlgorithmInternal);
+            ((RSACryptoServiceProvider)_privateKey).SignData(bytesToSign, this.HashAlgorithmName.Name);
 #else
-            _privateKey.SignData(bytesToSign, HashAlgorithmInternal, RSASignaturePadding.Pkcs1);
+            _privateKey.SignData(bytesToSign, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
 #endif
 
         /// <inheritdoc />
         public bool Verify(byte[] bytesToSign, byte[] signature) =>
 #if NET35 || NET40
-            ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, this.HashAlgorithmInternal, signature);
+            ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, this.HashAlgorithmName.Name, signature);
 #else
-            _publicKey.VerifyData(bytesToSign, signature, HashAlgorithmInternal, RSASignaturePadding.Pkcs1);
+            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
 #endif
 
         private static RSA GetPrivateKey(X509Certificate2 cert)
