@@ -3,16 +3,9 @@
 namespace JWT.Algorithms
 {
     /// <inheritdoc />
-    public class HMACSHAAlgorithmFactory : IAlgorithmFactory
+    public class HMACSHAAlgorithmFactory : JwtAlgorithmFactory
     {
-        /// <inheritdoc />
-        public virtual IJwtAlgorithm Create(JwtDecoderContext context)
-        {
-            var algorithmName = (JwtAlgorithmName)Enum.Parse(typeof(JwtAlgorithmName), context.Header.Algorithm);
-            return Create(algorithmName);
-        }
-
-        protected virtual IJwtAlgorithm Create(JwtAlgorithmName algorithm)
+        protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
             switch (algorithm)
             {
