@@ -41,7 +41,8 @@ namespace JWT
                 new Dictionary<string, object>(2, StringComparer.OrdinalIgnoreCase) :
                 new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
             
-            header.TryAdd("typ", "JWT");
+            if (!header.ContainsKey("typ"))
+                header.Add("typ", "JWT");
             header.Add("alg", _algorithm.Name);
 
             var headerBytes = GetBytes(_jsonSerializer.Serialize(header));
