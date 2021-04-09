@@ -6,8 +6,10 @@ using JWT.Exceptions;
 
 #if NET35 || NET40
 using IReadOnlyPayloadDictionary = System.Collections.Generic.IDictionary<string, object>;
+using IReadOnlyList = System.Collections.Generic.IList<string>;
 #else
 using IReadOnlyPayloadDictionary = System.Collections.Generic.IReadOnlyDictionary<string, object>;
+using IReadOnlyList = System.Collections.Generic.IReadOnlyList<string>;
 #endif
 using static JWT.Internal.EncodingHelper;
 #if NET35
@@ -25,7 +27,6 @@ namespace JWT
     {
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly int _timeMargin;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
@@ -33,7 +34,8 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
-            : this(jsonSerializer, dateTimeProvider, 0)
+            : this(jsonSerializer, dateTimeProvider,
+                new JwtClaimValidation{TimeMarginInSeconds = 0, Validator = ClaimValidator})
         {
         }
 
@@ -44,11 +46,26 @@ namespace JWT
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
+            : this(jsonSerializer, dateTimeProvider,
+                new JwtClaimValidation{TimeMarginInSeconds = timeMargin, Validator = ClaimValidator})
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="claimValidation">claim validation information</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, JwtClaimValidation claimValidation)
         {
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
-            _timeMargin = timeMargin;
+            ClaimValidation = claimValidation ?? throw new ArgumentNullException(nameof(claimValidation));
         }
+
+        /// <inheritdoc />
+        public JwtClaimValidation ClaimValidation { get; }
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -123,8 +140,119 @@ namespace JWT
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
-            return ValidateExpClaim(payloadData, secondsSinceEpoch) ?? ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            return ValidateClaims(payloadData, secondsSinceEpoch);
         }
+
+                /// <summary>
+        /// initiate jwt claims validation.
+        /// </summary>
+        /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenExpiredException" />
+        private Exception ValidateClaims(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
+        {
+            if (ClaimValidation.Validator == null) return null;
+
+            var context = new JwtClaimValidationContext{Claims = payloadData, NowInSecondsSinceEpoch = secondsSinceEpoch};
+
+            foreach (var claim in new[] { "exp", "iat", "nbf", "iss", "sub", "aud" })
+            {
+                var ex = GetClaimValue(claim, out var value);
+
+                if (ex != null) return ex;
+                if (value == null) continue;
+
+                switch (claim)
+                {
+                    case "exp":
+                        ex = GetNumber(claim, value, out var num);
+                        if (ex != null) return ex;
+                        context.Expire = num;
+                        break;
+
+                    case "iat":
+                        ex = GetNumber(claim, value, out num);
+                        if (ex != null) return ex;
+                        context.IssuedAt = num;
+                        break;
+
+                    case "nbf":
+                        ex = GetNumber(claim, value, out num);
+                        if (ex != null) return ex;
+                        context.NotBefore = num;
+                        break;
+
+                    case "iss":
+                        ex = GetString(claim, value, out var str);
+                        if (ex != null) return ex;
+                        context.Issuer = str;
+                        break;
+
+                    case "sub":
+                        ex = GetString(claim, value, out str);
+                        if (ex != null) return ex;
+                        context.Subject = str;
+                        break;
+
+                    case "aud":
+                        ex = GetList(claim, value, out var list);
+                        if (ex != null) return ex;
+                        context.Audiences = list;
+                        break;
+                }
+            }
+
+            return ClaimValidation.Validator(context, ClaimValidation.TimeMarginInSeconds);
+
+            Exception GetClaimValue(string claimName, out object claimValue)
+            {
+                if (!payloadData.TryGetValue(claimName, out claimValue))
+                    return null;
+
+                return claimValue is null ? new SignatureVerificationException($"Claim '{claimName}' must have a value.") : null;
+            }
+
+            Exception GetNumber(string claimName, object value, out double result)
+            {
+                try
+                {
+                    result = Convert.ToDouble(value);
+                    return null;
+                }
+                catch
+                {
+                    result = 0;
+                    return new SignatureVerificationException($"Claim '{claimName}' must be a number.");
+                }
+            }
+
+            Exception GetString(string claimName, object value, out string result)
+            {
+                result = value as string;
+
+                return result == null ? new SignatureVerificationException($"Claim '{claimName}' must be a string.") : null;
+            }
+
+            Exception GetList(string claimName, object value, out IReadOnlyList result)
+            {
+                var str = value as string;
+
+                if (str == null)
+                {
+                    result = null;
+                    return new SignatureVerificationException($"Claim '{claimName}' must be a string or a string array.");
+                }
+
+                if (!str.Trim().StartsWith("["))
+                {
+                    result = new[] {str};
+                    return null;
+                }
+
+                result = _jsonSerializer.Deserialize<List<string>>(str);
+                return null;
+            }
+        }
+
 
         private static bool AreAllDecodedSignaturesNullOrWhiteSpace(IEnumerable<string> decodedSignatures) =>
             decodedSignatures.All(sgn => IsNullOrWhiteSpace(sgn));
@@ -150,71 +278,9 @@ namespace JWT
             return result == 0;
         }
 
-        /// <summary>
-        /// Verifies the 'exp' claim.
-        /// </summary>
-        /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.4</remarks>
-        /// <exception cref="SignatureVerificationException" />
-        /// <exception cref="TokenExpiredException" />
-        private Exception ValidateExpClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
+        private static Exception ClaimValidator(JwtClaimValidationContext context, int timeMargin)
         {
-            if (!payloadData.TryGetValue("exp", out var expObj))
-                return null;
-
-            if (expObj is null)
-                return new SignatureVerificationException("Claim 'exp' must be a number.");
-
-            double expValue;
-            try
-            {
-                expValue = Convert.ToDouble(expObj);
-            }
-            catch
-            {
-                return new SignatureVerificationException("Claim 'exp' must be a number.");
-            }
-
-            if (secondsSinceEpoch - _timeMargin >= expValue)
-            {
-                return new TokenExpiredException("Token has expired.")
-                {
-                    Expiration = UnixEpoch.Value.AddSeconds(expValue),
-                    PayloadData = payloadData
-                };
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Verifies the 'nbf' claim.
-        /// </summary>
-        /// <remarks>See https://tools.ietf.org/html/rfc7515#section-4.1.5</remarks>
-        /// <exception cref="SignatureVerificationException" />
-        private Exception ValidateNbfClaim(IReadOnlyPayloadDictionary payloadData, double secondsSinceEpoch)
-        {
-            if (!payloadData.TryGetValue("nbf", out var nbfObj))
-                return null;
-
-            if (nbfObj is null)
-                return new SignatureVerificationException("Claim 'nbf' must be a number.");
-
-            double nbfValue;
-            try
-            {
-                nbfValue = Convert.ToDouble(nbfObj);
-            }
-            catch
-            {
-                return new SignatureVerificationException("Claim 'nbf' must be a number.");
-            }
-
-            if (secondsSinceEpoch + _timeMargin < nbfValue)
-            {
-                return new SignatureVerificationException("Token is not yet valid.");
-            }
-
-            return null;
+            return context.ValidateExpireClaim(timeMargin) ?? context.ValidateNotBeforeClaim(timeMargin);
         }
     }
 }
