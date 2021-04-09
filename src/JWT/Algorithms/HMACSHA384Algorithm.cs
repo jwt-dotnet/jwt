@@ -13,6 +13,6 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA384;
 
-        protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA512(key);
+        protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA384(key);
     }
 }
