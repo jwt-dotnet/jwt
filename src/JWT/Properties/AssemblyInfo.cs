@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("JWT.Tests.Net35, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net40, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net46, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Tests.Net50, PublicKey=" + AssemblyInfo.PublicKey)]
 
 internal static class AssemblyInfo
 {
