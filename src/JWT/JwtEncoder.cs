@@ -18,8 +18,8 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtEncoder" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="algorithm">The Jwt Algorithm</param>
+        /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="urlEncoder">The Base64 URL Encoder</param>
         public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
@@ -40,7 +40,7 @@ namespace JWT
             var header = extraHeaders is null ?
                 new Dictionary<string, object>(2, StringComparer.OrdinalIgnoreCase) :
                 new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
-            
+
             if (!header.ContainsKey("typ"))
                 header.Add("typ", "JWT");
             header.Add("alg", _algorithm.Name);

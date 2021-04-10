@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JWT.Exceptions;
+using JWT.Internal;
 
 namespace JWT.Builder
 {
@@ -43,8 +44,8 @@ namespace JWT.Builder
         /// <param name="token">The JWT token</param>
         public JwtData(string token)
         {
-            var partsOfToken = token.Split('.');
-            if (partsOfToken.Length != 3)
+            var partsOfTokenCount = token.Count('.');
+            if (partsOfTokenCount != 3)
                 throw new InvalidTokenPartsException(nameof(token));
         }
 

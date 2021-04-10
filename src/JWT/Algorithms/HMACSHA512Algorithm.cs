@@ -8,7 +8,7 @@ namespace JWT.Algorithms
     public sealed class HMACSHA512Algorithm : HMACSHAAlgorithm
     {
         /// <inheritdoc />
-        public override string Name => JwtAlgorithmName.HS512.ToString();
+        public override string Name => nameof(JwtAlgorithmName.HS512);
 
         /// <inheritdoc />
         public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA512;

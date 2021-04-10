@@ -1,4 +1,5 @@
 using System;
+using JWT.Internal;
 
 #if NET35
 using static JWT.Compatibility.String;
@@ -24,7 +25,7 @@ namespace JWT
                 throw new ArgumentOutOfRangeException(nameof(input));
 
             var output = Convert.ToBase64String(input);
-            output = output.Split('=')[0]; // Remove any trailing '='s
+            output = output.FirstSegment('='); // Remove any trailing '='s
             output = output.Replace('+', '-'); // 62nd char of encoding
             output = output.Replace('/', '_'); // 63rd char of encoding
             return output;

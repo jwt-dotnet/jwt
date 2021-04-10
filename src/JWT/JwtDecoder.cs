@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -241,7 +240,7 @@ namespace JWT
             var header = DecodeHeader<JwtHeader>(jwt);
             var alg = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
 
-            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var bytesToSign = GetBytes(jwt.Header, (byte)'.', jwt.Payload);
 
             if (alg is IAsymmetricAlgorithm asymmAlg)
             {
@@ -253,23 +252,22 @@ namespace JWT
                 var rawSignature = Convert.ToBase64String(decodedSignature);
 
                 // the signatures re-created by the algorithm, with the leading =
-                var recreatedSignatures = keys.Select(key => alg.Sign(key, bytesToSign))
-                                              .Select(sd => Convert.ToBase64String(sd))
+                var recreatedSignatures = keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign)))
                                               .ToArray();
 
                 _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
             }
         }
 
-        private static bool AllKeysHaveValues(ICollection<byte[]> keys)
+        private static bool AllKeysHaveValues(byte[][] keys)
         {
             if (keys is null)
                 return true;
 
-            if (keys.Count == 0)
+            if (keys.Length == 0)
                 return false;
 
-            return keys.All(key => key.Any());
+            return Array.TrueForAll(keys, key => key.Length > 0);
         }
     }
 }

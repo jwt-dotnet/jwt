@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 
 namespace JWT.Exceptions
 {
     /// <summary>
-    /// Represents an exception thrown when when a token doesn't consist of 3 delimited by dot parts.
+    /// Represents an exception thrown when a token doesn't consist of 3 delimited by dot parts.
     /// </summary>
     public class InvalidTokenPartsException : ArgumentOutOfRangeException
     {

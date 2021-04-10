@@ -1,4 +1,4 @@
-﻿#if NET35
+#if NET35
 namespace JWT.Compatibility
 {
     internal static class String
@@ -9,7 +9,8 @@ namespace JWT.Compatibility
             {
                 foreach (var ch in value)
                 {
-                    if (!char.IsWhiteSpace(ch)) return false;
+                    if (!char.IsWhiteSpace(ch))
+                        return false;
                 }
             }
             return true;
