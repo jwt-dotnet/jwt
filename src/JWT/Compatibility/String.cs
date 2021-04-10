@@ -13,7 +13,7 @@ namespace JWT.Compatibility
         {
             return value.IndexOf(ch.ToString(), comparisonType);
         }
-#end
+#endif
   
 #if NET35
         public static bool IsNullOrWhiteSpace(string value)
