@@ -27,6 +27,6 @@ namespace JWT.Compatibility
             }
             return true;
         }
-    }
 #endif
+    }
 }
