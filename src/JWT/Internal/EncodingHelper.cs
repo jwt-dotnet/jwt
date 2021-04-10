@@ -1,4 +1,8 @@
-﻿using System.Text;
+using System.Text;
+
+#if !NETSTANDARD
+using JWT.Compatibility;
+#endif
 
 namespace JWT.Internal
 {
@@ -6,10 +10,10 @@ namespace JWT.Internal
     {
         private static readonly UTF8Encoding utf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
-        internal static byte[] GetBytes(string input) =>
+        public static byte[] GetBytes(string input) =>
             utf8Encoding.GetBytes(input);
 
-        internal static byte[] GetBytes(string input1, byte separator, string input2)
+        public static byte[] GetBytes(string input1, byte separator, string input2)
         {
             byte[] output = new byte[utf8Encoding.GetByteCount(input1) + utf8Encoding.GetByteCount(input2) + 1];
             int bytesWritten = utf8Encoding.GetBytes(input1, 0, input1.Length, output, 0);
@@ -18,7 +22,7 @@ namespace JWT.Internal
             return output;
         }
 
-        internal static byte[][] GetBytes(string[] input)
+        public static byte[][] GetBytes(string[] input)
         {
             byte[][] results = new byte[input.Length][];
             for (int i = 0; i < input.Length; i++)
@@ -28,7 +32,7 @@ namespace JWT.Internal
             return results;
         }
 
-        internal static string GetString(byte[] bytes) =>
+        public static string GetString(byte[] bytes) =>
             utf8Encoding.GetString(bytes);
     }
 }
