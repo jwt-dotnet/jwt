@@ -1,8 +1,16 @@
-﻿#if NET35
+#if NET35
+using System;
+
 namespace JWT.Compatibility
 {
     internal static class String
     {
+        public int IndexOf(string value, char ch, StringComparison comparisonType)
+        {
+            // ignores comparisonType since the overload is missing in .NET 3.5
+            return value.IndexOf(ch);
+        }
+    
         public static bool IsNullOrWhiteSpace(string value)
         {
             if (!string.IsNullOrEmpty(value))
