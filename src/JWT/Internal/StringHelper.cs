@@ -1,6 +1,6 @@
 using System;
 
-#if !NETSTANDARD
+#if !NETSTANDARD2_0
 using JWT.Compatibility;
 #endif
 
