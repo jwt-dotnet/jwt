@@ -1,16 +1,12 @@
 using System;
 
-#if !NETSTANDARD2_0
-using JWT.Compatibility;
-#endif
-
 namespace JWT.Internal
 {
     internal static class StringHelper
     {
         public static string FirstSegment(this string input, char separator)
         {
-            var idx = input.IndexOf(separator, StringComparison.OrdinalIgnoreCase);
+            var idx = input.IndexOf(separator);
             return idx != -1 ? input.Substring(0, idx): input;
         }
 
