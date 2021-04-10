@@ -4,7 +4,7 @@ namespace JWT.Compatibility
 {
     internal static class String
     {
-#if !NETSTANDARD
+#if !NETSTANDARD2_0
         /// <remarks>
         /// The overload accpting char is missing outside .NET Standard.
         /// See https://docs.microsoft.com/en-us/dotnet/api/system.string.indexof?view=netstandard-2.0#System_String_IndexOf_System_String_System_StringComparison_
