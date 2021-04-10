@@ -41,7 +41,7 @@ namespace JWT.Algorithms
         }
 
         /// <inheritdoc />
-        public override string Name => JwtAlgorithmName.ES384.ToString();
+        public override string Name => nameof(JwtAlgorithmName.ES384);
 
         /// <inheritdoc />
         public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA384;
