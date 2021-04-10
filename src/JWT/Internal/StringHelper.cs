@@ -1,5 +1,9 @@
 using System;
 
+#if !NETSTANDARD
+using JWT.Compatibility;
+#endif
+
 namespace JWT.Internal
 {
     internal static class StringHelper
