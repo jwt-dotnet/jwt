@@ -24,9 +24,9 @@ namespace JWT.Builder
         {
             var valueString = value.ToString();
             return value.GetType()
-                .GetField(valueString)
-                .GetCustomAttribute<DescriptionAttribute>()
-                ?.Description ?? valueString;
+                        .GetField(valueString)
+                        .GetCustomAttribute<DescriptionAttribute>()
+                       ?.Description ?? valueString;
         }
     }
 }
