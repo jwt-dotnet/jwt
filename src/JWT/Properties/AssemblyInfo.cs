@@ -1,11 +1,12 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("JWT.Tests.Common, PublicKey=" + AssemblyInfo.PublicKey)]
-[assembly: InternalsVisibleTo("JWT.Tests.Core2, PublicKey=" + AssemblyInfo.PublicKey)]
-[assembly: InternalsVisibleTo("JWT.Tests.Core3, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Tests.NetCore2, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Tests.NetCore3, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net35, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net40, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net46, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Tests.Net50, PublicKey=" + AssemblyInfo.PublicKey)]
 
 internal static class AssemblyInfo
 {

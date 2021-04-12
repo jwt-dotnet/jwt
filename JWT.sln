@@ -32,15 +32,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin.Tests", "tests\JWT.Extensions.Owin.Tests\JWT.Extensions.Owin.Tests.csproj", "{4B65AB99-C173-4B8E-B535-95008F4B4328}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Core2", "tests\JWT.Tests.Core2\JWT.Tests.Core2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore2", "tests\JWT.Tests.NetCore2\JWT.Tests.NetCore2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Core3", "tests\JWT.Tests.Core3\JWT.Tests.Core3.csproj", "{559F1CBB-DB9C-4149-BEAC-417DA1BBB162}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore3", "tests\JWT.Tests.NetCore3\JWT.Tests.NetCore3.csproj", "{559F1CBB-DB9C-4149-BEAC-417DA1BBB162}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net35", "tests\JWT.Tests.Net35\JWT.Tests.Net35.csproj", "{30D3D291-2C79-4CDD-94D3-C834A4995149}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net40", "tests\JWT.Tests.Net40\JWT.Tests.Net40.csproj", "{53CA6EF4-9C1E-4BDB-9829-CCD5C581DC00}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net46", "tests\JWT.Tests.Net46\JWT.Tests.Net46.csproj", "{78D9FDC0-9CFB-447B-B373-D43EB8122D10}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net50", "tests\JWT.Tests.Net50\JWT.Tests.Net50.csproj", "{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,10 @@ Global
 		{78D9FDC0-9CFB-447B-B373-D43EB8122D10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{78D9FDC0-9CFB-447B-B373-D43EB8122D10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78D9FDC0-9CFB-447B-B373-D43EB8122D10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
