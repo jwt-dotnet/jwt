@@ -1,4 +1,4 @@
-#if !(NET35 || NET40 || NET46)
+#if NETSTANDARD2_0 || NET50
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -88,5 +88,4 @@ namespace JWT.Tests.Algorithms
         }
     }
 }
-
 #endif
