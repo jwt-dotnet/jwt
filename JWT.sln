@@ -32,9 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin.Tests", "tests\JWT.Extensions.Owin.Tests\JWT.Extensions.Owin.Tests.csproj", "{4B65AB99-C173-4B8E-B535-95008F4B4328}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Core2", "tests\JWT.Tests.Core2\JWT.Tests.Core2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore2", "tests\JWT.Tests.NetCore2\JWT.Tests.NetCore2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Core3", "tests\JWT.Tests.Core3\JWT.Tests.Core3.csproj", "{559F1CBB-DB9C-4149-BEAC-417DA1BBB162}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore3", "tests\JWT.Tests.NetCore3\JWT.Tests.NetCore3.csproj", "{559F1CBB-DB9C-4149-BEAC-417DA1BBB162}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net35", "tests\JWT.Tests.Net35\JWT.Tests.Net35.csproj", "{30D3D291-2C79-4CDD-94D3-C834A4995149}"
 EndProject
