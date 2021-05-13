@@ -70,7 +70,7 @@ namespace JWT.Algorithms
 #endif
         }
 
-#if NETSTANDARD2_0 || NET50
+#if NETSTANDARD2_0 || NET_50
         private IJwtAlgorithm CreateES256Algorithm()
         {
             if (_certFactory is object)
