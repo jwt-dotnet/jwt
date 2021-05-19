@@ -28,6 +28,7 @@ namespace JWT
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly int _timeMargin;
+        private readonly ValidationParameters _validationParameters;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
@@ -35,11 +36,13 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
-        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin = 0)
+        /// <param name="validationParameters">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin = 0, ValidationParameters validationParameters = null)
         {
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
             _timeMargin = timeMargin;
+            _validationParameters = validationParameters ?? new ValidationParameters();
         }
 
         /// <inheritdoc />
@@ -91,7 +94,7 @@ namespace JWT
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
                 return new ArgumentException(nameof(decodedSignatures));
 
-            if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
+            if (_validationParameters.ValidateIssuerSigningKey && !IsAnySignatureValid(decodedCrypto, decodedSignatures))
                 return new SignatureVerificationException(decodedCrypto, decodedSignatures);
 
             return GetValidationException(payloadJson);
@@ -99,7 +102,7 @@ namespace JWT
 
         private Exception GetValidationException(IAsymmetricAlgorithm alg, string payloadJson, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (!alg.Verify(bytesToSign, decodedSignature))
+            if (_validationParameters.ValidateIssuerSigningKey && !alg.Verify(bytesToSign, decodedSignature))
                 return new SignatureVerificationException("The signature is invalid according to the validation procedure.");
 
             return GetValidationException(payloadJson);
@@ -115,7 +118,19 @@ namespace JWT
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
-            return ValidateExpClaim(payloadData, secondsSinceEpoch) ?? ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            Exception exception = null;
+
+            if (_validationParameters.ValidateLifetime)
+            {
+                exception = ValidateExpClaim(payloadData, secondsSinceEpoch);
+            }
+
+            if (_validationParameters.ValidateIssuedTime)
+            {
+                exception ??= ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            }
+
+            return exception;
         }
 
         private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures) =>
