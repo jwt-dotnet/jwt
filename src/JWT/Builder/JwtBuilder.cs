@@ -27,13 +27,13 @@ namespace JWT.Builder
         private byte[][] _secrets;
         private ValidationParameters _validationParameters;
 
+        private bool RequiresValidation => _validationParameters?.RequiresValidation == true;
+
         /// <summary>
         /// Creates a new instance of instance <see cref="JwtBuilder" />
         /// </summary>
         public static JwtBuilder Create() =>
             new JwtBuilder();
-
-        private bool RequiresValidation => _validationParameters?.RequiresValidation == true;
 
         /// <summary>
         /// Add header to the JWT.
