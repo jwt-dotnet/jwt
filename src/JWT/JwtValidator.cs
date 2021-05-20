@@ -28,7 +28,7 @@ namespace JWT
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly int _timeMargin;
-        private readonly ValidationParameters _validationParameters;
+        private readonly ValidationParameters _valParams;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
@@ -42,7 +42,7 @@ namespace JWT
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
             _timeMargin = timeMargin;
-            _validationParameters = validationParameters ?? new ValidationParameters();
+            _valParams = validationParameters ?? new ValidationParameters();
         }
 
         /// <inheritdoc />
@@ -94,7 +94,7 @@ namespace JWT
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
                 return new ArgumentException(nameof(decodedSignatures));
 
-            if (_validationParameters.ValidateIssuerSigningKey && !IsAnySignatureValid(decodedCrypto, decodedSignatures))
+            if (_valParams.ValidateIssuerSigningKey && !IsAnySignatureValid(decodedCrypto, decodedSignatures))
                 return new SignatureVerificationException(decodedCrypto, decodedSignatures);
 
             return GetValidationException(payloadJson);
@@ -102,7 +102,7 @@ namespace JWT
 
         private Exception GetValidationException(IAsymmetricAlgorithm alg, string payloadJson, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (_validationParameters.ValidateIssuerSigningKey && !alg.Verify(bytesToSign, decodedSignature))
+            if (_valParams.ValidateIssuerSigningKey && !alg.Verify(bytesToSign, decodedSignature))
                 return new SignatureVerificationException("The signature is invalid according to the validation procedure.");
 
             return GetValidationException(payloadJson);
@@ -120,12 +120,12 @@ namespace JWT
 
             Exception exception = null;
 
-            if (_validationParameters.ValidateLifetime)
+            if (_valParams.ValidateLifetime)
             {
                 exception = ValidateExpClaim(payloadData, secondsSinceEpoch);
             }
 
-            if (_validationParameters.ValidateIssuedTime)
+            if (_valParams.ValidateIssuedTime)
             {
                 exception ??= ValidateNbfClaim(payloadData, secondsSinceEpoch);
             }

@@ -25,9 +25,9 @@ namespace JWT.Builder
         private IJwtAlgorithm _algorithm;
         private IAlgorithmFactory _algFactory;
         private byte[][] _secrets;
-        private ValidationParameters _validationParameters;
+        private ValidationParameters _valParams;
 
-        private bool RequiresValidation => _validationParameters?.RequiresValidation == true;
+        private bool RequiresValidation => _valParams?.RequiresValidation == true;
 
         /// <summary>
         /// Creates a new instance of instance <see cref="JwtBuilder" />
@@ -197,7 +197,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithVerifySignature(bool verify)
         {
-            _validationParameters = verify
+            _valParams = verify
                 ? new ValidationParameters()
                 : ValidationParameters.None;
 
@@ -211,7 +211,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithVerifySignature(ValidationParameters validationParameters)
         {
-            _validationParameters = validationParameters;
+            _valParams = validationParameters;
             return this;
         }
 
@@ -316,7 +316,7 @@ namespace JWT.Builder
             if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
-            _validator = new JwtValidator(_serializer, _dateTimeProvider, validationParameters: _validationParameters);
+            _validator = new JwtValidator(_serializer, _dateTimeProvider, validationParameters: _valParams);
         }
 
         private void EnsureCanEncode()
