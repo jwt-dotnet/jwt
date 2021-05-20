@@ -205,11 +205,11 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Instructs whether to verify the JWT signature.
+        /// Instructs whether to verify the JWT signature and what parts of the validation to perform.
         /// </summary>
         /// <param name="validationParameters">Parameters to be used for validation</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithVerifySignature(ValidationParameters validationParameters)
+        public JwtBuilder WithValidationParameters(ValidationParameters validationParameters)
         {
             _valParams = validationParameters;
             return this;
