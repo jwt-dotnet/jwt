@@ -35,9 +35,41 @@ namespace JWT
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
+            : this(jsonSerializer, dateTimeProvider, 0, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with validation parameters
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="validationParameters">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, ValidationParameters validationParameters)
+            : this(jsonSerializer, dateTimeProvider, 0, validationParameters)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
+            : this(jsonSerializer, dateTimeProvider, timeMargin, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin and validation parameters
+        /// </summary>
+        /// <param name="jsonSerializer">The Json Serializer</param>
+        /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         /// <param name="validationParameters">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
-        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin = 0, ValidationParameters validationParameters = null)
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin, ValidationParameters validationParameters)
         {
             _jsonSerializer = jsonSerializer;
             _dateTimeProvider = dateTimeProvider;
