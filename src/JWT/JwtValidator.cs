@@ -36,7 +36,7 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
-            : this(jsonSerializer, dateTimeProvider, 0, null)
+            : this(jsonSerializer, dateTimeProvider, 0, ValidationParameters)
         {
         }
 
@@ -58,7 +58,7 @@ namespace JWT
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
-            : this(jsonSerializer, dateTimeProvider, timeMargin, null)
+            : this(jsonSerializer, dateTimeProvider, timeMargin, ValidationParameters.Default)
         {
         }
 
@@ -71,10 +71,10 @@ namespace JWT
         /// <param name="validationParameters">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin, ValidationParameters valParams)
         {
-            _jsonSerializer = jsonSerializer;
-            _dateTimeProvider = dateTimeProvider;
+            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
             _timeMargin = timeMargin;
-            _valParams = valParams ?? new ValidationParameters();
+            _valParams = valParams ?? throw new ArgumentNullException(nameofvalParams());
         }
 
         /// <inheritdoc />
