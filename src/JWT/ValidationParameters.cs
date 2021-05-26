@@ -29,6 +29,10 @@
         /// Returns a <see cref="ValidationParameters"/> with all the validation parameters set to <see langword="false"/>.
         /// </summary>
         public static ValidationParameters None => new ValidationParameters
-            {ValidateIssuerSigningKey = false, ValidateLifetime = false, ValidateIssuedTime = false};
+        {
+            ValidateIssuerSigningKey = false,
+            ValidateLifetime = false,
+            ValidateIssuedTime = false
+        };
     }
 }
