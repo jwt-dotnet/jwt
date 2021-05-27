@@ -82,7 +82,7 @@ namespace JWT.Tests
 
             var validationParameters = new ValidationParameters {ValidateIssuerSigningKey = false};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                validationParameters: validationParameters);
+                valParams: validationParameters);
 
             jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
@@ -271,7 +271,7 @@ namespace JWT.Tests
 
             var validationParameters = new ValidationParameters {ValidateLifetime = false};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                validationParameters: validationParameters);
+                valParams: validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -392,7 +392,7 @@ namespace JWT.Tests
 
             var validationParameters = new ValidationParameters {ValidateIssuedTime = false};
             var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                validationParameters: validationParameters);
+                valParams: validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
