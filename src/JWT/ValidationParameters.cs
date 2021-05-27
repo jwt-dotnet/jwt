@@ -21,6 +21,11 @@
         public bool ValidateIssuedTime { get; set; }
 
         /// <summary>
+        /// Gets or sets an integer to control the time margin in seconds for exp and nbf during token validation.
+        /// </summary>
+        public int TimeMargin { get; set; }
+
+        /// <summary>
         /// A boolean that indicates if any of the <see cref="ValidationParameters" /> properties have been set to <see langword="true" />.
         /// </summary>
         public bool RequiresValidation => this.ValidateIssuerSigningKey || this.ValidateLifetime || this.ValidateIssuedTime;

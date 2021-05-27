@@ -27,7 +27,6 @@ namespace JWT
     {
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly int _timeMargin;
         private readonly ValidationParameters _valParams;
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
-            : this(jsonSerializer, dateTimeProvider, 0, ValidationParameters.Default)
+            : this(jsonSerializer, dateTimeProvider, ValidationParameters.Default)
         {
         }
 
@@ -47,8 +46,10 @@ namespace JWT
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="valParams">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, ValidationParameters valParams)
-            : this(jsonSerializer, dateTimeProvider, 0, valParams)
         {
+            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+            _valParams = valParams ?? throw new ArgumentNullException(nameof(valParams));
         }
 
         /// <summary>
@@ -57,6 +58,7 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
+        [Obsolete("The timeMargin parameter has been merged with the validation parameters. Please use the constructor without the time margin.")]
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
             : this(jsonSerializer, dateTimeProvider, timeMargin, ValidationParameters.Default)
         {
@@ -69,12 +71,11 @@ namespace JWT
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         /// <param name="valParams">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
+        [Obsolete("The timeMargin parameter has been merged with the validation parameters. Please use the constructor without the time margin.")]
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin, ValidationParameters valParams)
+            : this(jsonSerializer, dateTimeProvider, valParams)
         {
-            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
-            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
-            _timeMargin = timeMargin;
-            _valParams = valParams ?? throw new ArgumentNullException(nameof(valParams));
+            _valParams.TimeMargin = timeMargin;
         }
 
         /// <inheritdoc />
@@ -213,7 +214,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'exp' must be a number.");
             }
 
-            if (secondsSinceEpoch - _timeMargin >= expValue)
+            if (secondsSinceEpoch - _valParams.TimeMargin >= expValue)
             {
                 return new TokenExpiredException("Token has expired.")
                 {
@@ -248,7 +249,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'nbf' must be a number.");
             }
 
-            if (secondsSinceEpoch + _timeMargin < nbfValue)
+            if (secondsSinceEpoch + _valParams.TimeMargin < nbfValue)
             {
                 return new SignatureVerificationException("Token is not yet valid.");
             }
