@@ -34,7 +34,7 @@
             ValidateLifetime = false,
             ValidateIssuedTime = false
         };
-        
+
         /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all the validation parameters set to <see langword="true" />.
         /// </summary>
