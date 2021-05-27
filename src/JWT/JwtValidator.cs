@@ -36,7 +36,7 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
-            : this(jsonSerializer, dateTimeProvider, 0, ValidationParameters)
+            : this(jsonSerializer, dateTimeProvider, 0, ValidationParameters.Default)
         {
         }
 
