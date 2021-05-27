@@ -197,9 +197,9 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithVerifySignature(bool verify)
         {
-            _valParams = verify
-                ? ValidationParameters.Default
-                : ValidationParameters.None;
+            _valParams = verify ?
+                ValidationParameters.Default :
+                ValidationParameters.None;
 
             return this;
         }
@@ -207,11 +207,11 @@ namespace JWT.Builder
         /// <summary>
         /// Instructs whether to verify the JWT signature and what parts of the validation to perform.
         /// </summary>
-        /// <param name="validationParameters">Parameters to be used for validation</param>
+        /// <param name="valParams">Parameters to be used for validation</param>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithValidationParameters(ValidationParameters validationParameters)
+        public JwtBuilder WithValidationParameters(ValidationParameters valParams)
         {
-            _valParams = validationParameters;
+            _valParams = valParams;
             return this;
         }
 
@@ -236,9 +236,9 @@ namespace JWT.Builder
         {
             EnsureCanDecode();
 
-            return this.RequiresValidation
-                ? _decoder.Decode(token, _secrets, this.RequiresValidation)
-                : _decoder.Decode(token);
+            return this.RequiresValidation ?
+                _decoder.Decode(token, _secrets, this.RequiresValidation) :
+                _decoder.Decode(token);
         }
 
         /// <summary>
@@ -272,9 +272,9 @@ namespace JWT.Builder
         {
             EnsureCanDecode();
 
-            return this.RequiresValidation
-                ? _decoder.DecodeToObject<T>(token, _secrets, this.RequiresValidation)
-                : _decoder.DecodeToObject<T>(token);
+            return this.RequiresValidation ?
+                _decoder.DecodeToObject<T>(token, _secrets, this.RequiresValidation) :
+                _decoder.DecodeToObject<T>(token);
         }
 
         private void TryCreateEncoder()
