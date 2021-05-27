@@ -22,7 +22,9 @@ namespace JWT.Tests
         [DataRow("{}", TestData.Token, "")]
         public void Validate_Should_Throw_Exception_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            var jwtValidator = new JwtValidator(null, null);
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
             Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
@@ -118,7 +120,9 @@ namespace JWT.Tests
         [DataRow("{}", TestData.Token, "")]
         public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            var jwtValidator = new JwtValidator(null, null);
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
