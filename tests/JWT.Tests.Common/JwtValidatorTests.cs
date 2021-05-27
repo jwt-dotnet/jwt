@@ -14,6 +14,40 @@ namespace JWT.Tests
     [TestClass]
     public class JwtValidatorTests
     {
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_Serializer_Is_Null()
+        {
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            Action action =
+                () => _ = new JwtValidator(null, utcDateTimeProvider);
+
+            action.Should()
+                .Throw<ArgumentNullException>("because the serializer must not be null");
+        }
+
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_DateTimeProvider_Is_Null()
+        {
+            var jsonNetSerializer = new JsonNetSerializer();
+            Action action =
+                () => _ = new JwtValidator(jsonNetSerializer, null);
+
+            action.Should()
+                .Throw<ArgumentException>("because the DateTime provider must not be null");
+        }
+
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_ValidationParameters_Are_Null()
+        {
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            Action action =
+                () => _ = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, null);
+
+            action.Should()
+                .Throw<ArgumentException>("because the validation parameters must not be null");
+        }
+
         [DataTestMethod]
         [DataRow(null, null, null)]
         [DataRow("", null, null)]
