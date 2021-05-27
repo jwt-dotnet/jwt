@@ -198,7 +198,7 @@ namespace JWT.Builder
         public JwtBuilder WithVerifySignature(bool verify)
         {
             _valParams = verify
-                ? new ValidationParameters()
+                ? ValidationParameters.Default
                 : ValidationParameters.None;
 
             return this;
