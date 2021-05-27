@@ -316,7 +316,7 @@ namespace JWT.Builder
             if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
-            _validator = new JwtValidator(_serializer, _dateTimeProvider, valParams: _valParams ?? ValidationParameters.Default);
+            _validator = new JwtValidator(_serializer, _dateTimeProvider, _valParams ?? ValidationParameters.Default);
         }
 
         private void EnsureCanEncode()

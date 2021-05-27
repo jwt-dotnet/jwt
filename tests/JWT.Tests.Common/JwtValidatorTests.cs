@@ -81,8 +81,7 @@ namespace JWT.Tests
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var validationParameters = new ValidationParameters {ValidateIssuerSigningKey = false};
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                valParams: validationParameters);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
 
             jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
@@ -270,8 +269,7 @@ namespace JWT.Tests
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var validationParameters = new ValidationParameters {ValidateLifetime = false};
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                valParams: validationParameters);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -329,7 +327,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, 1);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -391,8 +389,7 @@ namespace JWT.Tests
             var decodedSignature = Convert.ToBase64String(signatureData);
 
             var validationParameters = new ValidationParameters {ValidateIssuedTime = false};
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider,
-                valParams: validationParameters);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -450,7 +447,7 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, 1);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
