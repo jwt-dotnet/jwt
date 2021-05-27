@@ -37,7 +37,8 @@
         {
             ValidateIssuerSigningKey = false,
             ValidateLifetime = false,
-            ValidateIssuedTime = false
+            ValidateIssuedTime = false,
+            TimeMargin = 0
         };
 
         /// <summary>
@@ -47,7 +48,8 @@
         {
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
-            ValidateIssuedTime = true
+            ValidateIssuedTime = true,
+            TimeMargin = 0
         };
     }
 }
