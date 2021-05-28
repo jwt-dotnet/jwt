@@ -52,32 +52,6 @@ namespace JWT
             _valParams = valParams ?? throw new ArgumentNullException(nameof(valParams));
         }
 
-        /// <summary>
-        /// Creates an instance of <see cref="JwtValidator" /> with time margin
-        /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="dateTimeProvider">The DateTime Provider</param>
-        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
-        [Obsolete("The timeMargin parameter has been merged with the validation parameters. Please use the constructor without the time margin.")]
-        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
-            : this(jsonSerializer, dateTimeProvider, timeMargin, ValidationParameters.Default)
-        {
-        }
-
-        /// <summary>
-        /// Creates an instance of <see cref="JwtValidator" /> with time margin and validation parameters
-        /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="dateTimeProvider">The DateTime Provider</param>
-        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
-        /// <param name="valParams">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
-        [Obsolete("The timeMargin parameter has been merged with the validation parameters. Please use the constructor without the time margin.")]
-        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin, ValidationParameters valParams)
-            : this(jsonSerializer, dateTimeProvider, valParams)
-        {
-            _valParams.TimeMargin = timeMargin;
-        }
-
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
         /// <exception cref="SignatureVerificationException" />
