@@ -25,7 +25,9 @@ namespace JWT.Builder
         private IJwtAlgorithm _algorithm;
         private IAlgorithmFactory _algFactory;
         private byte[][] _secrets;
-        private bool _verify;
+        private ValidationParameters _valParams;
+
+        private bool RequiresValidation => _valParams?.RequiresValidation == true;
 
         /// <summary>
         /// Creates a new instance of instance <see cref="JwtBuilder" />
@@ -195,7 +197,21 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithVerifySignature(bool verify)
         {
-            _verify = verify;
+            _valParams = verify ?
+                ValidationParameters.Default :
+                ValidationParameters.None;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Instructs whether to verify the JWT signature and what parts of the validation to perform.
+        /// </summary>
+        /// <param name="valParams">Parameters to be used for validation</param>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithValidationParameters(ValidationParameters valParams)
+        {
+            _valParams = valParams;
             return this;
         }
 
@@ -220,7 +236,9 @@ namespace JWT.Builder
         {
             EnsureCanDecode();
 
-            return _verify ? _decoder.Decode(token, _secrets, _verify) : _decoder.Decode(token);
+            return this.RequiresValidation ?
+                _decoder.Decode(token, _secrets, this.RequiresValidation) :
+                _decoder.Decode(token);
         }
 
         /// <summary>
@@ -254,7 +272,9 @@ namespace JWT.Builder
         {
             EnsureCanDecode();
 
-            return _verify ? _decoder.DecodeToObject<T>(token, _secrets, _verify) : _decoder.DecodeToObject<T>(token);
+            return this.RequiresValidation ?
+                _decoder.DecodeToObject<T>(token, _secrets, this.RequiresValidation) :
+                _decoder.DecodeToObject<T>(token);
         }
 
         private void TryCreateEncoder()
@@ -282,7 +302,7 @@ namespace JWT.Builder
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algorithm);
             else if (_algFactory is object)
                 _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algFactory);
-            else if (!_verify)
+            else if (!this.RequiresValidation)
                 _decoder = new JwtDecoder(_serializer, _urlEncoder);
         }
 
@@ -296,7 +316,7 @@ namespace JWT.Builder
             if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
-            _validator = new JwtValidator(_serializer, _dateTimeProvider);
+            _validator = new JwtValidator(_serializer, _dateTimeProvider, _valParams ?? ValidationParameters.Default);
         }
 
         private void EnsureCanEncode()
@@ -346,7 +366,7 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 return false;
 
-            if (_verify)
+            if (this.RequiresValidation)
                 return _validator is object && (_algorithm is object || _algFactory is object);
 
             return true;

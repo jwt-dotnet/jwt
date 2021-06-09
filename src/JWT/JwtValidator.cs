@@ -27,7 +27,7 @@ namespace JWT
     {
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly int _timeMargin;
+        private readonly ValidationParameters _valParams;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
@@ -35,21 +35,21 @@ namespace JWT
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
-            : this(jsonSerializer, dateTimeProvider, 0)
+            : this(jsonSerializer, dateTimeProvider, ValidationParameters.Default)
         {
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// Creates an instance of <see cref="JwtValidator" /> with validation parameters
         /// </summary>
         /// <param name="jsonSerializer">The Json Serializer</param>
         /// <param name="dateTimeProvider">The DateTime Provider</param>
-        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
-        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
+        /// <param name="valParams">Validation parameters that are passed on to <see cref="JwtValidator"/></param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, ValidationParameters valParams)
         {
-            _jsonSerializer = jsonSerializer;
-            _dateTimeProvider = dateTimeProvider;
-            _timeMargin = timeMargin;
+            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+            _valParams = valParams ?? throw new ArgumentNullException(nameof(valParams));
         }
 
         /// <inheritdoc />
@@ -101,7 +101,7 @@ namespace JWT
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
                 return new ArgumentException(nameof(decodedSignatures));
 
-            if (!IsAnySignatureValid(decodedCrypto, decodedSignatures))
+            if (_valParams.ValidateIssuerSigningKey && !IsAnySignatureValid(decodedCrypto, decodedSignatures))
                 return new SignatureVerificationException(decodedCrypto, decodedSignatures);
 
             return GetValidationException(payloadJson);
@@ -109,7 +109,7 @@ namespace JWT
 
         private Exception GetValidationException(IAsymmetricAlgorithm alg, string payloadJson, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (!alg.Verify(bytesToSign, decodedSignature))
+            if (_valParams.ValidateIssuerSigningKey && !alg.Verify(bytesToSign, decodedSignature))
                 return new SignatureVerificationException("The signature is invalid according to the validation procedure.");
 
             return GetValidationException(payloadJson);
@@ -125,7 +125,19 @@ namespace JWT
             var now = _dateTimeProvider.GetNow();
             var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
-            return ValidateExpClaim(payloadData, secondsSinceEpoch) ?? ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            Exception exception = null;
+
+            if (_valParams.ValidateLifetime)
+            {
+                exception = ValidateExpClaim(payloadData, secondsSinceEpoch);
+            }
+
+            if (_valParams.ValidateIssuedTime)
+            {
+                exception ??= ValidateNbfClaim(payloadData, secondsSinceEpoch);
+            }
+
+            return exception;
         }
 
         private static bool AreAllDecodedSignaturesNullOrWhiteSpace(string[] decodedSignatures) =>
@@ -176,7 +188,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'exp' must be a number.");
             }
 
-            if (secondsSinceEpoch - _timeMargin >= expValue)
+            if (secondsSinceEpoch - _valParams.TimeMargin >= expValue)
             {
                 return new TokenExpiredException("Token has expired.")
                 {
@@ -211,7 +223,7 @@ namespace JWT
                 return new SignatureVerificationException("Claim 'nbf' must be a number.");
             }
 
-            if (secondsSinceEpoch + _timeMargin < nbfValue)
+            if (secondsSinceEpoch + _valParams.TimeMargin < nbfValue)
             {
                 return new SignatureVerificationException("Token is not yet valid.");
             }

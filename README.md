@@ -186,6 +186,34 @@ var token = encoder.Encode(payload, secret);
 var json = decoder.Decode(token, secret); // throws TokenExpiredException
 ```
 
+#### Turning off parts of the token validation
+
+If you wish to validate a token but ignore certain parts of the validation (such as the lifetime of the token when refreshing the token), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
+
+```c#
+var validationParameters = new ValidationParameters
+{
+    ValidateLifetime = false
+};
+IJwtValidator validator = new JwtValidator(serializer, provider, validationParameters: validationParameters);
+IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
+
+var json = decoder.Decode(expiredToken, secret, verify: true); // will not throw because of expired token
+```
+
+Using the fluent builder API, you can pass the `ValidationParameters` to the `WithVerifySignature` method.
+
+```c#
+var json = JwtBuilder.Create()
+                     .WithAlgorithm(new HMACSHA256Algorithm())
+                     .WithSecret(secret)
+                     .WithVerifySignature(new ValidationParameters
+                     {
+                         ValidateLifetime = false
+                     })
+                     .Decode(expiredToken);
+```
+
 #### Parsing (decoding) token header
 
 ```c#

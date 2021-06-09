@@ -14,6 +14,40 @@ namespace JWT.Tests
     [TestClass]
     public class JwtValidatorTests
     {
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_Serializer_Is_Null()
+        {
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            Action action =
+                () => _ = new JwtValidator(null, utcDateTimeProvider);
+
+            action.Should()
+                .Throw<ArgumentNullException>("because the serializer must not be null");
+        }
+
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_DateTimeProvider_Is_Null()
+        {
+            var jsonNetSerializer = new JsonNetSerializer();
+            Action action =
+                () => _ = new JwtValidator(jsonNetSerializer, null);
+
+            action.Should()
+                .Throw<ArgumentException>("because the DateTime provider must not be null");
+        }
+
+        [TestMethod]
+        public void Constructor_Should_Throw_Exception_When_ValidationParameters_Are_Null()
+        {
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            Action action =
+                () => _ = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, null);
+
+            action.Should()
+                .Throw<ArgumentException>("because the validation parameters must not be null");
+        }
+
         [DataTestMethod]
         [DataRow(null, null, null)]
         [DataRow("", null, null)]
@@ -22,7 +56,9 @@ namespace JWT.Tests
         [DataRow("{}", TestData.Token, "")]
         public void Validate_Should_Throw_Exception_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            var jwtValidator = new JwtValidator(null, null);
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
             Action action =
                 () => jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
@@ -61,6 +97,33 @@ namespace JWT.Tests
         }
 
         [TestMethod]
+        public void Validate_Should_Not_Throw_Exception_When_Signature_Is_Invalid_But_Signature_Validation_Parameter_Is_False()
+        {
+            const string token = TestData.Token;
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+
+            var jwt = new JwtParts(token);
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
+            ++signatureData[0]; // malformed signature
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var validationParameters = ValidationParameters.Default
+                .With(parameters => parameters.ValidateIssuerSigningKey = false);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
+
+            jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
+        }
+
+        [TestMethod]
         public void Validate_Should_Not_Throw_Exception_When_Crypto_Matches_Signature()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -91,8 +154,40 @@ namespace JWT.Tests
         [DataRow("{}", TestData.Token, "")]
         public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
-            var jwtValidator = new JwtValidator(null, null);
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
 
+            var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
+
+            isValid.Should()
+                   .BeFalse("because token should be invalid");
+
+            ex.Should()
+              .NotBeNull("because invalid token should thrown exception");
+        }
+
+        [TestMethod]
+        public void TryValidate_Should_Return_True_And_Exception_Null_When_Signature_Is_Not_Valid()
+        {
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new UtcDateTimeProvider();
+
+            var jwt = new JwtParts(TestData.Token);
+
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
+            ++signatureData[0]; // malformed signature
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -194,6 +289,37 @@ namespace JWT.Tests
         }
 
         [TestMethod]
+        public void TryValidate_Should_Return_True_And_Exception_Null_When_Token_Is_Expired_But_Lifetime_Validation_Parameter_Is_False()
+        {
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new StaticDateTimeProvider(DateTimeOffset.FromUnixTimeSeconds(TestData.TokenTimestamp));
+
+            var jwt = new JwtParts(TestData.TokenWithExp);
+
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var validationParameters = ValidationParameters.Default
+                .With(parameters => parameters.ValidateLifetime = false);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
+            var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
+
+            isValid.Should()
+                .BeTrue("because even though the token is expired, the lifetime validation is turned off");
+
+            ex.Should()
+                .BeNull("because valid token should not throw exception");
+        }
+
+        [TestMethod]
         public void TryValidate_Should_Return_True_And_Exception_Null_When_Token_Is_Not_Expired()
         {
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -241,7 +367,9 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var validationParameters = ValidationParameters.Default
+                .With(parameters => parameters.TimeMargin = 1);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
@@ -281,6 +409,37 @@ namespace JWT.Tests
 
             ex.Should()
                 .BeOfType(typeof(SignatureVerificationException), "because not yet usable token should thrown SignatureVerificationException");
+        }
+
+        [TestMethod]
+        public void TryValidate_Should_Return_True_And_Exception_Null_When_Token_Is_Not_Yet_Usable_But_Issued_Time_Validation_Parameter_Is_False()
+        {
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var jsonNetSerializer = new JsonNetSerializer();
+            var utcDateTimeProvider = new StaticDateTimeProvider(DateTimeOffset.FromUnixTimeSeconds(TestData.TokenTimestamp - 1));
+
+            var jwt = new JwtParts(TestData.TokenWithNbf);
+
+            var payloadJson = GetString(urlEncoder.Decode(jwt.Payload));
+
+            var crypto = urlEncoder.Decode(jwt.Signature);
+            var decodedCrypto = Convert.ToBase64String(crypto);
+
+            var alg = new HMACSHA256Algorithm();
+            var bytesToSign = GetBytes(String.Concat(jwt.Header, ".", jwt.Payload));
+            var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
+            var decodedSignature = Convert.ToBase64String(signatureData);
+
+            var validationParameters = ValidationParameters.Default
+                .With(parameters => parameters.ValidateIssuedTime = false);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
+            var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
+
+            isValid.Should()
+                .BeTrue("because even though the token is not yet usable, the issued time validation is turned off");
+
+            ex.Should()
+                .BeNull("because valid token should not throw exception");
         }
 
         [TestMethod]
@@ -331,7 +490,9 @@ namespace JWT.Tests
             var signatureData = alg.Sign(GetBytes(TestData.Secret), bytesToSign);
             var decodedSignature = Convert.ToBase64String(signatureData);
 
-            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, timeMargin: 1);
+            var validationParameters = ValidationParameters.Default
+                .With(parameters => parameters.TimeMargin = 1);
+            var jwtValidator = new JwtValidator(jsonNetSerializer, utcDateTimeProvider, validationParameters);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
             isValid.Should()
