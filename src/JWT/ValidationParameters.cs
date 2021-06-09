@@ -1,4 +1,6 @@
-﻿namespace JWT
+﻿using System;
+
+namespace JWT
 {
     /// <summary>
     /// Contains a set of parameters that are used by a <see cref="JwtValidator" /> when validating a token.
@@ -66,5 +68,14 @@
             ValidateIssuedTime = true,
             TimeMargin = 0
         };
+    }
+
+    public static class ValidationParametersExtensions
+    {
+        public static ValidationParameters With(this ValidationParameters @this, Action<ValidationParameters> action)
+        {
+            action(@this);
+            return @this;
+        }
     }
 }
