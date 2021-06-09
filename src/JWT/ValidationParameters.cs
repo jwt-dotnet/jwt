@@ -6,6 +6,21 @@
     public class ValidationParameters
     {
         /// <summary>
+        /// <para>
+        /// The constructor is kept private to prevent creating a new <see cref="ValidationParameters"/> object which
+        /// will not validate any of the parameters of a token.
+        /// </para>
+        /// <para>
+        /// Use <see cref="Default"/> if you wish to create a <see cref="ValidationParameters"/> object with all
+        /// properties set to <see langword="true"/> or use <see cref="None"/> if you wish to create a create a
+        /// <see cref="ValidationParameters"/> object with all validation turned off.
+        /// </para>
+        /// </summary>
+        private ValidationParameters()
+        {
+        }
+
+        /// <summary>
         /// Gets or sets a boolean that controls if validation of the signature that signed the token is called.
         /// </summary>
         public bool ValidateIssuerSigningKey { get; set; }
