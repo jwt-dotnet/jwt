@@ -11,7 +11,7 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class ECDSAAlgorithmFactoryTests
     {
-#if NETSTANDARD2_0 || NET_50
+#if NETSTANDARD2_0 || NET5_0
         [TestMethod]
         public void Create_Should_Return_Instance_Of_ES256Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES256_And_Targeting_NetStandard20()
         {

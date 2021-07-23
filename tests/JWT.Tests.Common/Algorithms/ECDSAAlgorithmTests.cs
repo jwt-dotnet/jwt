@@ -1,4 +1,4 @@
-#if NETSTANDARD2_0 || NET_50
+#if NETSTANDARD2_0 || NET5_0
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;

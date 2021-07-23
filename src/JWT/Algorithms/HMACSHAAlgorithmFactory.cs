@@ -24,7 +24,7 @@ namespace JWT.Algorithms
                 case JwtAlgorithmName.ES512:
                     throw new NotSupportedException($"For algorithm {algorithm} please use an instance of {nameof(ECDSAAlgorithmFactory)}");
                 default:
-                    throw new NotSupportedException($"Algorithm {algorithm} is not supported.");
+                    throw new NotSupportedException($"For algorithm {Enum.GetName(typeof(JwtAlgorithmName), algorithm)} please use the appropriate factory by implementing {nameof(IAlgorithmFactory)}");
             }
         }
     }
