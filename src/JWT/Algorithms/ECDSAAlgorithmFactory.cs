@@ -45,7 +45,7 @@ namespace JWT.Algorithms
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
-#if NETSTANDARD2_0 || NET_50
+#if NETSTANDARD2_0 || NET5_0
             switch (algorithm)
             {
                 case JwtAlgorithmName.ES256:
@@ -70,7 +70,7 @@ namespace JWT.Algorithms
 #endif
         }
 
-#if NETSTANDARD2_0 || NET_50
+#if NETSTANDARD2_0 || NET5_0
         private IJwtAlgorithm CreateES256Algorithm()
         {
             if (_certFactory is object)
