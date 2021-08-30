@@ -12,8 +12,6 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 |-|-|
 | [<img alt="Auth0 logo" src="https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg" width="200">](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth) | If you want to quickly add secure token-based authentication to your .NET projects, feel free to check Auth0's free plan at [auth0.com/developers](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth).  |
 
-Want to support the project too? Please visit [my Patreon page](https://www.patreon.com/abatishchev).
-
 ## Avaliable packages
 
 1. [Jwt.Net](#JwtNet)
@@ -315,9 +313,6 @@ options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
 app.UseJwtMiddleware();
 ```
 
-**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.
-
-
 ### Jwt.Net OWIN
 
 #### NuGet
@@ -331,4 +326,4 @@ app.UseJwtMiddleware();
 app.UseJwtMiddleware();
 ```
 
-**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.
+**Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
