@@ -313,6 +313,10 @@ options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
 app.UseJwtMiddleware();
 ```
 
+**Note:** work in progress on `JwtAuthenticationMiddleware` as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
+
+However, `JwtAuthenticationHandler` works and can be used already. Please provide your feedback, comments, feature requests.
+
 ### Jwt.Net OWIN
 
 #### NuGet
