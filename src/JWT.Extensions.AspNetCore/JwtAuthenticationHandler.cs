@@ -24,27 +24,27 @@ namespace JWT
         {
             _logMissingHeader = LoggerMessage.Define(
                 LogLevel.Information,
-                new EventId(10, "ControllerMethodCalled"),
+                10,
                 $"Header {nameof(HeaderNames.Authorization)} is empty, returning none");
 
             _logIncorrectScheme = LoggerMessage.Define<string, string>(
                 LogLevel.Information,
-                new EventId(11, "ControllerMethodCalled"),
+                11,
                 $"Header {nameof(HeaderNames.Authorization)} scheme is {{0}}, expected {{1}}, returning none");
 
             _logEmptyHeader = LoggerMessage.Define(
                 LogLevel.Information,
-                new EventId(12, "ControllerMethodCalled"),
+                12,
                 $"Token in header {nameof(HeaderNames.Authorization)} is empty, returning none");
 
             _logSuccessfulTicket = LoggerMessage.Define(
                 LogLevel.Information,
-                new EventId(1, "ControllerMethodCalled"),
+                1,
                 "Successfully decoded JWT, returning success");
 
             _logFailedTicket = LoggerMessage.Define<string>(
                 LogLevel.Information,
-                new EventId(2, "ControllerMethodCalled"),
+                2,
                 "Error decoding JWT: {0}, returning failure");
         }
 
