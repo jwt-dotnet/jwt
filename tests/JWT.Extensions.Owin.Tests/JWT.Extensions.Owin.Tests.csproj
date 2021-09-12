@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JWT.Extensions.AspNetCore\JWT.Extensions.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\JWT.Extensions.Owin\JWT.Extensions.Owin.csproj" />
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
 
