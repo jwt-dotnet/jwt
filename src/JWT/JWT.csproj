@@ -19,9 +19,9 @@
     <Copyright>Public Domain</Copyright>
     <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
-    <PackageTags>jwt;json</PackageTags>
+    <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <Version>8.4.0-beta1</Version>
+    <Version>8.4.0</Version>
     <FileVersion>8.0.0.0</FileVersion>
     <AssemblyVersion>8.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
