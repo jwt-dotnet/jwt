@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Builder;
 
 namespace JWT
 {
@@ -8,18 +7,6 @@ namespace JWT
     /// </summary>
     public static class ApplicationBuilderExtensions
     {
-        /// <summary>
-        /// Adds the <see cref="JwtAuthenticationMiddleware" /> to the specified <see cref="IApplicationBuilder" />, which enables authentication/authorization using JWT.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IApplicationBuilder" />.
-        /// </returns>
-        public static IApplicationBuilder UseJwtMiddleware(this IApplicationBuilder app)
-        {
-            if (app == null)
-                throw new ArgumentNullException(nameof(app));
 
-            return app.UseMiddleware<JwtAuthenticationMiddleware>();
-        }
     }
 }
