@@ -144,11 +144,11 @@ namespace JWT.Extensions.AspNetCore.Tests
 
                               services.AddAuthentication(options =>
                                            {
-                                         // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-                                         options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                               // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+                                               options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
-                                         // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-                                         options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                               // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                                               options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
                                            })
                                       .AddJwt(options =>
                                            {

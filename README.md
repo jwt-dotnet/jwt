@@ -310,10 +310,20 @@ options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
 #### Register middleware to validate JWT
 
 ```c#
-app.UseJwtMiddleware();
-```
+services.AddAuthentication(options =>
+    {
+        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+        options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
-**Note:** work in progress on `JwtAuthenticationMiddleware` as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
+        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+        options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+    })
+.AddJwt(options =>
+    {
+        options.Keys = configureOptions.Keys;
+        options.VerifySignature = configureOptions.VerifySignature;
+    });
+```
 
 However, `JwtAuthenticationHandler` works and can be used already. Please provide your feedback, comments, feature requests.
 

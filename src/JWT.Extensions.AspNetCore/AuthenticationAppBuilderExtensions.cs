@@ -1,4 +1,5 @@
 ﻿using System;
+using JWT.Algorithms;
 using JWT.Internal;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
@@ -26,6 +27,14 @@ namespace JWT
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
 
             return builder.AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(authenticationScheme, configureOptions);
+        }
+
+        public static AuthenticationBuilder AddJwt<TFactory>(this AuthenticationBuilder builder, string authenticationScheme, Action<JwtAuthenticationOptions> configureOptions)
+            where TFactory : class, IAlgorithmFactory
+        {
+            builder.Services.TryAddSingleton<IAlgorithmFactory, TFactory>();
+
+            return builder.AddJwt(authenticationScheme, configureOptions);
         }
     }
 }
