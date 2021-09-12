@@ -7,14 +7,14 @@
 
   <PropertyGroup>
     <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
-    <PackageDescription>ASP.NET Core intergration package for Jwt.Net</PackageDescription>
+    <PackageDescription>Microsoft Dependency Injection container intergration package for Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
-    <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
+    <PackageTags>jwt;json;asp.net;asp.net core;.net core;dependenсy injection</PackageTags>
     <PackageLicense>MIT</PackageLicense>
-    <Version>8.0.0</Version>
-    <FileVersion>8.0.0.0</FileVersion>
-    <AssemblyVersion>7.0.0.0</AssemblyVersion>
-    <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
@@ -30,16 +30,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\JWT\JWT.csproj" />
   </ItemGroup>
 
