@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -140,21 +140,19 @@ namespace JWT.Extensions.AspNetCore.Tests
                     })
                 .ConfigureServices(services =>
                           {
-                              services.AddSingleton<IAlgorithmFactory, HMACSHAAlgorithmFactory>();
-
                               services.AddAuthentication(options =>
-                                           {
-                                               // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-                                               options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                               {
+                                   // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+                                   options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
-                                               // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-                                               options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-                                           })
-                                      .AddJwt(options =>
-                                           {
-                                               options.Keys = configureOptions.Keys;
-                                               options.VerifySignature = configureOptions.VerifySignature;
-                                           });
+                                   // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                                   options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                               })
+                              .AddJwt<HMACSHAAlgorithmFactory>(options =>
+                               {
+                                   options.Keys = configureOptions.Keys;
+                                   options.VerifySignature = configureOptions.VerifySignature;
+                               });
                           });
 
             return new TestServer(builder);
