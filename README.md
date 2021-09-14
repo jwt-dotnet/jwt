@@ -19,10 +19,11 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## Supported .NET versions:
 
-- .NET Framework 3.5 and higher versions
-- .NET Framework 4.0 and higher versions
+- .NET Framework 3.5
+- .NET Framework 4.0 - 4.8
 - .NET Standard 1.3
 - .NET Standard 2.0
+- .NET 5.0
 
 ## License
 
