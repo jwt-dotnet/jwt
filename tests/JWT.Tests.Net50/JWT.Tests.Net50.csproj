@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net50</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworkIdentifier>.NETFramework,Version=5.0</TargetFrameworkIdentifier>
     <RootNamespace>JWT.Tests</RootNamespace>
   </PropertyGroup>
 

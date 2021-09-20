@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net46;netstandard1.3;netstandard2.0;net50</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net46;netstandard1.3;netstandard2.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
@@ -10,6 +10,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net46'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <TargetFrameworkIdentifier>.NETFramework,Version=5.0</TargetFrameworkIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
