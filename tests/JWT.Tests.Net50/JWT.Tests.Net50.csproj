@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net50</TargetFrameworks>
+    <TargetFrameworkIdentifier>.NETFramework,Version=v5.0</TargetFrameworkIdentifier>
     <RootNamespace>JWT.Tests</RootNamespace>
   </PropertyGroup>
 
