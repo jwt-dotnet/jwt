@@ -116,8 +116,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (key is object && key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
 
             if (verify)
             {
@@ -140,8 +138,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
             {
@@ -260,7 +256,9 @@ namespace JWT
             }
         }
 
-        private static bool AllKeysHaveValues(byte[][] keys)
+        private static bool 
+            
+            (byte[][] keys)
         {
             if (keys is null)
                 return true;
