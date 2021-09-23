@@ -256,9 +256,7 @@ namespace JWT
             }
         }
 
-        private static bool 
-            
-            (byte[][] keys)
+        private static bool AllKeysHaveValues(byte[][] keys)
         {
             if (keys is null)
                 return true;
