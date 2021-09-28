@@ -7,7 +7,7 @@ namespace JWT.Internal
         private static readonly UTF8Encoding utf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
         public static byte[] GetBytes(string input) =>
-            input is object ? utf8Encoding.GetBytes(input) : null;
+            utf8Encoding.GetBytes(input);
 
         public static byte[] GetBytes(string input1, byte separator, string input2)
         {
