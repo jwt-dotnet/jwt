@@ -4,7 +4,6 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using JWT.Algorithms;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -26,7 +25,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         public async Task HandleAuthenticateAsync_Should_Return_Success_When_Token_Is_Valid()
         {
             // Arrange
-            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.Token}";
+            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenByAsymmetricAlgorithm}";
             var handler = await CreateHandler(header);
 
             // Act
@@ -104,17 +103,17 @@ namespace JWT.Extensions.AspNetCore.Tests
             var dateTimeProvider = new UtcDateTimeProvider();
             var urlEncoder = new JwtBase64UrlEncoder();
             var jwtValidator = new JwtValidator(serializer, dateTimeProvider);
-            var decoder = new JwtDecoder(serializer, jwtValidator, urlEncoder, new HMACSHA256Algorithm());
+            var decoder = new JwtDecoder(serializer, jwtValidator, urlEncoder, TestData.RS256Algorithm);
 
             var options = new JwtAuthenticationOptions
             {
-                Keys = TestData.Secrets,
+                Keys = null,
                 VerifySignature = true
             };
             var optionsMonitor = new Mock<IOptionsMonitor<JwtAuthenticationOptions>>();
             optionsMonitor.Setup(m => m.Get(It.IsAny<string>())).Returns(options);
 
-            var loggerFactory = new NullLoggerFactory();
+            var loggerFactory = NullLoggerFactory.Instance;
             var encoder = UrlEncoder.Default;
             var clock = new SystemClock();
 

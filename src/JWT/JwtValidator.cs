@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JWT.Algorithms;
 using JWT.Exceptions;
 

@@ -116,8 +116,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (key is object && key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
 
             if (verify)
             {
@@ -140,8 +138,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
             {
@@ -231,8 +227,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
 
             var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
@@ -248,6 +242,9 @@ namespace JWT
             }
             else
             {
+                if (!AllKeysHaveValues(keys))
+                    throw new ArgumentOutOfRangeException(nameof(keys));
+
                 // the signature on the token, with the leading =
                 var rawSignature = Convert.ToBase64String(decodedSignature);
 

@@ -17,26 +17,21 @@ namespace JWT.Tests
         [TestMethod]
         public void Encode_and_Decode_With_Certificate()
         {
-            using var rsa = RSA.Create();
-            rsa.FromXmlString(TestData.ServerRsaPrivateKey);
-
-            using var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
-            using var certPubPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
-
-            var builder = JwtBuilder.Create();
-            var algorithm = new RS256Algorithm(certPubPriv);
+            var cert = CreateCertificate();
+            var algorithm = new RS256Algorithm(cert);
 
             const string iss = "test";
             var exp = new DateTimeOffset(2038, 1, 19, 3, 14, 8, 0, TimeSpan.Zero).ToUnixTimeSeconds();
 
-            var token = builder.WithAlgorithm(algorithm)
-                               .AddHeader(HeaderName.KeyId, certPub.Thumbprint)
-                               .AddHeader(HeaderName.X5c, new[] { Convert.ToBase64String(certPub.Export(X509ContentType.Cert)) })
-                               .AddClaim("iss", iss)
-                               .AddClaim("exp", exp)
-                               .AddClaim(nameof(Customer.FirstName), TestData.Customer.FirstName)
-                               .AddClaim(nameof(Customer.Age), TestData.Customer.Age)
-                               .Encode();
+            var builder = JwtBuilder.Create()
+                                    .WithAlgorithm(algorithm)
+                                    .AddHeader(HeaderName.KeyId, cert.Thumbprint)
+                                    .AddHeader(HeaderName.X5c, new[] { Convert.ToBase64String(cert.Export(X509ContentType.Cert)) })
+                                    .AddClaim("iss", iss)
+                                    .AddClaim("exp", exp)
+                                    .AddClaim(nameof(Customer.FirstName), TestData.Customer.FirstName)
+                                    .AddClaim(nameof(Customer.Age), TestData.Customer.Age);
+            var token = builder.Encode();
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
@@ -64,6 +59,17 @@ namespace JWT.Tests
             jwt["exp"].Should().Be(exp);
             jwt[nameof(Customer.FirstName)].Should().Be(TestData.Customer.FirstName);
             jwt[nameof(Customer.Age)].Should().Be(TestData.Customer.Age);
+        }
+
+        private static X509Certificate2 CreateCertificate()
+        {
+            var rsa = RSA.Create();
+            rsa.FromXmlString(TestData.ServerRsaPrivateKey);
+
+            var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
+            var certPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
+
+            return certPriv;
         }
     }
 }
