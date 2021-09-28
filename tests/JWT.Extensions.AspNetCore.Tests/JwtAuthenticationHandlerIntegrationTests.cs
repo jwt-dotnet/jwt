@@ -61,7 +61,7 @@ namespace JWT.Extensions.AspNetCore.Tests
             // Arrange
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 JwtAuthenticationDefaults.AuthenticationScheme,
-                TestData.Token);
+                TestData.TokenByAsymmetricAlgorithm);
 
             // Act
             var response = await _client.GetAsync("https://example.com/");
@@ -127,7 +127,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                             var authenticationResult = await context.AuthenticateAsync();
                             if (authenticationResult.Succeeded)
                             {
-                                context.Response.StatusCode = (int)HttpStatusCode.OK;
+                                context.Response.StatusCode = StatusCodes.Status200OK;
                                 context.Response.ContentType = new ContentType("text/json").MediaType;
 
                                 await context.Response.WriteAsync("Hello");
@@ -139,21 +139,22 @@ namespace JWT.Extensions.AspNetCore.Tests
                         });
                     })
                 .ConfigureServices(services =>
-                          {
-                              services.AddAuthentication(options =>
-                               {
-                                   // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-                                   options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                    {
+                        services.AddAuthentication(options =>
+                        {
+                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+                            options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
-                                   // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-                                   options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-                               })
-                              .AddJwt<HMACSHAAlgorithmFactory>(options =>
-                               {
-                                   options.Keys = configureOptions.Keys;
-                                   options.VerifySignature = configureOptions.VerifySignature;
-                               });
-                          });
+                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                            options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                        })
+                        .AddJwt(options =>
+                        {
+                            options.Keys = null;
+                            options.VerifySignature = configureOptions.VerifySignature;
+                        });
+                        services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
+                    });
 
             return new TestServer(builder);
         }
