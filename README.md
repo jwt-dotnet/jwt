@@ -88,7 +88,7 @@ const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
-    var provider = new UtcDateTimeProvider();
+    IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
     IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
@@ -166,13 +166,17 @@ The output would be:
 
 #### Set and validate token expiration
 
-As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
+As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4):
+
+>The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
+
+If it is present in the payload and is prior to the current time the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 UTC.
 
 ```c#
-var provider = new UtcDateTimeProvider();
+IDateTimeProvider provider = new UtcDateTimeProvider();
 var now = provider.GetNow();
 
-var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+double  secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
 var payload = new Dictionary<string, object>
 {
@@ -181,15 +185,15 @@ var payload = new Dictionary<string, object>
 const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 var token = encoder.Encode(payload, secret);
 
-var json = decoder.Decode(token, secret); // throws TokenExpiredException
+var json = decoder.Decode(token, secret, validate: true); // throws TokenExpiredException
 ```
 
 #### Parsing (decoding) token header
 
 ```c#
-var serializer = new JsonNetSerializer();
-var urlEncoder = new JwtBase64UrlEncoder();
-var decoder = new JwtDecoder(serializer, urlEncoder);
+IJsonSerializer serializer = new JsonNetSerializer();
+IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+IJwtDecoder decoder = new JwtDecoder(serializer, urlEncoder);
 
 JwtHeader header = decoder.DecodeHeader<JwtHeader>(token);
 
@@ -202,7 +206,7 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 
 ```c#
 JwtHeader header = JwtBuilder.Create()
-                             .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+                             .DecodeHeader<JwtHeader>(token);
 
 var typ = header.Type; // JWT
 var alg = header.Algorithm; // RS256
@@ -214,7 +218,7 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
 ```c#
-public class CustomJsonSerializer : IJsonSerializer
+public sealed class CustomJsonSerializer : IJsonSerializer
 {
     public string Serialize(object obj)
     {
@@ -281,7 +285,7 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secrets
+                     // secrets, needed only for symmetric algorithms
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
                      // force JwtDecoder to throw exception if JWT signature is invalid
