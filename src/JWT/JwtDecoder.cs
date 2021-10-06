@@ -119,8 +119,10 @@ namespace JWT
 
             if (verify)
             {
-                if (_jwtValidator is null || _algFactory is null)
-                    throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
+                if (_jwtValidator is null)
+                    throw new InvalidOperationException("This instance was constructed without validator so cannot be used for signature validation");
+                if (_algFactory is null)
+                    throw new InvalidOperationException("This instance was constructed without algorithm factory so cannot be used for signature validation");
 
                 Validate(jwt, key);
             }

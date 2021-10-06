@@ -285,12 +285,19 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secrets, needed only for symmetric algorithms
+                     // secrets, required only for symmetric algorithms
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
                      // force JwtDecoder to throw exception if JWT signature is invalid
                      options.VerifySignature = true;
                  });
+  // the non-generic version AddJwt() requires you to register an instance of IAlgorithmFactory manually
+  services.AddSingleton<IAlgorithmFactory>(new RSAlgorithmFactory(certificate));
+  // or
+  services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
+
+  // or use the generic version AddJwt<TFactory() if you have a custom implementation of IAlgorithmFactory
+  // AddJwt<MyCustomAlgorithmFactory(options => ...);
 }
 
 public void Configure(IApplicationBuilder app)
@@ -328,8 +335,6 @@ services.AddAuthentication(options =>
         options.VerifySignature = configureOptions.VerifySignature;
     });
 ```
-
-However, `JwtAuthenticationHandler` works and can be used already. Please provide your feedback, comments, feature requests.
 
 ### Jwt.Net OWIN
 
