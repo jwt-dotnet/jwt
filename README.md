@@ -9,7 +9,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 | | |
 |-|-|
-| [<img alt="Auth0 logo" src="https://cdn.auth0.com/blog/brand-evolution-logo-Auth0-shield-black-background-Squared.png" width="200">](https://a0.to/try-auth0) | Create an Auth0 account; it's free!  |
+| [<img alt="Auth0 logo" src="https://cdn.auth0.com/blog/brand-evolution-logo-Auth0-shield-black-background-Squared.png" width="100" height="100">](https://a0.to/try-auth0) | Create an Auth0 account; it's free!  |
 
 ## Avaliable packages
 
