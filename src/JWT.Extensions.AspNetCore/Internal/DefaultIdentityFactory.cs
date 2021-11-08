@@ -17,7 +17,7 @@ namespace JWT.Internal
             var claims = dic.Select(p => new Claim(p.Key, p.Value));
             return options.IncludeAuthenticationScheme ?
                 new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme) :
-                new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme);
+                new ClaimsIdentity(claims);
         }
     }
 }
