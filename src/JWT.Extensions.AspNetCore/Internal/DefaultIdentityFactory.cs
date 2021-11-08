@@ -15,7 +15,7 @@ namespace JWT.Internal
         public static IIdentity CreateIdentity(IDictionary<string, string> dic)
         {
             var claims = dic.Select(p => new Claim(p.Key, p.Value));
-            return new ClaimsIdentity(claims);
+            return new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme);
         }
     }
 }
