@@ -70,6 +70,14 @@ namespace JWT
         /// For the default behavior <see cref="DefaultIdentityFactory.CreateIdentity" />.
         /// </remarks>
         public Func<JwtAuthenticationOptions, IDictionary<string, string>, IIdentity> IdentityFactory { get; set; } = DefaultIdentityFactory.CreateIdentity;
+        
+        /// <summary>
+        /// Whether to include by default AuthenticationScheme into the resulting <see cref="ClaimsIdentity" />.
+        /// </summary>
+        /// <remarks>
+        /// The default value is <c>true</c>.
+        /// </remarks>
+        public bool IncludeAuthenticationScheme { get; set; } = true;
 
         /// <summary>
         /// Creates user's <see cref="AuthenticationTicket" /> from user's <see cref="IIdentity" /> and current <see cref="AuthenticationScheme" />
