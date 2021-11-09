@@ -3,7 +3,7 @@ using System.Security.Principal;
 
 namespace JWT
 {
-    internal interface IIdentityFactory
+    public interface IIdentityFactory
     {
         IIdentity CreateIdentity(IDictionary<string, string> payload);
     }

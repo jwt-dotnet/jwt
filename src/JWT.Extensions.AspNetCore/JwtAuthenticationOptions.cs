@@ -70,13 +70,5 @@ namespace JWT
         /// The default value is <c>true</c>.
         /// </remarks>
         public bool IncludeAuthenticationScheme { get; set; } = true;
-
-        /// <summary>
-        /// Creates user's <see cref="AuthenticationTicket" /> from user's <see cref="IIdentity" /> and current <see cref="AuthenticationScheme" />
-        /// </summary>
-        /// <remarks>
-        /// For the default behavior <see cref="DefaultTicketFactory.CreateTicket" />.
-        /// </remarks>
-        public Func<IIdentity, AuthenticationScheme, AuthenticationTicket> TicketFactory { get; set; } = DefaultTicketFactory.CreateTicket;
     }
 }

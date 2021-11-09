@@ -27,6 +27,7 @@ namespace JWT
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
 
             builder.Services.TryAddSingleton<IIdentityFactory, DefaultIdentityFactory>();
+            builder.Services.TryAddSingleton<ITicketFactory, DefaultTicketFactory>();
 
             return builder.AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(authenticationScheme, configureOptions);
         }
