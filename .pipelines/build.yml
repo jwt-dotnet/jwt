@@ -69,7 +69,7 @@ steps:
   displayName: 'Run tests'
   inputs:
     command: 'test'
-    projects: 'tests/JWT.Tests.*/*.csproj'
+    projects: 'tests/**/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
