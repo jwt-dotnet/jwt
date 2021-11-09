@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Principal;
 
-namespace JWT
+namespace JWT.Factory
 {
     public interface ITicketFactory
     {

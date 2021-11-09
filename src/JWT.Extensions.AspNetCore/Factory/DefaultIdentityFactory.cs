@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace JWT.Internal
+namespace JWT.Factory
 {
     public sealed class DefaultIdentityFactory : IIdentityFactory
     {

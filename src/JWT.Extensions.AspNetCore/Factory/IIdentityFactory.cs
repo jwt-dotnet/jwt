@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Principal;
 
-namespace JWT
+namespace JWT.Factory
 {
     public interface IIdentityFactory
     {

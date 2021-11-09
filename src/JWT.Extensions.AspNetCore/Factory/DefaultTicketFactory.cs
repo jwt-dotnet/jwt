@@ -2,7 +2,7 @@
 using System.Security.Principal;
 using Microsoft.AspNetCore.Authentication;
 
-namespace JWT.Internal
+namespace JWT.Factory
 {
     public sealed class DefaultTicketFactory : ITicketFactory
     {
