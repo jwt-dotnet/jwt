@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace JWT.Factory
+namespace JWT.Extensions.AspNetCore.Factories
 {
     public sealed class DefaultIdentityFactory : IIdentityFactory
     {

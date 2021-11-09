@@ -5,7 +5,7 @@ using JWT.Internal;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public class JwtAuthenticationOptions : AuthenticationSchemeOptions
     {

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public sealed class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {

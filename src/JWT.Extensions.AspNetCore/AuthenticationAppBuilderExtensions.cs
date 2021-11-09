@@ -5,7 +5,7 @@ using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public static class AuthenticationBuilderExtensions
     {

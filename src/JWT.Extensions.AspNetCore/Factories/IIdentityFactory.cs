@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Principal;
 
-namespace JWT.Factory
+namespace JWT.Extensions.AspNetCore.Factories
 {
     public interface IIdentityFactory
     {
