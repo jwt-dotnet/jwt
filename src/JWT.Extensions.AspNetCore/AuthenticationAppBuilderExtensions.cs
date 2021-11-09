@@ -24,8 +24,9 @@ namespace JWT
             builder.Services.TryAddSingleton<IJsonSerializer, JsonNetSerializer>();
             builder.Services.TryAddSingleton<IJwtValidator, JwtValidator>();
             builder.Services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
-
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
+
+            builder.Services.TryAddSingleton<IIdentityFactory, DefaultIdentityFactory>();
 
             return builder.AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(authenticationScheme, configureOptions);
         }

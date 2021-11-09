@@ -64,14 +64,6 @@ namespace JWT
         public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = JwtAuthenticationHandler.OnFailedTicket;
 
         /// <summary>
-        /// Creates user's <see cref="IIdentity" /> from <see cref="IDictionary{String,String}" /> of user's claims
-        /// </summary>
-        /// <remarks>
-        /// For the default behavior <see cref="DefaultIdentityFactory.CreateIdentity" />.
-        /// </remarks>
-        public Func<JwtAuthenticationOptions, IDictionary<string, string>, IIdentity> IdentityFactory { get; set; } = DefaultIdentityFactory.CreateIdentity;
-        
-        /// <summary>
         /// Whether to include by default AuthenticationScheme into the resulting <see cref="ClaimsIdentity" />.
         /// </summary>
         /// <remarks>
