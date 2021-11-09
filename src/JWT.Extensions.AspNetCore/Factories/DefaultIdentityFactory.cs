@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
+using Microsoft.Extensions.Options;
 
 namespace JWT.Extensions.AspNetCore.Factories
 {
     public sealed class DefaultIdentityFactory : IIdentityFactory
     {
-        private readonly JwtAuthenticationOptions _options;
+        private readonly IOptionsMonitor<JwtAuthenticationOptions> _options;
 
-        public DefaultIdentityFactory(JwtAuthenticationOptions options) =>
+        public DefaultIdentityFactory(IOptionsMonitor<JwtAuthenticationOptions> options) =>
             _options = options;
 
         /// <summary>
@@ -20,7 +21,7 @@ namespace JWT.Extensions.AspNetCore.Factories
         public IIdentity CreateIdentity(IDictionary<string, string> payload)
         {
             var claims = payload.Select(p => new Claim(p.Key, p.Value));
-            return _options.IncludeAuthenticationScheme ?
+            return _options.CurrentValue.IncludeAuthenticationScheme ?
                 new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme) :
                 new ClaimsIdentity(claims);
         }

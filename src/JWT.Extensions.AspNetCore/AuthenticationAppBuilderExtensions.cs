@@ -1,6 +1,7 @@
 using System;
 using JWT.Algorithms;
-using JWT.Internal;
+using JWT.Extensions.AspNetCore.Factories;
+using JWT.Extensions.AspNetCore.Internal;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
