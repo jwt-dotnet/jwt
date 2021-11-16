@@ -122,7 +122,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                     {
                         app.UseAuthentication();
 
-                        app.Use(async (context, next) =>
+                        app.Use(async (HttpContext context, Func<Task> next) =>
                         {
                             var authenticationResult = await context.AuthenticateAsync();
                             if (authenticationResult.Succeeded)

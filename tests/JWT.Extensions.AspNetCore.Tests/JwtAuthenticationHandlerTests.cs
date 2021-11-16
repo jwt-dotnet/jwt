@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
+using JWT.Extensions.AspNetCore.Factories;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -110,14 +111,22 @@ namespace JWT.Extensions.AspNetCore.Tests
                 Keys = null,
                 VerifySignature = true
             };
-            var optionsMonitor = new Mock<IOptionsMonitor<JwtAuthenticationOptions>>();
+            var optionsMonitor = new Mock<IOptionsMonitor<JwtAuthenticationOptions>>(MockBehavior.Strict);
             optionsMonitor.Setup(m => m.Get(It.IsAny<string>())).Returns(options);
+            optionsMonitor.Setup(m => m.CurrentValue).Returns(options);
 
             var loggerFactory = NullLoggerFactory.Instance;
             var encoder = UrlEncoder.Default;
             var clock = new SystemClock();
 
-            var handler = new JwtAuthenticationHandler(decoder, optionsMonitor.Object, loggerFactory, encoder, clock);
+            var handler = new JwtAuthenticationHandler(
+                decoder,
+                new DefaultIdentityFactory(optionsMonitor.Object),
+                new DefaultTicketFactory(),
+                optionsMonitor.Object,
+                loggerFactory,
+                encoder,
+                clock);
 
             var scheme = new AuthenticationScheme(JwtAuthenticationDefaults.AuthenticationScheme, JwtAuthenticationDefaults.AuthenticationScheme, typeof(JwtAuthenticationHandler));
             var context = new DefaultHttpContext

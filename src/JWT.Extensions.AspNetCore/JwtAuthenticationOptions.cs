@@ -5,7 +5,7 @@ using JWT.Internal;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public class JwtAuthenticationOptions : AuthenticationSchemeOptions
     {
@@ -64,19 +64,11 @@ namespace JWT
         public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = JwtAuthenticationHandler.OnFailedTicket;
 
         /// <summary>
-        /// Creates user's <see cref="IIdentity" /> from <see cref="IDictionary{String,String}" /> of user's claims
+        /// Whether to include by default AuthenticationScheme into the resulting <see cref="ClaimsIdentity" />.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="DefaultIdentityFactory.CreateIdentity" />.
+        /// The default value is <c>true</c>.
         /// </remarks>
-        public Func<IDictionary<string, string>, IIdentity> IdentityFactory { get; set; } = DefaultIdentityFactory.CreateIdentity;
-
-        /// <summary>
-        /// Creates user's <see cref="AuthenticationTicket" /> from user's <see cref="IIdentity" /> and current <see cref="AuthenticationScheme" />
-        /// </summary>
-        /// <remarks>
-        /// For the default behavior <see cref="DefaultTicketFactory.CreateTicket" />.
-        /// </remarks>
-        public Func<IIdentity, AuthenticationScheme, AuthenticationTicket> TicketFactory { get; set; } = DefaultTicketFactory.CreateTicket;
+        public bool IncludeAuthenticationScheme { get; set; } = true;
     }
 }

@@ -1,11 +1,12 @@
 using System;
 using JWT.Algorithms;
-using JWT.Internal;
+using JWT.Extensions.AspNetCore.Factories;
+using JWT.Extensions.AspNetCore.Internal;
 using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public static class AuthenticationBuilderExtensions
     {
@@ -24,8 +25,10 @@ namespace JWT
             builder.Services.TryAddSingleton<IJsonSerializer, JsonNetSerializer>();
             builder.Services.TryAddSingleton<IJwtValidator, JwtValidator>();
             builder.Services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
-
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
+
+            builder.Services.TryAddSingleton<IIdentityFactory, DefaultIdentityFactory>();
+            builder.Services.TryAddSingleton<ITicketFactory, DefaultTicketFactory>();
 
             return builder.AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(authenticationScheme, configureOptions);
         }

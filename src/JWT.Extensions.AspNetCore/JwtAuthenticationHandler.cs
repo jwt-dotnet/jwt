@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using JWT.Extensions.AspNetCore.Factories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
-namespace JWT
+namespace JWT.Extensions.AspNetCore
 {
     public sealed class JwtAuthenticationHandler : AuthenticationHandler<JwtAuthenticationOptions>
     {
@@ -19,6 +20,8 @@ namespace JWT
         private static readonly Action<ILogger, string, Exception> _logFailedTicket;
 
         private readonly IJwtDecoder _jwtDecoder;
+        private readonly IIdentityFactory _identityFactory;
+        private readonly ITicketFactory _ticketFactory;
 
         static JwtAuthenticationHandler()
         {
@@ -50,12 +53,18 @@ namespace JWT
 
         public JwtAuthenticationHandler(
             IJwtDecoder jwtDecoder,
+            IIdentityFactory identityFactory,
+            ITicketFactory ticketFactory,
             IOptionsMonitor<JwtAuthenticationOptions> optionsMonitor,
             ILoggerFactory loggerFactory,
             UrlEncoder urlEncoder,
             ISystemClock clock)
-            : base(optionsMonitor, loggerFactory, urlEncoder, clock) =>
+            : base(optionsMonitor, loggerFactory, urlEncoder, clock)
+        {
             _jwtDecoder = jwtDecoder;
+            _identityFactory = identityFactory;
+            _ticketFactory = ticketFactory;
+        }
 
         public static AuthenticateResult OnMissingHeader(ILogger logger)
         {
@@ -108,9 +117,9 @@ namespace JWT
 
             try
             {
-                var dic = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Keys, this.Options.VerifySignature);
-                var identity = this.Options.IdentityFactory(dic);
-                var ticket = this.Options.TicketFactory(identity, this.Scheme);
+                var payload = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Keys, this.Options.VerifySignature);
+                var identity = _identityFactory.CreateIdentity(payload);
+                var ticket = _ticketFactory.CreateTicket(identity, this.Scheme);
 
                 return this.Options.OnSuccessfulTicket(this.Logger, ticket);
             }
