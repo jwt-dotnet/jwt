@@ -1,4 +1,4 @@
-﻿namespace JWT
+﻿namespace JWT.Extensions.AspNetCore
 {
     /// <summary>
     /// Default values related to Jwt authentication/authorization

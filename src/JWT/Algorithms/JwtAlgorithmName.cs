@@ -48,6 +48,11 @@ namespace JWT.Algorithms
         /// <summary>
         /// ECDSA using SHA-512
         /// </summary>
-        ES512
+        ES512,
+        
+        /// <summary>
+        /// Algorithm used when no signing is wanted
+        /// </summary>
+        None
     }
 }

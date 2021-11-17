@@ -1,4 +1,4 @@
-#if NETSTANDARD2_0 || NET_50
+#if NETSTANDARD2_0 || NET5_0
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -57,7 +57,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(Func<X509Certificate2, ECDSAAlgorithm> algFactory)
         {
-            var bytes = Encoding.ASCII.GetBytes(TestData.ServerEcdsaPublicKey);
+            var bytes = Convert.FromBase64String(TestData.ServerEcdsaPublicKey);
             var cert = new X509Certificate2(bytes);
 
             var alg = algFactory(cert);

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using JWT.Algorithms;
 
 namespace JWT.Tests.Models
@@ -18,7 +18,8 @@ namespace JWT.Tests.Models
 
         public static string[] Secrets = { Secret, Secret2 };
 
-        public const string Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
+        public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
+        public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJOb25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
         public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.QQJaPxDE6E7l-zC-LKTbEgPfId5FDvowRKww1o6jdwU";
         public const string TokenWithCustomTypeHeader = "eyJ0eXAiOiJmb28iLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.vubwuLxx_7AWGvo-Y8XF_l7XP1WOv5obJulIk3RlVdk";
         public const string TokenWithExp = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsImV4cCI6MTYwNTgzNDI1NX0.dOkG1StO33Ae0qFQbHLslvSsCV6ThLofjc885egDnuY";
@@ -37,7 +38,7 @@ namespace JWT.Tests.Models
             { nameof(Customer.Age), Customer.Age },
         };
 
-        public const string ServerRsaPublicKey1 = "-----BEGIN CERTIFICATE-----MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcNMTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALsspKjcF/mB0nheaT+9KizOeBM6Qpi69LzOLBw8rxohSFJw/BFB/ch+8jXbtq23IwtavJTwSeY6a7pbZgrwCwUK/27gy04m/tum5FJBfCVGTTI4vqUYeTKimQzxj2pupQ+wx//1tKrXMIDGdllmQ/tffQHXxYGBR5Ol543YRN+dAgMBAAGjUDBOMB0GA1UdDgQWBBQMfi0akrZdtPpiYSbE4h2/9vlaozAfBgNVHSMEGDAWgBQMfi0akrZdtPpiYSbE4h2/9vlaozAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBDQUAA4GBAF9pg6H7C7O5/oHeRtKSOPb9WnrHZ/mxAl30wCh2pCtJLkgMKKhquYmKqTA+QWpSF/Qeaq17DAf7Wq8VQ2QES9WCQm+PlBlTeZAf3UTLkxIUDchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j-----END CERTIFICATE-----";
+        public const string ServerRsaPublicKey1 = "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcNMTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALsspKjcF/mB0nheaT+9KizOeBM6Qpi69LzOLBw8rxohSFJw/BFB/ch+8jXbtq23IwtavJTwSeY6a7pbZgrwCwUK/27gy04m/tum5FJBfCVGTTI4vqUYeTKimQzxj2pupQ+wx//1tKrXMIDGdllmQ/tffQHXxYGBR5Ol543YRN+dAgMBAAGjUDBOMB0GA1UdDgQWBBQMfi0akrZdtPpiYSbE4h2/9vlaozAfBgNVHSMEGDAWgBQMfi0akrZdtPpiYSbE4h2/9vlaozAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBDQUAA4GBAF9pg6H7C7O5/oHeRtKSOPb9WnrHZ/mxAl30wCh2pCtJLkgMKKhquYmKqTA+QWpSF/Qeaq17DAf7Wq8VQ2QES9WCQm+PlBlTeZAf3UTLkxIUDchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j";
 
         public const string ServerRsaPublicThumbprint1 = "CFAEAE2D650A6CA9862575DE54371EA980643849";
 
@@ -50,7 +51,6 @@ namespace JWT.Tests.Models
         public static readonly IJwtAlgorithm HMACSHA256Algorithm = new HMACSHA256Algorithm();
 
         public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
-            new X509Certificate2(
-                Encoding.ASCII.GetBytes(ServerRsaPublicKey2)));
+            new X509Certificate2(Convert.FromBase64String(ServerRsaPublicKey2)));
     }
 }

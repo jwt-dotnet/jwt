@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net46;netstandard1.3;netstandard2.0;net50</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net46;netstandard1.3;netstandard2.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
@@ -11,6 +11,9 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net46'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <TargetFrameworkIdentifier>.NETFramework,Version=5.0</TargetFrameworkIdentifier>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
   </PropertyGroup>
@@ -19,7 +22,7 @@
     <Copyright>Public Domain</Copyright>
     <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
-    <PackageTags>jwt;json</PackageTags>
+    <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
     <Version>9.0.0</Version>
     <FileVersion>9.0.0.0</FileVersion>
@@ -41,7 +44,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net50'">

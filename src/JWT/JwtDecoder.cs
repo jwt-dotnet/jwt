@@ -116,13 +116,13 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (key is object && key.Length == 0)
-                throw new ArgumentOutOfRangeException(nameof(key));
 
             if (verify)
             {
-                if (_jwtValidator is null || _algFactory is null)
-                    throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
+                if (_jwtValidator is null)
+                    throw new InvalidOperationException("This instance was constructed without validator so cannot be used for signature validation");
+                if (_algFactory is null)
+                    throw new InvalidOperationException("This instance was constructed without algorithm factory so cannot be used for signature validation");
 
                 Validate(jwt, key);
             }
@@ -140,8 +140,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
 
             if (verify)
             {
@@ -231,8 +229,6 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
 
             var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
@@ -248,6 +244,9 @@ namespace JWT
             }
             else
             {
+                if (!AllKeysHaveValues(keys))
+                    throw new ArgumentOutOfRangeException(nameof(keys));
+
                 // the signature on the token, with the leading =
                 var rawSignature = Convert.ToBase64String(decodedSignature);
 

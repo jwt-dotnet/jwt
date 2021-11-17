@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFrameworks>net46;net472;net48</TargetFrameworks>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
@@ -10,7 +11,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core</PackageTags>
     <PackageLicense>MIT</PackageLicense>
-    <Version>6.0.0-alpha2</Version>
+    <Version>6.1.0</Version>
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
@@ -30,7 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Owin" Version="3.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>

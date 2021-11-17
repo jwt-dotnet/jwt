@@ -1,5 +1,10 @@
 trigger:
-- main
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - '*.md'
 
 pool:
   vmImage: 'windows-latest'
@@ -31,6 +36,13 @@ steps:
     version: '5.0.x'
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
+- task: UseDotNet@2
+  displayName: 'Use .NET 6.0.x'
+  inputs:
+    packageType: sdk
+    version: '6.0.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
+
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
@@ -57,7 +69,7 @@ steps:
   displayName: 'Run tests'
   inputs:
     command: 'test'
-    projects: 'tests/JWT.Tests.Net*/*.csproj'
+    projects: 'tests/**/*.csproj'
     arguments: ' -c $(buildConfiguration) --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'

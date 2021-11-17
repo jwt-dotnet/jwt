@@ -177,6 +177,24 @@ namespace JWT.Tests
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
+        
+        [TestMethod]
+        public void Decode_Token_Missing_Signature_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
+        {
+            const string token = TestData.TokenWithoutSignature;
+            var payload = TestData.Customer;
+
+            var serializer = new JsonNetSerializer();
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var decoder = new JwtDecoder(serializer, urlEncoder);
+
+            var actual = decoder.Decode(token);
+            var expected = serializer.Serialize(payload);
+
+            actual.Should()
+                .Be(expected, "because the provided object should be correctly serialized in the token");
+        }
 
         [TestMethod]
         public void DecodeToObject_Should_Decode_Token_To_Dictionary()

@@ -1,6 +1,5 @@
-[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=7)
+[![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=9)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
-![Build status](https://github.com/jwt-dotnet/jwt/workflows/Build/badge.svg)
 
 # Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
@@ -10,9 +9,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 | | |
 |-|-|
-| [<img alt="Auth0 logo" src="https://cdn.auth0.com/website/press/resources/auth0-logo-light.svg" width="200">](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth) | If you want to quickly add secure token-based authentication to your .NET projects, feel free to check Auth0's free plan at [auth0.com/developers](https://auth0.com/developers/?utm_source=GHsponsor&utm_medium=GHsponsor&utm_campaign=jwtdotnet&utm_content=auth).  |
-
-Want to support the project too? Please visit [my Patreon page](https://www.patreon.com/abatishchev).
+| [<img alt="Auth0 logo" src="https://cdn.auth0.com/blog/github-sponsorships/brand-evolution-logo-Auth0-horizontal-Indigo.png" height="91">](https://a0.to/try-auth0) | If you want to quickly implement a secure authentication to your JWT project, [create an Auth0 account](https://a0.to/try-auth0); it's Free! |
 
 ## Avaliable packages
 
@@ -22,10 +19,11 @@ Want to support the project too? Please visit [my Patreon page](https://www.patr
 
 ## Supported .NET versions:
 
-- .NET Framework 3.5 and higher versions
-- .NET Framework 4.0 and higher versions
+- .NET Framework 3.5
+- .NET Framework 4.0 - 4.8
 - .NET Standard 1.3
 - .NET Standard 2.0
+- .NET 5.0
 
 ## License
 
@@ -90,7 +88,7 @@ const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
-    var provider = new UtcDateTimeProvider();
+    IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
     IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
@@ -168,13 +166,17 @@ The output would be:
 
 #### Set and validate token expiration
 
-As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4), the `exp` "claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing." If an `exp` claim is present and is prior to the current time the token will fail verification. The exp (expiry) value must be specified as the number of seconds since 1/1/1970 UTC.
+As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4):
+
+>The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
+
+If it is present in the payload and is prior to the current time the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 UTC.
 
 ```c#
-var provider = new UtcDateTimeProvider();
+IDateTimeProvider provider = new UtcDateTimeProvider();
 var now = provider.GetNow();
 
-var secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+double  secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
 var payload = new Dictionary<string, object>
 {
@@ -183,7 +185,7 @@ var payload = new Dictionary<string, object>
 const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 var token = encoder.Encode(payload, secret);
 
-var json = decoder.Decode(token, secret); // throws TokenExpiredException
+var json = decoder.Decode(token, secret, validate: true); // throws TokenExpiredException
 ```
 
 #### Turning off parts of the token validation
@@ -217,9 +219,9 @@ var json = JwtBuilder.Create()
 #### Parsing (decoding) token header
 
 ```c#
-var serializer = new JsonNetSerializer();
-var urlEncoder = new JwtBase64UrlEncoder();
-var decoder = new JwtDecoder(serializer, urlEncoder);
+IJsonSerializer serializer = new JsonNetSerializer();
+IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
+IJwtDecoder decoder = new JwtDecoder(serializer, urlEncoder);
 
 JwtHeader header = decoder.DecodeHeader<JwtHeader>(token);
 
@@ -232,7 +234,7 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 
 ```c#
 JwtHeader header = JwtBuilder.Create()
-                             .DecodeHeader<JwtHeader>(TestData.TokenByAsymmetricAlgorithm);
+                             .DecodeHeader<JwtHeader>(token);
 
 var typ = header.Type; // JWT
 var alg = header.Algorithm; // RS256
@@ -244,7 +246,7 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
 ```c#
-public class CustomJsonSerializer : IJsonSerializer
+public sealed class CustomJsonSerializer : IJsonSerializer
 {
     public string Serialize(object obj)
     {
@@ -311,12 +313,19 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secrets
+                     // secrets, required only for symmetric algorithms
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
                      // force JwtDecoder to throw exception if JWT signature is invalid
                      options.VerifySignature = true;
                  });
+  // the non-generic version AddJwt() requires you to register an instance of IAlgorithmFactory manually
+  services.AddSingleton<IAlgorithmFactory>(new RSAlgorithmFactory(certificate));
+  // or
+  services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
+
+  // or use the generic version AddJwt<TFactory() if you have a custom implementation of IAlgorithmFactory
+  // AddJwt<MyCustomAlgorithmFactory(options => ...);
 }
 
 public void Configure(IApplicationBuilder app)
@@ -340,11 +349,20 @@ options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
 #### Register middleware to validate JWT
 
 ```c#
-app.UseJwtMiddleware();
+services.AddAuthentication(options =>
+    {
+        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+        options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+
+        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+        options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+    })
+.AddJwt(options =>
+    {
+        options.Keys = configureOptions.Keys;
+        options.VerifySignature = configureOptions.VerifySignature;
+    });
 ```
-
-**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.
-
 
 ### Jwt.Net OWIN
 
@@ -359,4 +377,4 @@ app.UseJwtMiddleware();
 app.UseJwtMiddleware();
 ```
 
-**Note:** work in progress as the scenario/usage is not designed yet. The registered will do nothing but throw an exception.
+**Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.

@@ -287,7 +287,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
         public static T DecodeToObject<T>(this IJwtDecoder decoder, string token, string[] keys, bool verify) =>
-            decoder.DecodeToObject<T>(token, GetBytes(keys), verify);
+            decoder.DecodeToObject<T>(token, keys is object ? GetBytes(keys) : null, verify);
 
         #endregion
     }
