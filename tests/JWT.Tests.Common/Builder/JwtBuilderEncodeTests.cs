@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,6 +7,7 @@ using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Builder
@@ -170,6 +171,44 @@ namespace JWT.Tests.Builder
             token.Split('.').Last()
                  .Should()
                  .BeEmpty("Because it should miss signature");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Encode_To_Token_With_Extra_Headers()
+        {
+            const string key = TestData.Secret;
+
+            var actual = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader(HeaderName.KeyId, "42")
+                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                .Encode();
+
+            const string expected = TestData.TokenWithCustomTypeHeader2;
+
+            actual.Should()
+                .Be(expected, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Encode_To_Token_With_Custom_Extra_Headers()
+        {
+            const string key = TestData.Secret;
+
+            var actual = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                .Encode();
+
+            const string expected = TestData.TokenWithCustomTypeHeader3;
+
+            actual.Should()
+                .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
     }
 }
