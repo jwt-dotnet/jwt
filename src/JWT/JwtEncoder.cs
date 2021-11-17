@@ -56,11 +56,11 @@ namespace JWT
             var stringToSign = headerSegment + "." + payloadSegment;
             var bytesToSign = GetBytes(stringToSign);
 
-            var signatureSegment = GetSignatureSegment();
+            var signatureSegment = GetSignatureSegment(key, bytesToSign);
             return stringToSign + "." + signatureSegment;
         }
         
-        private string GetSignatureSegment()
+        private string GetSignatureSegment(byte[] key, byte[] bytesToSign)
         {
             switch (_algorithm)
             {
