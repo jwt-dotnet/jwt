@@ -14,10 +14,10 @@ namespace JWT.Algorithms
 
         /// <inheritdoc />
         public HashAlgorithmName HashAlgorithmName => 
-            throw new NotSupportedException("The \"None\" algorithm doesn't have any hash algorithm.");
+            throw new NotSupportedException("The None algorithm doesn't have any hash algorithm.");
 
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign) =>
-            throw new NotSupportedException("The \"None\" algorithm doesn't support signing.");
+            throw new NotSupportedException("The None algorithm doesn't support signing.");
     }
 }
