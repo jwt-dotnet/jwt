@@ -71,5 +71,22 @@ namespace JWT.Tests
             actual.Should()
                   .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
+        
+        [TestMethod]
+        public void Encode_With_NoAlgorithm_Should_Encode_To_Token()
+        {
+            const string key = TestData.Secret;
+            var toEncode = TestData.Customer;
+            const string expected = TestData.TokenWithoutSignature;
+
+            var algorithm = new NoneAlgorithm();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var serializer = new JsonNetSerializer();
+            var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+
+            var actual = encoder.Encode(toEncode, key);
+
+            actual.Should()
+                .Be(expected, "because the same data encoded with the same key must result in the same token");        }
     }
 }

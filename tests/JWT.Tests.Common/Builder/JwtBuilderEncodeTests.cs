@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
@@ -134,9 +135,9 @@ namespace JWT.Tests.Builder
                           .Encode();
 
             action.Should()
-                  .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
-
+        
         [TestMethod]
         public void Encode_With_MultipleSecrets_Should_Throw_Exception()
         {
@@ -149,6 +150,26 @@ namespace JWT.Tests.Builder
 
             action.Should()
                   .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+        }
+
+        [TestMethod]
+        public void Encode_WithoutAlgorithm_Should_Return_Token()
+        {
+            var secret = _fixture.Create<string>();
+
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new NoneAlgorithm())
+                                  .WithSecret(secret)
+                                  .Encode();
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the token should contains some data");
+            token.Split('.')
+                 .Should()
+                 .HaveCount(3, "because the token should consist of three parts");
+            token.Split('.').Last()
+                 .Should()
+                 .BeEmpty("Because it should miss signature");
         }
     }
 }
