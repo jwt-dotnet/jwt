@@ -43,9 +43,6 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)
         {
-            var header = extraHeaders is null ?
-                new Dictionary<string, object>(2, StringComparer.OrdinalIgnoreCase) :
-                new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
 
@@ -54,6 +51,10 @@ namespace JWT
                 throw new ArgumentNullException(nameof(algorithm));
             if (!algorithm.IsAsymmetric() && key is null)
                 throw new ArgumentNullException(nameof(key));
+
+            var header = extraHeaders is null ?
+                new Dictionary<string, object>(2, StringComparer.OrdinalIgnoreCase) :
+                new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
 
             if (!header.ContainsKey("typ"))
             {
@@ -70,21 +71,21 @@ namespace JWT
             var stringToSign = headerSegment + "." + payloadSegment;
             var bytesToSign = GetBytes(stringToSign);
 
-            var signatureSegment = GetSignatureSegment(key, bytesToSign);
+            var signatureSegment = GetSignatureSegment(algorithm, key, bytesToSign);
             return stringToSign + "." + signatureSegment;
         }
-        
-        private string GetSignatureSegment(byte[] key, byte[] bytesToSign)
+
+        private string GetSignatureSegment(IJwtAlgorithm algorithm, byte[] key, byte[] bytesToSign)
         {
-            switch (_algorithm)
+            switch (algorithm)
             {
-                case NoneAlgorithm none:
+                case NoneAlgorithm _:
                 {
                     return null;
                 }
                 default:
                 {
-                    var signature = _algorithm.Sign(key, bytesToSign);
+                    var signature = algorithm.Sign(key, bytesToSign);
                     return _urlEncoder.Encode(signature);
                 }
             }
