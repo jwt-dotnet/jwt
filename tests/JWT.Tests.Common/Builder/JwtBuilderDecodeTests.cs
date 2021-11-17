@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Serializers;
 using JWT.Tests.Models;
@@ -67,6 +68,27 @@ namespace JWT.Tests.Builder
 
             token.Should()
                  .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
+        }
+        
+        [TestMethod]
+        public void Decode_Using_None_Algorithm_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .Decode(TestData.Token);
+
+            token.Should()
+                .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
+        }
+
+        [TestMethod]
+        public void Decode_Using_WithAlgorithm_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                .Decode(TestData.Token);
+
+            token.Should()
+                .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
         }
 
         [TestMethod]

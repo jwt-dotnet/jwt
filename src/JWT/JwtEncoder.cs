@@ -54,8 +54,12 @@ namespace JWT
             var stringToSign = headerSegment + "." + payloadSegment;
             var bytesToSign = GetBytes(stringToSign);
 
-            var signature = _algorithm.Sign(key, bytesToSign);
-            var signatureSegment = _urlEncoder.Encode(signature);
+            var signatureSegment = string.Empty;
+            if (_algorithm is not NoneAlgorithm)
+            {
+                var signature = _algorithm.Sign(key, bytesToSign);
+                signatureSegment = _urlEncoder.Encode(signature);
+            }
 
             return stringToSign + "." + signatureSegment;
         }

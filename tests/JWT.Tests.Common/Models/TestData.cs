@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using JWT.Algorithms;
 
 namespace JWT.Tests.Models
@@ -18,7 +18,8 @@ namespace JWT.Tests.Models
 
         public static string[] Secrets = { Secret, Secret2 };
 
-        public const string Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
+        public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
+        public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJOb25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
         public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.QQJaPxDE6E7l-zC-LKTbEgPfId5FDvowRKww1o6jdwU";
         public const string TokenWithCustomTypeHeader = "eyJ0eXAiOiJmb28iLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.vubwuLxx_7AWGvo-Y8XF_l7XP1WOv5obJulIk3RlVdk";
         public const string TokenWithExp = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsImV4cCI6MTYwNTgzNDI1NX0.dOkG1StO33Ae0qFQbHLslvSsCV6ThLofjc885egDnuY";
@@ -50,7 +51,6 @@ namespace JWT.Tests.Models
         public static readonly IJwtAlgorithm HMACSHA256Algorithm = new HMACSHA256Algorithm();
 
         public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
-            new X509Certificate2(
-                Encoding.ASCII.GetBytes(ServerRsaPublicKey2)));
+            new X509Certificate2(Convert.FromBase64String(ServerRsaPublicKey2)));
     }
 }
