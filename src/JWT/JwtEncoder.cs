@@ -42,7 +42,9 @@ namespace JWT
                 new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
 
             if (!header.ContainsKey("typ"))
+            {
                 header.Add("typ", "JWT");
+            }
             header.Add("alg", _algorithm.Name);
 
             var headerBytes = GetBytes(_jsonSerializer.Serialize(header));
@@ -54,14 +56,24 @@ namespace JWT
             var stringToSign = headerSegment + "." + payloadSegment;
             var bytesToSign = GetBytes(stringToSign);
 
-            var signatureSegment = string.Empty;
-            if (_algorithm is not NoneAlgorithm)
-            {
-                var signature = _algorithm.Sign(key, bytesToSign);
-                signatureSegment = _urlEncoder.Encode(signature);
-            }
-
+            var signatureSegment = GetSignatureSegment();
             return stringToSign + "." + signatureSegment;
+        }
+        
+        private string GetSignatureSegment()
+        {
+            switch (_algorithm)
+            {
+                case NoneAlgorithm none:
+                {
+                    return null;
+                }
+                default:
+                {
+                    var signature = _algorithm.Sign(key, bytesToSign);
+                    return _urlEncoder.Encode(signature);
+                }
+            }
         }
     }
 }
