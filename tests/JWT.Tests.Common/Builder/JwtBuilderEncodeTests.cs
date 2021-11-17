@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -131,8 +131,8 @@ namespace JWT.Tests.Builder
 
             Action action = () =>
                 JwtBuilder.Create()
-                    .WithSecret(secret)
-                    .Encode();
+                          .WithSecret(secret)
+                          .Encode();
 
             action.Should()
                 .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
@@ -145,11 +145,11 @@ namespace JWT.Tests.Builder
 
             Action action = () =>
                 JwtBuilder.Create()
-                    .WithSecret(secrets)
-                    .Encode();
+                          .WithSecret(secrets)
+                          .Encode();
 
             action.Should()
-                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+                  .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
 
         [TestMethod]
@@ -158,18 +158,18 @@ namespace JWT.Tests.Builder
             var secret = _fixture.Create<string>();
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithSecret(secret)
-                .Encode();
+                                  .WithAlgorithm(new NoneAlgorithm())
+                                  .WithSecret(secret)
+                                  .Encode();
 
             token.Should()
-                .NotBeNullOrEmpty("because the token should contains some data");
+                 .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')
-                .Should()
-                .HaveCount(3, "because the token should consist of three parts");
+                 .Should()
+                 .HaveCount(3, "because the token should consist of three parts");
             token.Split('.').Last()
-                .Should()
-                .BeEmpty("Because it should miss signature");
+                 .Should()
+                 .BeEmpty("Because it should miss signature");
         }
     }
 }
