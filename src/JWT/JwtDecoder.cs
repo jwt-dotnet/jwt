@@ -7,7 +7,6 @@ using static JWT.Internal.EncodingHelper;
 #if NET35
 using static JWT.Compatibility.String;
 #else
-using static System.String;
 #endif
 
 namespace JWT
@@ -234,11 +233,13 @@ namespace JWT
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
 
             var header = DecodeHeader<JwtHeader>(jwt);
-            var alg = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
+            var algorithm = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
+            if (algorithm is null)
+                throw new ArgumentNullException(nameof(algorithm));
 
             var bytesToSign = GetBytes(jwt.Header, (byte)'.', jwt.Payload);
 
-            if (alg is IAsymmetricAlgorithm asymmAlg)
+            if (algorithm is IAsymmetricAlgorithm asymmAlg)
             {
                 _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
             }
@@ -251,8 +252,7 @@ namespace JWT
                 var rawSignature = Convert.ToBase64String(decodedSignature);
 
                 // the signatures re-created by the algorithm, with the leading =
-                var recreatedSignatures = keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign)))
-                                              .ToArray();
+                var recreatedSignatures = keys.Select(key => Convert.ToBase64String(algorithm.Sign(key, bytesToSign))).ToArray();
 
                 _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
             }

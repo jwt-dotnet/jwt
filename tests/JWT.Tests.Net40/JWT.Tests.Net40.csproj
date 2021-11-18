@@ -10,7 +10,7 @@
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
     <Compile Include="..\JWT.Tests.Common\Properties\AssemblyInfo.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
 

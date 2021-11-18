@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using JWT.Algorithms;
 using JWT.Extensions.AspNetCore.Factories;
 using JWT.Extensions.AspNetCore.Internal;
-using JWT.Serializers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -21,10 +20,7 @@ namespace JWT.Extensions.AspNetCore
 
         public static AuthenticationBuilder AddJwt(this AuthenticationBuilder builder, string authenticationScheme, Action<JwtAuthenticationOptions> configureOptions)
         {
-            builder.Services.TryAddSingleton<IJwtDecoder, JwtDecoder>();
-            builder.Services.TryAddSingleton<IJsonSerializer, JsonNetSerializer>();
-            builder.Services.TryAddSingleton<IJwtValidator, JwtValidator>();
-            builder.Services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
+            builder.Services.AddJwtDecoder();
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
 
             builder.Services.TryAddSingleton<IIdentityFactory, DefaultIdentityFactory>();
@@ -48,7 +44,7 @@ namespace JWT.Extensions.AspNetCore
         public static AuthenticationBuilder AddJwt<TFactory>(this AuthenticationBuilder builder, string authenticationScheme, Action<JwtAuthenticationOptions> configureOptions)
             where TFactory : class, IAlgorithmFactory
         {
-            builder.Services.TryAddSingleton<IAlgorithmFactory, TFactory>();
+            builder.Services.AddJwtDecoder<TFactory>();
 
             return builder.AddJwt(authenticationScheme, configureOptions);
         }
