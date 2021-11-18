@@ -10,7 +10,7 @@ namespace JWT.Algorithms
     public class NoneAlgorithm : IJwtAlgorithm
     {
         /// <inheritdoc />
-        public string Name => nameof(JwtAlgorithmName.None);
+        public string Name => "none";
 
         /// <inheritdoc />
         public HashAlgorithmName HashAlgorithmName => 

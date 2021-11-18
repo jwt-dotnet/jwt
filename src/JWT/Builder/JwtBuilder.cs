@@ -44,6 +44,19 @@ namespace JWT.Builder
             _jwt.Header.Add(name.GetHeaderName(), value);
             return this;
         }
+        
+        /// <summary>
+        /// Add header to the JWT.
+        /// </summary>
+        /// <remarks>This adds a non-standard header value.</remarks>
+        /// <param name="name">Header name</param>
+        /// <param name="value">The value you want give to the header</param>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder AddHeader(string name, object value)
+        {
+            _jwt.Header.Add(name, value);
+            return this;
+        }
 
         /// <summary>
         /// Adds claim to the JWT.

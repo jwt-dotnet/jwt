@@ -19,9 +19,11 @@ namespace JWT.Tests.Models
         public static string[] Secrets = { Secret, Secret2 };
 
         public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
-        public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJOb25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
+        public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
         public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.QQJaPxDE6E7l-zC-LKTbEgPfId5FDvowRKww1o6jdwU";
         public const string TokenWithCustomTypeHeader = "eyJ0eXAiOiJmb28iLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.vubwuLxx_7AWGvo-Y8XF_l7XP1WOv5obJulIk3RlVdk";
+        public const string TokenWithCustomTypeHeader2 = "eyJraWQiOiI0MiIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.sPwGfDyhArZCmWRHTxm0xzNeG1gCf-qXhz21PdUxS4k";
+        public const string TokenWithCustomTypeHeader3 = "eyJ2ZXJzaW9uIjoxLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.TSQb2zVBJL9uY6mIdBKFaEooR-0OPjR-FPqY7hzwzwU";
         public const string TokenWithExp = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsImV4cCI6MTYwNTgzNDI1NX0.dOkG1StO33Ae0qFQbHLslvSsCV6ThLofjc885egDnuY";
         public const string TokenWithNbf = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsIm5iZiI6MTYwNTgzNDI1NX0.iuxTYx6CMcNaxgvPn8pfnPFDhIZceKB0PrIZgkmHFbg";
         public const long TokenTimestamp = 1605834255;
