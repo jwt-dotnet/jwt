@@ -69,7 +69,7 @@ namespace JWT.Tests.Builder
             token.Should()
                  .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
         }
-        
+
         [TestMethod]
         public void Decode_Using_None_Algorithm_Should_Return_Token()
         {

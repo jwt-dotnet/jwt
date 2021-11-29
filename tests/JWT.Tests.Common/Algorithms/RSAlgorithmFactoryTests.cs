@@ -83,5 +83,41 @@ namespace JWT.Tests.Algorithms
             alg.Should()
                .BeOfType<RS1024Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
         }
+
+        [TestMethod]
+        public void Create_Should_Return_Instance_Of_RS2048Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS2048()
+        {
+            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var factory = new RSAlgorithmFactory(publicKey);
+            var context = new JwtDecoderContext
+            {
+                Header = new JwtHeader
+                {
+                    Algorithm = JwtAlgorithmName.RS2048.ToString()
+                }
+            };
+            var alg = factory.Create(context);
+
+            alg.Should()
+               .BeOfType<RS2048Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
+        }
+
+        [TestMethod]
+        public void Create_Should_Return_Instance_Of_RS4096Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS4096()
+        {
+            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var factory = new RSAlgorithmFactory(publicKey);
+            var context = new JwtDecoderContext
+            {
+                Header = new JwtHeader
+                {
+                    Algorithm = JwtAlgorithmName.RS4096.ToString()
+                }
+            };
+            var alg = factory.Create(context);
+
+            alg.Should()
+               .BeOfType<RS4096Algorithm>("because Create should return an instance of RS384Algorithm when the algorithm name in the header is 'RS256'");
+        }
     }
 }
