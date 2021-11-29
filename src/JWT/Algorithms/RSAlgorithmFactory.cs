@@ -44,6 +44,12 @@ namespace JWT.Algorithms
                     return CreateRS384Algorithm();
                 case JwtAlgorithmName.RS512:
                     return CreateRS512Algorithm();
+                case JwtAlgorithmName.RS1024:
+                    return CreateRS1024Algorithm();
+                case JwtAlgorithmName.RS2048:
+                    return CreateRS2048Algorithm();
+                case JwtAlgorithmName.RS4096:
+                    return CreateRS4096Algorithm();
                 case JwtAlgorithmName.HS256:
                 case JwtAlgorithmName.HS384:
                 case JwtAlgorithmName.HS512:
@@ -106,6 +112,58 @@ namespace JWT.Algorithms
             if (_publicKey is object)
             {
                 return new RS512Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+        private RS1024Algorithm CreateRS1024Algorithm()
+        {
+            if (_certFactory is object)
+            {
+                return new RS1024Algorithm(_certFactory());
+            }
+            if (_publicKey is object && _privateKey is object)
+            {
+                return new RS1024Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey is object)
+            {
+                return new RS1024Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+        private RS2048Algorithm CreateRS2048Algorithm()
+        {
+            if (_certFactory is object)
+            {
+                return new RS2048Algorithm(_certFactory());
+            }
+            if (_publicKey is object && _privateKey is object)
+            {
+                return new RS2048Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey is object)
+            {
+                return new RS2048Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+
+        private RS4096Algorithm CreateRS4096Algorithm()
+        {
+            if (_certFactory is object)
+            {
+                return new RS4096Algorithm(_certFactory());
+            }
+            if (_publicKey is object && _privateKey is object)
+            {
+                return new RS4096Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey is object)
+            {
+                return new RS4096Algorithm(_publicKey);
             }
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");

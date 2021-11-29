@@ -36,6 +36,21 @@ namespace JWT.Algorithms
         RS512,
 
         /// <summary>
+        /// RSASSA-PKCS1-v1_5 using SHA-1024
+        /// </summary>
+        RS1024,
+
+        /// <summary>
+        /// RSASSA-PKCS1-v1_5 using SHA-2048
+        /// </summary>
+        RS2048,
+
+        /// <summary>
+        /// RSASSA-PKCS1-v1_5 using SHA-4096
+        /// </summary>
+        RS4096,
+
+        /// <summary>
         /// ECDSA using SHA-256
         /// </summary>
         ES256,
@@ -49,7 +64,7 @@ namespace JWT.Algorithms
         /// ECDSA using SHA-512
         /// </summary>
         ES512,
-        
+
         /// <summary>
         /// Algorithm used when no signing is wanted
         /// </summary>

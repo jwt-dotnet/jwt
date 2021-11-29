@@ -136,9 +136,9 @@ namespace JWT.Tests.Builder
                           .Encode();
 
             action.Should()
-                .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
+                  .Throw<InvalidOperationException>("because a JWT should not be created if no algorithm is provided");
         }
-        
+
         [TestMethod]
         public void Encode_With_MultipleSecrets_Should_Throw_Exception()
         {
@@ -172,7 +172,7 @@ namespace JWT.Tests.Builder
                  .Should()
                  .BeEmpty("Because it should miss signature");
         }
-        
+
         [TestMethod]
         public void Encode_Should_Encode_To_Token_With_Extra_Headers()
         {
@@ -189,9 +189,9 @@ namespace JWT.Tests.Builder
             const string expected = TestData.TokenWithCustomTypeHeader2;
 
             actual.Should()
-                .Be(expected, "because the same data encoded with the same key must result in the same token");
+                  .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
-        
+
         [TestMethod]
         public void Encode_Should_Encode_To_Token_With_Custom_Extra_Headers()
         {
@@ -208,7 +208,7 @@ namespace JWT.Tests.Builder
             const string expected = TestData.TokenWithCustomTypeHeader3;
 
             actual.Should()
-                .Be(expected, "because the same data encoded with the same key must result in the same token");
+                  .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
     }
 }

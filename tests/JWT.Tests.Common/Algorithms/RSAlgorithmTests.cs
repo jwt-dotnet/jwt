@@ -67,12 +67,13 @@ namespace JWT.Tests.Algorithms
             alg.Should()
                .NotBeNull();
         }
-    
+
         private static IEnumerable<object[]> GetFactoryWithPublicKey()
         {
             yield return new object[] { new Func<RSA, RSAlgorithm>(publicKey => new RS256Algorithm(publicKey)) };
             yield return new object[] { new Func<RSA, RSAlgorithm>(publicKey => new RS384Algorithm(publicKey)) };
             yield return new object[] { new Func<RSA, RSAlgorithm>(publicKey => new RS512Algorithm(publicKey)) };
+            yield return new object[] { new Func<RSA, RSAlgorithm>(publicKey => new RS1024Algorithm(publicKey)) };
         }
 
         private static IEnumerable<object[]> GetFactoryWithPublicPrivateKey()
@@ -80,6 +81,7 @@ namespace JWT.Tests.Algorithms
             yield return new object[] { new Func<RSA, RSA, RSAlgorithm>((publicKey, privateKey) => new RS256Algorithm(publicKey, privateKey)) };
             yield return new object[] { new Func<RSA, RSA, RSAlgorithm>((publicKey, privateKey) => new RS384Algorithm(publicKey, privateKey)) };
             yield return new object[] { new Func<RSA, RSA, RSAlgorithm>((publicKey, privateKey) => new RS512Algorithm(publicKey, privateKey)) };
+            yield return new object[] { new Func<RSA, RSA, RSAlgorithm>((publicKey, privateKey) => new RS1024Algorithm(publicKey, privateKey)) };
         }
 
         private static IEnumerable<object[]> GetFactoryWithCert()
@@ -87,6 +89,7 @@ namespace JWT.Tests.Algorithms
             yield return new object[] { new Func<X509Certificate2, RSAlgorithm>(cert => new RS256Algorithm(cert)) };
             yield return new object[] { new Func<X509Certificate2, RSAlgorithm>(cert => new RS384Algorithm(cert)) };
             yield return new object[] { new Func<X509Certificate2, RSAlgorithm>(cert => new RS512Algorithm(cert)) };
+            yield return new object[] { new Func<X509Certificate2, RSAlgorithm>(cert => new RS1024Algorithm(cert)) };
         }
     }
 }
