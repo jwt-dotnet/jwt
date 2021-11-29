@@ -44,6 +44,8 @@ namespace JWT.Algorithms
                     return CreateRS384Algorithm();
                 case JwtAlgorithmName.RS512:
                     return CreateRS512Algorithm();
+                case JwtAlgorithmName.RS1024:
+                    return CreateRS1024Algorithm();
                 case JwtAlgorithmName.HS256:
                 case JwtAlgorithmName.HS384:
                 case JwtAlgorithmName.HS512:
@@ -106,6 +108,23 @@ namespace JWT.Algorithms
             if (_publicKey is object)
             {
                 return new RS512Algorithm(_publicKey);
+            }
+
+            throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
+        }
+        private RS1024Algorithm CreateRS1024Algorithm()
+        {
+            if (_certFactory is object)
+            {
+                return new RS1024Algorithm(_certFactory());
+            }
+            if (_publicKey is object && _privateKey is object)
+            {
+                return new RS1024Algorithm(_publicKey, _privateKey);
+            }
+            if (_publicKey is object)
+            {
+                return new RS1024Algorithm(_publicKey);
             }
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
