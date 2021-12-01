@@ -13,9 +13,20 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## Avaliable packages
 
-1. [Jwt.Net](#JwtNet)
-2. [Jwt.Net for ASP.NET Core](#JwtNet-ASPNET-Core)
-3. [Jwt.Net for Owin](#JwtNet-OWIN)
+1.  Jwt.Net
+
+[![NuGet](https://img.shields.io/nuget/v/JWT.svg)](https://www.nuget.org/packages/JWT)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.svg)](https://www.nuget.org/packages/JWT)
+
+2. Jwt.Net for Microsoft Dependency Injection container
+
+[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.DependencyInjection.svg)](https://www.nuget.org/packages/JWT.Extensions.DependencyInjection)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.DependencyInjection.svg)](https://www.nuget.org/packages/JWT.Extensions.DependencyInjection)
+
+3. Jwt.Net for ASP.NET Core
+
+[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
+[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
 
 ## Supported .NET versions:
 
@@ -25,23 +36,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 - .NET Standard 2.0
 - .NET 5.0
 
-## License
-
-The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#Public-Domain) file.
-
-- JWT 
-
-The following projects and their resulting packages are licensed under the MIT License, see the [LICENSE#MIT](LICENSE.md#MIT) file.
-
-- JWT.Extensions.AspNetCore
-- JWT.Extensions.Owin
-
 ### Jwt.NET
-
-#### NuGet
-
-[![NuGet](https://img.shields.io/nuget/v/JWT.svg)](https://www.nuget.org/packages/JWT)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.svg)](https://www.nuget.org/packages/JWT)
 
 #### Creating (encoding) token
 
@@ -268,11 +263,6 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 
 ### Jwt.Net ASP.NET Core
 
-#### NuGet
-
-[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.AspNetCore.svg)](https://www.nuget.org/packages/JWT.Extensions.AspNetCore)
-
 #### Register authentication handler to validate JWT
 
 ```c#
@@ -348,5 +338,16 @@ services.AddAuthentication(options =>
 ```c#
 app.UseJwtMiddleware();
 ```
+
+## License
+
+The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#Public-Domain) file.
+
+- JWT 
+
+The following projects and their resulting packages are licensed under the MIT License, see the [LICENSE#MIT](LICENSE.md#MIT) file.
+
+- JWT.Extensions.AspNetCore
+- JWT.Extensions.Owin
 
 **Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
