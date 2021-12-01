@@ -1,11 +1,11 @@
 [![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=9)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
 
-# Jwt.Net, a JWT (JSON Web Token) implementation for .NET
+## Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
 This library supports generating and decoding [JSON Web Tokens](https://tools.ietf.org/html/rfc7519).
 
-# Sponsor
+## Sponsor
 
 | | |
 |-|-|
@@ -36,9 +36,9 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 - .NET Standard 2.0
 - .NET 5.0
 
-### Jwt.NET
+## Jwt.NET
 
-#### Creating (encoding) token
+### Creating (encoding) token
 
 ```c#
 var payload = new Dictionary<string, object>
@@ -57,7 +57,7 @@ var token = encoder.Encode(payload, secret);
 Console.WriteLine(token);
 ```
 
-##### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 var token = JwtBuilder.Create()
@@ -74,7 +74,7 @@ The output would be:
 
 >eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
 
-#### Parsing (decoding) and verifying token
+### Parsing (decoding) and verifying token
 
 ```c#
 const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
@@ -102,7 +102,7 @@ catch (SignatureVerificationException)
 }
 ```
 
-##### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 var json = JwtBuilder.Create()
@@ -134,7 +134,7 @@ var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret)
 Console.WriteLine(payload["claim2"]);
  ```
 
-##### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 var payload = JwtBuilder.Create()
@@ -159,7 +159,7 @@ The output would be:
     
 >claim2-value
 
-#### Set and validate token expiration
+### Set and validate token expiration
 
 As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4):
 
@@ -183,7 +183,7 @@ var token = encoder.Encode(payload, secret);
 var json = decoder.Decode(token, secret, validate: true); // throws TokenExpiredException
 ```
 
-#### Parsing (decoding) token header
+### Parsing (decoding) token header
 
 ```c#
 IJsonSerializer serializer = new JsonNetSerializer();
@@ -197,7 +197,7 @@ var alg = header.Algorithm; // RS256
 var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 ```
 
-##### Or using the fluent builder API
+#### Or using the fluent builder API
 
 ```c#
 JwtHeader header = JwtBuilder.Create()
@@ -208,7 +208,7 @@ var alg = header.Algorithm; // RS256
 var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 ```
 
-#### Custom JSON serializer
+### Custom JSON serializer
 
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
 
@@ -236,7 +236,7 @@ IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 ```
 
-#### Custom JSON serialization settings with the default JsonNetSerializer
+### Custom JSON serialization settings with the default JsonNetSerializer
 
 As mentioned above, the default JSON serialization is done by `JsonNetSerializer`. You can define your own custom serialization settings as follows:
 
@@ -261,9 +261,9 @@ JsonSerializer customJsonSerializer = new JsonSerializer
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
 
-### Jwt.Net ASP.NET Core
+## Jwt.Net ASP.NET Core
 
-#### Register authentication handler to validate JWT
+### Register authentication handler to validate JWT
 
 ```c#
 public void ConfigureServices(IServiceCollection services)
@@ -296,7 +296,7 @@ public void Configure(IApplicationBuilder app)
 }
 ```
 
-#### Custom factories to produce Identity or AuthenticationTicket
+### Custom factories to produce Identity or AuthenticationTicket
 
 ```c#
 options.IdentityFactory = dic => new ClaimsIdentity(
@@ -308,7 +308,7 @@ options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
     scheme.Name);
 ```
 
-#### Register middleware to validate JWT
+### Register middleware to validate JWT
 
 ```c#
 services.AddAuthentication(options =>
@@ -326,14 +326,14 @@ services.AddAuthentication(options =>
     });
 ```
 
-### Jwt.Net OWIN
+## Jwt.Net OWIN
 
-#### NuGet
+### NuGet
 
 [![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
 [![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
 
-#### Register middleware to validate JWT
+### Register middleware to validate JWT
 
 ```c#
 app.UseJwtMiddleware();
