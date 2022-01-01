@@ -188,7 +188,7 @@ namespace JWT.Tests.Builder
                                    .Encode();
 
             actual.Should()
-                  .Be(TokenWithCustomTypeHeader2, "because the same data encoded with the same key must result in the same token");
+                  .Be(TestData.TokenWithCustomTypeHeader2, "because the same data encoded with the same key must result in the same token");
         }
 
         [TestMethod]
