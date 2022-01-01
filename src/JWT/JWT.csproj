@@ -11,11 +11,14 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net46'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
+    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net5.0'">
     <TargetFrameworkIdentifier>.NETFramework,Version=5.0</TargetFrameworkIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
-    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <TargetFrameworkIdentifier>.NETFramework,Version=6.0</TargetFrameworkIdentifier>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,7 +27,7 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <Version>8.8.0</Version>
+    <Version>8.8.1</Version>
     <FileVersion>8.0.0.0</FileVersion>
     <AssemblyVersion>8.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
@@ -47,7 +50,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFramework)' == 'net50'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
