@@ -168,7 +168,8 @@ namespace JWT.Tests.Builder
             token.Split('.')
                  .Should()
                  .HaveCount(3, "because the token should consist of three parts");
-            token.Split('.').Last()
+            token.Split('.')
+                 .Last()
                  .Should()
                  .BeEmpty("Because it should miss signature");
         }
@@ -179,17 +180,15 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var actual = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader(HeaderName.KeyId, "42")
-                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
-                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
-                .Encode();
-
-            const string expected = TestData.TokenWithCustomTypeHeader2;
+                                   .WithAlgorithm(new HMACSHA256Algorithm())
+                                   .WithSecret(key)
+                                   .AddHeader(HeaderName.KeyId, "42")
+                                   .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                   .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                   .Encode();
 
             actual.Should()
-                  .Be(expected, "because the same data encoded with the same key must result in the same token");
+                  .Be(TokenWithCustomTypeHeader2, "because the same data encoded with the same key must result in the same token");
         }
 
         [TestMethod]
@@ -198,17 +197,15 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var actual = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader("version", 1)
-                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
-                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
-                .Encode();
-
-            const string expected = TestData.TokenWithCustomTypeHeader3;
+                                   .WithAlgorithm(new HMACSHA256Algorithm())
+                                   .WithSecret(key)
+                                   .AddHeader("version", 1)
+                                   .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                   .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                   .Encode();
 
             actual.Should()
-                  .Be(expected, "because the same data encoded with the same key must result in the same token");
+                  .Be(TestData.TokenWithCustomTypeHeader3, "because the same data encoded with the same key must result in the same token");
         }
     }
 }

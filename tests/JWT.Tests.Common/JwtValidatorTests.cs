@@ -190,7 +190,7 @@ namespace JWT.Tests
               .NotBeNull("because invalid token should thrown exception");
 
             ex.Should()
-                .BeOfType(typeof(TokenExpiredException), "because expired token should thrown TokenExpiredException");
+              .BeOfType(typeof(TokenExpiredException), "because expired token should thrown TokenExpiredException");
         }
 
         [TestMethod]
@@ -280,7 +280,7 @@ namespace JWT.Tests
               .NotBeNull("because invalid token should thrown exception");
 
             ex.Should()
-                .BeOfType(typeof(SignatureVerificationException), "because not yet usable token should thrown SignatureVerificationException");
+              .BeOfType(typeof(SignatureVerificationException), "because not yet usable token should thrown SignatureVerificationException");
         }
 
         [TestMethod]
