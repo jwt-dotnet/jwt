@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{513CE2B5-E0D6-43BC-998A-A02CB2875479}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,22 +15,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT", "src\JWT\JWT.csproj", "{2F79EB8D-5B33-4EA6-AC1A-89B107F043D2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Common", "tests\JWT.Tests.Common\JWT.Tests.Common.csproj", "{5D0282D5-9CC4-4D42-A3F0-E18270F92184}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".pipelines", ".pipelines", "{BC7D1169-0261-419F-84F2-6312910AD508}"
 	ProjectSection(SolutionItems) = preProject
 		.pipelines\build.yml = .pipelines\build.yml
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore", "src\JWT.Extensions.AspNetCore\JWT.Extensions.AspNetCore.csproj", "{3AC25D69-9863-45ED-A767-2809C46CB5A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT", "src\JWT\JWT.csproj", "{2F79EB8D-5B33-4EA6-AC1A-89B107F043D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore.Tests", "tests\JWT.Extensions.AspNetCore.Tests\JWT.Extensions.AspNetCore.Tests.csproj", "{319388E9-1529-46B2-A230-2B978BAC4649}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin", "src\JWT.Extensions.Owin\JWT.Extensions.Owin.csproj", "{D3001A7C-5C10-4393-8713-F8C899F91A4A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin.Tests", "tests\JWT.Extensions.Owin.Tests\JWT.Extensions.Owin.Tests.csproj", "{4B65AB99-C173-4B8E-B535-95008F4B4328}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Common", "tests\JWT.Tests.Common\JWT.Tests.Common.csproj", "{5D0282D5-9CC4-4D42-A3F0-E18270F92184}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore2", "tests\JWT.Tests.NetCore2\JWT.Tests.NetCore2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
 EndProject
@@ -44,11 +36,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net46", "tests\JW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net50", "tests\JWT.Tests.Net50\JWT.Tests.Net50.csproj", "{2ACE4343-0E79-493E-8FAF-DC2B6D0F5C73}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net60", "tests\JWT.Tests.Net60\JWT.Tests.Net60.csproj", "{241D7C36-5693-4115-800E-8F080DD1FB5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{E7F3756F-ABDA-436D-8C42-FADAF79012ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore", "src\JWT.Extensions.AspNetCore\JWT.Extensions.AspNetCore.csproj", "{3AC25D69-9863-45ED-A767-2809C46CB5A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore.Tests", "tests\JWT.Extensions.AspNetCore.Tests\JWT.Extensions.AspNetCore.Tests.csproj", "{319388E9-1529-46B2-A230-2B978BAC4649}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin", "src\JWT.Extensions.Owin\JWT.Extensions.Owin.csproj", "{D3001A7C-5C10-4393-8713-F8C899F91A4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.Owin.Tests", "tests\JWT.Extensions.Owin.Tests\JWT.Extensions.Owin.Tests.csproj", "{4B65AB99-C173-4B8E-B535-95008F4B4328}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.DependencyInjection", "src\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj", "{5805A1D3-60B7-4F73-BA9F-F49B0BBFBB94}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.DependencyInjection.Tests", "tests\JWT.Extensions.DependencyInjection.Tests\JWT.Extensions.DependencyInjection.Tests.csproj", "{73167BAB-1F21-4DE9-83E0-5E0686AB7245}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{E7F3756F-ABDA-436D-8C42-FADAF79012ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,10 @@ Global
 		{73167BAB-1F21-4DE9-83E0-5E0686AB7245}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73167BAB-1F21-4DE9-83E0-5E0686AB7245}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73167BAB-1F21-4DE9-83E0-5E0686AB7245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{241D7C36-5693-4115-800E-8F080DD1FB5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{241D7C36-5693-4115-800E-8F080DD1FB5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{241D7C36-5693-4115-800E-8F080DD1FB5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{241D7C36-5693-4115-800E-8F080DD1FB5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

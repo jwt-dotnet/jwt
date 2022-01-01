@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworkIdentifier>.NETFramework,Version=6.0</TargetFrameworkIdentifier>
     <RootNamespace>JWT.Tests</RootNamespace>
   </PropertyGroup>
 
@@ -21,9 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JWT\JWT.csproj">
-      <SetTargetFramework>TargetFramework=net40</SetTargetFramework>
-    </ProjectReference>
+    <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
 
