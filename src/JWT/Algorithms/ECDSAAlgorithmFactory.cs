@@ -7,7 +7,7 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public sealed class ECDSAAlgorithmFactory : HMACSHAAlgorithmFactory
     {
-#if NETSTANDARD2_0 || NET5_0
+#if NETSTANDARD2_0 || NET5_0 || NET6_0
         private readonly Func<X509Certificate2> _certFactory;
 
         private readonly ECDsa _publicKey;
@@ -45,7 +45,7 @@ namespace JWT.Algorithms
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
-#if NETSTANDARD2_0 || NET5_0
+#if NETSTANDARD2_0 || NET5_0 || NET6_0
             switch (algorithm)
             {
                 case JwtAlgorithmName.ES256:
@@ -70,7 +70,7 @@ namespace JWT.Algorithms
 #endif
         }
 
-#if NETSTANDARD2_0 || NET5_0
+#if NETSTANDARD2_0 || NET5_0 || NET6_0
         private IJwtAlgorithm CreateES256Algorithm()
         {
             if (_certFactory is object)

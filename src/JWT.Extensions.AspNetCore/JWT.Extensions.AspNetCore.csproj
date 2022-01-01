@@ -11,7 +11,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicense>MIT</PackageLicense>
-    <Version>8.1.0</Version>
+    <Version>8.2.0</Version>
     <FileVersion>8.0.0.0</FileVersion>
     <AssemblyVersion>7.0.0.0</AssemblyVersion>
     <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
