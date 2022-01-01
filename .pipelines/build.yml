@@ -16,28 +16,21 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Use .NET Core 2.2.x'
-  inputs:
-    packageType: sdk
-    version: '2.2.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
-
-- task: UseDotNet@2
-  displayName: 'Use .NET Core 3.1.x'
+  displayName: 'Install .NET Core 3.1.x'
   inputs:
     packageType: sdk
     version: '3.1.x'
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: UseDotNet@2
-  displayName: 'Use .NET 5.0.x'
+  displayName: 'Install .NET 5.0.x'
   inputs:
     packageType: sdk
     version: '5.0.x'
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: UseDotNet@2
-  displayName: 'Use .NET 6.0.x'
+  displayName: 'Install .NET 6.0.x'
   inputs:
     packageType: sdk
     version: '6.0.x'
@@ -77,7 +70,7 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
-  displayName: 'Create NuGet package'
+  displayName: 'Create NuGet packages'
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'

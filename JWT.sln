@@ -24,8 +24,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT", "src\JWT\JWT.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Common", "tests\JWT.Tests.Common\JWT.Tests.Common.csproj", "{5D0282D5-9CC4-4D42-A3F0-E18270F92184}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore2", "tests\JWT.Tests.NetCore2\JWT.Tests.NetCore2.csproj", "{2433BAFA-2C09-44F4-A172-E0F7CA6688C3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.NetCore3", "tests\JWT.Tests.NetCore3\JWT.Tests.NetCore3.csproj", "{559F1CBB-DB9C-4149-BEAC-417DA1BBB162}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net35", "tests\JWT.Tests.Net35\JWT.Tests.Net35.csproj", "{30D3D291-2C79-4CDD-94D3-C834A4995149}"
