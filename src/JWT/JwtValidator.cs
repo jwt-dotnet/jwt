@@ -46,7 +46,7 @@ namespace JWT
         /// <param name="dateTimeProvider">The DateTime provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
-            : this(jsonSerializer, dateTimeProvider, null, 0)
+            : this(jsonSerializer, dateTimeProvider, null, timeMargin)
         {
         }
 
