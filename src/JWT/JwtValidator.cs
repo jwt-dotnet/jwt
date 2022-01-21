@@ -95,6 +95,12 @@ namespace JWT
             return ex is null;
         }
 
+        public Exception GetValidationException(byte[] bytes)
+        {
+            var decodedPayload = GetString(bytes);
+            return GetValidationException(decodedPayload);
+        }
+
         private Exception GetValidationException(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
             if (AreAllDecodedSignaturesNullOrWhiteSpace(decodedSignatures))
@@ -114,7 +120,7 @@ namespace JWT
             return GetValidationException(payloadJson);
         }
 
-        public Exception GetValidationException(string payloadJson)
+        private Exception GetValidationException(string payloadJson)
         {
             if (String.IsNullOrEmpty(payloadJson))
                 throw new ArgumentException(nameof(payloadJson));
