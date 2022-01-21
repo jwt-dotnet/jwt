@@ -114,7 +114,7 @@ namespace JWT
             return GetValidationException(payloadJson);
         }
 
-        private Exception GetValidationException(string payloadJson)
+        public Exception GetValidationException(string payloadJson)
         {
             if (String.IsNullOrEmpty(payloadJson))
                 throw new ArgumentException(nameof(payloadJson));
