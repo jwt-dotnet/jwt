@@ -10,7 +10,7 @@ using static System.String;
 namespace JWT
 {
     /// <summary>
-    /// Base64 encoding/decoding implementation according to the JWT spec
+    /// base64 encoding/decoding implementation according to the JWT spec
     /// </summary>
     public sealed class JwtBase64UrlEncoder : IBase64UrlEncoder
     {

@@ -18,9 +18,9 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtEncoder" />
         /// </summary>
-        /// <param name="algFactory">The Algorithm Factory</param>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="algFactory">The JWT algorithm factory</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="urlEncoder">The base64 URL encoder</param>
         public JwtEncoder(IAlgorithmFactory algFactory, IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
             _algFactory = algFactory;
@@ -31,9 +31,9 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtEncoder" />
         /// </summary>
-        /// <param name="algorithm">The Jwt Algorithm</param>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="algorithm">The JWT algorithm</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="urlEncoder">The base64 URL encoder</param>
         public JwtEncoder(IJwtAlgorithm algorithm, IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
             : this(new DelegateAlgorithmFactory(algorithm), jsonSerializer, urlEncoder)
         {
