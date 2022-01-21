@@ -77,7 +77,7 @@ namespace JWT
             _urlEncoder = urlEncoder;
 
             if (timeMargin < 0)
-                throw new ArgumentOutOfRangeException(nameof(timeMargin), "Value margin cannot be negative");
+                throw new ArgumentOutOfRangeException(nameof(timeMargin), "Value cannot be negative");
             _timeMargin = timeMargin;
         }
 
@@ -124,7 +124,6 @@ namespace JWT
             ex = GetValidationException(alg, payloadJson, bytesToSign, decodedSignature);
             return ex is null;
         }
-
 
         public Exception GetValidationException(JwtParts parts)
         {
