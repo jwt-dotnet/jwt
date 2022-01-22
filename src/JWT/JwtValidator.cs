@@ -26,13 +26,14 @@ namespace JWT
     {
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IBase64UrlEncoder _urlEncoder;
         private readonly int _timeMargin;
 
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="dateTimeProvider">The DateTime provider</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider)
             : this(jsonSerializer, dateTimeProvider, 0)
         {
@@ -41,13 +42,42 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtValidator" /> with time margin
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="dateTimeProvider">The DateTime Provider</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="dateTimeProvider">The DateTime provider</param>
         /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
         public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, int timeMargin)
+            : this(jsonSerializer, dateTimeProvider, null, timeMargin)
         {
-            _jsonSerializer = jsonSerializer;
-            _dateTimeProvider = dateTimeProvider;
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// </summary>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="dateTimeProvider">The DateTime provider</param>
+        /// <param name="urlEncoder">The base64 URL Encoder</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, IBase64UrlEncoder urlEncoder)
+            : this(jsonSerializer, dateTimeProvider, urlEncoder, 0)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="JwtValidator" /> with time margin
+        /// </summary>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="dateTimeProvider">The DateTime provider</param>
+        /// <param name="urlEncoder">The base64 URL Encoder</param>
+        /// <param name="timeMargin">Time margin in seconds for exp and nbf validation</param>
+        public JwtValidator(IJsonSerializer jsonSerializer, IDateTimeProvider dateTimeProvider, IBase64UrlEncoder urlEncoder, int timeMargin)
+        {
+            _jsonSerializer = jsonSerializer ?? throw new ArgumentNullException(nameof(jsonSerializer));
+            _dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider));
+
+            // can be null
+            _urlEncoder = urlEncoder;
+
+            if (timeMargin < 0)
+                throw new ArgumentOutOfRangeException(nameof(timeMargin), "Value cannot be negative");
             _timeMargin = timeMargin;
         }
 
@@ -93,6 +123,21 @@ namespace JWT
         {
             ex = GetValidationException(alg, payloadJson, bytesToSign, decodedSignature);
             return ex is null;
+        }
+
+        public Exception GetValidationException(JwtParts parts)
+        {
+            if (_urlEncoder is null)
+                throw new InvalidOperationException("This instance was constructed without URl encoder so cannot be used for shallow validation");
+
+            byte[] bytes = _urlEncoder.Decode(parts.Payload);
+            return GetValidationException(bytes);
+        }
+
+        public Exception GetValidationException(byte[] bytes)
+        {
+            var decodedPayload = GetString(bytes);
+            return GetValidationException(decodedPayload);
         }
 
         private Exception GetValidationException(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
