@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
 
     <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="FluentAssertions" Version="6.4.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
