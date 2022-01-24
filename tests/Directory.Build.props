@@ -5,7 +5,10 @@
 
   <PropertyGroup>
     <IsCommonProject>false</IsCommonProject>
-    <IsCommonProject Condition="'$(MSBuildProjectFile)' == 'JWT.Tests.Common.csproj'">true</IsCommonProject>
+    <IsCommonProject Condition="$(MSBuildProjectFile.Contains('JWT.Tests.Common'))">true</IsCommonProject>
+
+    <IsExtensionsProject>false</IsExtensionsProject>
+    <IsExtensionsProject Condition="$(MSBuildProjectFile.Contains('JWT.Extensions'))">true</IsExtensionsProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,9 +22,6 @@
   </Target>
 
   <ItemGroup Condition="!$(IsCommonProject)">
-    <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
-      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
-    </Compile>
     <Compile Include="..\JWT.Tests.Common\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
@@ -29,7 +29,12 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
-    <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(IsCommonProject) AND !$(IsExtensionsProject)">
+    <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
 
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
