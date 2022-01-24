@@ -1,3 +1,4 @@
+#if NETSTANDARD2_0 || NET5_0 || NET6_0
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -73,3 +74,4 @@ namespace JWT.Tests
         }
     }
 }
+#endif
