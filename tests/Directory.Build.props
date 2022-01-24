@@ -32,7 +32,7 @@
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
 
-  <!-- All lib tests -->
+  <!-- All lib projects -->
   <ItemGroup Condition="!$(IsCommonProject) AND !$(IsExtensionsProject)">
     <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
