@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />-->
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\JWT\JWT.csproj">
       <SetTargetFramework>TargetFramework=net35</SetTargetFramework>
     </ProjectReference>
