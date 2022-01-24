@@ -15,12 +15,6 @@
     <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
   </ItemGroup>
 
-  <Target DependsOnTargets="Build" AfterTargets="Build" Name="test1">
-    <Message Importance="high" Text="MSBuildProjectFile: $(MSBuildProjectFile)"  />
-    <Message Importance="high" Text="MSBuildProjectName: $(MSBuildProjectName)"  />
-    <Message Importance="high" Text="IsCommonProject: $(IsCommonProject)"  />
-  </Target>
-
   <ItemGroup Condition="!$(IsCommonProject)">
     <Compile Include="..\JWT.Tests.Common\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
