@@ -27,8 +27,8 @@ namespace JWT
         /// <remarks>
         /// This overload supplies no <see cref="IJwtValidator" /> and no <see cref="IAlgorithmFactory" /> so the resulting decoder cannot be used for signature validation.
         /// </remarks>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="urlEncoder">The base64 URL encoder</param>
         /// <exception cref="ArgumentNullException" />
         public JwtDecoder(IJsonSerializer jsonSerializer, IBase64UrlEncoder urlEncoder)
         {
@@ -39,10 +39,10 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtDecoder" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="jwtValidator">The Jwt validator</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder</param>
-        /// <param name="algFactory">The Algorithm Factory</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="jwtValidator">The JWT validator</param>
+        /// <param name="urlEncoder">The base64 URL encoder</param>
+        /// <param name="algFactory">The JWT algorithm Factory</param>
         /// <exception cref="ArgumentNullException" />
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IAlgorithmFactory algFactory)
             : this(jsonSerializer, urlEncoder)
@@ -54,10 +54,10 @@ namespace JWT
         /// <summary>
         /// Creates an instance of <see cref="JwtDecoder" />
         /// </summary>
-        /// <param name="jsonSerializer">The Json Serializer</param>
-        /// <param name="jwtValidator">The Jwt validator</param>
-        /// <param name="urlEncoder">The Base64 URL Encoder</param>
-        /// <param name="algorithm">The Algorithm</param>
+        /// <param name="jsonSerializer">The JSON serializer</param>
+        /// <param name="jwtValidator">The JWT validator</param>
+        /// <param name="urlEncoder">The base64 URL encoder</param>
+        /// <param name="algorithm">The JWT algorithm</param>
         /// <exception cref="ArgumentNullException" />
         public JwtDecoder(IJsonSerializer jsonSerializer, IJwtValidator jwtValidator, IBase64UrlEncoder urlEncoder, IJwtAlgorithm algorithm)
             : this(jsonSerializer, jwtValidator, urlEncoder, new DelegateAlgorithmFactory(algorithm))
