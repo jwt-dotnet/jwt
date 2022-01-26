@@ -12,8 +12,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
-  <PropertyGroup>
+    
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\JwtStrongNameKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
