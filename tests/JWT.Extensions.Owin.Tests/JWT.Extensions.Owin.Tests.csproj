@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
     <ProjectReference Include="..\..\src\JWT.Extensions.Owin\JWT.Extensions.Owin.csproj" />
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
   </ItemGroup>
