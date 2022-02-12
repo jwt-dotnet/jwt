@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoFixture;
@@ -26,7 +25,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         public async Task HandleAuthenticateAsync_Should_Return_Success_When_Token_Is_Valid()
         {
             // Arrange
-            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenByAsymmetricAlgorithm}";
+            const string header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenByAsymmetricAlgorithm}";
             var handler = await CreateHandler(header);
 
             // Act
@@ -45,7 +44,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         public async Task HandleAuthenticateAsync_Should_Return_None_When_Token_Is_Empty()
         {
             // Arrange
-            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {String.Empty}";
+            const string header = $"{JwtAuthenticationDefaults.AuthenticationScheme} ";
             var handler = await CreateHandler(header);
 
             // Act
@@ -64,7 +63,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         public async Task HandleAuthenticateAsync_Should_Return_Fail_When_Token_Is_Invalid()
         {
             // Arrange
-            var header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenWithIncorrectSignature}";
+            const string header = $"{JwtAuthenticationDefaults.AuthenticationScheme} {TestData.TokenWithIncorrectSignature}";
             var handler = await CreateHandler(header);
 
             // Act
