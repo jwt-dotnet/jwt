@@ -300,13 +300,8 @@ public void Configure(IApplicationBuilder app)
 ### Custom factories to produce Identity or AuthenticationTicket
 
 ```c#
-options.IdentityFactory = dic => new ClaimsIdentity(
-    dic.Select(p => new Claim(p.Key, p.Value)));
-
-options.TicketFactory = (identity, scheme) => new AuthenticationTicket(
-    new ClaimsPrincipal(identity),
-    new AuthenticationProperties(),
-    scheme.Name);
+services.AddSingleton<IIdentityFactory, CustomIdentityFctory>();
+services.AddSingleton<ITicketFactory, CustomTicketFactory>();
 ```
 
 ### Register middleware to validate JWT
