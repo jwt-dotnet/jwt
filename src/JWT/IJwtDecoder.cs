@@ -60,30 +60,30 @@ namespace JWT
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="jwt">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt);
+        object DecodeToObject(Type type, JwtParts jwt);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="jwt">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt, byte[] key, bool verify);
+        object DecodeToObject(Type type, JwtParts jwt, byte[] key, bool verify);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="jwt">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <param name="keys">The keys which one of them was used to sign the JWT</param>
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt, byte[][] keys, bool verify);
+        object DecodeToObject<T>(Type type, JwtParts jwt, byte[][] keys, bool verify);
 
         #endregion
     }
@@ -184,6 +184,37 @@ namespace JWT
 
         #region DecodeToObject
 
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="jwt">The JWT</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt) =>
+            (T)decoder.DecodeToObject(typeof(T), new JwtParts(token));
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="jwt">The JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        public static  T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt, byte[] key, bool verify) =>
+            (T)decoder.DecodeToObject(typeof(T), jwt, key, verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="jwt">The JWT</param>
+        /// <param name="keys">The keys which one of them was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt, byte[][] keys, bool verify) =>
+            (T)decoder.DecodeToObject(typeof(T), jwt, keys, verify);
+            
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
