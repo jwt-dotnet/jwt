@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Security.Principal;
 
 namespace JWT.Extensions.AspNetCore.Factories

@@ -12,19 +12,19 @@ namespace JWT.Extensions.AspNetCore.Factories
         private readonly IOptionsMonitor<JwtAuthenticationOptions> _options;
 
         public DefaultIdentityFactory(IOptionsMonitor<JwtAuthenticationOptions> options) =>
-            _options = options ?? throw new ArgumentNullException(typeof(options);
-            
+            _options = options ?? throw new ArgumentNullException(nameof(options));
+
         IIdentity IIdentityFactory.CreateIdentity(Type type, object payload)
         {
             if (type is null)
-                throw new ArgumentNullException(type);
+                throw new ArgumentNullException(nameof(type));
             if (payload is null)
-                throw new ArgumentException(payload);
-        
-            Type targetType = typeof(IDictionary<string, string>));
-            if (typeof(targetType.IsAssignableFrom(type))
-                throw new ArgumentOutOfRangeException(typeof(type), $"Type {type} is not assignable to {targetType}");
-        
+                throw new ArgumentException(nameof(payload));
+
+            Type targetType = typeof(IDictionary<string, string>);
+            if (!targetType.IsAssignableFrom(type))
+                throw new ArgumentOutOfRangeException(nameof(type), $"Type {type} is not assignable to {targetType}");
+
             return CreateIdentity((IDictionary<string, string>)payload);
         }
 

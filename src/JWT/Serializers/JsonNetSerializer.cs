@@ -53,10 +53,10 @@ namespace JWT.Serializers
                 throw new ArgumentNullException(nameof(type));
             if (String.IsNullOrEmpty(json))
                 throw new ArgumentException(nameof(json));
-        
+
             using var stringReader = new StringReader(json);
             using var jsonReader = new JsonTextReader(stringReader);
-            return (T)_serializer.Deserialize(jsonReader, typeof(T));
+            return _serializer.Deserialize(jsonReader, type);
         }
     }
 }
