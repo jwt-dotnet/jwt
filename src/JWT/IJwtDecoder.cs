@@ -178,7 +178,7 @@ namespace JWT
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         public static string Decode(this IJwtDecoder decoder, string token, string[] keys, bool verify) =>
-            decoder.Decode(token, GetBytes(keys), verify);
+            decoder.Decode(token, keys is object ? GetBytes(keys) : null, verify);
 
         #endregion
 
@@ -213,7 +213,7 @@ namespace JWT
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
         public static IDictionary<string, object> DecodeToObject(this IJwtDecoder decoder, string token, string[] keys, bool verify) =>
-            decoder.DecodeToObject(token, GetBytes(keys), verify);
+            decoder.DecodeToObject(token, keys is object ? GetBytes(keys) : null, verify);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as a dictionary.
@@ -299,7 +299,7 @@ namespace JWT
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         public static object DecodeToObject(this IJwtDecoder decoder, Type type, string token, string[] keys, bool verify) =>
-            decoder.DecodeToObject(token, GetBytes(keys), verify);
+            decoder.DecodeToObject(type, token, keys is object ? GetBytes(keys) : null, verify);
 
         #endregion
 
