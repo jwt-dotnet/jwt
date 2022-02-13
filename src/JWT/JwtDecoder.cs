@@ -155,10 +155,10 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
-        public T DecodeToObject<T>(JwtParts jwt)
+        public object DecodeToObject(Type type, JwtParts jwt)
         {
             var payload = Decode(jwt);
-            return _jsonSerializer.Deserialize<T>(payload);
+            return _jsonSerializer.Deserialize(type, payload);
         }
 
         /// <inheritdoc />
@@ -168,10 +168,10 @@ namespace JWT
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        public T DecodeToObject<T>(JwtParts jwt, byte[] key, bool verify)
+        public object DecodeToObject(Type type, JwtParts jwt, byte[] key, bool verify)
         {
             var payload = Decode(jwt, key, verify);
-            return _jsonSerializer.Deserialize<T>(payload);
+            return _jsonSerializer.Deserialize(type, payload);
         }
 
         /// <inheritdoc />
@@ -181,10 +181,10 @@ namespace JWT
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenExpiredException" />
-        public T DecodeToObject<T>(JwtParts jwt, byte[][] keys, bool verify)
+        public object DecodeToObject(Type type, JwtParts jwt, byte[][] keys, bool verify)
         {
             var payload = Decode(jwt, keys, verify);
-            return _jsonSerializer.Deserialize<T>(payload);
+            return _jsonSerializer.Deserialize(type, payload);
         }
 
         /// <summary>

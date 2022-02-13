@@ -55,35 +55,35 @@ namespace JWT
 
         #endregion
 
-        #region T DecodeToObject<T>
+        #region DecodeToObject
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="type">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt);
+        object DecodeToObject(Type type, JwtParts jwt);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="type">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <param name="key">The key that was used to sign the JWT</param>
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt, byte[] key, bool verify);
+        object DecodeToObject(Type type, JwtParts jwt, byte[] key, bool verify);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.
         /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="type">The type to deserialize to.</param>
         /// <param name="jwt">The JWT</param>
         /// <param name="keys">The keys which one of them was used to sign the JWT</param>
         /// <param name="verify">Whether to verify the signature (default is true)</param>
         /// <returns>An object representing the payload</returns>
-        T DecodeToObject<T>(JwtParts jwt, byte[][] keys, bool verify);
+        object DecodeToObject(Type type, JwtParts jwt, byte[][] keys, bool verify);
 
         #endregion
     }
@@ -178,21 +178,11 @@ namespace JWT
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         public static string Decode(this IJwtDecoder decoder, string token, string[] keys, bool verify) =>
-            decoder.Decode(token, GetBytes(keys), verify);
+            decoder.Decode(token, keys is object ? GetBytes(keys) : null, verify);
 
         #endregion
 
         #region DecodeToObject
-
-        /// <summary>
-        /// Given a JWT, decodes it and return the payload as an object.
-        /// </summary>
-        /// <typeparam name="T">The type to return</typeparam>
-        /// <param name="decoder">The decoder instance</param>
-        /// <param name="token">The JWT</param>
-        /// <returns>An object representing the payload</returns>
-        public static T DecodeToObject<T>(this IJwtDecoder decoder, string token) =>
-            decoder.DecodeToObject<T>(new JwtParts(token));
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as a dictionary.
@@ -203,11 +193,27 @@ namespace JWT
         public static IDictionary<string, object> DecodeToObject(this IJwtDecoder decoder, string token) =>
             decoder.DecodeToObject<Dictionary<string, object>>(token);
 
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as a dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
         public static IDictionary<string, object> DecodeToObject(this IJwtDecoder decoder, string token, string key, bool verify) =>
             decoder.DecodeToObject(token, GetBytes(key), verify);
 
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as a dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
         public static IDictionary<string, object> DecodeToObject(this IJwtDecoder decoder, string token, string[] keys, bool verify) =>
-            decoder.DecodeToObject(token, GetBytes(keys), verify);
+            decoder.DecodeToObject(token, keys is object ? GetBytes(keys) : null, verify);
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as a dictionary.
@@ -237,9 +243,111 @@ namespace JWT
         public static IDictionary<string, object> DecodeToObject(this IJwtDecoder decoder, string token, byte[][] keys, bool verify) =>
             decoder.DecodeToObject<Dictionary<string, object>>(new JwtParts(token), keys, verify);
 
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as a dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="type">The type to deserialize to.</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        /// <exception cref = "ArgumentException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="InvalidTokenPartsException" />
+        public static object DecodeToObject(this IJwtDecoder decoder, Type type, string token, byte[] key, bool verify) =>
+            decoder.DecodeToObject(type, new JwtParts(token), key, verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as a dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="type">The type to deserialize to.</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="keys">The keys that were used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>A string containing the JSON payload</returns>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="InvalidTokenPartsException" />
+        public static object DecodeToObject(this IJwtDecoder decoder, Type type, string token, byte[][] keys, bool verify) =>
+            decoder.DecodeToObject(type, new JwtParts(token), keys, verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="type">The type to deserialize to.</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        public static object DecodeToObject(this IJwtDecoder decoder, Type type, string token, string key, bool verify) =>
+            decoder.DecodeToObject(token, GetBytes(key), verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an dictionary.
+        /// </summary>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="type">The type to deserialize to.</param>
+        /// <param name="token">The JWT</param>
+        /// <param name="keys">The key which one of them was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        public static object DecodeToObject(this IJwtDecoder decoder, Type type, string token, string[] keys, bool verify) =>
+            decoder.DecodeToObject(type, token, keys is object ? GetBytes(keys) : null, verify);
+
         #endregion
 
         #region DecodeToObject<T>
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="jwt">The JWT</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt) =>
+            (T)decoder.DecodeToObject(typeof(T), jwt);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="jwt">The JWT</param>
+        /// <param name="key">The key that was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt, byte[] key, bool verify) =>
+            (T)decoder.DecodeToObject(typeof(T), jwt, key, verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to deserialize to.</typeparam>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="jwt">The JWT</param>
+        /// <param name="keys">The keys which one of them was used to sign the JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is true)</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, JwtParts jwt, byte[][] keys, bool verify) =>
+            (T)decoder.DecodeToObject(typeof(T), jwt, keys, verify);
+
+        /// <summary>
+        /// Given a JWT, decodes it and return the payload as an object.
+        /// </summary>
+        /// <typeparam name="T">The type to return</typeparam>
+        /// <param name="decoder">The decoder instance</param>
+        /// <param name="token">The JWT</param>
+        /// <returns>An object representing the payload</returns>
+        public static T DecodeToObject<T>(this IJwtDecoder decoder, string token) =>
+            decoder.DecodeToObject<T>(new JwtParts(token));
 
         /// <summary>
         /// Given a JWT, decodes it and return the payload as an object.

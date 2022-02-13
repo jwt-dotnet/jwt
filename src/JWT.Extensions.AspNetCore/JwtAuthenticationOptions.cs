@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Security.Principal;
-using JWT.Internal;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -70,5 +69,13 @@ namespace JWT.Extensions.AspNetCore
         /// The default value is <c>true</c>.
         /// </remarks>
         public bool IncludeAuthenticationScheme { get; set; } = true;
+
+        /// <summary>
+        /// Type of the payload to deserialize to.
+        /// </summary>
+        /// <remarks>
+        /// The default value is <see cref="Dictionary{String, String}" />.
+        /// </remarks>
+        public Type PayloadType { get; set; } = typeof(Dictionary<string, string>);
     }
 }

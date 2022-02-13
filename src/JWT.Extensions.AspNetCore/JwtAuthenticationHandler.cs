@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -117,8 +116,8 @@ namespace JWT.Extensions.AspNetCore
 
             try
             {
-                var payload = _jwtDecoder.DecodeToObject<Dictionary<string, string>>(token, this.Options.Keys, this.Options.VerifySignature);
-                var identity = _identityFactory.CreateIdentity(payload);
+                object payload = _jwtDecoder.DecodeToObject(this.Options.PayloadType, token, this.Options.Keys, this.Options.VerifySignature);
+                var identity = _identityFactory.CreateIdentity(this.Options.PayloadType, payload);
                 var ticket = _ticketFactory.CreateTicket(identity, this.Scheme);
 
                 return this.Options.OnSuccessfulTicket(this.Logger, ticket);
