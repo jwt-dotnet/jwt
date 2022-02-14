@@ -304,7 +304,7 @@ services.AddSingleton<IIdentityFactory, CustomIdentityFctory>();
 services.AddSingleton<ITicketFactory, CustomTicketFactory>();
 ```
 
-### Register middleware to validate JWT
+### Register authentication handler to validate JWT
 
 ```c#
 services.AddAuthentication(options =>
@@ -319,6 +319,8 @@ services.AddAuthentication(options =>
     {
         options.Keys = configureOptions.Keys;
         options.VerifySignature = configureOptions.VerifySignature;
+
+        // optionally customize
     });
 ```
 
