@@ -7,13 +7,13 @@ namespace JWT.Algorithms
     /// Implements the "None" algorithm.
     /// </summary>
     /// <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-6">RFC-7519</see>
-    public class NoneAlgorithm : IJwtAlgorithm
+    public sealed class NoneAlgorithm : IJwtAlgorithm
     {
         /// <inheritdoc />
         public string Name => "none";
 
         /// <inheritdoc />
-        public HashAlgorithmName HashAlgorithmName => 
+        public HashAlgorithmName HashAlgorithmName =>
             throw new NotSupportedException("The None algorithm doesn't have any hash algorithm.");
 
         /// <inheritdoc />

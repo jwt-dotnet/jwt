@@ -209,6 +209,38 @@ var alg = header.Algorithm; // RS256
 var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 ```
 
+### Turning off parts of token validation
+
+If you wish to validate a token but ignore certain parts of the validation (such as the lifetime of the token when refreshing the token), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
+
+```c#
+var validationParameters = new ValidationParameters
+{
+    ValidateSignature = true,
+    ValidateExpirationTime = true,
+    ValidateIssuedTime = true
+};
+IJwtValidator validator = new JwtValidator(serializer, provider, validationParameters);
+IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
+var json = decoder.Decode(expiredToken, secret, verify: true); // will not throw because of expired token
+```
+
+#### Or using the fluent builder API
+
+```c#
+var json = JwtBuilder.Create()
+                     .WithAlgorithm(new HMACSHA256Algorithm())
+                     .WithSecret(secret)
+                     .WithValidationParameters(
+                         new ValidationParameters
+                         {
+                             ValidateSignature = true,
+                             ValidateExpirationTime = true,
+                             ValidateIssuedTime = true
+                         })
+                     .Decode(expiredToken);
+```
+
 ### Custom JSON serializer
 
 By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:

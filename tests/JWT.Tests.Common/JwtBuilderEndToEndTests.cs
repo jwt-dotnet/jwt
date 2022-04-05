@@ -40,6 +40,15 @@ namespace JWT.Tests
                  .Should()
                  .HaveCount(3, "because the token should consist of three parts");
 
+            var jwt = builder.WithAlgorithm(algorithm)
+                             .MustVerifySignature()
+                             .Decode<Dictionary<string, object>>(token);
+
+            jwt["iss"].Should().Be(iss);
+            jwt["exp"].Should().Be(exp);
+            jwt[nameof(Customer.FirstName)].Should().Be(TestData.Customer.FirstName);
+            jwt[nameof(Customer.Age)].Should().Be(TestData.Customer.Age);
+
             var header = builder.DecodeHeader<JwtHeader>(token);
 
             header.Type
@@ -51,15 +60,6 @@ namespace JWT.Tests
             header.KeyId
                   .Should()
                   .Be(TestData.ServerRsaPublicThumbprint1);
-
-            var jwt = builder.WithAlgorithm(algorithm)
-                             .MustVerifySignature()
-                             .Decode<Dictionary<string, object>>(token);
-
-            jwt["iss"].Should().Be(iss);
-            jwt["exp"].Should().Be(exp);
-            jwt[nameof(Customer.FirstName)].Should().Be(TestData.Customer.FirstName);
-            jwt[nameof(Customer.Age)].Should().Be(TestData.Customer.Age);
         }
 
         private static X509Certificate2 CreateCertificate()
