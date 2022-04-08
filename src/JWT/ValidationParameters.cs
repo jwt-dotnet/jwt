@@ -5,7 +5,7 @@ namespace JWT
     /// <summary>
     /// Contains a set of parameters that are used by a <see cref="JwtValidator" /> when validating a token.
     /// </summary>
-    public class ValidationParameters
+    public struct ValidationParameters
     {
         /// <remarks>
         /// Use <see cref="Default"/> if you'd like to set all properties set to <see langword="true" />
