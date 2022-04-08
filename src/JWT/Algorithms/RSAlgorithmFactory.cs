@@ -116,6 +116,7 @@ namespace JWT.Algorithms
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
         }
+
         private RS1024Algorithm CreateRS1024Algorithm()
         {
             if (_certFactory is object)
@@ -133,6 +134,7 @@ namespace JWT.Algorithms
 
             throw new InvalidOperationException("Can't create a new algorithm without a certificate factory, private key or public key");
         }
+
         private RS2048Algorithm CreateRS2048Algorithm()
         {
             if (_certFactory is object)

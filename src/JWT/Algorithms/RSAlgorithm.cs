@@ -17,7 +17,7 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
-        public RSAlgorithm(RSA publicKey, RSA privateKey)
+        protected RSAlgorithm(RSA publicKey, RSA privateKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
             _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
@@ -30,7 +30,7 @@ namespace JWT.Algorithms
         /// An instance created using this constructor can only be used for verifying the data, not for signing it.
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
-        public RSAlgorithm(RSA publicKey)
+        protected RSAlgorithm(RSA publicKey)
         {
             _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
             _privateKey = null;
@@ -40,7 +40,7 @@ namespace JWT.Algorithms
         /// Creates an instance using the provided certificate.
         /// </summary>
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
-        public RSAlgorithm(X509Certificate2 cert)
+        protected RSAlgorithm(X509Certificate2 cert)
         {
             _publicKey = GetPublicKey(cert) ?? throw new Exception("Certificate's PublicKey cannot be null.");
             _privateKey = GetPrivateKey(cert);

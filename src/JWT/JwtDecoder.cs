@@ -261,7 +261,7 @@ namespace JWT
         private static bool AllKeysHaveValues(byte[][] keys)
         {
             if (keys is null)
-                return true;
+                return false;
 
             if (keys.Length == 0)
                 return false;

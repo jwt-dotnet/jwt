@@ -60,11 +60,23 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_Should_Return_Token()
+        public void Decode_Using_Symmetric_Algorithm_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secret)
+                                  .Decode(TestData.Token);
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
+        }
+
+        [TestMethod]
+        public void Decode_Using_Asymmetric_Algorithm_Should_Return_Token()
         {
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(TestData.RS256Algorithm)
-                                  .Decode(TestData.Token);
+                                  .Decode(TestData.TokenByAsymmetricAlgorithm);
 
             token.Should()
                  .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
@@ -75,16 +87,7 @@ namespace JWT.Tests.Builder
         {
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(new NoneAlgorithm())
-                                  .Decode(TestData.Token);
-
-            token.Should()
-                 .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
-        }
-
-        [TestMethod]
-        public void Decode_Using_WithAlgorithm_Should_Return_Token()
-        {
-            var token = JwtBuilder.Create()
+                                  .DoNotVerifySignature()
                                   .Decode(TestData.Token);
 
             token.Should()
@@ -168,20 +171,6 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_With_Serializer_Should_Return_Token()
-        {
-            var serializer = new JsonNetSerializer();
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.RS256Algorithm)
-                                  .WithSerializer(serializer)
-                                  .Decode(TestData.Token);
-
-            token.Should()
-                 .NotBeNullOrEmpty("because token should be correctly decoded and its data extracted");
-        }
-
-        [TestMethod]
         public void Decode_Without_UrlEncoder_Should_Throw_Exception()
         {
             Action action =
@@ -192,20 +181,6 @@ namespace JWT.Tests.Builder
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid UrlEncoder");
-        }
-
-        [TestMethod]
-        public void Decode_With_UrlEncoder_Should_Return_Token()
-        {
-            var urlEncoder = new JwtBase64UrlEncoder();
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.RS256Algorithm)
-                                  .WithUrlEncoder(urlEncoder)
-                                  .Decode(TestData.Token);
-
-            token.Should()
-                   .NotBeNullOrEmpty("because token should have been correctly decoded with the valid base64 encoder");
         }
 
         [TestMethod]
@@ -222,46 +197,16 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_With_DateTimeProvider_Should_Return_Token()
-        {
-            var dateTimeProvider = new UtcDateTimeProvider();
-
-
-            var token = JwtBuilder.Create()
-                                  .WithDateTimeProvider(dateTimeProvider)
-                                  .WithAlgorithm(TestData.RS256Algorithm)
-                                  .Decode(TestData.Token);
-
-            token.Should()
-                   .NotBeNullOrEmpty("because the decoding process must be successful with valid DateTimeProvider");
-        }
-
-        [TestMethod]
         public void Decode_Without_Validator_Should_Return_Token()
         {
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(TestData.RS256Algorithm)
                                   .WithValidator(null)
+                                  .DoNotVerifySignature()
                                   .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeNullOrEmpty("because a JWT should not necessary have validator to be decoded");
-        }
-
-        [TestMethod]
-        public void Decode_With_ExplicitValidator_Should_Return_Token()
-        {
-            var validator = new JwtValidator(
-                new JsonNetSerializer(),
-                new UtcDateTimeProvider());
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.RS256Algorithm)
-                                  .WithValidator(validator)
-                                  .Decode(TestData.Token);
-
-            token.Should()
-                   .NotBeNullOrEmpty("because a JWT should be correctly decoded, even with validator");
+                 .NotBeNullOrEmpty("because a JWT should not necessary have validator to be decoded");
         }
 
         [TestMethod]
@@ -274,7 +219,7 @@ namespace JWT.Tests.Builder
                                   .Decode(TestData.Token);
 
             token.Should()
-                   .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
+                 .NotBeNullOrEmpty("because the signature must have been verified successfully and the JWT correctly decoded");
         }
 
         [TestMethod]
