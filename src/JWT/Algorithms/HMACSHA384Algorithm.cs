@@ -1,10 +1,12 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 
 namespace JWT.Algorithms
 {
     /// <summary>
     /// HMAC using SHA-384
     /// </summary>
+    [Obsolete(ObsoleteMessage, error: false)]
     public sealed class HMACSHA384Algorithm : HMACSHAAlgorithm
     {
         /// <inheritdoc />
