@@ -8,7 +8,8 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public virtual IJwtAlgorithm Create(JwtDecoderContext context)
         {
-            var algorithmName = (JwtAlgorithmName)Enum.Parse(typeof(JwtAlgorithmName), context.Header.Algorithm);
+            var algorithm = context?.Header?.Algorithm ?? throw new ArgumentNullException(nameof(context));
+            var algorithmName = (JwtAlgorithmName)Enum.Parse(typeof(JwtAlgorithmName), algorithm);
             return Create(algorithmName);
         }
 
