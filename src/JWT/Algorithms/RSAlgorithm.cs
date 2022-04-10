@@ -86,7 +86,7 @@ namespace JWT.Algorithms
             if (cert is null)
                 throw new ArgumentNullException(nameof(cert));
 
-#if NETSTANDARD || NET || NETCOREAPP || NETFRAMEWORK && (NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48)
+#if NETSTANDARD || NETCOREAPP || NET462
             return cert.GetRSAPrivateKey();
 #else
             return (RSA)cert.PrivateKey;
@@ -98,7 +98,7 @@ namespace JWT.Algorithms
             if (cert is null)
                 throw new ArgumentNullException(nameof(cert));
 
-#if NETSTANDARD || NET || NETCOREAPP || NETFRAMEWORK && (NET46 || NET461 || NET462 || NET47 || NET471 || NET472 || NET48)
+#if NETSTANDARD || NETCOREAPP || NET462
             return cert.GetRSAPublicKey();
 #else
             return (RSA)cert.PublicKey.Key;

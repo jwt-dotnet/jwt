@@ -4,6 +4,7 @@ using JWT.Algorithms;
 using JWT.Serializers;
 
 using static JWT.Internal.EncodingHelper;
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Builder
 {
@@ -18,7 +19,7 @@ namespace JWT.Builder
         private IJwtDecoder _decoder;
         private IJwtValidator _validator;
 
-        private IJsonSerializer _serializer = new JsonNetSerializer();
+        private IJsonSerializer _serializer = CreateSerializer();
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
         private ValidationParameters _valParams = ValidationParameters.Default;
@@ -279,6 +280,17 @@ namespace JWT.Builder
             EnsureCanDecode();
 
             return _decoder.DecodeToObject<T>(token, _secrets, _valParams.ValidateSignature);
+        }
+
+        private static IJsonSerializer CreateSerializer()
+        {
+#if SYSTEM_TEXT_JSON
+            return new SystemTextSerializer();
+#elif NEWTONSOFT_JSON
+            return new JsonNetSerializer();
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         private void TryCreateEncoder()

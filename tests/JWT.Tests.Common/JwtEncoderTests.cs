@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
-using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -19,7 +20,7 @@ namespace JWT.Tests
 
             var algorithm = new HMACSHA256Algorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
             var actual = encoder.Encode(toEncode, key);
@@ -41,7 +42,7 @@ namespace JWT.Tests
 
             var algorithm = new HMACSHA256Algorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
             var actual = encoder.Encode(extraHeaders, toEncode, key);
@@ -63,7 +64,7 @@ namespace JWT.Tests
 
             var algorithm = new HMACSHA256Algorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
             var actual = encoder.Encode(extraHeaders, toEncode, key);
@@ -81,7 +82,7 @@ namespace JWT.Tests
 
             var algorithm = new NoneAlgorithm();
             var urlEncoder = new JwtBase64UrlEncoder();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
             var actual = encoder.Encode(toEncode, key);
