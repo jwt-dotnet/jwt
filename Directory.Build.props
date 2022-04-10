@@ -15,10 +15,12 @@
 
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\JwtStrongNameKey.snk</AssemblyOriginatorKeyFile>
+    
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
 
     <!-- Disable Warning CS1591: Missing XML comment for publicly visible type or member 'xyz' -->
     <NoWarn>$(NoWarn);CS0618</NoWarn>
-
     <!-- Disable Warning CS0618: 'xyz' is obsolete: -->
     <NoWarn>$(Nowarn);CS1591</NoWarn>
   </PropertyGroup>
