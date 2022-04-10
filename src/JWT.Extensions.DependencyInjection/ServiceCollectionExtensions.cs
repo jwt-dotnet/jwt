@@ -1,4 +1,5 @@
-﻿using JWT.Algorithms;
+﻿using System;
+using JWT.Algorithms;
 using JWT.Internal;
 using JWT.Serializers;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,10 +18,20 @@ namespace JWT
             return services;
         }
 
-        public static IServiceCollection AddJwtEncoder<TFactory>(this IServiceCollection services)
+        public static IServiceCollection AddJwtEncoder<TAlgo>(this IServiceCollection services)
+            where TAlgo : IJwtAlgorithm, new() =>
+            services.AddJwtEncoder(new GenericAlgorithmFactory<TAlgo>());
+
+        public static IServiceCollection AddJwtEncoder(this IServiceCollection services, Func<IJwtAlgorithm> algFactory) =>
+            services.AddJwtEncoder(new DelegateAlgorithmFactory(algFactory));
+
+        public static IServiceCollection AddJwtEncoder(this IServiceCollection services, IJwtAlgorithm algorithm) =>
+            services.AddJwtEncoder(() => algorithm);
+
+        private static IServiceCollection AddJwtEncoder<TFactory>(this IServiceCollection services, TFactory algFactory)
             where TFactory : class, IAlgorithmFactory
         {
-            services.TryAddSingleton<IAlgorithmFactory, TFactory>();
+            services.TryAddSingleton<IAlgorithmFactory>(_ => algFactory);
 
             return services.AddJwtEncoder();
         }
