@@ -274,7 +274,6 @@ namespace JWT.Builder
         /// Decodes a token using the supplied dependencies.
         /// </summary>
         /// <param name="token">The JWT</param>
-        /// <returns>The payload converted to <see cref="T" /></returns>
         public T Decode<T>(string token)
         {
             EnsureCanDecode();
