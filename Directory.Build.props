@@ -12,8 +12,14 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    
+
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\JwtStrongNameKey.snk</AssemblyOriginatorKeyFile>
+
+    <!-- Disable Warning CS1591: Missing XML comment for publicly visible type or member 'xyz' -->
+    <NoWarn>CS0618</NoWarn>
+
+    <!-- Disable Warning CS0618: 'xyz' is obsolete: -->
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
 </Project>
