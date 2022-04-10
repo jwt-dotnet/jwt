@@ -27,24 +27,64 @@ namespace JWT.Extensions.DependencyInjection.Tests
         {
             var services = new ServiceCollection();
             services.AddJwtEncoder()
-                    .AddSingleton<IAlgorithmFactory, HMACSHAAlgorithmFactory>();
+                    .AddSingleton<IAlgorithmFactory>(p => new DelegateAlgorithmFactory(TestData.HMACSHA256Algorithm));
 
             var provider = services.BuildServiceProvider();
             var encoder = provider.GetRequiredService<IJwtEncoder>();
-
             encoder.Should().NotBeNull();
+
+            var payload = TestData.DictionaryPayload;
+            const string key = TestData.Secret;
+            var jwt = encoder.Encode(payload, key);
+            jwt.Should().NotBeNull();
         }
 
         [TestMethod]
-        public void AddJwtEncoder_With_AlgorithmFactory_Should_Register_JwtEncoder()
+        public void AddJwtEncoder_With_Algorithm_Generic_Type_Should_Register_JwtEncoder()
         {
             var services = new ServiceCollection();
-            services.AddJwtEncoder<HMACSHAAlgorithmFactory>();
+            services.AddJwtEncoder<HMACSHA256Algorithm>();
 
             var provider = services.BuildServiceProvider();
             var encoder = provider.GetRequiredService<IJwtEncoder>();
-
             encoder.Should().NotBeNull();
+
+            var payload = TestData.DictionaryPayload;
+            const string key = TestData.Secret;
+            var jwt = encoder.Encode(payload, key);
+            jwt.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public void AddJwtEncoder_With_Algorithm_Should_Register_JwtEncoder()
+        {
+            var services = new ServiceCollection();
+            services.AddJwtEncoder(TestData.HMACSHA256Algorithm);
+
+            var provider = services.BuildServiceProvider();
+            var encoder = provider.GetRequiredService<IJwtEncoder>();
+            encoder.Should().NotBeNull();
+
+            var payload = TestData.DictionaryPayload;
+            const string key = TestData.Secret;
+            var jwt = encoder.Encode(payload, key);
+            jwt.Should().NotBeNull();
+        }
+
+        [TestMethod]
+        public void AddJwtEncoder_With_Algorithm_Func_Should_Register_JwtEncoder()
+        {
+            var services = new ServiceCollection();
+            services.AddJwtEncoder(() => TestData.HMACSHA256Algorithm);
+
+            var provider = services.BuildServiceProvider();
+            var encoder = provider.GetRequiredService<IJwtEncoder>();
+            encoder.Should().NotBeNull();
+
+            var payload = TestData.DictionaryPayload;
+            const string key = TestData.Secret;
+            var jwt = encoder.Encode(payload, key);
+            jwt.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -70,8 +110,11 @@ namespace JWT.Extensions.DependencyInjection.Tests
 
             var provider = services.BuildServiceProvider();
             var decoder = provider.GetRequiredService<IJwtDecoder>();
-
             decoder.Should().NotBeNull();
+
+            const string token = TestData.Token;
+            var payload = decoder.Decode(token);
+            payload.Should().NotBeNull();
         }
 
         [TestMethod]
@@ -82,8 +125,11 @@ namespace JWT.Extensions.DependencyInjection.Tests
 
             var provider = services.BuildServiceProvider();
             var decoder = provider.GetRequiredService<IJwtDecoder>();
-
             decoder.Should().NotBeNull();
+
+            const string token = TestData.Token;
+            var payload = decoder.Decode(token);
+            payload.Should().NotBeNull();
         }
     }
 }
