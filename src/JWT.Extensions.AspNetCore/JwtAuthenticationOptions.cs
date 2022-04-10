@@ -76,6 +76,6 @@ namespace JWT.Extensions.AspNetCore
         /// <remarks>
         /// The default value is <see cref="Dictionary{String, String}" />.
         /// </remarks>
-        public Type PayloadType { get; set; } = typeof(Dictionary<string, string>);
+        public Type PayloadType { get; set; } = typeof(Dictionary<string, object>);
     }
 }

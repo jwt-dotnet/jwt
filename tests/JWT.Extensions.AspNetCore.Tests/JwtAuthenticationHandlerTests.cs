@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Extensions.AspNetCore.Factories;
-using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +12,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Extensions.AspNetCore.Tests
 {
@@ -99,7 +100,7 @@ namespace JWT.Extensions.AspNetCore.Tests
 
         private static async Task<JwtAuthenticationHandler> CreateHandler(string header)
         {
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var urlEncoder = new JwtBase64UrlEncoder();
             var jwtValidator = new JwtValidator(serializer, dateTimeProvider);

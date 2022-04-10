@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
-using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -389,13 +388,13 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_ToDictionary_Without_Serializer_Should_Throw_Exception()
         {
-            Action action =
-                () => JwtBuilder.Create()
-                                .WithAlgorithm(TestData.RS256Algorithm)
-                                .WithSerializer(null)
-                                .WithSecret(TestData.Secret)
-                                .MustVerifySignature()
-                                .Decode<Dictionary<string, string>>(TestData.Token);
+            Action action = () =>
+                JwtBuilder.Create()
+                          .WithAlgorithm(TestData.RS256Algorithm)
+                          .WithSerializer(null)
+                          .WithSecret(TestData.Secret)
+                          .MustVerifySignature()
+                          .Decode<Dictionary<string, string>>(TestData.Token);
 
             action.Should()
                   .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");

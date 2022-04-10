@@ -2,9 +2,10 @@
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
-using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -20,7 +21,7 @@ namespace JWT.Tests
             var key = _fixture.Create<string>();
             const string token = TestData.TokenWithoutAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, new HMACSHAAlgorithmFactory());
@@ -39,7 +40,7 @@ namespace JWT.Tests
             var keys = _fixture.Create<string[]>();
             const string token = TestData.TokenWithoutAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, new HMACSHAAlgorithmFactory());
@@ -55,7 +56,7 @@ namespace JWT.Tests
         [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Jwt_Contains_HMA_Algorithm_But_RSA_Was_Expected()
         {
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
 
@@ -77,7 +78,7 @@ namespace JWT.Tests
         [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Jwt_Contains_HMA_Algorithm_But_RSA_Was_Expected_With_Multiple_Keys()
         {
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
 

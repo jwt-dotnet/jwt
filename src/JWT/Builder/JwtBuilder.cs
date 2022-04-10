@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using JWT.Algorithms;
-using JWT.Serializers;
-
 using static JWT.Internal.EncodingHelper;
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Builder
 {
@@ -18,7 +17,7 @@ namespace JWT.Builder
         private IJwtDecoder _decoder;
         private IJwtValidator _validator;
 
-        private IJsonSerializer _serializer = new JsonNetSerializer();
+        private IJsonSerializer _serializer = CreateSerializer();
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
         private ValidationParameters _valParams = ValidationParameters.Default;
@@ -73,9 +72,6 @@ namespace JWT.Builder
         /// <summary>
         /// Sets JWT serializer.
         /// </summary>
-        /// <remarks>
-        /// If not set then default <see cref="JsonNetSerializer" /> will be used.
-        /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSerializer(IJsonSerializer serializer)
         {
