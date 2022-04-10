@@ -356,19 +356,6 @@ services.AddAuthentication(options =>
     });
 ```
 
-## Jwt.Net OWIN
-
-### NuGet
-
-[![NuGet](https://img.shields.io/nuget/v/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
-[![NuGet Pre](https://img.shields.io/nuget/vpre/JWT.Extensions.Owin.svg)](https://www.nuget.org/packages/JWT.Extensions.Owin)
-
-### Register middleware to validate JWT
-
-```c#
-app.UseJwtMiddleware();
-```
-
 ## License
 
 The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#Public-Domain) file.
@@ -378,6 +365,6 @@ The following projects and their resulting packages are licensed under Public Do
 The following projects and their resulting packages are licensed under the MIT License, see the [LICENSE#MIT](LICENSE.md#MIT) file.
 
 - JWT.Extensions.AspNetCore
-- JWT.Extensions.Owin
+- JWT.Extensions.DependencyInjection
 
 **Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
