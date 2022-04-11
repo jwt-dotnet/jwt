@@ -29,14 +29,14 @@ steps:
     version: '6.0.x'
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet'
+
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-
-- task: NuGetToolInstaller@1
-  displayName: 'Install NuGet'
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet packages for .NET Framework'
