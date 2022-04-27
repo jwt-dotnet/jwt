@@ -4,9 +4,6 @@
     <TargetFrameworks>netstandard1.3;netstandard2.0;net6.0;net35;net40;net46;</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
-    <!--<AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>-->
-  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net46'">
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
   </PropertyGroup>
