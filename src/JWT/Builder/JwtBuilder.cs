@@ -209,7 +209,6 @@ namespace JWT.Builder
         public JwtBuilder WithVerifySignature(bool verify)
         {
             _valParams = _valParams.With(p => p.ValidateSignature = verify);
-
             return this;
         }
 
