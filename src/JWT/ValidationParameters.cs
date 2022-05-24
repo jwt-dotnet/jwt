@@ -36,6 +36,17 @@ namespace JWT
         public int TimeMargin { get; set; }
 
         /// <summary>
+        /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="true" />.
+        /// </summary>
+        public static ValidationParameters Default => new ValidationParameters
+        {
+            ValidateSignature = true,
+            ValidateExpirationTime = true,
+            ValidateIssuedTime = true,
+            TimeMargin = 0
+        };
+
+        /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="false" />.
         /// </summary>
         public static ValidationParameters None => new ValidationParameters
@@ -47,15 +58,10 @@ namespace JWT
         };
 
         /// <summary>
-        /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="true" />.
+        /// Creates a new instance of instance <see ValidationParameters" />.
         /// </summary>
-        public static ValidationParameters Default => new ValidationParameters
-        {
-            ValidateSignature = true,
-            ValidateExpirationTime = true,
-            ValidateIssuedTime = true,
-            TimeMargin = 0
-        };
+        public static ValidationParameters Create() =>
+            new ValidationParameters;
     }
 
     public static class ValidationParametersExtensions
