@@ -34,7 +34,6 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 - .NET Framework 4.0 - 4.8
 - .NET Standard 1.3
 - .NET Standard 2.0
-- .NET 5.0
 - .NET 6.0
 
 ## Jwt.NET
@@ -218,7 +217,8 @@ var validationParameters = new ValidationParameters
 {
     ValidateSignature = true,
     ValidateExpirationTime = true,
-    ValidateIssuedTime = true
+    ValidateIssuedTime = true,
+    TimeMargin = 100
 };
 IJwtValidator validator = new JwtValidator(serializer, provider, validationParameters);
 IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
@@ -229,14 +229,15 @@ var json = decoder.Decode(expiredToken, secret, verify: true); // will not throw
 
 ```c#
 var json = JwtBuilder.Create()
-                     .WithAlgorithm(new HMACSHA256Algorithm())
+                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
                      .WithSecret(secret)
                      .WithValidationParameters(
                          new ValidationParameters
                          {
                              ValidateSignature = true,
                              ValidateExpirationTime = true,
-                             ValidateIssuedTime = true
+                             ValidateIssuedTime = true,
+                             TimeMargin = 100
                          })
                      .Decode(expiredToken);
 ```
@@ -311,10 +312,10 @@ public void ConfigureServices(IServiceCollection services)
                      // secrets, required only for symmetric algorithms
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
-                     // force JwtDecoder to throw exception if JWT signature is invalid
-                     options.VerifySignature = true;
+                     // optionally; disable throwing an exception if JWT signature is invalid
+                     // options.VerifySignature = false;
                  });
-  // the non-generic version AddJwt() requires you to register an instance of IAlgorithmFactory manually
+  // the non-generic version AddJwt() requires registering an instance of IAlgorithmFactory manually
   services.AddSingleton<IAlgorithmFactory>(new RSAlgorithmFactory(certificate));
   // or
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));

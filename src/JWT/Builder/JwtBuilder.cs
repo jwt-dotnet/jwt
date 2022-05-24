@@ -163,10 +163,10 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Sets certificate secret.
+        /// Sets secrets.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create a new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
@@ -176,10 +176,10 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Sets certificate secret.
+        /// Sets secrets.
         /// </summary>
         /// <remarks>
-        /// Required to create new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
+        /// Required to create a new token that uses an symmetric algorithm such as <seealso cref="RS256Algorithm" />
         /// </remarks>
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params byte[][] secrets)
@@ -189,7 +189,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Instructs to do verify the JWT signature.
+        /// Instructs to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
         public JwtBuilder MustVerifySignature() =>
@@ -209,14 +209,14 @@ namespace JWT.Builder
         public JwtBuilder WithVerifySignature(bool verify)
         {
             _valParams = _valParams.With(p => p.ValidateSignature = verify);
-
             return this;
         }
 
         /// <summary>
-        /// Instructs whether to verify the JWT signature and what parts of the validation to perform.
+        /// Sets the JWT signature validation parameters.
         /// </summary>
         /// <param name="valParams">Parameters to be used for validation</param>
+        /// <exception cref="ArgumentNullException" />
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidationParameters(ValidationParameters valParams)
         {
@@ -225,10 +225,23 @@ namespace JWT.Builder
         }
 
         /// <summary>
+        /// Sets the JWT signature validation parameters.
+        /// </summary>
+        /// <param name="valParams">Parameters to be used for validation</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithValidationParameters(Action<ValidationParameters> action)
+        {
+            _valParams = _valParams.With(action);
+            return this;
+        }
+
+        /// <summary>
         /// Encodes a token using the supplied dependencies.
         /// </summary>
         /// <returns>The generated JWT</returns>
-        /// <exception cref="InvalidOperationException">Thrown if either algorithm, serializer, encoder or secret is null</exception>
+        /// <exception cref="InvalidOperationException" />
+        /// <returns>Current builder instance</returns>
         public string Encode()
         {
             EnsureCanEncode();

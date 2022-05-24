@@ -31,20 +31,9 @@ namespace JWT
         public bool ValidateIssuedTime { get; set; }
 
         /// <summary>
-        /// Gets or sets an integer to control the time margin in seconds for exp and nbf during token validation.
+        /// Gets or sets the time margin in seconds for exp and nbf during token validation.
         /// </summary>
         public int TimeMargin { get; set; }
-
-        /// <summary>
-        /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="false" />.
-        /// </summary>
-        public static ValidationParameters None => new ValidationParameters
-        {
-            ValidateSignature = false,
-            ValidateExpirationTime = false,
-            ValidateIssuedTime = false,
-            TimeMargin = 0
-        };
 
         /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="true" />.
@@ -54,6 +43,17 @@ namespace JWT
             ValidateSignature = true,
             ValidateExpirationTime = true,
             ValidateIssuedTime = true,
+            TimeMargin = 0
+        };
+
+        /// <summary>
+        /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="false" />.
+        /// </summary>
+        public static ValidationParameters None => new ValidationParameters
+        {
+            ValidateSignature = false,
+            ValidateExpirationTime = false,
+            ValidateIssuedTime = false,
             TimeMargin = 0
         };
     }
