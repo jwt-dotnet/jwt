@@ -312,10 +312,10 @@ public void ConfigureServices(IServiceCollection services)
                      // secrets, required only for symmetric algorithms
                      options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
                      
-                     // force JwtDecoder to throw exception if JWT signature is invalid
-                     options.VerifySignature = true;
+                     // optionally; disable throwing an exception if JWT signature is invalid
+                     // options.VerifySignature = false;
                  });
-  // the non-generic version AddJwt() requires you to register an instance of IAlgorithmFactory manually
+  // the non-generic version AddJwt() requires registering an instance of IAlgorithmFactory manually
   services.AddSingleton<IAlgorithmFactory>(new RSAlgorithmFactory(certificate));
   // or
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
