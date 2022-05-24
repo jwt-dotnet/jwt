@@ -31,7 +31,7 @@ namespace JWT
         public bool ValidateIssuedTime { get; set; }
 
         /// <summary>
-        /// Gets or sets an integer to control the time margin in seconds for exp and nbf during token validation.
+        /// Gets or sets the time margin in seconds for exp and nbf during token validation.
         /// </summary>
         public int TimeMargin { get; set; }
 
@@ -56,12 +56,6 @@ namespace JWT
             ValidateIssuedTime = false,
             TimeMargin = 0
         };
-
-        /// <summary>
-        /// Creates a new instance of instance <see ValidationParameters" />.
-        /// </summary>
-        public static ValidationParameters Create() =>
-            new ValidationParameters;
     }
 
     public static class ValidationParametersExtensions
