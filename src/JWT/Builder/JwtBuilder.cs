@@ -217,6 +217,7 @@ namespace JWT.Builder
         /// Sets the JWT signature validation parameters.
         /// </summary>
         /// <param name="valParams">Parameters to be used for validation</param>
+        /// <exception cref="ArgumentNullException" />
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidationParameters(ValidationParameters valParams)
         {
@@ -228,6 +229,7 @@ namespace JWT.Builder
         /// Sets the JWT signature validation parameters.
         /// </summary>
         /// <param name="valParams">Parameters to be used for validation</param>
+        /// <exception cref="ArgumentNullException" />
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidationParameters(Action<ValidationParameters> action)
         {
@@ -239,7 +241,8 @@ namespace JWT.Builder
         /// Encodes a token using the supplied dependencies.
         /// </summary>
         /// <returns>The generated JWT</returns>
-        // <returns>Current builder instance</returns>
+        /// <exception cref="InvalidOperationException" />
+        /// <returns>Current builder instance</returns>
         public string Encode()
         {
             EnsureCanEncode();
