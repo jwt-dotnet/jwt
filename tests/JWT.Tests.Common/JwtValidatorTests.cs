@@ -315,7 +315,7 @@ namespace JWT.Tests
 
             ex.Should()
               .NotBeNull("because invalid token should thrown exception")
-              .And.BeOfType(typeof(SignatureVerificationException), "because not yet usable token should thrown SignatureVerificationException");
+              .And.BeOfType(typeof(TokenNotYetValidException), "because not yet usable token should thrown TokenNotYetValidException");
         }
 
         [TestMethod]
