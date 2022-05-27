@@ -255,7 +255,11 @@ namespace JWT
 
             if (secondsSinceEpoch + _valParams.TimeMargin < nbfValue)
             {
-                return new SignatureVerificationException("Token is not yet valid.");
+                return new TokenNotYetValidException("Token is not yet valid.")
+                {
+                    NotBefore = UnixEpoch.Value.AddSeconds(nbfValue),
+                    PayloadData = payloadData
+                };                
             }
 
             return null;
