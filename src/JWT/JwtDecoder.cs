@@ -6,6 +6,7 @@ using JWT.Exceptions;
 using static JWT.Internal.EncodingHelper;
 #if NET35
 using static JWT.Compatibility.String;
+#endif
 
 namespace JWT
 {
