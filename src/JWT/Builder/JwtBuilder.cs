@@ -159,6 +159,13 @@ namespace JWT.Builder
         public JwtBuilder WithAlgorithm(IJwtAlgorithm algorithm)
         {
             _algorithm = algorithm;
+
+            if (algorithm != null &&
+                algorithm.Name.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                _valParams.ValidateSignature = false;
+            }
+
             return this;
         }
 
