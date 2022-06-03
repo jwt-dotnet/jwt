@@ -95,6 +95,18 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
+        public void Decode_Using_Empty_Signature_Should_Work_For_None_Algorithm()
+        {
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithSecret(TestData.Secret)
+                .Decode(TestData.TokenMissingSignature);
+
+            token.Should()
+                .NotBeNullOrEmpty("Using none algorithm should be valid without any signature");
+        }
+
+        [TestMethod]
         public void Decode_With_VerifySignature_And_Without_Algorithm_Should_Throw_Exception()
         {
             Action action =
