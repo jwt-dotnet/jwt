@@ -9,7 +9,7 @@ namespace JWT.Algorithms
     /// <see href="https://datatracker.ietf.org/doc/html/rfc7519#section-6">RFC-7519</see>
     public sealed class NoneAlgorithm : IJwtAlgorithm
     {
-        private static readonly Lazy<NoneAlgorithm> = new Lazy<NoneAlgorithm>(() => new NoneAlgorithm());
+        private static readonly Lazy<NoneAlgorithm> _lazy = new Lazy<NoneAlgorithm>(() => new NoneAlgorithm());
 
         public static NoneAlgorithm Instance => _lazy.Value;
 
