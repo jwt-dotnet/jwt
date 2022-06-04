@@ -160,7 +160,7 @@ namespace JWT.Builder
         {
             _algorithm = algorithm;
 
-            if (String.Equals(algorithm?.Name, nameof(AlgorithmName.None), StringComparison.OrdinalIgnoreCase))
+            if (_algorithm is NoneAlgorithm)
             {
                 _valParams.ValidateSignature = false;
             }
@@ -200,11 +200,6 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder MustVerifySignature()
         {
-            if (String.Equals(algorithm?.Name, nameof(AlgorithmName.None), StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Verify signature is not allowed for algorithm none");
-            }
-
             return WithVerifySignature(true);
         }
 
@@ -221,7 +216,16 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithVerifySignature(bool verify)
         {
-            _valParams = _valParams.With(p => p.ValidateSignature = verify);
+            if (_algorithm is not NoneAlgorithm)
+            {
+                _valParams = _valParams.With(p => p.ValidateSignature = verify);
+            }
+            else
+            {
+                if (verify)
+                    throw new InvalidOperationException("Verify signature is not allowed for algorithm none");
+            }
+
             return this;
         }
 
