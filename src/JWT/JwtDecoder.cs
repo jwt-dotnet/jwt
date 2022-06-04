@@ -127,10 +127,10 @@ namespace JWT
             else
             {
                 var header = DecodeHeader<JwtHeader>(jwt);
-                if (header.Algorithm.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase) &&
-                    !string.IsNullOrEmpty(jwt.Signature))
+                if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
+                    !String.IsNullOrEmpty(jwt.Signature))
                 {
-                    throw new InvalidOperationException("Signature is not acceptable for algorithm none");
+                    throw new InvalidOperationException("Signature is not acceptable for algorithm None");
                 }
             }
             return Decode(jwt);
@@ -158,10 +158,10 @@ namespace JWT
             else
             {
                 var header = DecodeHeader<JwtHeader>(jwt);
-                if (header.Algorithm.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase) &&
-                    !string.IsNullOrEmpty(jwt.Signature))
+                if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
+                    !String.IsNullOrEmpty(jwt.Signature))
                 {
-                    throw new InvalidOperationException("Signature is not acceptable for algorithm none");
+                    throw new InvalidOperationException("Signature is not acceptable for algorithm None");
                 }
             }
             return Decode(jwt);
