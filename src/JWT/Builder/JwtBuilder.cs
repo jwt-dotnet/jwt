@@ -160,8 +160,7 @@ namespace JWT.Builder
         {
             _algorithm = algorithm;
 
-            if (algorithm != null &&
-                algorithm.Name.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (String.Equals(algorithm?.Name, nameof(AlgorithmName.None), StringComparison.OrdinalIgnoreCase))
             {
                 _valParams.ValidateSignature = false;
             }
