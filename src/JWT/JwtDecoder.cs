@@ -124,6 +124,15 @@ namespace JWT
 
                 Validate(jwt, key);
             }
+            else
+            {
+                var header = DecodeHeader<JwtHeader>(jwt);
+                if (header.Algorithm.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrEmpty(jwt.Signature))
+                {
+                    throw new InvalidOperationException("Signature is not acceptable for algorithm none");
+                }
+            }
             return Decode(jwt);
         }
 
@@ -145,6 +154,15 @@ namespace JWT
                     throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
 
                 Validate(jwt, keys);
+            }
+            else
+            {
+                var header = DecodeHeader<JwtHeader>(jwt);
+                if (header.Algorithm.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrEmpty(jwt.Signature))
+                {
+                    throw new InvalidOperationException("Signature is not acceptable for algorithm none");
+                }
             }
             return Decode(jwt);
         }

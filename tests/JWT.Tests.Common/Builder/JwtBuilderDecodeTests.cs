@@ -83,15 +83,15 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_Using_None_Algorithm_Should_Return_Token()
+        public void Decode_Using_Signature_Is_Not_Accepted_For_None_Algorithm()
         {
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(new NoneAlgorithm())
-                                  .DoNotVerifySignature()
-                                  .Decode(TestData.Token);
+            Action action = () => JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .DoNotVerifySignature()
+                .Decode(TestData.TokenWithAlgNoneMissingSignature + "ANY");
 
-            token.Should()
-                 .NotBeNullOrEmpty("because the decoded token contains values and they should have been decoded");
+            action.Should()
+                 .Throw<InvalidOperationException>("Signature must be empty per https://datatracker.ietf.org/doc/html/rfc7518#section-3.6");
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ namespace JWT.Tests.Builder
             var token = JwtBuilder.Create()
                 .WithAlgorithm(new NoneAlgorithm())
                 .WithSecret(TestData.Secret)
-                .Decode(TestData.TokenMissingSignature);
+                .Decode(TestData.TokenWithAlgNoneMissingSignature);
 
             token.Should()
                 .NotBeNullOrEmpty("Using none algorithm should be valid without any signature");
