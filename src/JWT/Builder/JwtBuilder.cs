@@ -200,9 +200,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder MustVerifySignature()
         {
-            
-            if (_algorithm != null &&
-                _algorithm.Name.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (String.Equals(algorithm?.Name, nameof(AlgorithmName.None), StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException("Verify signature is not allowed for algorithm none");
             }
