@@ -199,8 +199,17 @@ namespace JWT.Builder
         /// Instructs to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature() =>
-            WithVerifySignature(true);
+        public JwtBuilder MustVerifySignature()
+        {
+            
+            if (_algorithm != null &&
+                _algorithm.Name.Equals(JwtAlgorithmName.None.ToString(), StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Verify signature is not allowed for algorithm none");
+            }
+
+            return WithVerifySignature(true);
+        }
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.

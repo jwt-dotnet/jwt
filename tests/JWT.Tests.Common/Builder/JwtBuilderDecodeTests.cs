@@ -105,7 +105,20 @@ namespace JWT.Tests.Builder
             token.Should()
                 .NotBeNullOrEmpty("Using none algorithm should be valid without any signature");
         }
+        
+        [TestMethod]
+        public void Decode_With_MustVerifySignature_Should_Not_Be_Allowed_For_For_None_Algorithm()
+        {
+            Action action =
+                () => JwtBuilder.Create()
+                    .WithAlgorithm(new NoneAlgorithm())
+                    .MustVerifySignature()
+                    .Decode(TestData.TokenWithAlgNoneMissingSignature);
 
+            action.Should()
+                .Throw<InvalidOperationException>("verify signature is not supported for none algorithm");
+        }
+        
         [TestMethod]
         public void Decode_With_VerifySignature_And_Without_Algorithm_Should_Throw_Exception()
         {
