@@ -6,7 +6,6 @@ using JWT.Exceptions;
 using static JWT.Internal.EncodingHelper;
 #if NET35
 using static JWT.Compatibility.String;
-#else
 #endif
 
 namespace JWT
@@ -228,6 +227,10 @@ namespace JWT
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
+            if (jwt.Payload is null)
+                throw new ArgumentNullException(nameof(JwtParts.Payload));
+            if (jwt.Signature is null)
+                throw new ArgumentNullException(nameof(JwtParts.Signature));
 
             var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
