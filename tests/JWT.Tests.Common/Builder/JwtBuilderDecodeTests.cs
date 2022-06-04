@@ -85,25 +85,26 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Decode_Using_Signature_Is_Not_Accepted_For_None_Algorithm()
         {
-            Action action = () => JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .DoNotVerifySignature()
-                .Decode(TestData.TokenWithAlgNoneMissingSignature + "ANY");
+            Action action =
+                () => JwtBuilder.Create()
+                                .WithAlgorithm(new NoneAlgorithm())
+                                .DoNotVerifySignature()
+                                .Decode(TestData.TokenWithAlgNoneMissingSignature + "ANY");
 
             action.Should()
-                 .Throw<InvalidOperationException>("Signature must be empty per https://datatracker.ietf.org/doc/html/rfc7518#section-3.6");
+                  .Throw<InvalidOperationException>("Signature must be empty per https://datatracker.ietf.org/doc/html/rfc7518#section-3.6");
         }
 
         [TestMethod]
         public void Decode_Using_Empty_Signature_Should_Work_For_None_Algorithm()
         {
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithSecret(TestData.Secret)
-                .Decode(TestData.TokenWithAlgNoneMissingSignature);
+                                  .WithAlgorithm(new NoneAlgorithm())
+                                  .WithSecret(TestData.Secret)
+                                  .Decode(TestData.TokenWithAlgNoneMissingSignature);
 
             token.Should()
-                .NotBeNullOrEmpty("Using none algorithm should be valid without any signature");
+                 .NotBeNullOrEmpty("Using none algorithm should be valid without any signature");
         }
         
         [TestMethod]
@@ -111,12 +112,12 @@ namespace JWT.Tests.Builder
         {
             Action action =
                 () => JwtBuilder.Create()
-                    .WithAlgorithm(new NoneAlgorithm())
-                    .MustVerifySignature()
-                    .Decode(TestData.TokenWithAlgNoneMissingSignature);
+                                .WithAlgorithm(new NoneAlgorithm())
+                                .MustVerifySignature()
+                                .Decode(TestData.TokenWithAlgNoneMissingSignature);
 
             action.Should()
-                .Throw<InvalidOperationException>("verify signature is not supported for none algorithm");
+                  .Throw<InvalidOperationException>("verify signature is not supported for none algorithm");
         }
         
         [TestMethod]
@@ -180,7 +181,7 @@ namespace JWT.Tests.Builder
                                 .Decode(null);
 
             action.Should()
-                   .Throw<ArgumentException>("because null is not valid value for token");
+                  .Throw<ArgumentException>("because null is not valid value for token");
         }
 
         [TestMethod]
