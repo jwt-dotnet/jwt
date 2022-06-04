@@ -212,20 +212,8 @@ namespace JWT.Builder
         /// Instructs whether to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithVerifySignature(bool verify)
-        {
-            if (_algorithm is not NoneAlgorithm)
-            {
-                _valParams = _valParams.With(p => p.ValidateSignature = verify);
-            }
-            else
-            {
-                if (verify)
-                    throw new InvalidOperationException("Verify signature is not allowed for algorithm none");
-            }
-
-            return this;
-        }
+        public JwtBuilder WithVerifySignature(bool verify) =>
+            WithValidationParameters(p => p.ValidateSignature = verify);
 
         /// <summary>
         /// Sets the JWT signature validation parameters.
@@ -235,7 +223,11 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidationParameters(ValidationParameters valParams)
         {
+            if (valParams.ValidateSignature && _algorithm is NoneAlgorithm)
+                throw new InvalidOperationException("Verify signature is not allowed for algorithm None");
+
             _valParams = valParams;
+
             return this;
         }
 
@@ -245,11 +237,8 @@ namespace JWT.Builder
         /// <param name="valParams">Parameters to be used for validation</param>
         /// <exception cref="ArgumentNullException" />
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithValidationParameters(Action<ValidationParameters> action)
-        {
-            _valParams = _valParams.With(action);
-            return this;
-        }
+        public JwtBuilder WithValidationParameters(Action<ValidationParameters> action) =>
+            WithValidationParameters(_valParams.With(action));
 
         /// <summary>
         /// Encodes a token using the supplied dependencies.
