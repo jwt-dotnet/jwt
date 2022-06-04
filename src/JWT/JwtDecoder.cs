@@ -124,6 +124,10 @@ namespace JWT
 
                 Validate(jwt, key);
             }
+            else
+            {
+                ValidateNoneAlgorithm(jwt);
+            }
             return Decode(jwt);
         }
 
@@ -145,6 +149,10 @@ namespace JWT
                     throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
 
                 Validate(jwt, keys);
+            }
+            else
+            {
+                ValidateNoneAlgorithm(jwt);
             }
             return Decode(jwt);
         }
@@ -270,6 +278,16 @@ namespace JWT
                 return false;
 
             return Array.TrueForAll(keys, key => key.Length > 0);
+        }
+        
+        private void ValidateNoneAlgorithm(JwtParts jwt)
+        {
+            var header = DecodeHeader<JwtHeader>(jwt);
+            if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
+                !String.IsNullOrEmpty(jwt.Signature))
+            {
+                throw new InvalidOperationException("Signature is not acceptable for algorithm None");
+            }
         }
     }
 }

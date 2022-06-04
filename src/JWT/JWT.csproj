@@ -20,7 +20,7 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <Version>9.0.2</Version>
+    <Version>9.0.3</Version>
     <FileVersion>9.0.0.0</FileVersion>
     <AssemblyVersion>9.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
