@@ -126,12 +126,7 @@ namespace JWT
             }
             else
             {
-                var header = DecodeHeader<JwtHeader>(jwt);
-                if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
-                    !String.IsNullOrEmpty(jwt.Signature))
-                {
-                    throw new InvalidOperationException("Signature is not acceptable for algorithm None");
-                }
+                ValidateNoneAlgorithm(jwt);
             }
             return Decode(jwt);
         }
@@ -157,12 +152,7 @@ namespace JWT
             }
             else
             {
-                var header = DecodeHeader<JwtHeader>(jwt);
-                if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
-                    !String.IsNullOrEmpty(jwt.Signature))
-                {
-                    throw new InvalidOperationException("Signature is not acceptable for algorithm None");
-                }
+                ValidateNoneAlgorithm(jwt);
             }
             return Decode(jwt);
         }
@@ -288,6 +278,16 @@ namespace JWT
                 return false;
 
             return Array.TrueForAll(keys, key => key.Length > 0);
+        }
+        
+        private void ValidateNoneAlgorithm(JwtParts jwt)
+        {
+            var header = DecodeHeader<JwtHeader>(jwt);
+            if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
+                !String.IsNullOrEmpty(jwt.Signature))
+            {
+                throw new InvalidOperationException("Signature is not acceptable for algorithm None");
+            }
         }
     }
 }

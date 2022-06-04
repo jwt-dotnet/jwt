@@ -198,10 +198,8 @@ namespace JWT.Builder
         /// Instructs to verify the JWT signature.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder MustVerifySignature()
-        {
-            return WithVerifySignature(true);
-        }
+        public JwtBuilder MustVerifySignature() =>
+            WithVerifySignature(true);
 
         /// <summary>
         /// Instructs to do not verify the JWT signature.
