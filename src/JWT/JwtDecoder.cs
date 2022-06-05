@@ -152,9 +152,9 @@ namespace JWT
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
-        public object DecodeToObject(Type type, JwtParts jwt)
+        public object DecodeToObject(Type type, JwtParts jwt, bool verify)
         {
-            var payload = Decode(jwt);
+            var payload = Decode(jwt, verify);
             return _jsonSerializer.Deserialize(type, payload);
         }
 
