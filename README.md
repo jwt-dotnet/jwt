@@ -134,13 +134,9 @@ var payload = JwtBuilder.Create()
 Console.WriteLine(payload["claim2"]);
 ```
 
-The output would be:
-    
->claim2-value
-
 ### Set and validate token expiration
 
-As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4):
+As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519#section-4.1.4):
 
 >The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
 
@@ -159,6 +155,8 @@ var payload = new Dictionary<string, object>
 var token = encoder.Encode(payload);
 var json = decoder.Decode(token); // throws TokenExpiredException
 ```
+
+Similarly, the `nbf` claim can be used to validate the token is not valid yet, as described in [RFC 7519 section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5).
 
 ### Parsing (decoding) token header
 
