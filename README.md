@@ -46,14 +46,13 @@ var payload = new Dictionary<string, object>
     { "claim1", 0 },
     { "claim2", "claim2-value" }
 };
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
 IJsonSerializer serializer = new JsonNetSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
-var token = encoder.Encode(payload, secret);
+var token = encoder.Encode(payload);
 Console.WriteLine(token);
 ```
 
@@ -61,35 +60,26 @@ Console.WriteLine(token);
 
 ```c#
 var token = JwtBuilder.Create()
-                      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-                      .WithSecret(secret)
+                      .WithAlgorithm(new RS256Algorithm(certificate))
                       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
                       .AddClaim("claim2", "claim2-value")
                       .Encode();
 
 Console.WriteLine(token);
 ```
-
-The output would be:
-
->eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
-
 ### Parsing (decoding) and verifying token
 
 ```c#
-const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
     IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-    IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+    IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
     IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
     
-    var json = decoder.Decode(token, secret, verify: true);
+    var json = decoder.Decode(token, verify: true);
     Console.WriteLine(json);
 }
 catch (TokenExpiredException)
@@ -106,18 +96,7 @@ catch (SignatureVerificationException)
 
 ```c#
 var json = JwtBuilder.Create()
-                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-                     .WithSecret(secret)
-                     .MustVerifySignature()
-                     .Decode(token);                    
-Console.WriteLine(json);
-```
-
-or
-
-```c#
-var json = JwtBuilder.Create()
-                     .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
+                     .WithAlgorithm(new RS256Algorithm(certificate))
                      .MustVerifySignature()
                      .Decode(token);                    
 Console.WriteLine(json);
@@ -138,7 +117,7 @@ Console.WriteLine(payload["claim2"]);
 
 ```c#
 var payload = JwtBuilder.Create()
-                        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                        .WithAlgorithm(new RS256Algorithm(certificate))
                         .WithSecret(secret)
                         .MustVerifySignature()
                         .Decode<IDictionary<string, object>>(token);     
@@ -171,16 +150,14 @@ If it is present in the payload and is prior to the current time the token will 
 IDateTimeProvider provider = new UtcDateTimeProvider();
 var now = provider.GetNow();
 
-double  secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+double secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
 var payload = new Dictionary<string, object>
 {
     { "exp", secondsSinceEpoch }
 };
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-var token = encoder.Encode(payload, secret);
-
-var json = decoder.Decode(token, secret, validate: true); // throws TokenExpiredException
+var token = encoder.Encode(payload);
+var json = decoder.Decode(token); // throws TokenExpiredException
 ```
 
 ### Parsing (decoding) token header
@@ -321,7 +298,7 @@ public void ConfigureServices(IServiceCollection services)
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
 
   // or use the generic version AddJwt<TFactory() if you have a custom implementation of IAlgorithmFactory
-  // AddJwt<MyCustomAlgorithmFactory(options => ...);
+  .AddJwt<MyCustomAlgorithmFactory(options => ...);
 }
 
 public void Configure(IApplicationBuilder app)
@@ -367,5 +344,3 @@ The following projects and their resulting packages are licensed under the MIT L
 
 - JWT.Extensions.AspNetCore
 - JWT.Extensions.DependencyInjection
-
-**Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.
