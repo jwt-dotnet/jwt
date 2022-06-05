@@ -106,14 +106,17 @@ namespace JWT
         #region Decode
 
         /// <summary>
-        /// Given a JWT, decodes it, and return the payload.
+        /// Given a JWT, decodes it and return the payload.
         /// </summary>
         /// <param name="decoder">The decoder instance</param>
-        /// <param name="jwt">The JWT</param>
-        /// <param name="verify">Whether to verify the signature (default is <c>true</c>)</param>  
+        /// <param name="token">The JWT</param>
+        /// <param name="verify">Whether to verify the signature (default is <c>true</c>)</param>
         /// <returns>A string containing the JSON payload</returns>
-        public static string Decode(this IJwtDecoder decoder, JwtParts jwt, bool verify = true) =>
-            decoder.Decode(jwt, (byte[])null, verify);
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="InvalidTokenPartsException" />
+        public static string Decode(this IJwtDecoder decoder, string token, bool verify = true) =>
+            decoder.Decode(new JwtParts(token), (byte[])null, verify);
 
         /// <summary>
         /// Given a JWT, decodes it, and return the payload.
