@@ -256,7 +256,7 @@ namespace JWT
             }
             else
             {
-                if (!AllKeysHaveValues(keys))
+                if (keys is object && !AllKeysHaveValues(keys))
                     throw new ArgumentOutOfRangeException(nameof(keys));
 
                 // the signature on the token, with the leading =
