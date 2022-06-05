@@ -85,7 +85,7 @@ try
 }
 catch (TokenNotYetValidException)
 {
-    Console.WriteLine("Token is not valid yet")
+    Console.WriteLine("Token is not valid yet");
 }
 catch (TokenExpiredException)
 {
