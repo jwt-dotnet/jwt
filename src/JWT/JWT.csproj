@@ -20,9 +20,9 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicense>CC0-1.0</PackageLicense>
-    <Version>9.1.0-beta1</Version>
-    <FileVersion>9.0.0.0</FileVersion>
-    <AssemblyVersion>9.0.0.0</AssemblyVersion>
+    <Version>10.0.0-beta1</Version>
+    <FileVersion>10.0.0.0</FileVersion>
+    <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
