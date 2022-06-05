@@ -120,7 +120,7 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        public void Decode_With_Multiple_Secrets_Should_Return_Token()
+        public void Decode_With_Multiple_Keys_Should_Return_Token()
         {
             const string key = TestData.Secret;
             const string token = TestData.Token;
@@ -146,8 +146,7 @@ namespace JWT.Tests
 
             var factory = new Mock<IAlgorithmFactory>();
             factory.Setup(f => f.Create(It.IsAny<JwtDecoderContext>()))
-                   .Returns(TestData.RS256Algorithm)
-                   .Verifiable("because custom algorithm factory must be called");
+                   .Returns(TestData.RS256Algorithm);
 
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -155,13 +154,13 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, factory.Object);
 
-            decoder.Decode(token, (byte[][])null, verify: true);
+            decoder.Decode(token);
 
             factory.VerifyAll();
         }
 
         [TestMethod]
-        public void Decode_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
+        public void Decode_Without_Verify_And_Without_Algorithm_Should_Return_Token()
         {
             const string token = TestData.Token;
             var payload = TestData.Customer;
@@ -171,7 +170,7 @@ namespace JWT.Tests
 
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
-            var actual = decoder.Decode(token);
+            var actual = decoder.Decode(token, verify: false);
             var expected = serializer.Serialize(payload);
 
             actual.Should()
@@ -179,7 +178,7 @@ namespace JWT.Tests
         }
         
         [TestMethod]
-        public void Decode_Token_Missing_Signature_Without_VerifySignature_And_Without_Algorithm_Should_Return_Token()
+        public void Decode_Token_Missing_Signature_And_Without_Verify_And_Without_Algorithm_Should_Return_Token()
         {
             const string token = TestData.TokenWithoutSignature;
             var payload = TestData.Customer;
@@ -189,7 +188,7 @@ namespace JWT.Tests
 
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
-            var actual = decoder.Decode(token);
+            var actual = decoder.Decode(token, verify: false);
             var expected = serializer.Serialize(payload);
 
             actual.Should()
@@ -216,7 +215,7 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Secrets()
+        public void DecodeToObject_Should_Decode_Token_To_Dictionary_Multiple_Keys()
         {
             var expected = TestData.DictionaryPayload;
             const string key = TestData.Secret;
@@ -254,7 +253,7 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_Multiple_Secrets()
+        public void DecodeToObject_Should_Decode_Token_To_Generic_Type_With_Multiple_Keys()
         {
             const string key = TestData.Secret;
             const string token = TestData.Token;
@@ -283,15 +282,14 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(badToken, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(badToken, key, verify: true);
 
             action.Should()
                   .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_With_Multiple_Secrets()
+        public void DecodeToObject_Should_Throw_Exception_On_Malformed_Token_With_Multiple_Keys()
         {
             const string badToken = TestData.TokenWithoutHeader;
             var keys = new[] { TestData.Secret, TestData.Secret2 };
@@ -302,8 +300,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(badToken, keys, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(badToken, keys, verify: true);
 
             action.Should()
                   .Throw<InvalidTokenPartsException>("because the provided token does not contains the required three parts");
@@ -320,15 +317,14 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Key_Multiple_Secrets()
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Multiple_Keys()
         {
             const string token = TestData.Token;
             var keys = _fixture.Create<string[]>();
@@ -338,8 +334,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>("because providing the wrong key must raise an error when the signature is verified");
@@ -359,17 +354,17 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_MultipleKeys()
+        public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim_And_Multiple_Keys()
         {
-            const string key = TestData.Secret;
+            const string key1 = TestData.Secret;
+            const string key2 = TestData.Secret;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -378,10 +373,9 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key);
+            var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key1);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, new[] { key }, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, new[] { key1, key2 }, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
@@ -401,8 +395,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>()
@@ -410,9 +403,10 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_MultipleKeys()
+        public void DecodeToObject_Should_Throw_Exception_On_Null_Expiration_Claim_And_Multiple_Keys()
         {
-            const string key = TestData.Secret;
+            const string key1 = TestData.Secret;
+            const string key2 = TestData.Secret2;
 
             var serializer = new JsonNetSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -421,10 +415,9 @@ namespace JWT.Tests
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(new { exp = (object)null }, key);
+            var token = encoder.Encode(new { exp = (object)null }, key1);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, new[] { key }, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, new[] { key1, key2 }, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>()
@@ -450,8 +443,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp }, key);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             action.Should()
                   .Throw<TokenExpiredException>("because decoding an expired token should raise an exception when verified");
@@ -474,7 +466,7 @@ namespace JWT.Tests
             var validToken = encoder.Encode(payload, key);
 
             var expected = serializer.Serialize(payload);
-            var actual = decoder.Decode(validToken, key, true);
+            var actual = decoder.Decode(validToken, key);
 
             expected.Should()
                     .Be(actual, "because the token should be correctly decoded");
@@ -495,8 +487,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { nbf }, TestData.Secret);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, TestData.Secret, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, TestData.Secret, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>();
@@ -540,8 +531,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { nbf = (object)null }, key);
 
-            Action action =
-                () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>()

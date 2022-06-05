@@ -27,7 +27,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
         {
             var services = new ServiceCollection();
             services.AddJwtEncoder()
-                    .AddSingleton<IAlgorithmFactory>(p => new DelegateAlgorithmFactory(TestData.HMACSHA256Algorithm));
+                    .AddSingleton<IAlgorithmFactory>(_ => new DelegateAlgorithmFactory(TestData.HMACSHA256Algorithm));
 
             var provider = services.BuildServiceProvider();
             var encoder = provider.GetRequiredService<IJwtEncoder>();
@@ -113,7 +113,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
             decoder.Should().NotBeNull();
 
             const string token = TestData.Token;
-            var payload = decoder.Decode(token);
+            var payload = decoder.Decode(token, TestData.Secret);
             payload.Should().NotBeNull();
         }
 
@@ -128,7 +128,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
             decoder.Should().NotBeNull();
 
             const string token = TestData.Token;
-            var payload = decoder.Decode(token);
+            var payload = decoder.Decode(token, TestData.Secret);
             payload.Should().NotBeNull();
         }
     }

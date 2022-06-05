@@ -46,14 +46,13 @@ var payload = new Dictionary<string, object>
     { "claim1", 0 },
     { "claim2", "claim2-value" }
 };
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
 
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
 IJsonSerializer serializer = new JsonNetSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
-var token = encoder.Encode(payload, secret);
+var token = encoder.Encode(payload);
 Console.WriteLine(token);
 ```
 
@@ -61,36 +60,32 @@ Console.WriteLine(token);
 
 ```c#
 var token = JwtBuilder.Create()
-                      .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-                      .WithSecret(secret)
+                      .WithAlgorithm(new RS256Algorithm(certificate))
                       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                      .AddClaim("claim1", 0)
                       .AddClaim("claim2", "claim2-value")
                       .Encode();
 
 Console.WriteLine(token);
 ```
-
-The output would be:
-
->eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s
-
 ### Parsing (decoding) and verifying token
 
 ```c#
-const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-
 try
 {
     IJsonSerializer serializer = new JsonNetSerializer();
     IDateTimeProvider provider = new UtcDateTimeProvider();
     IJwtValidator validator = new JwtValidator(serializer, provider);
     IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
-    IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+    IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
     IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
     
-    var json = decoder.Decode(token, secret, verify: true);
+    var json = decoder.Decode(token);
     Console.WriteLine(json);
+}
+catch (TokenNotYetValidException)
+{
+    Console.WriteLine("Token is not valid yet");
 }
 catch (TokenExpiredException)
 {
@@ -106,18 +101,7 @@ catch (SignatureVerificationException)
 
 ```c#
 var json = JwtBuilder.Create()
-                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
-                     .WithSecret(secret)
-                     .MustVerifySignature()
-                     .Decode(token);                    
-Console.WriteLine(json);
-```
-
-or
-
-```c#
-var json = JwtBuilder.Create()
-                     .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
+                     .WithAlgorithm(new RS256Algorithm(certificate))
                      .MustVerifySignature()
                      .Decode(token);                    
 Console.WriteLine(json);
@@ -131,37 +115,21 @@ You can also deserialize the JSON payload directly to a .NET type:
 
 ```c#
 var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
-Console.WriteLine(payload["claim2"]);
- ```
+```
 
 #### Or using the fluent builder API
 
 ```c#
 var payload = JwtBuilder.Create()
-                        .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                        .WithAlgorithm(new RS256Algorithm(certificate))
                         .WithSecret(secret)
                         .MustVerifySignature()
                         .Decode<IDictionary<string, object>>(token);     
-Console.WriteLine(payload["claim2"]);
 ```
-
-and
-
-```c#
-var payload = JwtBuilder.Create()
-                        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
-                        .MustVerifySignature()
-                        .Decode<IDictionary<string, object>>(token);     
-Console.WriteLine(payload["claim2"]);
-```
-
-The output would be:
-    
->claim2-value
 
 ### Set and validate token expiration
 
-As described in the [JWT RFC](https://tools.ietf.org/html/rfc7519#section-4.1.4):
+As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519#section-4.1.4):
 
 >The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
 
@@ -169,19 +137,20 @@ If it is present in the payload and is prior to the current time the token will 
 
 ```c#
 IDateTimeProvider provider = new UtcDateTimeProvider();
-var now = provider.GetNow();
+var now = provider.GetNow().AddMinutes(-5); // token has expired 5 minutes ago
 
-double  secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
+double secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
 var payload = new Dictionary<string, object>
 {
     { "exp", secondsSinceEpoch }
 };
-const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-var token = encoder.Encode(payload, secret);
+var token = encoder.Encode(payload);
 
-var json = decoder.Decode(token, secret, validate: true); // throws TokenExpiredException
+decoder.Decode(token); // throws TokenExpiredException
 ```
+
+Similarly, the `nbf` claim can be used to validate the token is not valid yet, as described in [RFC 7519 section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5).
 
 ### Parsing (decoding) token header
 
@@ -210,33 +179,33 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 
 ### Turning off parts of token validation
 
-If you wish to validate a token but ignore certain parts of the validation (such as the lifetime of the token when refreshing the token), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
+If you'd like to validate a token but ignore certain parts of the validation (such as whether to the token has expired or not valid yet), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
 
 ```c#
 var validationParameters = new ValidationParameters
 {
     ValidateSignature = true,
-    ValidateExpirationTime = true,
-    ValidateIssuedTime = true,
+    ValidateExpirationTime = false,
+    ValidateIssuedTime = false,
     TimeMargin = 100
 };
 IJwtValidator validator = new JwtValidator(serializer, provider, validationParameters);
 IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
-var json = decoder.Decode(expiredToken, secret, verify: true); // will not throw because of expired token
+var json = decoder.Decode(expiredToken); // will not throw because of expired token
 ```
 
 #### Or using the fluent builder API
 
 ```c#
 var json = JwtBuilder.Create()
-                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                     .WithAlgorithm(new RS256Algorirhm(certificate))
                      .WithSecret(secret)
                      .WithValidationParameters(
                          new ValidationParameters
                          {
                              ValidateSignature = true,
-                             ValidateExpirationTime = true,
-                             ValidateIssuedTime = true,
+                             ValidateExpirationTime = false,
+                             ValidateIssuedTime = false,
                              TimeMargin = 100
                          })
                      .Decode(expiredToken);
@@ -264,7 +233,7 @@ public sealed class CustomJsonSerializer : IJsonSerializer
 And then pass this serializer to JwtEncoder constructor:
 
 ```c#
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+IJwtAlgorithm algorithm = new RS256Algorirhm(certificate);
 IJsonSerializer serializer = new CustomJsonSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
@@ -309,8 +278,8 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secrets, required only for symmetric algorithms
-                     options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
+                     // secrets, required only for symmetric algorithms, such as HMACSHA256Algorithm
+                     // options.Keys = new[] { "mySecret" };
                      
                      // optionally; disable throwing an exception if JWT signature is invalid
                      // options.VerifySignature = false;
@@ -320,8 +289,8 @@ public void ConfigureServices(IServiceCollection services)
   // or
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
 
-  // or use the generic version AddJwt<TFactory() if you have a custom implementation of IAlgorithmFactory
-  // AddJwt<MyCustomAlgorithmFactory(options => ...);
+  // or use the generic version AddJwt<TFactory() to use a custom implementation of IAlgorithmFactory
+  .AddJwt<MyCustomAlgorithmFactory(options => ...);
 }
 
 public void Configure(IApplicationBuilder app)
@@ -337,26 +306,6 @@ services.AddSingleton<IIdentityFactory, CustomIdentityFctory>();
 services.AddSingleton<ITicketFactory, CustomTicketFactory>();
 ```
 
-### Register authentication handler to validate JWT
-
-```c#
-services.AddAuthentication(options =>
-    {
-        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-        options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-
-        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-        options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-    })
-.AddJwt(options =>
-    {
-        options.Keys = configureOptions.Keys;
-        options.VerifySignature = configureOptions.VerifySignature;
-
-        // optionally customize
-    });
-```
-
 ## License
 
 The following projects and their resulting packages are licensed under Public Domain, see the [LICENSE#Public-Domain](LICENSE.md#Public-Domain) file.
@@ -367,5 +316,3 @@ The following projects and their resulting packages are licensed under the MIT L
 
 - JWT.Extensions.AspNetCore
 - JWT.Extensions.DependencyInjection
-
-**Note:** work in progress as the scenario/usage is not designed yet. The registered component will do nothing but throw an exception.

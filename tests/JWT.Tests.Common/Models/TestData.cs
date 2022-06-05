@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using JWT.Algorithms;
 
+#if NETSTANDARD2_1 || NET6_0
+using System.Security.Cryptography;
+using System.Text;
+#endif
+
 namespace JWT.Tests.Models
 {
     public static class TestData
@@ -16,7 +21,7 @@ namespace JWT.Tests.Models
         public const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public const string Secret2 = "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT";
 
-        public static string[] Secrets = { Secret, Secret2 };
+        public static readonly string[] Secrets = { Secret, Secret2 };
 
         public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
         public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
@@ -42,18 +47,37 @@ namespace JWT.Tests.Models
         };
 
         public const string ServerRsaPublicKey1 = "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcNMTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALsspKjcF/mB0nheaT+9KizOeBM6Qpi69LzOLBw8rxohSFJw/BFB/ch+8jXbtq23IwtavJTwSeY6a7pbZgrwCwUK/27gy04m/tum5FJBfCVGTTI4vqUYeTKimQzxj2pupQ+wx//1tKrXMIDGdllmQ/tffQHXxYGBR5Ol543YRN+dAgMBAAGjUDBOMB0GA1UdDgQWBBQMfi0akrZdtPpiYSbE4h2/9vlaozAfBgNVHSMEGDAWgBQMfi0akrZdtPpiYSbE4h2/9vlaozAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBDQUAA4GBAF9pg6H7C7O5/oHeRtKSOPb9WnrHZ/mxAl30wCh2pCtJLkgMKKhquYmKqTA+QWpSF/Qeaq17DAf7Wq8VQ2QES9WCQm+PlBlTeZAf3UTLkxIUDchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j";
-
         public const string ServerRsaPublicThumbprint1 = "CFAEAE2D650A6CA9862575DE54371EA980643849";
 
         public const string ServerRsaPublicKey2 = "MIIDfDCCAmSgAwIBAgIQQDCxkdjCQqmQsnSLtcHj3TANBgkqhkiG9w0BAQsFADA7MQswCQYDVQQGEwJ1czELMAkGA1UECBMCVVMxETAPBgNVBAoTCENlcnR0ZXN0MQwwCgYDVQQDEwNqd3QwHhcNMjAwMzIzMDI1NDAzWhcNMjMwMzIzMDMwNDAzWjA7MQswCQYDVQQGEwJ1czELMAkGA1UECBMCVVMxETAPBgNVBAoTCENlcnR0ZXN0MQwwCgYDVQQDEwNqd3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC5hM+0cIjO0oLcxQPGdnSS0ZVJDSNVsPmtiXimSLhEIPczbZ35OSWa9PI+PRIztr/yjtwjTlCES4EjyEoJ8LYIQmGVLdYV5ULS/CyXVpgWpDdiSv6QOwB2qMv3mKiPcmaKxy+oo4zfihBqGkCC6QnspyvUFPZiWTx86Apw3u3WqBRE3HQ+PjMnjDSnWdPaAsb75ti61RU+9qYj3BwxDJR6xnAaYz1RSkxHOw4+Ty+/tNtObrZmTH7msVRpV7kMU1QgyD3Y2/JTTf3YUU0LCm1J+WJ0cMbVrILAvVlOQnRn3IlcI1LOL/e6XEyET5tVymv8S5EoJjGf2o8VnTsF3vttAgMBAAGjfDB6MA4GA1UdDwEB/wQEAwIFoDAJBgNVHRMEAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAfBgNVHSMEGDAWgBTTMvXgytSFWwQk58CpxCpZAr5G1jAdBgNVHQ4EFgQU0zL14MrUhVsEJOfAqcQqWQK+RtYwDQYJKoZIhvcNAQELBQADggEBAK5vSwzh0x0pJm6njJX29rsd53ktyph+L90Enh0xzLFN0Ku9p+tM8E9TmKR+9ppdPqIEe4G/AuR1fHvmWenEw44M85Y/pBIPZDM2QVQngjg6iRQ42yD5hb/P4+UnvP9a5uI4Xc3f4NlJi3n54qBmdD5Hg52tNYgr8FKRoNzAoUCHelLk5PW0llF8Nc6cjJf0JfrSA1lVua488Dd34sPt798xM3IoISof1dqKslTypHP4BCyZ55SSfQJ+GrY7T9J3ct23BTrPnhhq0sPDogN4j258RmDriBGZmRcnrlmuBD5v+lvjYk0fISYNMfkrCQg5zae4d6BJIZVLY3gITGbaNoA=";
+        private const string ServerRsaPrivateKey2 = "<RSAKeyValue><Modulus>uYTPtHCIztKC3MUDxnZ0ktGVSQ0jVbD5rYl4pki4RCD3M22d+TklmvTyPj0SM7a/8o7cI05QhEuBI8hKCfC2CEJhlS3WFeVC0vwsl1aYFqQ3Ykr+kDsAdqjL95ioj3JmiscvqKOM34oQahpAgukJ7Kcr1BT2Ylk8fOgKcN7t1qgURNx0Pj4zJ4w0p1nT2gLG++bYutUVPvamI9wcMQyUesZwGmM9UUpMRzsOPk8vv7TbTm62Zkx+5rFUaVe5DFNUIMg92NvyU0392FFNCwptSflidHDG1ayCwL1ZTkJ0Z9yJXCNSzi/3ulxMhE+bVcpr/EuRKCYxn9qPFZ07Bd77bQ==</Modulus><Exponent>AQAB</Exponent><P>2Mrzzbb8Gh7aoW0YXdtdO7WEZ7+pOvbxdp4Qw8sp8dF5cF5vss3I2FoJ9kssy/DsUsreBUhD0HKrADBus7BHKXp7Q/9hhu1nAJxpng255cUfngVD9k1xQdfWEHCeWrr7XJHcplTkh4ysH4nWK+8S+RoCpiuphkJJqVxPzDaY1+M=</P><Q>2xHwflmaMbNs9dXi3wx10SyG5KQJeRIXlKkhlUYlAU+7598AdmTiUPHfhj4WDRCmcJGHjSWqdiuQuwmRYsBXRhtk7XjGAjcefloSpXSR9G+tpVFuIthBU337g2pK1o8z/29LKiWZvcytgxQLEWwGIyduj2I9BoDw1jgFmVd/IG8=</Q><DP>b9n+ghO37G4g1QqpeLtWVhkoEDNFyANiv5V8BtjKclZmdoBy1ujviBikbSuKGErcUzcR593KB0EyUu2qIBGCFbd447NeiTPxYdJRd9eTIyZaUrhawThhh9wpOOAyA5PXXoJvOm4wXnNI1xjRpGc7/cPavAto8rk+sh/LmAxPPYs=</DP><DQ>b2l2N6v2IWSw+22lje5WVOUiTVGnh61N1MsXS0V7OGmGlOvy3kN8XdJE7Y7RxB89pm480+neAW8ykgzRpblQKVVxRNxxR1sk5PmGFiNsvzW0yCjbrFjzEDU4HqOGIAyAU14UigDJaZ+YdttQrbGUhXheYAmEI7SbxzaCknPPMX0=</DQ><InverseQ>SpRpqI+Z4g3jMbb0iE0oD+FAUaBXGp00DjKVbeYH8WQl2rVGFkspFYeN69u3ZFUL3JJd4rCF6zbuLq6iyDJq/F+Jo4zSzXChepr/dSEH1TszaA6imdqFyj3pjOT/ZXNK4YPCRijRM3fy8GdNybZDQljL1djY8D1YK3CWEtKuogs=</InverseQ><D>ADJKztC1SseTfRmPgnZ+DLXAgbflpK6WS3+/9/UcKAsc5LOmA8bytwvkjpPqYNGkH5g7iKU8yP16rbrSXgy6NJ7VYAVENJIhYWKdxxJzAMfvVkeCc4A/sa1GFThwXUG5KBND7EExrsu3oe67LyhOBJXv7vHCvQhSwkZNbiDEtOh7y6bKOOb0aluzPir3eY3HyN7TP2uS5mEeokMvwk9yGOUvCeKoz8t9WJf8HoP2OsDqFsbs5qA66qC6DWaU9OZ0VrO3zgmceIDP2ZXFkWmz2cVJ/Yvfi5zCvc0+g670twnuG8P00Syr/3xNCVuhwwuZbDcILjNvc9uOu9iDbY5xZQ==</D></RSAKeyValue>";
 
-        public const string ServerRsaPrivateKey = "<RSAKeyValue><Modulus>uYTPtHCIztKC3MUDxnZ0ktGVSQ0jVbD5rYl4pki4RCD3M22d+TklmvTyPj0SM7a/8o7cI05QhEuBI8hKCfC2CEJhlS3WFeVC0vwsl1aYFqQ3Ykr+kDsAdqjL95ioj3JmiscvqKOM34oQahpAgukJ7Kcr1BT2Ylk8fOgKcN7t1qgURNx0Pj4zJ4w0p1nT2gLG++bYutUVPvamI9wcMQyUesZwGmM9UUpMRzsOPk8vv7TbTm62Zkx+5rFUaVe5DFNUIMg92NvyU0392FFNCwptSflidHDG1ayCwL1ZTkJ0Z9yJXCNSzi/3ulxMhE+bVcpr/EuRKCYxn9qPFZ07Bd77bQ==</Modulus><Exponent>AQAB</Exponent><P>2Mrzzbb8Gh7aoW0YXdtdO7WEZ7+pOvbxdp4Qw8sp8dF5cF5vss3I2FoJ9kssy/DsUsreBUhD0HKrADBus7BHKXp7Q/9hhu1nAJxpng255cUfngVD9k1xQdfWEHCeWrr7XJHcplTkh4ysH4nWK+8S+RoCpiuphkJJqVxPzDaY1+M=</P><Q>2xHwflmaMbNs9dXi3wx10SyG5KQJeRIXlKkhlUYlAU+7598AdmTiUPHfhj4WDRCmcJGHjSWqdiuQuwmRYsBXRhtk7XjGAjcefloSpXSR9G+tpVFuIthBU337g2pK1o8z/29LKiWZvcytgxQLEWwGIyduj2I9BoDw1jgFmVd/IG8=</Q><DP>b9n+ghO37G4g1QqpeLtWVhkoEDNFyANiv5V8BtjKclZmdoBy1ujviBikbSuKGErcUzcR593KB0EyUu2qIBGCFbd447NeiTPxYdJRd9eTIyZaUrhawThhh9wpOOAyA5PXXoJvOm4wXnNI1xjRpGc7/cPavAto8rk+sh/LmAxPPYs=</DP><DQ>b2l2N6v2IWSw+22lje5WVOUiTVGnh61N1MsXS0V7OGmGlOvy3kN8XdJE7Y7RxB89pm480+neAW8ykgzRpblQKVVxRNxxR1sk5PmGFiNsvzW0yCjbrFjzEDU4HqOGIAyAU14UigDJaZ+YdttQrbGUhXheYAmEI7SbxzaCknPPMX0=</DQ><InverseQ>SpRpqI+Z4g3jMbb0iE0oD+FAUaBXGp00DjKVbeYH8WQl2rVGFkspFYeN69u3ZFUL3JJd4rCF6zbuLq6iyDJq/F+Jo4zSzXChepr/dSEH1TszaA6imdqFyj3pjOT/ZXNK4YPCRijRM3fy8GdNybZDQljL1djY8D1YK3CWEtKuogs=</InverseQ><D>ADJKztC1SseTfRmPgnZ+DLXAgbflpK6WS3+/9/UcKAsc5LOmA8bytwvkjpPqYNGkH5g7iKU8yP16rbrSXgy6NJ7VYAVENJIhYWKdxxJzAMfvVkeCc4A/sa1GFThwXUG5KBND7EExrsu3oe67LyhOBJXv7vHCvQhSwkZNbiDEtOh7y6bKOOb0aluzPir3eY3HyN7TP2uS5mEeokMvwk9yGOUvCeKoz8t9WJf8HoP2OsDqFsbs5qA66qC6DWaU9OZ0VrO3zgmceIDP2ZXFkWmz2cVJ/Yvfi5zCvc0+g670twnuG8P00Syr/3xNCVuhwwuZbDcILjNvc9uOu9iDbY5xZQ==</D></RSAKeyValue>";
-
-        public const string ServerEcdsaPublicKey = "MIIByzCCAXGgAwIBAgIUPDQy5M4HxMqW8+X2KfoYUUj5l5MwCgYIKoZIzj0EAwIwOzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMREwDwYDVQQKDAhDZXJ0dGVzdDEMMAoGA1UEAwwDand0MB4XDTIxMDIwNjEzNTQ0NVoXDTIxMDMwODEzNTQ0NVowOzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMREwDwYDVQQKDAhDZXJ0dGVzdDEMMAoGA1UEAwwDand0MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3Ympn6KCBHXmOmlMNfdncXBotz+0/V9JbMhMrbK8K2Oig+lrUHZL/+Ny23YWapp0laUeUfrtkfD1YyNKsPmRkaNTMFEwHQYDVR0OBBYEFCq4dD2oz6a4PYklRdKQYOe4XYiAMB8GA1UdIwQYMBaAFCq4dD2oz6a4PYklRdKQYOe4XYiAMA8GA1UdEwEB/wQFMAMBAf8wCgYIKoZIzj0EAwIDSAAwRQIhAKvagRL0NpbXyGyOoRHNhHjZhZT0j/VtEmi765QH6VCvAiAhEarI4dCcEWX9EwzrUI0+GUlulQZR+LtXzeoIvfUrAQ==";
+        private const string ServerPublicKeyEcdsa = "MIIByzCCAXGgAwIBAgIUPDQy5M4HxMqW8+X2KfoYUUj5l5MwCgYIKoZIzj0EAwIwOzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMREwDwYDVQQKDAhDZXJ0dGVzdDEMMAoGA1UEAwwDand0MB4XDTIxMDIwNjEzNTQ0NVoXDTIxMDMwODEzNTQ0NVowOzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlVTMREwDwYDVQQKDAhDZXJ0dGVzdDEMMAoGA1UEAwwDand0MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE3Ympn6KCBHXmOmlMNfdncXBotz+0/V9JbMhMrbK8K2Oig+lrUHZL/+Ny23YWapp0laUeUfrtkfD1YyNKsPmRkaNTMFEwHQYDVR0OBBYEFCq4dD2oz6a4PYklRdKQYOe4XYiAMB8GA1UdIwQYMBaAFCq4dD2oz6a4PYklRdKQYOe4XYiAMA8GA1UdEwEB/wQFMAMBAf8wCgYIKoZIzj0EAwIDSAAwRQIhAKvagRL0NpbXyGyOoRHNhHjZhZT0j/VtEmi765QH6VCvAiAhEarI4dCcEWX9EwzrUI0+GUlulQZR+LtXzeoIvfUrAQ==";
 
         public static readonly IJwtAlgorithm HMACSHA256Algorithm = new HMACSHA256Algorithm();
 
         public static readonly IJwtAlgorithm RS256Algorithm = new RS256Algorithm(
             new X509Certificate2(Convert.FromBase64String(ServerRsaPublicKey2)));
+
+        public static readonly X509Certificate2 CertificateWithPublicKey = new X509Certificate2(
+            Convert.FromBase64String(ServerRsaPublicKey1));
+
+        public static readonly X509Certificate2 CertificateWithPublicKeyEcdsa = new X509Certificate2(
+            Convert.FromBase64String(ServerPublicKeyEcdsa));
+
+#if NETSTANDARD2_1 || NET6_0
+        public static readonly X509Certificate2 CertificateWithPrivateKey = CreateCertificate();
+
+        private static X509Certificate2 CreateCertificate()
+        {
+            var rsa = RSA.Create();
+            rsa.FromXmlString(ServerRsaPrivateKey2);
+
+            var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
+            var certPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
+
+            return certPriv;
+        }
+#endif
     }
 }
