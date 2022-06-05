@@ -256,17 +256,22 @@ namespace JWT
             }
             else
             {
-                if (keys is object && !AllKeysHaveValues(keys))
-                    throw new ArgumentOutOfRangeException(nameof(keys));
-
-                // the signature on the token, with the leading =
-                var rawSignature = Convert.ToBase64String(decodedSignature);
-
-                // the signatures re-created by the algorithm, with the leading =
-                var recreatedSignatures = keys.Select(key => Convert.ToBase64String(algorithm.Sign(key, bytesToSign))).ToArray();
-
-                _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
+                ValidSymmetricAlgorithm(keys, decodedPayload, algorithm, bytesToSign, decodedSignature);
             }
+        }
+
+        private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
+        {
+            if (keys is object && !AllKeysHaveValues(keys))
+                throw new ArgumentOutOfRangeException(nameof(keys));
+
+            // the signature on the token, with the leading =
+            var rawSignature = Convert.ToBase64String(decodedSignature);
+
+            // the signatures re-created by the algorithm, with the leading =
+            var recreatedSignatures = keys.Select(key => Convert.ToBase64String(algorithm.Sign(key, bytesToSign))).ToArray();
+
+            _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
         }
 
         private static bool AllKeysHaveValues(byte[][] keys)
