@@ -161,9 +161,7 @@ namespace JWT.Builder
             _algorithm = algorithm;
 
             if (_algorithm is NoneAlgorithm)
-            {
                 _valParams.ValidateSignature = false;
-            }
 
             return this;
         }
@@ -234,7 +232,7 @@ namespace JWT.Builder
         /// <summary>
         /// Sets the JWT signature validation parameters.
         /// </summary>
-        /// <param name="valParams">Parameters to be used for validation</param>
+        /// <param name="action">Delegate to produce parameters to be used for validation</param>
         /// <exception cref="ArgumentNullException" />
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithValidationParameters(Action<ValidationParameters> action) =>

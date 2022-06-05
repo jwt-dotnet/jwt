@@ -279,7 +279,7 @@ namespace JWT.Tests.Builder
             Action action =
                 () => JwtBuilder.Create()
                                 .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                .WithSecret(new string[0])
+                                .WithSecret(Array.Empty<string>())
                                 .MustVerifySignature()
                                 .Decode(TestData.Token);
 
@@ -293,7 +293,7 @@ namespace JWT.Tests.Builder
             Action action =
                 () => JwtBuilder.Create()
                                 .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                .WithSecret(new byte[0])
+                                .WithSecret(Array.Empty<byte>())
                                 .MustVerifySignature()
                                 .Decode(TestData.Token);
 
@@ -307,7 +307,7 @@ namespace JWT.Tests.Builder
             Action action =
                 () => JwtBuilder.Create()
                                 .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                .WithSecret(new byte[0], new byte[1])
+                                .WithSecret(Array.Empty<byte>(), new byte[1])
                                 .MustVerifySignature()
                                 .Decode(TestData.Token);
 

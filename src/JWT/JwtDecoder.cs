@@ -92,15 +92,16 @@ namespace JWT
         }
 
         /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public string Decode(JwtParts jwt)
-        {
-            if (jwt is null)
-                throw new ArgumentNullException(nameof(jwt));
-
-            var decoded = _urlEncoder.Decode(jwt.Payload);
-            return GetString(decoded);
-        }
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="InvalidTokenPartsException" />
+        /// <exception cref="FormatException" />
+        /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
+        /// <exception cref="TokenExpiredException" />
+        public string Decode(JwtParts jwt, bool verify) =>
+            Decode(jwt, (byte[])null, verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />
@@ -109,8 +110,20 @@ namespace JWT
         /// <exception cref="InvalidTokenPartsException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
-        public string Decode(JwtParts jwt, byte[] key, bool verify)
+        public string Decode(JwtParts jwt, byte[] key, bool verify) =>
+            Decode(jwt, new[] { key }, verify);
+
+        /// <inheritdoc />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="FormatException" />
+        /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
+        /// <exception cref="TokenExpiredException" />
+        public string Decode(JwtParts jwt, byte[][] keys, bool verify)
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
@@ -121,32 +134,6 @@ namespace JWT
                     throw new InvalidOperationException("This instance was constructed without validator so cannot be used for signature validation");
                 if (_algFactory is null)
                     throw new InvalidOperationException("This instance was constructed without algorithm factory so cannot be used for signature validation");
-
-                Validate(jwt, key);
-            }
-            else
-            {
-                ValidateNoneAlgorithm(jwt);
-            }
-            return Decode(jwt);
-        }
-
-        /// <inheritdoc />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="ArgumentOutOfRangeException" />
-        /// <exception cref="FormatException" />
-        /// <exception cref="SignatureVerificationException" />
-        /// <exception cref="TokenExpiredException" />
-        public string Decode(JwtParts jwt, byte[][] keys, bool verify)
-        {
-            if (jwt is null)
-                throw new ArgumentNullException(nameof(jwt));
-
-            if (verify)
-            {
-                if (_jwtValidator is null || _algFactory is null)
-                    throw new InvalidOperationException("This instance was constructed without validator and algorithm so cannot be used for signature validation");
 
                 Validate(jwt, keys);
             }
@@ -162,6 +149,9 @@ namespace JWT
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
+        /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
+        /// <exception cref="TokenExpiredException" />
         public object DecodeToObject(Type type, JwtParts jwt)
         {
             var payload = Decode(jwt);
@@ -174,6 +164,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public object DecodeToObject(Type type, JwtParts jwt, byte[] key, bool verify)
         {
@@ -187,6 +178,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public object DecodeToObject(Type type, JwtParts jwt, byte[][] keys, bool verify)
         {
@@ -203,6 +195,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public void Validate(string[] parts, byte[] key) =>
             Validate(new JwtParts(parts), key);
@@ -216,6 +209,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public void Validate(string[] parts, params byte[][] keys) =>
             Validate(new JwtParts(parts), keys);
@@ -230,6 +224,7 @@ namespace JWT
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="FormatException" />
         /// <exception cref="SignatureVerificationException" />
+        /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public void Validate(JwtParts jwt, params byte[][] keys)
         {
@@ -248,7 +243,7 @@ namespace JWT
             if (algorithm is null)
                 throw new ArgumentNullException(nameof(algorithm));
 
-            var bytesToSign = GetBytes(jwt.Header, (byte)'.', jwt.Payload);
+            var bytesToSign = GetBytes(jwt.Header, '.', jwt.Payload);
 
             if (algorithm is IAsymmetricAlgorithm asymmAlg)
             {
@@ -258,6 +253,15 @@ namespace JWT
             {
                 ValidSymmetricAlgorithm(keys, decodedPayload, algorithm, bytesToSign, decodedSignature);
             }
+        }
+
+        private string Decode(JwtParts jwt)
+        {
+            if (jwt is null)
+                throw new ArgumentNullException(nameof(jwt));
+
+            var decoded = _urlEncoder.Decode(jwt.Payload);
+            return GetString(decoded);
         }
 
         private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
@@ -284,7 +288,7 @@ namespace JWT
 
             return Array.TrueForAll(keys, key => key.Length > 0);
         }
-        
+
         private void ValidateNoneAlgorithm(JwtParts jwt)
         {
             var header = DecodeHeader<JwtHeader>(jwt);
