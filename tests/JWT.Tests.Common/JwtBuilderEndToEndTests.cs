@@ -1,9 +1,7 @@
-#if NETSTANDARD2_0 || NET6_0
+#if NETSTANDARD2_1 || NET6_0
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -18,7 +16,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Encode_and_Decode_With_Certificate()
         {
-            var cert = CreateCertificate();
+            var cert = TestData.CertificateWithPrivateKey;
             var algorithm = new RS256Algorithm(cert);
 
             const string iss = "test";
@@ -60,17 +58,6 @@ namespace JWT.Tests
             header.KeyId
                   .Should()
                   .Be(TestData.ServerRsaPublicThumbprint1);
-        }
-
-        private static X509Certificate2 CreateCertificate()
-        {
-            var rsa = RSA.Create();
-            rsa.FromXmlString(TestData.ServerRsaPrivateKey);
-
-            var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
-            var certPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
-
-            return certPriv;
         }
     }
 }

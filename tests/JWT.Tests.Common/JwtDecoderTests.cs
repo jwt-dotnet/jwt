@@ -146,8 +146,7 @@ namespace JWT.Tests
 
             var factory = new Mock<IAlgorithmFactory>();
             factory.Setup(f => f.Create(It.IsAny<JwtDecoderContext>()))
-                   .Returns(TestData.RS256Algorithm)
-                   .Verifiable("because custom algorithm factory must be called");
+                   .Returns(TestData.RS256Algorithm);
 
             var serializer = new JsonNetSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
@@ -155,7 +154,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, factory.Object);
 
-            decoder.Decode(token, (byte[][])null, verify: true);
+            decoder.Decode(token);
 
             factory.VerifyAll();
         }

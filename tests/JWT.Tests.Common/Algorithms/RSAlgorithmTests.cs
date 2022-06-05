@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -59,8 +58,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(Func<X509Certificate2, RSAlgorithm> algFactory)
         {
-            var bytes = Convert.FromBase64String(TestData.ServerRsaPublicKey1);
-            var cert = new X509Certificate2(bytes);
+            var cert = TestData.CertificateWithPublicKey;
 
             var alg = algFactory(cert);
 

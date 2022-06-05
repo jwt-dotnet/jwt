@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -64,7 +63,7 @@ namespace JWT.Tests
             const string key = TestData.ServerRsaPublicKey1;
 
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
+            var algFactory = new RSAlgorithmFactory(() => TestData.CertificateWithPublicKey);
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, algFactory);
 
             Action action =
@@ -85,7 +84,7 @@ namespace JWT.Tests
             var encodedToken = encoder.Encode(TestData.Customer, TestData.ServerRsaPublicKey1);
 
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-            var algFactory = new RSAlgorithmFactory(() => new X509Certificate2(TestData.ServerRsaPublicKey1));
+            var algFactory = new RSAlgorithmFactory(() => TestData.CertificateWithPublicKey);
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, algFactory);
 
             var keys = new[] { TestData.ServerRsaPublicKey1, TestData.ServerRsaPublicKey2 };
