@@ -62,6 +62,7 @@ Console.WriteLine(token);
 var token = JwtBuilder.Create()
                       .WithAlgorithm(new RS256Algorithm(certificate))
                       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                      .AddClaim("claim1", 0)
                       .AddClaim("claim2", "claim2-value")
                       .Encode();
 
@@ -79,8 +80,12 @@ try
     IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
     IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
     
-    var json = decoder.Decode(token, verify: true);
+    var json = decoder.Decode(token);
     Console.WriteLine(json);
+}
+catch (TokenNotYetValidException)
+{
+    Console.WriteLine("Token is not valid yet")
 }
 catch (TokenExpiredException)
 {
@@ -110,8 +115,7 @@ You can also deserialize the JSON payload directly to a .NET type:
 
 ```c#
 var payload = decoder.DecodeToObject<IDictionary<string, object>>(token, secret);
-Console.WriteLine(payload["claim2"]);
- ```
+```
 
 #### Or using the fluent builder API
 
@@ -121,7 +125,6 @@ var payload = JwtBuilder.Create()
                         .WithSecret(secret)
                         .MustVerifySignature()
                         .Decode<IDictionary<string, object>>(token);     
-Console.WriteLine(payload["claim2"]);
 ```
 
 and
@@ -131,7 +134,6 @@ var payload = JwtBuilder.Create()
                         .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
                         .MustVerifySignature()
                         .Decode<IDictionary<string, object>>(token);     
-Console.WriteLine(payload["claim2"]);
 ```
 
 ### Set and validate token expiration
@@ -144,7 +146,7 @@ If it is present in the payload and is prior to the current time the token will 
 
 ```c#
 IDateTimeProvider provider = new UtcDateTimeProvider();
-var now = provider.GetNow();
+var now = provider.GetNow().AddMinutes(-5); // token has expired 5 minutes ago
 
 double secondsSinceEpoch = UnixEpoch.GetSecondsSince(now);
 
@@ -153,7 +155,8 @@ var payload = new Dictionary<string, object>
     { "exp", secondsSinceEpoch }
 };
 var token = encoder.Encode(payload);
-var json = decoder.Decode(token); // throws TokenExpiredException
+
+decoder.Decode(token); // throws TokenExpiredException
 ```
 
 Similarly, the `nbf` claim can be used to validate the token is not valid yet, as described in [RFC 7519 section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5).
@@ -185,33 +188,33 @@ var kid = header.KeyId; // CFAEAE2D650A6CA9862575DE54371EA980643849
 
 ### Turning off parts of token validation
 
-If you wish to validate a token but ignore certain parts of the validation (such as the lifetime of the token when refreshing the token), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
+If you'd like to validate a token but ignore certain parts of the validation (such as whether to the token has expired or not valid yet), you can pass a `ValidateParameters` object to the constructor of the `JwtValidator` class.
 
 ```c#
 var validationParameters = new ValidationParameters
 {
     ValidateSignature = true,
-    ValidateExpirationTime = true,
-    ValidateIssuedTime = true,
+    ValidateExpirationTime = false,
+    ValidateIssuedTime = false,
     TimeMargin = 100
 };
 IJwtValidator validator = new JwtValidator(serializer, provider, validationParameters);
 IJwtDecoder decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithm);
-var json = decoder.Decode(expiredToken, secret, verify: true); // will not throw because of expired token
+var json = decoder.Decode(expiredToken); // will not throw because of expired token
 ```
 
 #### Or using the fluent builder API
 
 ```c#
 var json = JwtBuilder.Create()
-                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                     .WithAlgorithm(new RS256Algorirhm(certificate))
                      .WithSecret(secret)
                      .WithValidationParameters(
                          new ValidationParameters
                          {
                              ValidateSignature = true,
-                             ValidateExpirationTime = true,
-                             ValidateIssuedTime = true,
+                             ValidateExpirationTime = false,
+                             ValidateIssuedTime = false,
                              TimeMargin = 100
                          })
                      .Decode(expiredToken);
@@ -239,7 +242,7 @@ public sealed class CustomJsonSerializer : IJsonSerializer
 And then pass this serializer to JwtEncoder constructor:
 
 ```c#
-IJwtAlgorithm algorithm = new HMACSHA256Algorithm(); // symmetric
+IJwtAlgorithm algorithm = new RS256Algorirhm(certificate);
 IJsonSerializer serializer = new CustomJsonSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
@@ -285,7 +288,7 @@ public void ConfigureServices(IServiceCollection services)
             .AddJwt(options =>
                  {
                      // secrets, required only for symmetric algorithms
-                     options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
+                     // options.Keys = new[] { "mySecret" };
                      
                      // optionally; disable throwing an exception if JWT signature is invalid
                      // options.VerifySignature = false;
@@ -295,7 +298,7 @@ public void ConfigureServices(IServiceCollection services)
   // or
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
 
-  // or use the generic version AddJwt<TFactory() if you have a custom implementation of IAlgorithmFactory
+  // or use the generic version AddJwt<TFactory() to use a custom implementation of IAlgorithmFactory
   .AddJwt<MyCustomAlgorithmFactory(options => ...);
 }
 
@@ -310,26 +313,6 @@ public void Configure(IApplicationBuilder app)
 ```c#
 services.AddSingleton<IIdentityFactory, CustomIdentityFctory>();
 services.AddSingleton<ITicketFactory, CustomTicketFactory>();
-```
-
-### Register authentication handler to validate JWT
-
-```c#
-services.AddAuthentication(options =>
-    {
-        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-        options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-
-        // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-        options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-    })
-.AddJwt(options =>
-    {
-        options.Keys = configureOptions.Keys;
-        options.VerifySignature = configureOptions.VerifySignature;
-
-        // optionally customize
-    });
 ```
 
 ## License
