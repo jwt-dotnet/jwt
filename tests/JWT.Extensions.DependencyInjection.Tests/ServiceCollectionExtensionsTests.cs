@@ -113,7 +113,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
             decoder.Should().NotBeNull();
 
             const string token = TestData.Token;
-            var payload = decoder.Decode(token);
+            var payload = decoder.Decode(token, TestData.Secret);
             payload.Should().NotBeNull();
         }
 
@@ -128,7 +128,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
             decoder.Should().NotBeNull();
 
             const string token = TestData.Token;
-            var payload = decoder.Decode(token);
+            var payload = decoder.Decode(token, TestData.Secret);
             payload.Should().NotBeNull();
         }
     }
