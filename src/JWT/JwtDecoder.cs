@@ -262,7 +262,7 @@ namespace JWT
 
         private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (keys is object && !AllKeysHaveValues(keys))
+            if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             // the signature on the token, with the leading =
