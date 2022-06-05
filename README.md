@@ -127,15 +127,6 @@ var payload = JwtBuilder.Create()
                         .Decode<IDictionary<string, object>>(token);     
 ```
 
-and
-
-```c#
-var payload = JwtBuilder.Create()
-                        .WithAlgorithm(new RS256Algorithm(certificate)) // asymmetric
-                        .MustVerifySignature()
-                        .Decode<IDictionary<string, object>>(token);     
-```
-
 ### Set and validate token expiration
 
 As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519#section-4.1.4):
@@ -287,7 +278,7 @@ public void ConfigureServices(IServiceCollection services)
                  })
             .AddJwt(options =>
                  {
-                     // secrets, required only for symmetric algorithms
+                     // secrets, required only for symmetric algorithms, such as HMACSHA256Algorithm
                      // options.Keys = new[] { "mySecret" };
                      
                      // optionally; disable throwing an exception if JWT signature is invalid
