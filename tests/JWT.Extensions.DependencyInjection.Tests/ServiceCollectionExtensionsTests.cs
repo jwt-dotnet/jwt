@@ -27,7 +27,7 @@ namespace JWT.Extensions.DependencyInjection.Tests
         {
             var services = new ServiceCollection();
             services.AddJwtEncoder()
-                    .AddSingleton<IAlgorithmFactory>(p => new DelegateAlgorithmFactory(TestData.HMACSHA256Algorithm));
+                    .AddSingleton<IAlgorithmFactory>(_ => new DelegateAlgorithmFactory(TestData.HMACSHA256Algorithm));
 
             var provider = services.BuildServiceProvider();
             var encoder = provider.GetRequiredService<IJwtEncoder>();

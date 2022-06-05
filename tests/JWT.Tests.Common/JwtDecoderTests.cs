@@ -474,7 +474,7 @@ namespace JWT.Tests
             var validToken = encoder.Encode(payload, key);
 
             var expected = serializer.Serialize(payload);
-            var actual = decoder.Decode(validToken, key, true);
+            var actual = decoder.Decode(validToken, key);
 
             expected.Should()
                     .Be(actual, "because the token should be correctly decoded");
