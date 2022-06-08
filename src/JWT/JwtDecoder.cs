@@ -266,6 +266,8 @@ namespace JWT
 
         private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
         {
+            if (keys is null)
+                throw new ArgumentNullException(nameof(keys));
             if (!AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
