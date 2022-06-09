@@ -305,7 +305,10 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
-            _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
+            if (_algorithm is object)
+                _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
+            else if (_algFactory is object)
+                _encoder = new JwtEncoder(_algFactory, _serializer, _urlEncoder);
         }
 
         private void TryCreateDecoder()
