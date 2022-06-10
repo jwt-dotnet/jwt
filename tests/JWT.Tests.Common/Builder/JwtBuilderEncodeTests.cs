@@ -208,6 +208,36 @@ namespace JWT.Tests.Builder
             token.Should()
                  .Be(TestData.TokenWithCustomTypeHeader3, "because the same data encoded with the same key must result in the same token");
         }
+        
+        [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .Encode(TestData.Customer);
+
+            token.Should()
+                .Be(TestData.TokenWithCustomTypeHeader3, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Return_Token_Nested_Data()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddClaim<Customer>("Data", TestData.Customer)
+                .Encode();
+
+            token.Should()
+                .Be(TestData.TokenWithNestedData, "because the same data encoded with the same key must result in the same token");
+        }
 
         [TestMethod]
         public void Encode_With_Custom_Factory_Return_Token()

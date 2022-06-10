@@ -1,6 +1,8 @@
 #if SYSTEM_TEXT_JSON
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -117,7 +119,15 @@ namespace JWT.Serializers.Converters
                 }
                 default:
                 {
-                    writer.WriteNullValue();
+                    var payloadPartAsDictionary = objectValue.GetType()
+                        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                        .ToDictionary(prop => prop.Name, prop => prop.GetValue(objectValue, null));
+                    writer.WriteStartObject();
+                    foreach (var payloadPartKeyValue in payloadPartAsDictionary)
+                    {
+                        HandleValue(writer, payloadPartKeyValue.Key, payloadPartKeyValue.Value);
+                    }
+                    writer.WriteEndObject();
                     break;
                 }
             }
