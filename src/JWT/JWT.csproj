@@ -19,7 +19,7 @@
     <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
-    <PackageLicense>CC0-1.0</PackageLicense>
+    <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
     <Version>10.0.0-beta2</Version>
     <FileVersion>10.0.0.0</FileVersion>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
