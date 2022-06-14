@@ -10,7 +10,7 @@
     <PackageDescription>Microsoft Dependency Injection container intergration package for Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization;dependenсy injection</PackageTags>
-    <PackageLicense>MIT</PackageLicense>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Version>2.1.0</Version>
     <FileVersion>2.0.0.0</FileVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
