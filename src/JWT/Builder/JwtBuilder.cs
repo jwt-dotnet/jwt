@@ -389,7 +389,7 @@ namespace JWT.Builder
             if (!CanDecodeHeader())
             {
                 throw new InvalidOperationException(
-                    "Can't decode a token header. Check if you have call all of the following methods:" + Environment.NewLine +
+                    "Can't decode a token header. Check if you have called all of the following methods:" + Environment.NewLine +
                     $"-{nameof(WithSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
