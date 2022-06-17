@@ -30,7 +30,6 @@ namespace JWT.Serializers.Converters
                     throw new JsonException("Failed to get property name");
 
                 reader.Read();
-
                 dic.Add(propertyName, ExtractValue(ref reader, options));
             }
 
@@ -124,10 +123,8 @@ namespace JWT.Serializers.Converters
             }
         }
 
-        private static void HandleValue(Utf8JsonWriter writer, object value)
-        {
+        private static void HandleValue(Utf8JsonWriter writer, object value) =>
             HandleValue(writer, null, value);
-        }
 
         private object ExtractValue(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
