@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Tests.Models;
@@ -13,13 +12,13 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class RSAlgorithmTests
     {
-        private static readonly Fixture _fixture = new Fixture();
+        private static RSACryptoServiceProvider RSACryptoServiceProvider => new();
 
         [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
         [DataTestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
-            var privateKey = _fixture.Create<RSACryptoServiceProvider>();
+            var privateKey = RSACryptoServiceProvider;
 
             Action action = () => algFactory(null, privateKey);
 
@@ -31,7 +30,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Ctor_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
 
             Action action = () => algFactory(publicKey, null);
 
@@ -43,7 +42,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSAlgorithm> algFactory)
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var alg = algFactory(publicKey);
 
             var bytesToSign = Array.Empty<byte>();

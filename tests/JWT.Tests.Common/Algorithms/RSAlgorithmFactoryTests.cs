@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
@@ -10,12 +9,12 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class RSAlgorithmFactoryTests
     {
-        private static readonly Fixture _fixture = new Fixture();
+        private static RSACryptoServiceProvider RSACryptoServiceProvider => new();
 
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS256Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS256()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -33,7 +32,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS384Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS384()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -51,7 +50,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS512Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS512()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -69,7 +68,8 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS1024Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS1024()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
+            
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -87,7 +87,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS2048Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS2048()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -105,7 +105,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS4096Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS4096()
         {
-            var publicKey = _fixture.Create<RSACryptoServiceProvider>();
+            var publicKey = RSACryptoServiceProvider;
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
