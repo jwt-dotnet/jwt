@@ -11,7 +11,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.0.0-beta3</Version>
+    <Version>10.0.0-beta1</Version>
     <FileVersion>10.0.0.0</FileVersion>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
