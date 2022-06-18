@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
+
 using static JWT.Internal.EncodingHelper;
 using static JWT.Serializers.JsonSerializerFactory;
 
@@ -252,13 +253,13 @@ namespace JWT.Builder
         {
             EnsureCanEncode();
 
-            var payloadAsDictionary = payload.GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
+            var dic = payload.GetType()
+                             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                             .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
 
-            foreach (var keyValuePair in payloadAsDictionary)
+            foreach (var pair in dic)
             {
-                _jwt.Payload.Add(keyValuePair.Key, keyValuePair.Value);
+                _jwt.Payload.Add(pair.Key, pair.Value);
             }
 
             return Encode();
