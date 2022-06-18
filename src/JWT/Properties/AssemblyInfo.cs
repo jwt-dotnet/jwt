@@ -2,12 +2,12 @@ using System.Runtime.CompilerServices;
 using JWT;
 
 [assembly: InternalsVisibleTo("JWT.Tests.Common, PublicKey=" + AssemblyInfo.PublicKey)]
-[assembly: InternalsVisibleTo("JWT.Tests.NetCore2, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.NetCore3, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net35, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net40, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net46, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net60, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Extensions.AspNetCore.Tests, PublicKey=" + AssemblyInfo.PublicKey)]
 
 namespace JWT
 {

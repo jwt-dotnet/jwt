@@ -21,11 +21,11 @@ namespace JWT.Extensions.AspNetCore.Factories
             if (payload is null)
                 throw new ArgumentException(nameof(payload));
 
-            Type targetType = typeof(IDictionary<string, string>);
+            Type targetType = typeof(IDictionary<string, object>);
             if (!targetType.IsAssignableFrom(type))
                 throw new ArgumentOutOfRangeException(nameof(type), $"Type {type} is not assignable to {targetType}");
 
-            return CreateIdentity((IDictionary<string, string>)payload);
+            return CreateIdentity((IDictionary<string, object>)payload);
         }
 
         /// <summary>
@@ -33,9 +33,9 @@ namespace JWT.Extensions.AspNetCore.Factories
         /// </summary>
         /// <param name="payload"><see cref="IDictionary{String,String}" /> of user's claims</param>
         /// <returns><see cref="ClaimsIdentity" /></returns>
-        public IIdentity CreateIdentity(IDictionary<string, string> payload)
+        public IIdentity CreateIdentity(IDictionary<string, object> payload)
         {
-            var claims = payload.Select(p => new Claim(p.Key, p.Value));
+            var claims = payload.Select(p => new Claim(p.Key, p.Value.ToString()));
             return _options.CurrentValue.IncludeAuthenticationScheme ?
                 new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme) :
                 new ClaimsIdentity(claims);

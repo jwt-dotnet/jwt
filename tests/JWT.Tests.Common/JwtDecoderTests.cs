@@ -5,10 +5,11 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
-using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+
+using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -22,7 +23,7 @@ namespace JWT.Tests
         {
             const string token = TestData.TokenByAsymmetricAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
@@ -37,7 +38,7 @@ namespace JWT.Tests
         {
             const string token = TestData.TokenByAsymmetricAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
@@ -59,7 +60,7 @@ namespace JWT.Tests
         {
             const string token = TestData.TokenByAsymmetricAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
@@ -84,7 +85,7 @@ namespace JWT.Tests
         {
             const string token = TestData.TokenByAsymmetricAlgorithm;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
@@ -106,7 +107,7 @@ namespace JWT.Tests
             const string token = TestData.Token;
             var payload = TestData.Customer;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -126,7 +127,7 @@ namespace JWT.Tests
             const string token = TestData.Token;
             var payload = TestData.Customer;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -148,7 +149,7 @@ namespace JWT.Tests
             factory.Setup(f => f.Create(It.IsAny<JwtDecoderContext>()))
                    .Returns(TestData.RS256Algorithm);
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -165,7 +166,7 @@ namespace JWT.Tests
             const string token = TestData.Token;
             var payload = TestData.Customer;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
 
             var decoder = new JwtDecoder(serializer, urlEncoder);
@@ -176,14 +177,14 @@ namespace JWT.Tests
             actual.Should()
                   .Be(expected, "because the provided object should be correctly serialized in the token");
         }
-        
+
         [TestMethod]
         public void Decode_Token_Missing_Signature_And_Without_Verify_And_Without_Algorithm_Should_Return_Token()
         {
             const string token = TestData.TokenWithoutSignature;
             var payload = TestData.Customer;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var urlEncoder = new JwtBase64UrlEncoder();
 
             var decoder = new JwtDecoder(serializer, urlEncoder);
@@ -202,7 +203,7 @@ namespace JWT.Tests
             const string key = TestData.Secret;
             const string token = TestData.Token;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -221,7 +222,7 @@ namespace JWT.Tests
             const string key = TestData.Secret;
             const string token = TestData.Token;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -240,7 +241,7 @@ namespace JWT.Tests
             const string key = TestData.Secret;
             const string token = TestData.Token;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -258,7 +259,7 @@ namespace JWT.Tests
             const string key = TestData.Secret;
             const string token = TestData.Token;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -276,7 +277,7 @@ namespace JWT.Tests
             const string badToken = TestData.TokenWithoutHeader;
             const string key = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -294,7 +295,7 @@ namespace JWT.Tests
             const string badToken = TestData.TokenWithoutHeader;
             var keys = new[] { TestData.Secret, TestData.Secret2 };
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -312,7 +313,7 @@ namespace JWT.Tests
             const string token = TestData.Token;
             var key = _fixture.Create<string>();
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
@@ -329,7 +330,7 @@ namespace JWT.Tests
             const string token = TestData.Token;
             var keys = _fixture.Create<string[]>();
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
@@ -345,7 +346,7 @@ namespace JWT.Tests
         {
             const string key = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -366,7 +367,7 @@ namespace JWT.Tests
             const string key1 = TestData.Secret;
             const string key2 = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -386,7 +387,7 @@ namespace JWT.Tests
         {
             const string key = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -408,7 +409,7 @@ namespace JWT.Tests
             const string key1 = TestData.Secret;
             const string key2 = TestData.Secret2;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -431,7 +432,7 @@ namespace JWT.Tests
             const int timeDelta = -1;
 
             var dateTimeProvider = new UtcDateTimeProvider();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
 
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -454,7 +455,7 @@ namespace JWT.Tests
         {
             const string key = TestData.Secret;
             var dateTimeProvider = new UtcDateTimeProvider();
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
@@ -475,7 +476,7 @@ namespace JWT.Tests
         [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_Before_NotBefore_Becomes_Valid()
         {
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var dateTimeProvider = new UtcDateTimeProvider();
             var validator = new JwtValidator(serializer, dateTimeProvider);
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -499,7 +500,7 @@ namespace JWT.Tests
             var dateTimeProvider = new UtcDateTimeProvider();
             const string key = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();
@@ -522,7 +523,7 @@ namespace JWT.Tests
         {
             const string key = TestData.Secret;
 
-            var serializer = new JsonNetSerializer();
+            var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
 
             var urlEncoder = new JwtBase64UrlEncoder();

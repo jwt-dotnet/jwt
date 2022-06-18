@@ -1,4 +1,8 @@
+#if SYSTEM_TEXT_JSON
+using JsonProperty = System.Text.Json.Serialization.JsonPropertyNameAttribute;
+#elif NEWTONSOFT_JSON
 using Newtonsoft.Json;
+#endif
 
 namespace JWT.Builder
 {

@@ -5,7 +5,6 @@ using JWT.Algorithms;
 
 #if NETSTANDARD2_1 || NET6_0
 using System.Security.Cryptography;
-using System.Text;
 #endif
 
 namespace JWT.Tests.Models
@@ -25,6 +24,7 @@ namespace JWT.Tests.Models
 
         public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
         public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";
+        public const string TokenPayloadAsCamelCase = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmaXJzdE5hbWUiOiJKZXN1cyIsImFnZSI6MzN9.u571boEFpzlFRlWhwpyeYzFO6SdekDLAQCjU6HmlS8k";
         public const string TokenWithExtraHeaders = "eyJmb28iOiJiYXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.QQJaPxDE6E7l-zC-LKTbEgPfId5FDvowRKww1o6jdwU";
         public const string TokenWithCustomTypeHeader = "eyJ0eXAiOiJmb28iLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.vubwuLxx_7AWGvo-Y8XF_l7XP1WOv5obJulIk3RlVdk";
         public const string TokenWithCustomTypeHeader2 = "eyJraWQiOiI0MiIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.sPwGfDyhArZCmWRHTxm0xzNeG1gCf-qXhz21PdUxS4k";
@@ -73,7 +73,7 @@ namespace JWT.Tests.Models
             var rsa = RSA.Create();
             rsa.FromXmlString(ServerRsaPrivateKey2);
 
-            var certPub = new X509Certificate2(Encoding.ASCII.GetBytes(TestData.ServerRsaPublicKey2));
+            var certPub = new X509Certificate2(Convert.FromBase64String(ServerRsaPublicKey2));
             var certPriv = new X509Certificate2(certPub.CopyWithPrivateKey(rsa).Export(X509ContentType.Pfx));
 
             return certPriv;

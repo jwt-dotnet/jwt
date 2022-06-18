@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NEWTONSOFT_JSON
+using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace JWT.Serializers
     /// <summary>
     /// JSON serializer using Newtonsoft.Json implementation.
     /// </summary>
-    public sealed class JsonNetSerializer : IJsonSerializer
+    public class JsonNetSerializer : IJsonSerializer
     {
         private readonly JsonSerializer _serializer;
 
@@ -60,3 +61,4 @@ namespace JWT.Serializers
         }
     }
 }
+#endif
