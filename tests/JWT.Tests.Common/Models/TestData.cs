@@ -29,6 +29,8 @@ namespace JWT.Tests.Models
         public const string TokenWithCustomTypeHeader = "eyJ0eXAiOiJmb28iLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.vubwuLxx_7AWGvo-Y8XF_l7XP1WOv5obJulIk3RlVdk";
         public const string TokenWithCustomTypeHeader2 = "eyJraWQiOiI0MiIsInR5cCI6IkpXVCIsImFsZyI6IkhTMjU2In0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.sPwGfDyhArZCmWRHTxm0xzNeG1gCf-qXhz21PdUxS4k";
         public const string TokenWithCustomTypeHeader3 = "eyJ2ZXJzaW9uIjoxLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.TSQb2zVBJL9uY6mIdBKFaEooR-0OPjR-FPqY7hzwzwU";
+        public const string TokenWithCustomTypeHeader3AndClaim = "eyJ2ZXJzaW9uIjoxLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJFeHRyYUNsYWltIjoiVmFsdWVDbGFpbSIsIkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM30.mx1F0mcTMyZ6ZKpst92SyN-XZFO6W8CamfIMUbSj95M";
+        public const string TokenWithCustomTypeHeader3AndClaimNested = "eyJ2ZXJzaW9uIjoxLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJFeHRyYUNsYWltIjp7Ik5lc3RlZFByb3BlcnR5MSI6IkZvbyIsIk5lc3RlZFByb3BlcnR5MiI6M30sIkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM30.e_ss-wOOpPwzqx-PuFoZPtEXkVx1-oAI1mYXLVmAJ8M";
         public const string TokenWithNestedData = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJEYXRhIjp7IkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM319.IDx9z7phNsm-0MQLpZ1fREcUtkKtAVnSV6MSeP2R88U";
         public const string TokenWithExp = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsImV4cCI6MTYwNTgzNDI1NX0.dOkG1StO33Ae0qFQbHLslvSsCV6ThLofjc885egDnuY";
         public const string TokenWithNbf = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzMsIm5iZiI6MTYwNTgzNDI1NX0.iuxTYx6CMcNaxgvPn8pfnPFDhIZceKB0PrIZgkmHFbg";

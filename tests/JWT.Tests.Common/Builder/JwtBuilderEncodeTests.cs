@@ -225,6 +225,58 @@ namespace JWT.Tests.Builder
         }
         
         [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .AddClaim("ExtraClaim", "ValueClaim")
+                .Encode(TestData.Customer);
+
+            token.Should()
+                .Be(TestData.TokenWithCustomTypeHeader3AndClaim, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims_With_Nested()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3})
+                .Encode(TestData.Customer);
+
+            token.Should()
+                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload2()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .Encode(new
+                {
+                    ExtraClaim = new { NestedProperty1 = "Foo", NestedProperty2 = 3 },
+                    FirstName = "Jesus",
+                    Age = 33
+                });
+
+            token.Should()
+                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
         public void Encode_Should_Return_Token_Nested_Data()
         {
             const string key = TestData.Secret;

@@ -253,7 +253,7 @@ namespace JWT.Builder
         {
             EnsureCanEncode();
 
-            var dic = payload.GetType()
+            var dic = typeof(T)
                              .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                              .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
 
