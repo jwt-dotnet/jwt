@@ -12,13 +12,11 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class RSAlgorithmTests
     {
-        private static RSACryptoServiceProvider RSACryptoServiceProvider => new();
-
         [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
         [DataTestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
-            var privateKey = RSACryptoServiceProvider;
+            var privateKey = new RSACryptoServiceProvider();
 
             Action action = () => algFactory(null, privateKey);
 
@@ -30,7 +28,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Ctor_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
-            var publicKey = RSACryptoServiceProvider;
+            var publicKey = new RSACryptoServiceProvider();
 
             Action action = () => algFactory(publicKey, null);
 
@@ -42,7 +40,7 @@ namespace JWT.Tests.Algorithms
         [DataTestMethod]
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSAlgorithm> algFactory)
         {
-            var publicKey = RSACryptoServiceProvider;
+            var publicKey = new RSACryptoServiceProvider();
             var alg = algFactory(publicKey);
 
             var bytesToSign = Array.Empty<byte>();
