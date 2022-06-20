@@ -1,3 +1,32 @@
+-   [Jwt.Net, a JWT (JSON Web Token) implementation for
+    .NET](#jwt.net-a-jwt-json-web-token-implementation-for-.net){#toc-jwt.net-a-jwt-json-web-token-implementation-for-.net}
+-   [Sponsor](#sponsor){#toc-sponsor}
+-   [Avaliable packages](#avaliable-packages){#toc-avaliable-packages}
+-   [Supported .NET
+    versions:](#supported-.net-versions){#toc-supported-.net-versions}
+-   [Jwt.NET](#jwt.net){#toc-jwt.net}
+    -   [Creating (encoding)
+        token](#creating-encoding-token){#toc-creating-encoding-token}
+    -   [Parsing (decoding) and verifying
+        token](#parsing-decoding-and-verifying-token){#toc-parsing-decoding-and-verifying-token}
+    -   [Set and validate token
+        expiration](#set-and-validate-token-expiration){#toc-set-and-validate-token-expiration}
+    -   [Parsing (decoding) token
+        header](#parsing-decoding-token-header){#toc-parsing-decoding-token-header}
+    -   [Turning off parts of token
+        validation](#turning-off-parts-of-token-validation){#toc-turning-off-parts-of-token-validation}
+    -   [Custom JSON
+        serializer](#custom-json-serializer){#toc-custom-json-serializer}
+    -   [Custom JSON serialization settings with the default
+        JsonNetSerializer](#custom-json-serialization-settings-with-the-default-jsonnetserializer){#toc-custom-json-serialization-settings-with-the-default-jsonnetserializer}
+-   [Jwt.Net ASP.NET
+    Core](#jwt.net-asp.net-core){#toc-jwt.net-asp.net-core}
+    -   [Register authentication handler to validate
+        JWT](#register-authentication-handler-to-validate-jwt){#toc-register-authentication-handler-to-validate-jwt}
+    -   [Custom factories to produce Identity or
+        AuthenticationTicket](#custom-factories-to-produce-identity-or-authenticationticket){#toc-custom-factories-to-produce-identity-or-authenticationticket}
+-   [License](#license){#toc-license}
+
 [![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=9)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
 
