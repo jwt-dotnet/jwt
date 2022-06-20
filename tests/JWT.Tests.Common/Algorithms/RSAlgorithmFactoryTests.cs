@@ -30,7 +30,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS384Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS384()
         {
-            var publicKey = RSACryptoServiceProvider;
+            var publicKey = new RSACryptoServiceProvider();
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -66,7 +66,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_RS1024Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_RS1024()
         {
-            var publicKey = RSACryptoServiceProvider;
+            var publicKey = new RSACryptoServiceProvider();
             
             var factory = new RSAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
