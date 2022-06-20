@@ -249,13 +249,20 @@ namespace JWT.Builder
             return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets?[0]);
         }
 
-        public string Encode<T>(T payload)
+        public string Encode<T>(T payload) =>
+            Encode(typeof(T), payload);
+        
+        public string Encode(Type payloadType, object payload)
         {
+            if (payloadType is null)
+                throw new ArgumentNullException(nameof(payloadType));
+            if (payload is null)
+                throw new ArgumentNullException(nameof(payload));
+            
             EnsureCanEncode();
 
-            var dic = typeof(T)
-                             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                             .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
+            var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                 .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
 
             foreach (var pair in dic)
             {
