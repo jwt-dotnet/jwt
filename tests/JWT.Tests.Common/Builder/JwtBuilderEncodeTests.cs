@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -62,26 +62,14 @@ namespace JWT.Tests.Builder
         public void Encode_With_PayloadWithClaims_Should_Return_Token()
         {
             var algorithm = new HMACSHA256Algorithm();
-            var claims = new Dictionary<string, object>();
             var secret = _fixture.Create<string>();
-
-            var nbClaims = _fixture.Create<int>();
-            var claimKeys = new string[nbClaims];
-            var claimValues = new string[nbClaims];
-
-            for (var i = 0; i < nbClaims; ++i)
-            {
-                claimKeys[i] = _fixture.Create<string>();
-                claimValues[i] = _fixture.Create<string>();
-
-                claims.Add(claimKeys[i], claimValues[i]);
-            }
+            var claims = _fixture.Create<Dictionary<string, string>>();
 
             var token = JwtBuilder.Create()
-                                   .WithAlgorithm(algorithm)
-                                   .WithSecret(secret)
-                                   .AddClaims(claims)
-                                   .Encode();
+                                  .WithAlgorithm(algorithm)
+                                  .WithSecret(secret)
+                                  .AddClaims(claims)
+                                  .Encode();
 
             var decodedToken = new UTF8Encoding(false)
                .GetString(new JwtBase64UrlEncoder()
@@ -95,10 +83,10 @@ namespace JWT.Tests.Builder
                  .HaveCount(3, "because the token should consist of three parts");
 
             decodedToken.Should()
-                        .ContainAll(claimKeys, "because all used keys should be retrieved in the token");
+                        .ContainAll(claims.Keys, "because all used keys should be retrieved in the token");
 
             decodedToken.Should()
-                        .ContainAll(claimValues, "because all values associated with the claims should be retrieved in the token");
+                        .ContainAll(claims.Values, "because all values associated with the claims should be retrieved in the token");
         }
 
         [TestMethod]
@@ -215,13 +203,13 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader("version", 1)
-                .Encode(TestData.Customer);
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddHeader("version", 1)
+                                  .Encode(TestData.Customer);
 
             token.Should()
-                .Be(TestData.TokenWithCustomTypeHeader3, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithCustomTypeHeader3, "because the same data encoded with the same key must result in the same token");
         }
         
         [TestMethod]
@@ -230,14 +218,14 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader("version", 1)
-                .AddClaim("ExtraClaim", "ValueClaim")
-                .Encode(TestData.Customer);
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddHeader("version", 1)
+                                  .AddClaim("ExtraClaim", "ValueClaim")
+                                  .Encode(TestData.Customer);
 
             token.Should()
-                .Be(TestData.TokenWithCustomTypeHeader3AndClaim, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithCustomTypeHeader3AndClaim, "because the same data encoded with the same key must result in the same token");
         }
         
         [TestMethod]
@@ -246,14 +234,14 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader("version", 1)
-                .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3})
-                .Encode(TestData.Customer);
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddHeader("version", 1)
+                                  .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
+                                  .Encode(TestData.Customer);
 
             token.Should()
-                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
         }
         
         [TestMethod]
@@ -262,15 +250,20 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddHeader("version", 1)
-                .Encode(new
-                {
-                    ExtraClaim = new { NestedProperty1 = "Foo", NestedProperty2 = 3 },
-                    FirstName = "Jesus",
-                    Age = 33
-                });
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddHeader("version", 1)
+                                  .Encode(
+                                      new
+                                      {
+                                          ExtraClaim = new
+                                          {
+                                              NestedProperty1 = "Foo",
+                                              NestedProperty2 = 3
+                                          },
+                                          FirstName = "Jesus",
+                                          Age = 33
+                                      });
 
             token.Should()
                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
@@ -282,13 +275,13 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(new HMACSHA256Algorithm())
-                .WithSecret(key)
-                .AddClaim<Customer>("Data", TestData.Customer)
-                .Encode();
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddClaim<Customer>("Data", TestData.Customer)
+                                  .Encode();
 
             token.Should()
-                .Be(TestData.TokenWithNestedData, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithNestedData, "because the same data encoded with the same key must result in the same token");
         }
 
         [TestMethod]
@@ -297,9 +290,9 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                                   .WithSecret(key)
-                                   .WithAlgorithmFactory(new CustomFactory())
-                                   .Encode();
+                                  .WithSecret(key)
+                                  .WithAlgorithmFactory(new CustomFactory())
+                                  .Encode();
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
