@@ -169,12 +169,12 @@ namespace JWT.Tests.Builder
             const string key = TestData.Secret;
 
             var token = JwtBuilder.Create()
-                                   .WithAlgorithm(new HMACSHA256Algorithm())
-                                   .WithSecret(key)
-                                   .AddHeader(HeaderName.KeyId, "42")
-                                   .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
-                                   .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
-                                   .Encode();
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(key)
+                                  .AddHeader(HeaderName.KeyId, "42")
+                                  .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                  .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                  .Encode();
 
             token.Should()
                  .Be(TestData.TokenWithCustomTypeHeader2, "because the same data encoded with the same key must result in the same token");
