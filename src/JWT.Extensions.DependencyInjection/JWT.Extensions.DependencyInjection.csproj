@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.25" />
     <PackageReference Condition="$(DefineConstants.Contains(SYSTEM_TEXT_JSON))" Include="System.Text.Json" Version="6.0.4" />
-    <PackageReference Condition="$(DefineConstants.Contains(NEWTONSOFT_JSON))" Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Condition="$(DefineConstants.Contains(NEWTONSOFT_JSON))" Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
