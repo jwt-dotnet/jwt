@@ -119,13 +119,13 @@ namespace JWT.Serializers.Converters
                 }
                 default:
                 {
-                    var payloadPartAsDictionary = objectValue.GetType()
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        .ToDictionary(prop => prop.Name, prop => prop.GetValue(objectValue, null));
+                    var dic = objectValue.GetType()
+                                         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                         .ToDictionary(p => p.Name, p => p.GetValue(objectValue, null));
                     writer.WriteStartObject();
-                    foreach (var payloadPartKeyValue in payloadPartAsDictionary)
+                    foreach (var p in dic)
                     {
-                        HandleValue(writer, payloadPartKeyValue.Key, payloadPartKeyValue.Value);
+                        HandleValue(writer, p.Key, p.Value);
                     }
                     writer.WriteEndObject();
                     break;
