@@ -45,10 +45,10 @@ namespace JWT.Tests.Builder
             var secret = _fixture.Create<string>();
 
             var token = JwtBuilder.Create()
-                                   .WithAlgorithm(algorithm)
-                                   .WithSecret(secret)
-                                   .AddClaim(claimKey, claimValue)
-                                   .Encode();
+                                  .WithAlgorithm(algorithm)
+                                  .WithSecret(secret)
+                                  .AddClaim(claimKey, claimValue)
+                                  .Encode();
 
             token.Should()
                  .NotBeNullOrEmpty("because the token should contains some data");
