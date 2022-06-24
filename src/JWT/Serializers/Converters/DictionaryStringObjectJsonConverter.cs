@@ -34,25 +34,22 @@ namespace JWT.Serializers.Converters
                 reader.Read();
                 dic.Add(propertyName, ExtractValue(ref reader, options));
             }
-
             return dic;
         }
 
         public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-
             foreach (var key in value.Keys)
             {
                 HandleValue(writer, key, value[key]);
             }
-
             writer.WriteEndObject();
         }
 
         private static void HandleValue(Utf8JsonWriter writer, string key, object objectValue)
         {
-            if (key != null)
+            if (key is object)
                 writer.WritePropertyName(key);
 
             switch (objectValue)
@@ -175,7 +172,7 @@ namespace JWT.Serializers.Converters
                 }
                 default:
                 {
-                    throw new JsonException($"'{reader.TokenType}' is not supported");
+                    throw new JsonException($"Token '{reader.TokenType}' is not supported");
                 }
             }
         }
