@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -63,7 +62,8 @@ namespace JWT.Tests.Builder
         {
             var algorithm = new HMACSHA256Algorithm();
             var secret = _fixture.Create<string>();
-            var claims = _fixture.Create<Dictionary<string, string>>();
+            var claims = Enumerable.Range(0, 3)
+                                   .ToDictionary(_ => _fixture.Create<string>(), _ => (object)_fixture.Create<string>());
 
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(algorithm)
@@ -86,7 +86,7 @@ namespace JWT.Tests.Builder
                         .ContainAll(claims.Keys, "because all used keys should be retrieved in the token");
 
             decodedToken.Should()
-                        .ContainAll(claims.Values, "because all values associated with the claims should be retrieved in the token");
+                        .ContainAll(claims.Values.Cast<string>(), "because all values associated with the claims should be retrieved in the token");
         }
 
         [TestMethod]
