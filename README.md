@@ -2,9 +2,9 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Jwt.Net, a JWT (JSON Web Token) implementation for .NET {name=jwt.net-a-jwt-json-web-token-implementation-for-.net}](#jwtnet-a-jwt-json-web-token-implementation-for-net-namejwtnet-a-jwt-json-web-token-implementation-for-net)
+- [Jwt.Net, a JWT (JSON Web Token) implementation for .NET](#jwtnet-a-jwt-json-web-token-implementation-for-net)
 - [Sponsor](#sponsor)
-- [Avaliable packages {#}](#avaliable-packages-)
+- [Avaliable packages](#avaliable-packages)
 - [Supported .NET versions:](#supported-net-versions)
 - [Jwt.NET](#jwtnet)
   - [Creating (encoding) token](#creating-encoding-token)
