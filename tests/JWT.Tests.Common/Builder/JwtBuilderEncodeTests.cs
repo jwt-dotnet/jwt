@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using AutoFixture;
 using FluentAssertions;
@@ -242,6 +243,39 @@ namespace JWT.Tests.Builder
 
             token.Should()
                  .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims_With_Nested_TypesMatch()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader("version", 1)
+                .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
+                .Encode(typeof(Customer), TestData.Customer);
+
+            token.Should()
+                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+        }
+        
+        [TestMethod]
+        public void Encode_Should_Return_ThrowTargetException_Encode_TypesMatch()
+        {
+            const string key = TestData.Secret;
+
+            Action action = () =>
+                JwtBuilder.Create()
+                    .WithAlgorithm(new HMACSHA256Algorithm())
+                    .WithSecret(key)
+                    .AddHeader("version", 1)
+                    .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
+                    .Encode(typeof(string), TestData.Customer);
+
+            action.Should()
+                .Throw<TargetException>("Object does not match target type.");
         }
         
         [TestMethod]
