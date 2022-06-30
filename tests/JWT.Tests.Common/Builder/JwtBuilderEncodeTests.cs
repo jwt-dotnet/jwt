@@ -268,14 +268,14 @@ namespace JWT.Tests.Builder
 
             Action action = () =>
                 JwtBuilder.Create()
-                    .WithAlgorithm(new HMACSHA256Algorithm())
-                    .WithSecret(key)
-                    .AddHeader("version", 1)
-                    .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
-                    .Encode(typeof(string), TestData.Customer);
+                          .WithAlgorithm(new HMACSHA256Algorithm())
+                          .WithSecret(key)
+                          .AddHeader("version", 1)
+                          .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
+                          .Encode(typeof(string), TestData.Customer);
 
             action.Should()
-                .Throw<TargetException>("Object does not match target type.");
+                  .Throw<TargetException>("Object does not match target type.");
         }
         
         [TestMethod]
