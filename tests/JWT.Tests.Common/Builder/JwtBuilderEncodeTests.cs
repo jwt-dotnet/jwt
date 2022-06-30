@@ -329,7 +329,7 @@ namespace JWT.Tests.Builder
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>
-                TestData.HMACSHA256Algorithm
+                TestData.HMACSHA256Algorithm;
         }
     }
 }
