@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using JWT.Algorithms;
+
 using static JWT.Internal.EncodingHelper;
 using static JWT.Serializers.JsonSerializerFactory;
 
@@ -245,6 +247,29 @@ namespace JWT.Builder
             EnsureCanEncode();
 
             return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets?[0]);
+        }
+
+        public string Encode<T>(T payload) =>
+            Encode(typeof(T), payload);
+        
+        public string Encode(Type payloadType, object payload)
+        {
+            if (payloadType is null)
+                throw new ArgumentNullException(nameof(payloadType));
+            if (payload is null)
+                throw new ArgumentNullException(nameof(payload));
+            
+            EnsureCanEncode();
+
+            var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                 .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
+
+            foreach (var pair in dic)
+            {
+                _jwt.Payload.Add(pair.Key, pair.Value);
+            }
+
+            return Encode();
         }
 
         /// <summary>

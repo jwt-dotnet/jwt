@@ -1,6 +1,8 @@
 #if SYSTEM_TEXT_JSON
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -32,25 +34,22 @@ namespace JWT.Serializers.Converters
                 reader.Read();
                 dic.Add(propertyName, ExtractValue(ref reader, options));
             }
-
             return dic;
         }
 
         public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-
             foreach (var key in value.Keys)
             {
                 HandleValue(writer, key, value[key]);
             }
-
             writer.WriteEndObject();
         }
 
         private static void HandleValue(Utf8JsonWriter writer, string key, object objectValue)
         {
-            if (key != null)
+            if (key is object)
                 writer.WritePropertyName(key);
 
             switch (objectValue)
@@ -117,7 +116,15 @@ namespace JWT.Serializers.Converters
                 }
                 default:
                 {
-                    writer.WriteNullValue();
+                    var dic = objectValue.GetType()
+                                         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                         .ToDictionary(p => p.Name, p => p.GetValue(objectValue, null));
+                    writer.WriteStartObject();
+                    foreach (var p in dic)
+                    {
+                        HandleValue(writer, p.Key, p.Value);
+                    }
+                    writer.WriteEndObject();
                     break;
                 }
             }
@@ -165,7 +172,7 @@ namespace JWT.Serializers.Converters
                 }
                 default:
                 {
-                    throw new JsonException($"'{reader.TokenType}' is not supported");
+                    throw new JsonException($"Token '{reader.TokenType}' is not supported");
                 }
             }
         }
