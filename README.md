@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+- [Jwt.Net, a JWT (JSON Web Token) implementation for .NET](#jwtnet-a-jwt-json-web-token-implementation-for-net)
+- [Sponsor](#sponsor)
+- [Avaliable packages](#avaliable-packages)
+- [Supported .NET versions:](#supported-net-versions)
+- [Jwt.NET](#jwtnet)
+  - [Creating (encoding) token](#creating-encoding-token)
+    - [Or using the fluent builder API](#or-using-the-fluent-builder-api)
+  - [Parsing (decoding) and verifying token](#parsing-decoding-and-verifying-token)
+    - [Or using the fluent builder API](#or-using-the-fluent-builder-api-1)
+    - [Or using the fluent builder API](#or-using-the-fluent-builder-api-2)
+  - [Set and validate token expiration](#set-and-validate-token-expiration)
+  - [Parsing (decoding) token header](#parsing-decoding-token-header)
+    - [Or using the fluent builder API](#or-using-the-fluent-builder-api-3)
+  - [Turning off parts of token validation](#turning-off-parts-of-token-validation)
+    - [Or using the fluent builder API](#or-using-the-fluent-builder-api-4)
+  - [Custom JSON serializer](#custom-json-serializer)
+  - [Custom JSON serialization settings with the default JsonNetSerializer](#custom-json-serialization-settings-with-the-default-jsonnetserializer)
+- [Jwt.Net ASP.NET Core](#jwtnet-aspnet-core)
+  - [Register authentication handler to validate JWT](#register-authentication-handler-to-validate-jwt)
+  - [Custom factories to produce Identity or AuthenticationTicket](#custom-factories-to-produce-identity-or-authenticationticket)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 [![Build status](https://abatishchev.visualstudio.com/OpenSource/_apis/build/status/Jwt.Net-CI)](https://abatishchev.visualstudio.com/OpenSource/_build/latest?definitionId=9)
 [![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
 
