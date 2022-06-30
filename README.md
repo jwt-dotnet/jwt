@@ -1,7 +1,5 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
 - [Jwt.Net, a JWT (JSON Web Token) implementation for .NET](#jwtnet-a-jwt-json-web-token-implementation-for-net)
 - [Sponsor](#sponsor)
 - [Avaliable packages](#avaliable-packages)
