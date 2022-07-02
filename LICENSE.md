@@ -1,6 +1,6 @@
 # Public Domain
 
-Written by John Sheehan (http://john-sheehan.com)
+Originally written by John Sheehan (https://john-sheehan.com). Then updated and maintained by Alexander Batishchev (https://abatishchev.dev).
 
 This work is public domain.
 
