@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace JWT.Extensions.AspNetCore.Factories
 {
-    public sealed class DefaultIdentityFactory : IIdentityFactory
+    public class DefaultIdentityFactory : IIdentityFactory
     {
         private readonly IOptionsMonitor<JwtAuthenticationOptions> _options;
 
@@ -21,11 +21,18 @@ namespace JWT.Extensions.AspNetCore.Factories
             if (payload is null)
                 throw new ArgumentException(nameof(payload));
 
+            var claims = ReadClaims(type, payload);
+            return CreateIdentity();
+        }
+
+        protected virtual IEnumerable<Claim> ReadClaims(Type type, object payload)
+        {
             Type targetType = typeof(IDictionary<string, object>);
             if (!targetType.IsAssignableFrom(type))
                 throw new ArgumentOutOfRangeException(nameof(type), $"Type {type} is not assignable to {targetType}");
-
-            return CreateIdentity((IDictionary<string, object>)payload);
+ 
+            var dic = (IDictionary<string, object>)payload;
+            return dic.Select(p => new Claim(p.Key, p.Value.ToString()));
         }
 
         /// <summary>
@@ -33,12 +40,9 @@ namespace JWT.Extensions.AspNetCore.Factories
         /// </summary>
         /// <param name="payload"><see cref="IDictionary{String,String}" /> of user's claims</param>
         /// <returns><see cref="ClaimsIdentity" /></returns>
-        public IIdentity CreateIdentity(IDictionary<string, object> payload)
-        {
-            var claims = payload.Select(p => new Claim(p.Key, p.Value.ToString()));
-            return _options.CurrentValue.IncludeAuthenticationScheme ?
+        private IIdentity CreateIdentity(IDictionary<string, object> payload) =>
+            _options.CurrentValue.IncludeAuthenticationScheme ?
                 new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme) :
                 new ClaimsIdentity(claims);
-        }
     }
 }
