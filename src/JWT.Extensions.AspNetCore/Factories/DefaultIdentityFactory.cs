@@ -22,7 +22,7 @@ namespace JWT.Extensions.AspNetCore.Factories
                 throw new ArgumentException(nameof(payload));
 
             var claims = ReadClaims(type, payload);
-            return CreateIdentity();
+            return CreateIdentity(claims);
         }
 
         protected virtual IEnumerable<Claim> ReadClaims(Type type, object payload)
@@ -35,12 +35,7 @@ namespace JWT.Extensions.AspNetCore.Factories
             return dic.Select(p => new Claim(p.Key, p.Value.ToString()));
         }
 
-        /// <summary>
-        /// Creates user's identity from user's claims
-        /// </summary>
-        /// <param name="payload"><see cref="IDictionary{String,String}" /> of user's claims</param>
-        /// <returns><see cref="ClaimsIdentity" /></returns>
-        private IIdentity CreateIdentity(IDictionary<string, object> payload) =>
+        private IIdentity CreateIdentity(IEnumerable<Claim> claims) =>
             _options.CurrentValue.IncludeAuthenticationScheme ?
                 new ClaimsIdentity(claims, JwtAuthenticationDefaults.AuthenticationScheme) :
                 new ClaimsIdentity(claims);
