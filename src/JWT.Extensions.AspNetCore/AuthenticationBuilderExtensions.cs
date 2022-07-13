@@ -23,7 +23,7 @@ namespace JWT.Extensions.AspNetCore
             builder.Services.AddJwtDecoder();
             builder.Services.TryAddSingleton<IDateTimeProvider, SystemClockDatetimeProvider>();
 
-            builder.Services.TryAddSingleton<IIdentityFactory, DefaultIdentityFactory>();
+            builder.Services.TryAddSingleton<IIdentityFactory, ClaimsIdentityFactory>();
             builder.Services.TryAddSingleton<ITicketFactory, DefaultTicketFactory>();
 
             return builder.AddScheme<JwtAuthenticationOptions, JwtAuthenticationHandler>(authenticationScheme, configureOptions);
