@@ -11,7 +11,7 @@ namespace JWT.Extensions.AspNetCore.Factories
     {
         private readonly IOptionsMonitor<JwtAuthenticationOptions> _options;
 
-        public DefaultIdentityFactory(IOptionsMonitor<JwtAuthenticationOptions> options) =>
+        public ClaimsIdentityFactory(IOptionsMonitor<JwtAuthenticationOptions> options) =>
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
         public IIdentity CreateIdentity(Type type, object payload)
