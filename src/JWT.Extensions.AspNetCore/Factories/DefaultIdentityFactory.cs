@@ -7,14 +7,14 @@ using Microsoft.Extensions.Options;
 
 namespace JWT.Extensions.AspNetCore.Factories
 {
-    public class DefaultIdentityFactory : IIdentityFactory
+    public class ClaimsIdentityFactory : IIdentityFactory
     {
         private readonly IOptionsMonitor<JwtAuthenticationOptions> _options;
 
         public DefaultIdentityFactory(IOptionsMonitor<JwtAuthenticationOptions> options) =>
             _options = options ?? throw new ArgumentNullException(nameof(options));
 
-        IIdentity IIdentityFactory.CreateIdentity(Type type, object payload)
+        public IIdentity CreateIdentity(Type type, object payload)
         {
             if (type is null)
                 throw new ArgumentNullException(nameof(type));
