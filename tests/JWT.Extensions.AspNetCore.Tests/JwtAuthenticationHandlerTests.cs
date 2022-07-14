@@ -121,7 +121,7 @@ namespace JWT.Extensions.AspNetCore.Tests
 
             var handler = new JwtAuthenticationHandler(
                 decoder,
-                new DefaultIdentityFactory(optionsMonitor.Object),
+                new ClaimsIdentityFactory(optionsMonitor.Object),
                 new DefaultTicketFactory(),
                 optionsMonitor.Object,
                 loggerFactory,
