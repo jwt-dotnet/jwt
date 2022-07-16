@@ -194,7 +194,7 @@ namespace JWT.Tests
             isValid.Should()
                    .BeTrue("because token should be valid");
 
-            ex.Should()
+            ex?.Should()
               .BeNull("because valid token should not throw exception: {0}", ex?.Message);
         }
 
@@ -282,7 +282,7 @@ namespace JWT.Tests
             var jwtValidator = new JwtValidator(jsonSerializer, dateTimeProvider, valParams);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
-            ex.Should()
+            ex?.Should()
               .BeNull("because valid token should not throw exception: {0}", ex?.Message);
 
             isValid.Should()
@@ -371,7 +371,7 @@ namespace JWT.Tests
             var jwtValidator = new JwtValidator(jsonSerializer, dateTimeProvider, valParams);
             var isValid = jwtValidator.TryValidate(payloadJson, decodedCrypto, decodedSignature, out var ex);
 
-            ex.Should()
+            ex?.Should()
               .BeNull("because valid token should not throw exception: {0}", ex?.Message);
 
             isValid.Should()
