@@ -1,5 +1,4 @@
 #if NETSTANDARD2_0 || NET6_0
-using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -8,20 +7,16 @@ namespace JWT.Algorithms
     /// <summary>
     /// Abstract base class for all ECDSA algorithms
     /// </summary>
-    public abstract class ECDSAAlgorithm : IAsymmetricAlgorithm
+    public abstract class ECDSAAlgorithm : CertificateAlgorithm<ECDsa>
     {
-        private readonly ECDsa _publicKey;
-        private readonly ECDsa _privateKey;
-
         /// <summary>
         /// Creates an instance of <see cref="ECDSAAlgorithm" /> using the provided pair of public and private keys.
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
         protected ECDSAAlgorithm(ECDsa publicKey, ECDsa privateKey)
+            : base(publicKey, privateKey)
         {
-            _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
-            _privateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
         }
 
         /// <summary>
@@ -32,9 +27,8 @@ namespace JWT.Algorithms
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
         protected ECDSAAlgorithm(ECDsa publicKey)
+            : base(publicKey)
         {
-            _publicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
-            _privateKey = null;
         }
 
         /// <summary>
@@ -42,53 +36,22 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
         protected ECDSAAlgorithm(X509Certificate2 cert)
+            : base(cert)
         {
-            _publicKey = GetPublicKey(cert) ?? throw new Exception("Certificate's PublicKey cannot be null.");
-            _privateKey = GetPrivateKey(cert);
         }
 
-        /// <inheritdoc />
-        public abstract string Name { get; }
+        protected override ECDsa GetPublicKey(X509Certificate2 cert) =>
+            cert.GetECDsaPublicKey();
 
-        /// <inheritdoc />
-        public abstract HashAlgorithmName HashAlgorithmName { get; }
+        protected override ECDsa GetPrivateKey(X509Certificate2 cert) =>
+            cert.GetECDsaPrivateKey();
 
-        /// <inheritdoc />
-        public byte[] Sign(byte[] key, byte[] bytesToSign)
-        {
-            if (_privateKey is null)
-                throw new InvalidOperationException("Can't sign data without private key");
 
-            return Sign(bytesToSign);
-        }
+        protected override byte[] SignData(byte[] bytesToSign) =>
+            _privateKey.SignData(bytesToSign, this.HashAlgorithmName);
 
-        /// <summary>
-        /// Signs the provided bytes.
-        /// </summary>
-        /// <param name="bytesToSign">The bytes to sign.</param>
-        /// <returns>The signed bytes.</returns>
-        public byte[] Sign(byte[] bytesToSign)
-            => _privateKey.SignData(bytesToSign, this.HashAlgorithmName);
-
-        /// <inheritdoc />
-        public bool Verify(byte[] bytesToSign, byte[] signature)
-            => _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
-
-        private static ECDsa GetPrivateKey(X509Certificate2 cert)
-        {
-            if (cert is null)
-                throw new ArgumentNullException(nameof(cert));
-
-            return cert.GetECDsaPrivateKey();
-        }
-
-        private static ECDsa GetPublicKey(X509Certificate2 cert)
-        {
-            if (cert is null)
-                throw new ArgumentNullException(nameof(cert));
-
-            return cert.GetECDsaPublicKey();
-        }
+        protected override bool VerifyData(byte[] bytesToSign, byte[] signature) =>
+            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
     }
 }
 #endif
