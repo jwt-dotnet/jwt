@@ -327,6 +327,24 @@ namespace JWT.Tests.Builder
                  .NotBeNullOrEmpty("because the token should contains some data");
         }
 
+        [TestMethod]
+        public void Encode_With_Secret_Should_Return_Valid_Token_Using_Json_Net()
+        {
+            var secret = _fixture.Create<string>();
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                .WithSecret(secret)
+                .WithSerializer(new JsonNetSerializer())
+                .Encode();
+
+            token.Should()
+                .NotBeNullOrEmpty("because the token should contains some data");
+            token.Split('.')
+                .Should()
+                .HaveCount(3, "because the token should consist of three parts");
+        }
+        
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>
