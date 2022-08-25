@@ -78,6 +78,9 @@ namespace JWT.Builder
         public JwtBuilder WithSerializer(IJsonSerializer serializer)
         {
             _serializer = serializer;
+#if MODERN_DOTNET
+            Serializer = serializer;
+#endif
             return this;
         }
 

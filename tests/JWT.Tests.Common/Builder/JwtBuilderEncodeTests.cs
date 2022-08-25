@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +7,7 @@ using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

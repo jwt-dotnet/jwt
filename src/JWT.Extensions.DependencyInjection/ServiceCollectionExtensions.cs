@@ -1,14 +1,9 @@
 ﻿using System;
 using JWT.Algorithms;
 using JWT.Internal;
+using JWT.Serializers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-
-#if SYSTEM_TEXT_JSON
-using JsonSerializer = JWT.Serializers.SystemTextSerializer;
-#elif NEWTONSOFT_JSON
-using JsonSerializer = JWT.Serializers.JsonNetSerializer;
-#endif
 
 namespace JWT
 {
@@ -17,7 +12,7 @@ namespace JWT
         public static IServiceCollection AddJwtEncoder(this IServiceCollection services)
         {
             services.TryAddSingleton<IJwtEncoder, JwtEncoder>();
-            services.TryAddSingleton<IJsonSerializer, JsonSerializer>();
+            services.TryAddSingleton(JsonSerializerFactory.Serializer);
             services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
 
             return services;
@@ -44,7 +39,7 @@ namespace JWT
         public static IServiceCollection AddJwtDecoder(this IServiceCollection services)
         {
             services.TryAddSingleton<IJwtDecoder, JwtDecoder>();
-            services.TryAddSingleton<IJsonSerializer, JsonSerializer>();
+            services.TryAddSingleton(JsonSerializerFactory.Serializer);
             services.TryAddSingleton<IJwtValidator, JwtValidator>();
             services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
             services.TryAddSingleton<IDateTimeProvider, UtcDatetimeProvider>();

@@ -1,5 +1,4 @@
-﻿#if NEWTONSOFT_JSON
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
@@ -61,4 +60,3 @@ namespace JWT.Serializers
         }
     }
 }
-#endif

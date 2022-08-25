@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-    <PackageReference Condition="$(DefineConstants.Contains(SYSTEM_TEXT_JSON))" Include="System.Text.Json" Version="6.0.4" />
-    <PackageReference Condition="$(DefineConstants.Contains(NEWTONSOFT_JSON))" Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Condition="$(DefineConstants.Contains(MODERN_DOTNET))" Include="System.Text.Json" Version="6.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

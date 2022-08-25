@@ -1,16 +1,28 @@
 ﻿namespace JWT.Serializers
 {
-    internal static class JsonSerializerFactory
+    public static class JsonSerializerFactory
     {
-        public static IJsonSerializer CreateSerializer()
+        private static IJsonSerializer _serializer;
+
+        public static IJsonSerializer Serializer
         {
-#if SYSTEM_TEXT_JSON
-            return new SystemTextSerializer();
-#elif NEWTONSOFT_JSON
-            return new JsonNetSerializer();
+            get
+            {
+#if MODERN_DOTNET
+                return _serializer ??= new SystemTextSerializer();
 #else
-            throw new System.NotSupportedException();
+                
+                return _serializer ??= new JsonNetSerializer();
+#endif
+            }
+#if MODERN_DOTNET
+            set
+            {
+                _serializer = value;
+            }
 #endif
         }
+
+        public static IJsonSerializer CreateSerializer() => Serializer;
     }
 }
