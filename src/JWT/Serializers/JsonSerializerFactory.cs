@@ -2,27 +2,22 @@
 {
     public static class JsonSerializerFactory
     {
-        private static IJsonSerializer _serializer;
+        private static IJsonSerializer _jsonSerializer;
 
-        public static IJsonSerializer Serializer
+#if MODERN_DOTNET
+        public static void SetSerializer(IJsonSerializer jsonSerializer)
         {
-            get
-            {
-#if MODERN_DOTNET
-                return _serializer ??= new SystemTextSerializer();
-#else
-                
-                return _serializer ??= new JsonNetSerializer();
+            _jsonSerializer = jsonSerializer;
+        }
 #endif
-            }
+
+        public static IJsonSerializer CreateSerializer()
+        {
 #if MODERN_DOTNET
-            set
-            {
-                _serializer = value;
-            }
+            return _jsonSerializer ??= new SystemTextSerializer();
+#else
+            return _jsonSerializer ??= new JsonNetSerializer();
 #endif
         }
-
-        public static IJsonSerializer CreateSerializer() => Serializer;
     }
 }

@@ -79,7 +79,7 @@ namespace JWT.Builder
         {
             _serializer = serializer;
 #if MODERN_DOTNET
-            Serializer = serializer;
+            SetSerializer(serializer);
 #endif
             return this;
         }
