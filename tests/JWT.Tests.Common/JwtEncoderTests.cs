@@ -108,7 +108,7 @@ namespace JWT.Tests
             var actual = encoder.Encode(toEncode, key);
 
             actual.Should()
-                .Be(expected, "because the same data encoded with the same key must result in the same token");
+                  .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
     }
 }
