@@ -295,7 +295,7 @@ namespace JWT.Tests.Builder
                                       });
 
             token.Should()
-                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
         }
         
         [TestMethod]
@@ -333,16 +333,16 @@ namespace JWT.Tests.Builder
             var secret = _fixture.Create<string>();
 
             var token = JwtBuilder.Create()
-                .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                .WithSecret(secret)
-                .WithSerializer(new JsonNetSerializer())
-                .Encode();
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(secret)
+                                  .WithSerializer(new JsonNetSerializer())
+                                  .Encode();
 
             token.Should()
-                .NotBeNullOrEmpty("because the token should contains some data");
+                 .NotBeNullOrEmpty("because the token should contains some data");
             token.Split('.')
-                .Should()
-                .HaveCount(3, "because the token should consist of three parts");
+                 .Should()
+                 .HaveCount(3, "because the token should consist of three parts");
         }
         
         private sealed class CustomFactory : IAlgorithmFactory
