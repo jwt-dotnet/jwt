@@ -269,8 +269,26 @@ namespace JWT.Tests.Builder
                           .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
                           .Encode(typeof(string), TestData.Customer);
 
-            action.Should()
-                  .Throw<TargetException>("Object does not match target type.");
+            if (IsRunningOnMono())
+            {
+                action.Should()
+                    .Throw<TargetInvocationException>("Exception has been thrown by the target of an invocation.");
+            }
+            else
+            {
+                action.Should()
+                    .Throw<TargetException>("Object does not match target type.");
+            }
+        }
+
+        /// <summary>
+        /// Copied from: https://stackoverflow.com/a/7077620/2890855
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsRunningOnMono()
+        {
+            Type type = Type.GetType("Mono.Runtime");
+            return type != null;
         }
         
         [TestMethod]
