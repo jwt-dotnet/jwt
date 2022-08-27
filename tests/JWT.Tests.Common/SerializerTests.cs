@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using JWT.Serializers;
@@ -24,9 +25,13 @@ namespace JWT.Tests
             {
                 case ".NETFramework,Version=v4.6.2":
                 case ".NETCoreApp,Version=v3.0":
-                    Assert.AreEqual(nameof(SystemTextSerializer), defaultSerializerClass);
+                case ".NETCoreApp,Version=v6.0":
+                    Assert.AreEqual("SystemTextSerializer", defaultSerializerClass);
                     break;
                     
+                case ".NETFramework,Version=v4.6.1":
+                    Assert.AreEqual("JsonNetSerializer", defaultSerializerClass);
+                    break;
                 default:
                     Assert.Fail($"Unrecognized dotnet version {dotnetVersion}");
                     break;
@@ -39,14 +44,11 @@ namespace JWT.Tests
         /// <returns>The running dotnet version.</returns>
         private string GetRunningDotnetVersion()
         {
-            string version = Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
-
-            if (!string.IsNullOrEmpty(version))
-            {
-                return version;
-            }
-            
-            version = AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName;
+            var version = Assembly.GetExecutingAssembly()
+                .GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
+                .Cast<TargetFrameworkAttribute>()
+                .Single()
+                .FrameworkName;
             return version;
         }
     }
