@@ -2,18 +2,23 @@
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Exceptions;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using JWT.Tests.Stubs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static JWT.Internal.EncodingHelper;
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
     [TestClass]
     public class JwtValidatorTests
     {
+        private static IJsonSerializer CreateSerializer()
+        {
+            return new JsonSerializerFactory().CreateSerializer();
+        }
+
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_Serializer_Is_Null()
         {

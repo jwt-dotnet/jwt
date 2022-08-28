@@ -2,10 +2,9 @@
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -14,6 +13,11 @@ namespace JWT.Tests
     {
         private static readonly Fixture _fixture = new Fixture();
 
+        private static IJsonSerializer CreateSerializer()
+        {
+            return new JsonSerializerFactory().CreateSerializer();
+        }
+        
         [TestMethod]
         [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Jwt_Contains_No_Algorithm()

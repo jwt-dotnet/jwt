@@ -5,11 +5,10 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -17,6 +16,11 @@ namespace JWT.Tests
     public class JwtDecoderTests
     {
         private static readonly Fixture _fixture = new Fixture();
+
+        private static IJsonSerializer CreateSerializer()
+        {
+            return new JsonSerializerFactory().CreateSerializer();
+        }
 
         [TestMethod]
         public void DecodeHeader_Should_Return_Header()

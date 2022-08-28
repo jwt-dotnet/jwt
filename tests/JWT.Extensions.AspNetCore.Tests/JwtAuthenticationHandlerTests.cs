@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Extensions.AspNetCore.Factories;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -13,14 +14,17 @@ using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-using static JWT.Serializers.JsonSerializerFactory;
-
 namespace JWT.Extensions.AspNetCore.Tests
 {
     [TestClass]
     public class JwtAuthenticationHandlerTests
     {
         private static readonly Fixture _fixture = new Fixture();
+
+        private static IJsonSerializer CreateSerializer()
+        {
+            return new JsonSerializerFactory().CreateSerializer();
+        }
 
         [TestMethod]
         public async Task HandleAuthenticateAsync_Should_Return_Success_When_Token_Is_Valid()

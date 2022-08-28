@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -6,13 +5,16 @@ using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using static JWT.Serializers.JsonSerializerFactory;
-
 namespace JWT.Tests
 {
     [TestClass]
     public class JwtEncoderTests
     {
+        private static IJsonSerializer CreateSerializer()
+        {
+            return new JsonSerializerFactory().CreateSerializer();
+        }
+        
         [TestMethod]
         public void Encode_Should_Encode_To_Token()
         {

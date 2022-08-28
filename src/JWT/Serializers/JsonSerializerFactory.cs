@@ -1,23 +1,26 @@
 ﻿namespace JWT.Serializers
 {
-    public static class JsonSerializerFactory
+    public class JsonSerializerFactory
     {
-        private static IJsonSerializer _jsonSerializer;
+        private readonly IJsonSerializer _jsonSerializer;
 
+        public JsonSerializerFactory()
+        {
 #if MODERN_DOTNET
-        public static void SetSerializer(IJsonSerializer jsonSerializer)
+            _jsonSerializer = new SystemTextSerializer();
+#else
+            _jsonSerializer = new JsonNetSerializer();
+#endif
+        }
+
+        public JsonSerializerFactory(IJsonSerializer jsonSerializer)
         {
             _jsonSerializer = jsonSerializer;
         }
-#endif
 
-        public static IJsonSerializer CreateSerializer()
+        public IJsonSerializer CreateSerializer()
         {
-#if MODERN_DOTNET
-            return _jsonSerializer ??= new SystemTextSerializer();
-#else
-            return _jsonSerializer ??= new JsonNetSerializer();
-#endif
+            return _jsonSerializer;
         }
     }
 }

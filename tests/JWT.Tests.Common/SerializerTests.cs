@@ -13,7 +13,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Serializer_Should_Use_Correct_Default()
         {
-            var serializer = JsonSerializerFactory.CreateSerializer();
+            var serializer = new JsonSerializerFactory().CreateSerializer();
 
             var dotnetVersion = GetRunningDotnetVersion();
             Console.WriteLine($"Dotnet version: {dotnetVersion}");
@@ -21,20 +21,18 @@ namespace JWT.Tests
             var defaultSerializerClass = serializer.GetType().Name;
             Console.WriteLine($"Default serializer class: {defaultSerializerClass}");
 
-            switch (dotnetVersion)
+            if (dotnetVersion is ".NETFramework,Version=v4.6.2" ||
+                dotnetVersion.StartsWith(".NETCoreApp"))
             {
-                case ".NETFramework,Version=v4.6.2":
-                case ".NETCoreApp,Version=v3.0":
-                case ".NETCoreApp,Version=v6.0":
-                    Assert.AreEqual("SystemTextSerializer", defaultSerializerClass);
-                    break;
-                    
-                case ".NETFramework,Version=v4.6.1":
-                    Assert.AreEqual("JsonNetSerializer", defaultSerializerClass);
-                    break;
-                default:
-                    Assert.Fail($"Unrecognized dotnet version {dotnetVersion}");
-                    break;
+                Assert.AreEqual("SystemTextSerializer", defaultSerializerClass);
+            }
+            else if (dotnetVersion == ".NETFramework,Version=v4.6.1")
+            {
+                Assert.AreEqual("JsonNetSerializer", defaultSerializerClass);
+            }
+            else
+            {
+                Assert.Fail($"Unrecognized dotnet version {dotnetVersion}");
             }
         }
 
