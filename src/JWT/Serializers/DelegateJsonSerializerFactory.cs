@@ -23,7 +23,7 @@ using System;
         public DelegateJsonSerializerFactory(Func<IJsonSerializer> factory) =>
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
-        public IJsonSerializer CreateSerializer() =>
+        public IJsonSerializer Create() =>
             _factory();
     }
 }
