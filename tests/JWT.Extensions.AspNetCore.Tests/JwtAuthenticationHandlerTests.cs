@@ -143,7 +143,6 @@ namespace JWT.Extensions.AspNetCore.Tests
             return handler;
         }
         
-        
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }
