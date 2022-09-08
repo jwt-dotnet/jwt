@@ -13,11 +13,6 @@ namespace JWT.Tests
     {
         private static readonly Fixture _fixture = new Fixture();
 
-        private static IJsonSerializer CreateSerializer()
-        {
-            return new JsonSerializerFactory().CreateSerializer();
-        }
-        
         [TestMethod]
         [TestCategory("Security")]
         public void Decode_Should_Throw_Exception_When_Jwt_Contains_No_Algorithm()
@@ -100,5 +95,8 @@ namespace JWT.Tests
             action.Should()
                   .Throw<NotSupportedException>("because an encryption algorithm can't be changed on decoding");
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }
