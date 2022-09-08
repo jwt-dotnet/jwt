@@ -18,8 +18,7 @@ namespace JWT.Builder
         private IJwtDecoder _decoder;
         private IJwtValidator _validator;
 
-        private JsonSerializerFactory _jsonSerializerFactory = new();
-        private IJsonSerializer Serializer => _jsonSerializerFactory.CreateSerializer();
+        private IJsonSerializerFactory _jsonSerializerFactory = new DefaultSerializerFactory();
         
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
@@ -76,9 +75,23 @@ namespace JWT.Builder
         /// Sets JWT serializer.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithSerializer(IJsonSerializer serializer)
+        public JwtBuilder WithSerializer(IJsonSerializer serializer) =>
+            WithSerializerFactory(new DelegateSerializerFactory(serializer));
+
+        /// <summary>
+        /// Sets JWT serializer.
+        /// </summary>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithSerializer(Func<IJsonSerializer> factory) =>
+            WithSerializerFactory(new DelegateSerializerFactory(factory));
+
+        /// <summary>
+        /// Sets JWT serializer factory.
+        /// </summary>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithSerializerFactory(IJsonSerializerFactory jsonSerializerFactory)
         {
-            _jsonSerializerFactory = new JsonSerializerFactory(serializer);
+            _jsonSerializerFactory = jsonSerializerFactory;
             return this;
         }
 
