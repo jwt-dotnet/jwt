@@ -36,8 +36,9 @@ namespace JWT.Tests
         /// <returns>The running dotnet version.</returns>
         private string GetRunningDotnetVersion() =>
             Assembly.GetExecutingAssembly()
-                    .GetCustomAttributes<TargetFrameworkAttribute>()
-                    .SingleOrDefault()
+                    .GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
+                    .Cast<TargetFrameworkAttribute>()
+                    .Single()
                    ?.FrameworkName;
     }
 }
