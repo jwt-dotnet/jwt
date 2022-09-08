@@ -13,6 +13,7 @@ namespace JWT
         {
             services.TryAddSingleton<IJwtEncoder, JwtEncoder>();
             services.TryAddSingleton<IJsonSerializerFactory, DefaultJsonSerializerFactory>();
+            services.TryAddSingleton<IJsonSerializer>(p => p.GetRequiredService<IJsonSerializerFactory>().Create());
             services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
 
             return services;
@@ -40,6 +41,7 @@ namespace JWT
         {
             services.TryAddSingleton<IJwtDecoder, JwtDecoder>();
             services.TryAddSingleton<IJsonSerializerFactory, DefaultJsonSerializerFactory>();
+            services.TryAddSingleton<IJsonSerializer>(p => p.GetRequiredService<IJsonSerializerFactory>().Create());
             services.TryAddSingleton<IJwtValidator, JwtValidator>();
             services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
             services.TryAddSingleton<IDateTimeProvider, UtcDatetimeProvider>();
