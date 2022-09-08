@@ -192,7 +192,7 @@ namespace JWT.Tests.Builder
                                 .Decode(TestData.Token);
 
             action.Should()
-                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
+                  .Throw<ArgumentNullException>();
         }
 
         [TestMethod]
@@ -397,7 +397,7 @@ namespace JWT.Tests.Builder
                           .Decode<Dictionary<string, string>>(TestData.Token);
 
             action.Should()
-                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
+                  .Throw<ArgumentNullException>();
         }
     }
 }
