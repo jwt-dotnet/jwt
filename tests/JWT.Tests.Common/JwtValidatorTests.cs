@@ -2,12 +2,12 @@
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Exceptions;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using JWT.Tests.Stubs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using static JWT.Internal.EncodingHelper;
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -378,5 +378,8 @@ namespace JWT.Tests
                    .BeTrue("because token should be valid");
 
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }

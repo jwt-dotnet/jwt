@@ -20,7 +20,7 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
-    <Version>10.0.0-beta6</Version>
+    <Version>10.0.0-beta7</Version>
     <FileVersion>10.0.0.0</FileVersion>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
@@ -38,8 +38,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Condition="$(DefineConstants.Contains(SYSTEM_TEXT_JSON))" Include="System.Text.Json" Version="6.0.4" />
-    <PackageReference Condition="$(DefineConstants.Contains(NEWTONSOFT_JSON))" Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Condition="$(DefineConstants.Contains(MODERN_DOTNET))" Include="System.Text.Json" Version="6.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">

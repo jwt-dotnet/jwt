@@ -7,6 +7,7 @@ using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -268,9 +269,24 @@ namespace JWT.Tests.Builder
                           .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
                           .Encode(typeof(string), TestData.Customer);
 
-            action.Should()
-                  .Throw<TargetException>("Object does not match target type.");
+            if (IsRunningOnMono())
+            {
+                action.Should()
+                      .Throw<TargetInvocationException>("Exception has been thrown by the target of an invocation.");
+            }
+            else
+            {
+                action.Should()
+                      .Throw<TargetException>("Object does not match target type.");
+            }
         }
+
+        /// <summary>
+        /// Copied from: https://stackoverflow.com/a/7077620/2890855
+        /// </summary>
+        /// <returns></returns>
+        private static bool IsRunningOnMono() => 
+            Type.GetType("Mono.Runtime") is not null;
         
         [TestMethod]
         public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload2()
@@ -294,7 +310,7 @@ namespace JWT.Tests.Builder
                                       });
 
             token.Should()
-                .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
         }
         
         [TestMethod]
@@ -326,6 +342,24 @@ namespace JWT.Tests.Builder
                  .NotBeNullOrEmpty("because the token should contains some data");
         }
 
+        [TestMethod]
+        public void Encode_With_Secret_Should_Return_Valid_Token_Using_Json_Net()
+        {
+            var secret = _fixture.Create<string>();
+
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(secret)
+                                  .WithJsonSerializer(new JsonNetSerializer())
+                                  .Encode();
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the token should contains some data");
+            token.Split('.')
+                 .Should()
+                 .HaveCount(3, "because the token should consist of three parts");
+        }
+        
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>

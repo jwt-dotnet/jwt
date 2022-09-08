@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
-
+using JWT.Serializers;
 using static JWT.Internal.EncodingHelper;
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Builder
 {
@@ -19,7 +18,8 @@ namespace JWT.Builder
         private IJwtDecoder _decoder;
         private IJwtValidator _validator;
 
-        private IJsonSerializer _serializer = CreateSerializer();
+        private IJsonSerializerFactory _jsonSerializerFactory = new DefaultJsonSerializerFactory();
+        
         private IBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
         private IDateTimeProvider _dateTimeProvider = new UtcDateTimeProvider();
         private ValidationParameters _valParams = ValidationParameters.Default;
@@ -75,9 +75,23 @@ namespace JWT.Builder
         /// Sets JWT serializer.
         /// </summary>
         /// <returns>Current builder instance</returns>
-        public JwtBuilder WithSerializer(IJsonSerializer serializer)
+        public JwtBuilder WithJsonSerializer(IJsonSerializer serializer) =>
+            WithJsonSerializerFactory(new DelegateJsonSerializerFactory(serializer));
+
+        /// <summary>
+        /// Sets JWT serializer.
+        /// </summary>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithJsonSerializer(Func<IJsonSerializer> factory) =>
+            WithJsonSerializerFactory(new DelegateJsonSerializerFactory(factory));
+
+        /// <summary>
+        /// Sets JWT serializer factory.
+        /// </summary>
+        /// <returns>Current builder instance</returns>
+        public JwtBuilder WithJsonSerializerFactory(IJsonSerializerFactory jsonSerializerFactory)
         {
-            _serializer = serializer;
+            _jsonSerializerFactory = jsonSerializerFactory;
             return this;
         }
 
@@ -321,42 +335,46 @@ namespace JWT.Builder
         {
             if (_algorithm is null && _algFactory is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithAlgorithm)}.");
-            if (_serializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
+
+            var jsonSerializer = _jsonSerializerFactory.Create();
+            if (jsonSerializer is null)
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithJsonSerializer)}");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
             if (_algorithm is object)
-                _encoder = new JwtEncoder(_algorithm, _serializer, _urlEncoder);
+                _encoder = new JwtEncoder(_algorithm, jsonSerializer, _urlEncoder);
             else if (_algFactory is object)
-                _encoder = new JwtEncoder(_algFactory, _serializer, _urlEncoder);
+                _encoder = new JwtEncoder(_algFactory, jsonSerializer, _urlEncoder);
         }
 
         private void TryCreateDecoder()
         {
             TryCreateValidator();
 
-            if (_serializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
+            var jsonSerializer = _jsonSerializerFactory.Create();
+            if (jsonSerializer is null)
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithJsonSerializer)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
             if (_algorithm is object)
-                _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algorithm);
+                _decoder = new JwtDecoder(jsonSerializer, _validator, _urlEncoder, _algorithm);
             else if (_algFactory is object)
-                _decoder = new JwtDecoder(_serializer, _validator, _urlEncoder, _algFactory);
+                _decoder = new JwtDecoder(jsonSerializer, _validator, _urlEncoder, _algFactory);
             else if (!_valParams.ValidateSignature)
-                _decoder = new JwtDecoder(_serializer, _urlEncoder);
+                _decoder = new JwtDecoder(jsonSerializer, _urlEncoder);
         }
 
         private void TryCreateDecoderForHeader()
         {
-            if (_serializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
+            var jsonSerializer = _jsonSerializerFactory.Create();
+            if (jsonSerializer is null)
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithJsonSerializer)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
-            _decoder = new JwtDecoder(_serializer, _urlEncoder);
+            _decoder = new JwtDecoder(jsonSerializer, _urlEncoder);
         }
 
         private void TryCreateValidator()
@@ -364,12 +382,13 @@ namespace JWT.Builder
             if (_validator is object)
                 return;
 
-            if (_serializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
+            var jsonSerializer = _jsonSerializerFactory.Create();
+            if (jsonSerializer is null)
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithJsonSerializer)}.");
             if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
-            _validator = new JwtValidator(_serializer, _dateTimeProvider, _valParams);
+            _validator = new JwtValidator(jsonSerializer, _dateTimeProvider, _valParams);
         }
 
         private void EnsureCanEncode()
@@ -382,7 +401,7 @@ namespace JWT.Builder
                 throw new InvalidOperationException(
                     "Can't encode a token. Check if you have called all of the following methods:" + Environment.NewLine +
                     $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
         }
@@ -396,7 +415,7 @@ namespace JWT.Builder
             {
                 throw new InvalidOperationException(
                     "Can't decode a token. Check if you have called all of the following methods:" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithValidator)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
@@ -411,7 +430,7 @@ namespace JWT.Builder
             {
                 throw new InvalidOperationException(
                     "Can't decode a token header. Check if you have called all of the following methods:" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
         }
@@ -421,7 +440,7 @@ namespace JWT.Builder
         /// </summary>
         private bool CanEncode() =>
             (_algorithm is object || _algFactory is object) &&
-            _serializer is object &&
+            _jsonSerializerFactory is object &&
             _urlEncoder is object &&
             _jwt.Payload is object;
 
@@ -444,7 +463,7 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 return false;
 
-            if (_serializer is null)
+            if (_jsonSerializerFactory is null)
                 return false;
 
             return true;

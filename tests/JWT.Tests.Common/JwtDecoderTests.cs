@@ -5,11 +5,10 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -538,5 +537,8 @@ namespace JWT.Tests
                   .Throw<SignatureVerificationException>()
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }

@@ -1,6 +1,6 @@
-#if SYSTEM_TEXT_JSON
+#if MODERN_DOTNET
 using JsonProperty = System.Text.Json.Serialization.JsonPropertyNameAttribute;
-#elif NEWTONSOFT_JSON
+#else
 using Newtonsoft.Json;
 #endif
 

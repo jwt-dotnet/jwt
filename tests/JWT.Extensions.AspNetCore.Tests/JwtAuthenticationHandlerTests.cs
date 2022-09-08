@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Extensions.AspNetCore.Factories;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -12,8 +13,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Extensions.AspNetCore.Tests
 {
@@ -143,5 +142,8 @@ namespace JWT.Extensions.AspNetCore.Tests
             await handler.InitializeAsync(scheme, context);
             return handler;
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }

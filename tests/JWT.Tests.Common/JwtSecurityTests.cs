@@ -2,10 +2,9 @@
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using static JWT.Serializers.JsonSerializerFactory;
 
 namespace JWT.Tests
 {
@@ -96,5 +95,8 @@ namespace JWT.Tests
             action.Should()
                   .Throw<NotSupportedException>("because an encryption algorithm can't be changed on decoding");
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }

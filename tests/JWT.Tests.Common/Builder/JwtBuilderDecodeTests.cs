@@ -188,11 +188,11 @@ namespace JWT.Tests.Builder
         {
             Action action =
                 () => JwtBuilder.Create()
-                                .WithSerializer(null)
+                                .WithJsonSerializer((IJsonSerializer)null)
                                 .Decode(TestData.Token);
 
             action.Should()
-                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
+                  .Throw<ArgumentNullException>();
         }
 
         [TestMethod]
@@ -391,13 +391,13 @@ namespace JWT.Tests.Builder
             Action action = () =>
                 JwtBuilder.Create()
                           .WithAlgorithm(TestData.RS256Algorithm)
-                          .WithSerializer(null)
+                          .WithJsonSerializer((IJsonSerializer)null)
                           .WithSecret(TestData.Secret)
                           .MustVerifySignature()
                           .Decode<Dictionary<string, string>>(TestData.Token);
 
             action.Should()
-                  .Throw<InvalidOperationException>("because token can't be decoded without valid serializer");
+                  .Throw<ArgumentNullException>();
         }
     }
 }
