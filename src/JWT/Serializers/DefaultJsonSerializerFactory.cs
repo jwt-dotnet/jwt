@@ -4,7 +4,7 @@
     {
         private readonly IJsonSerializer _jsonSerializer;
 
-        public JsonSerializerFactory()
+        public DefaultJsonSerializerFactory()
         {
 #if MODERN_DOTNET
             _jsonSerializer = new SystemTextSerializer();
