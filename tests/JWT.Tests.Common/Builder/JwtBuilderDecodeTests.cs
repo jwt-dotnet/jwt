@@ -120,6 +120,17 @@ namespace JWT.Tests.Builder
         }
         
         [TestMethod]
+        public void Decode_Using_No_Secret_Should_Work_For_None_Algorithm()
+        {
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new NoneAlgorithm())
+                                  .Decode(TestData.TokenWithAlgNoneMissingSignature);
+
+            token.Should()
+                 .NotBeNullOrEmpty("Using none algorithm should be valid without any secret");
+        }
+        
+        [TestMethod]
         public void Decode_With_VerifySignature_And_Without_Algorithm_Should_Throw_Exception()
         {
             Action action =

@@ -139,13 +139,31 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Encode_WithoutAlgorithm_Should_Return_Token()
+        public void Encode_With_NoneAlgorithm_Should_Return_Token()
         {
             var secret = _fixture.Create<string>();
 
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(new NoneAlgorithm())
                                   .WithSecret(secret)
+                                  .Encode();
+
+            token.Should()
+                 .NotBeNullOrEmpty("because the token should contains some data");
+            token.Split('.')
+                 .Should()
+                 .HaveCount(3, "because the token should consist of three parts");
+            token.Split('.')
+                 .Last()
+                 .Should()
+                 .BeEmpty("Because it should miss signature");
+        }
+        
+        [TestMethod]
+        public void Encode_With_NoneAlgorithm_Should_Not_Require_Secret()
+        {
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new NoneAlgorithm())
                                   .Encode();
 
             token.Should()
