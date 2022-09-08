@@ -380,6 +380,6 @@ namespace JWT.Tests
         }
         
         private static IJsonSerializer CreateSerializer() =>
-            new DefaultJsonSerializerFactory().CreateSerializer();
+            new DefaultJsonSerializerFactory().Create();
     }
 }
