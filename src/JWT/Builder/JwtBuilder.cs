@@ -369,7 +369,7 @@ namespace JWT.Builder
         private void TryCreateDecoderForHeader()
         {
             var jsonSerializer = _jsonSerializerFactory.Create();
-            if (tjsonSerializer is null)
+            if (jsonSerializer is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithJsonSerializer)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
