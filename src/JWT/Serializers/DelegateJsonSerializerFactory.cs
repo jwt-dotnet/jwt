@@ -13,7 +13,7 @@ using System;
                  throw new ArgumentNullException(nameof(factory))
         }
 
-        public DelegateJsonSerializerFactory(IJsonSerializerFactory factory)
+        public DelegateJsonSerializerFactory(IJsonSerializerFactory factory) :
             this(() => factory.Create())
         {
             if (factory is null)
