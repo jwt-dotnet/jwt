@@ -1,6 +1,6 @@
-﻿namespace JWT.Serializers
+namespace JWT.Serializers
 {
-    internal sealed class DefaultJsonSerializerFactory : IJsonSerializerFactory
+    public sealed class DefaultJsonSerializerFactory : IJsonSerializerFactory
     {
         private readonly IJsonSerializer _jsonSerializer;
 
