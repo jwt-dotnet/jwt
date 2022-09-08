@@ -13,9 +13,7 @@
 #endif
         }
 
-        public IJsonSerializer CreateSerializer()
-        {
-            return _jsonSerializer;
-        }
+        public IJsonSerializer Create() =>
+            _jsonSerializer;
     }
 }
