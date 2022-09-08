@@ -127,7 +127,7 @@ namespace JWT.Tests.Builder
                                   .Decode(TestData.TokenWithAlgNoneMissingSignature);
 
             token.Should()
-                .NotBeNullOrEmpty("Using none algorithm should be valid without any secret");
+                 .NotBeNullOrEmpty("Using none algorithm should be valid without any secret");
         }
         
         [TestMethod]
