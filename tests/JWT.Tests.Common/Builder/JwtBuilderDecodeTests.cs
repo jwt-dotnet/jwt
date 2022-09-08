@@ -188,7 +188,7 @@ namespace JWT.Tests.Builder
         {
             Action action =
                 () => JwtBuilder.Create()
-                                .WithSerializer(null)
+                                .WithJsonSerializer(null)
                                 .Decode(TestData.Token);
 
             action.Should()
