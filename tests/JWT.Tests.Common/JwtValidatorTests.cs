@@ -14,11 +14,6 @@ namespace JWT.Tests
     [TestClass]
     public class JwtValidatorTests
     {
-        private static IJsonSerializer CreateSerializer()
-        {
-            return new JsonSerializerFactory().CreateSerializer();
-        }
-
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_Serializer_Is_Null()
         {
@@ -383,5 +378,8 @@ namespace JWT.Tests
                    .BeTrue("because token should be valid");
 
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().CreateSerializer();
     }
 }
