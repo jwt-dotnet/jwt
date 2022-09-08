@@ -17,7 +17,7 @@ namespace JWT.Tests
             var defaultSerializerClass = serializer.GetType().Name;
             var dotNetVersion = GetDotNetVersion();            
 
-            if (String.Equals(dotNetVersion, ".NETFramework,Version=v4.6.2", StringComparison.OrdinalIgnoreCase) || dotnetVersion.StartsWith(".NETCoreApp"))
+            if (String.Equals(dotNetVersion, ".NETFramework,Version=v4.6.2", StringComparison.OrdinalIgnoreCase) || dotNetVersion.StartsWith(".NETCoreApp"))
             {
                 Assert.AreEqual("SystemTextSerializer", defaultSerializerClass);
             }
