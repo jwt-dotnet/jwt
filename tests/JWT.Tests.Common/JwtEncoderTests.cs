@@ -10,11 +10,6 @@ namespace JWT.Tests
     [TestClass]
     public class JwtEncoderTests
     {
-        private static IJsonSerializer CreateSerializer()
-        {
-            return new JsonSerializerFactory().CreateSerializer();
-        }
-        
         [TestMethod]
         public void Encode_Should_Encode_To_Token()
         {
@@ -112,5 +107,8 @@ namespace JWT.Tests
             actual.Should()
                   .Be(expected, "because the same data encoded with the same key must result in the same token");
         }
+        
+        private static IJsonSerializer CreateSerializer() => 
+            new DefaultJsonSerializerFactory().Create();
     }
 }
