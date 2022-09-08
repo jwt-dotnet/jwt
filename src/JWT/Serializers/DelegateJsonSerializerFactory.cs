@@ -10,7 +10,7 @@ using System;
             this(() => jsonSerializer)
         {
             if (jsonSerializer is null)
-                throw new ArgumentNullException(nameof(factory));
+                throw new ArgumentNullException(nameof(jsonSerializer));
         }
 
         public DelegateJsonSerializerFactory(IJsonSerializerFactory factory) :
