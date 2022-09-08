@@ -1,7 +1,7 @@
-﻿namespace JWT.Serializers
+namespace JWT.Serializers
 {
     public interface IJsonSerializerFactory
     {
-        IJsonSerializer CreateSerializer();
+        IJsonSerializer Create();
     }
 }
