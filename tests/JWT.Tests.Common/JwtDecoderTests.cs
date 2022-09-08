@@ -17,11 +17,6 @@ namespace JWT.Tests
     {
         private static readonly Fixture _fixture = new Fixture();
 
-        private static IJsonSerializer CreateSerializer()
-        {
-            return new JsonSerializerFactory().CreateSerializer();
-        }
-
         [TestMethod]
         public void DecodeHeader_Should_Return_Header()
         {
@@ -542,5 +537,8 @@ namespace JWT.Tests
                   .Throw<SignatureVerificationException>()
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }
