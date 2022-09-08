@@ -2,7 +2,7 @@ using System;
 
 ﻿namespace JWT.Serializers
 {
-    internal sealed class DefaultJsonSerializerFactory : IJsonSerializerFactory
+    internal sealed class DelegateJsonSerializerFactory : IJsonSerializerFactory
     {
         private readonly Func<IJsonSerializer> _factory;
 
