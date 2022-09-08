@@ -20,12 +20,11 @@ namespace JWT.Algorithms
         /// Creates an instance of <see cref="DelegateAlgorithmFactory" /> with supplied algorithm.
         /// </summary>
         /// <exception cref="ArgumentNullException" />
-        public DelegateAlgorithmFactory(IJwtAlgorithm algorithm)
+        public DelegateAlgorithmFactory(IJwtAlgorithm algorithm) :
+            this(() => algorithm)
         {
             if (algorithm is null)
                 throw new ArgumentNullException(nameof(algorithm));
-
-            _algFactory = () => algorithm;
         }
 
         /// <inheritdoc />
