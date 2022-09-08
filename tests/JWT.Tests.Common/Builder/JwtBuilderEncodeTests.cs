@@ -272,12 +272,12 @@ namespace JWT.Tests.Builder
             if (IsRunningOnMono())
             {
                 action.Should()
-                    .Throw<TargetInvocationException>("Exception has been thrown by the target of an invocation.");
+                      .Throw<TargetInvocationException>("Exception has been thrown by the target of an invocation.");
             }
             else
             {
                 action.Should()
-                    .Throw<TargetException>("Object does not match target type.");
+                      .Throw<TargetException>("Object does not match target type.");
             }
         }
 
@@ -285,11 +285,8 @@ namespace JWT.Tests.Builder
         /// Copied from: https://stackoverflow.com/a/7077620/2890855
         /// </summary>
         /// <returns></returns>
-        private static bool IsRunningOnMono()
-        {
-            Type type = Type.GetType("Mono.Runtime");
-            return type != null;
-        }
+        private static bool IsRunningOnMono() => 
+            Type.GetType("Mono.Runtime") is not null;
         
         [TestMethod]
         public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload2()
