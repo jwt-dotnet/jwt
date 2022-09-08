@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -350,7 +350,7 @@ namespace JWT.Tests.Builder
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(TestData.HMACSHA256Algorithm)
                                   .WithSecret(secret)
-                                  .WithSerializer(new JsonNetSerializer())
+                                  .WithJsonSerializer(new JsonNetSerializer())
                                   .Encode();
 
             token.Should()
