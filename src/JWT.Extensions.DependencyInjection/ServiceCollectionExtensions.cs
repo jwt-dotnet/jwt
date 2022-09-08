@@ -39,7 +39,7 @@ namespace JWT
         public static IServiceCollection AddJwtDecoder(this IServiceCollection services)
         {
             services.TryAddSingleton<IJwtDecoder, JwtDecoder>();
-            services.TryAddSingleton<IJsonSerializerFactory>();
+            services.TryAddSingleton<IJsonSerializerFactory, DefaultJsonSerializerFactory>();
             services.TryAddSingleton<IJwtValidator, JwtValidator>();
             services.TryAddSingleton<IBase64UrlEncoder, JwtBase64UrlEncoder>();
             services.TryAddSingleton<IDateTimeProvider, UtcDatetimeProvider>();
