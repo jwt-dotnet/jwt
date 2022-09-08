@@ -188,7 +188,7 @@ namespace JWT.Tests.Builder
         {
             Action action =
                 () => JwtBuilder.Create()
-                                .WithJsonSerializer(null)
+                                .WithJsonSerializer((IJsonSerializer)null)
                                 .Decode(TestData.Token);
 
             action.Should()
@@ -391,7 +391,7 @@ namespace JWT.Tests.Builder
             Action action = () =>
                 JwtBuilder.Create()
                           .WithAlgorithm(TestData.RS256Algorithm)
-                          .WithSerializer(null)
+                          .WithJsonSerializer((IJsonSerializer)null)
                           .WithSecret(TestData.Secret)
                           .MustVerifySignature()
                           .Decode<Dictionary<string, string>>(TestData.Token);
