@@ -110,5 +110,22 @@ namespace JWT.Tests
         
         private static IJsonSerializer CreateSerializer() => 
             new DefaultJsonSerializerFactory().Create();
+        
+        [TestMethod]
+        public void Encode_With_NoAlgorithm_Should_Encode_To_Token_Not_Needing_Secret()
+        {
+            var toEncode = TestData.Customer;
+            const string expected = TestData.TokenWithoutSignature;
+
+            var algorithm = new NoneAlgorithm();
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var serializer = CreateSerializer();
+            var encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+
+            var actual = encoder.Encode(toEncode, (string)null);
+
+            actual.Should()
+                .Be(expected, "because the same data encoded with the same key must result in the same token");
+        }
     }
 }
