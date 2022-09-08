@@ -13,20 +13,14 @@ namespace JWT.Tests
         [TestMethod]
         public void Serializer_Should_Use_Correct_Default()
         {
-            var serializer = new JsonSerializerFactory().CreateSerializer();
-
+            var serializer = new DefaultJsonSerializerFactory().Create();
             var dotnetVersion = GetRunningDotnetVersion();
-            Console.WriteLine($"Dotnet version: {dotnetVersion}");
 
-            var defaultSerializerClass = serializer.GetType().Name;
-            Console.WriteLine($"Default serializer class: {defaultSerializerClass}");
-
-            if (dotnetVersion is ".NETFramework,Version=v4.6.2" ||
-                dotnetVersion.StartsWith(".NETCoreApp"))
+            if (String.Equals(dotnetVersion, ".NETFramework,Version=v4.6.2", StringComparison.OrdinalIgnoreCase) || dotnetVersion.StartsWith(".NETCoreApp"))
             {
                 Assert.AreEqual("SystemTextSerializer", defaultSerializerClass);
             }
-            else if (dotnetVersion == ".NETFramework,Version=v4.6.1")
+            else if (String.Equals(dotnetVersion, ".NETFramework,Version=v4.6.1", StringComparison.OrdinalIgnoreCase))
             {
                 Assert.AreEqual("JsonNetSerializer", defaultSerializerClass);
             }
@@ -40,14 +34,10 @@ namespace JWT.Tests
         /// Copied from: https://stackoverflow.com/a/49754978
         /// </summary>
         /// <returns>The running dotnet version.</returns>
-        private string GetRunningDotnetVersion()
-        {
-            var version = Assembly.GetExecutingAssembly()
-                .GetCustomAttributes(typeof(TargetFrameworkAttribute), false)
-                .Cast<TargetFrameworkAttribute>()
-                .Single()
-                .FrameworkName;
-            return version;
-        }
+        private string GetRunningDotnetVersion() =>
+            Assembly.GetExecutingAssembly()
+                    .GetCustomAttributes<TargetFrameworkAttribute>()
+                    .SingleOrDefault()
+                   ?.FrameworkName;
     }
 }
