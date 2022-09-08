@@ -338,7 +338,7 @@ namespace JWT.Builder
 
             var jsonSerializer = _jsonSerializerFactory.Create();
             if (jsonSerializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithSerializer)}");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithJsonSerializer)}");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
@@ -354,7 +354,7 @@ namespace JWT.Builder
 
             var jsonSerializer = _jsonSerializerFactory.Create();
             if (jsonSerializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithJsonSerializer)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
@@ -368,12 +368,13 @@ namespace JWT.Builder
 
         private void TryCreateDecoderForHeader()
         {
-            if (this.Serializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithSerializer)}.");
+            var jsonSerializer = _jsonSerializerFactory.Create();
+            if (tjsonSerializer is null)
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithJsonSerializer)}.");
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
-            _decoder = new JwtDecoder(this.Serializer, _urlEncoder);
+            _decoder = new JwtDecoder(jsonSerializer, _urlEncoder);
         }
 
         private void TryCreateValidator()
@@ -383,7 +384,7 @@ namespace JWT.Builder
 
             var jsonSerializer = _jsonSerializerFactory.Create();
             if (jsonSerializer is null)
-                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithSerializer)}.");
+                throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithJsonSerializer)}.");
             if (_dateTimeProvider is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtValidator)}. Call {nameof(WithDateTimeProvider)}.");
 
@@ -400,7 +401,7 @@ namespace JWT.Builder
                 throw new InvalidOperationException(
                     "Can't encode a token. Check if you have called all of the following methods:" + Environment.NewLine +
                     $"-{nameof(WithAlgorithm)}" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
         }
@@ -414,7 +415,7 @@ namespace JWT.Builder
             {
                 throw new InvalidOperationException(
                     "Can't decode a token. Check if you have called all of the following methods:" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithValidator)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
@@ -429,7 +430,7 @@ namespace JWT.Builder
             {
                 throw new InvalidOperationException(
                     "Can't decode a token header. Check if you have called all of the following methods:" + Environment.NewLine +
-                    $"-{nameof(WithSerializer)}" + Environment.NewLine +
+                    $"-{nameof(WithJsonSerializer)}" + Environment.NewLine +
                     $"-{nameof(WithUrlEncoder)}.");
             }
         }
