@@ -21,11 +21,6 @@ namespace JWT.Extensions.AspNetCore.Tests
     {
         private static readonly Fixture _fixture = new Fixture();
 
-        private static IJsonSerializer CreateSerializer()
-        {
-            return new JsonSerializerFactory().CreateSerializer();
-        }
-
         [TestMethod]
         public async Task HandleAuthenticateAsync_Should_Return_Success_When_Token_Is_Valid()
         {
@@ -147,5 +142,9 @@ namespace JWT.Extensions.AspNetCore.Tests
             await handler.InitializeAsync(scheme, context);
             return handler;
         }
+        
+        
+        private static IJsonSerializer CreateSerializer() =>
+            new DefaultJsonSerializerFactory().Create();
     }
 }
