@@ -28,7 +28,7 @@ namespace JWT.Algorithms
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="DelegateAlgorithmFactory" /> with supplied algorithm.
+        /// Creates an instance of <see cref="DelegateAlgorithmFactory" /> with supplied algorithm factory.
         /// </summary>
         /// <exception cref="ArgumentNullException" />
         public DelegateAlgorithmFactory(IAlgorithmFactory algFactory) :
