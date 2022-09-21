@@ -14,7 +14,7 @@ using System;
         }
 
         public DelegateJsonSerializerFactory(IJsonSerializerFactory factory) :
-            this(() => factory.Create())
+            this(() => factory?.Create())
         {
             if (factory is null)
                 throw new ArgumentNullException(nameof(factory));
