@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -394,9 +395,16 @@ namespace JWT.Tests.Builder
             var now = DateTime.UtcNow;
             var sessionId = Guid.NewGuid();
 
+            IEnumerable<string> enumerable = new List<string>
+            {
+                "string1",
+                "string2"
+            };
+            
             var builder = JwtBuilder.Create()
                                     .WithAlgorithmFactory(factory)
                                     .AddClaim("session_id", sessionId.ToString())
+                .AddClaim("enumerable", enumerable)
                                     .Issuer("Security Guy")
                                     .Audience("Strict access perimeter")
                                     .IssuedAt(now)

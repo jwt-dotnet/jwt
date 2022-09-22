@@ -114,6 +114,16 @@ namespace JWT.Serializers.Converters
                     writer.WriteEndArray();
                     break;
                 }
+                case System.Collections.IEnumerable enumerable:
+                {
+                    writer.WriteStartArray();
+                    foreach (var item in enumerable)
+                    {
+                        HandleValue(writer, item);
+                    }
+                    writer.WriteEndArray();
+                    break;
+                }                    
                 default:
                 {
                     var dic = objectValue.GetType()
