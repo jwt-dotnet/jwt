@@ -413,9 +413,9 @@ namespace JWT.Tests.Builder
             var token = builder.Encode();
 
             token.Should()
-                 .NotBeNullOrEmty();
+                 .NotBeNullOrEmpty();
         }
-#endif        
+#endif
 
         private sealed class CustomFactory : IAlgorithmFactory
         {
