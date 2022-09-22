@@ -1,5 +1,6 @@
 #if MODERN_DOTNET
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -106,22 +107,12 @@ namespace JWT.Serializers.Converters
                 }
                 case object[] arr:
                 {
-                    writer.WriteStartArray();
-                    foreach (var item in arr)
-                    {
-                        HandleValue(writer, item);
-                    }
-                    writer.WriteEndArray();
+                    WriteArray(writer, arr);
                     break;
                 }
-                case System.Collections.IEnumerable enumerable:
+                case IEnumerable enumerable:
                 {
-                    writer.WriteStartArray();
-                    foreach (var item in enumerable)
-                    {
-                        HandleValue(writer, item);
-                    }
-                    writer.WriteEndArray();
+                    WriteArray(writer, enumerable);
                     break;
                 }                    
                 default:
@@ -138,6 +129,17 @@ namespace JWT.Serializers.Converters
                     break;
                 }
             }
+        }
+
+        private static void WriteArray(Utf8JsonWriter writer, IEnumerable arr)
+        {
+            writer.WriteStartArray();
+            foreach (var item in arr)
+            {
+                HandleValue(writer, item);
+            }
+
+            writer.WriteEndArray();
         }
 
         private static void HandleValue(Utf8JsonWriter writer, object value) =>
