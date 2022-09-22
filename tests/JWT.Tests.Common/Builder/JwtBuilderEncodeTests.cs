@@ -2,7 +2,9 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -378,6 +380,34 @@ namespace JWT.Tests.Builder
                  .HaveCount(3, "because the token should consist of three parts");
         }
         
+#if NETSTANDARD2_0 || NET6_0
+        [TestMethod]
+        public void Encode_Test_Bug438()
+        {
+            var privateKey = ECDsa.Create();
+            var publicKey = ECDsa.Create();;
+            
+            var algo = new ES256Algorithm(publicKey, privateKey);
+
+            var factory = new DelegateAlgorithmFactory(() => algo);
+
+            var now = DateTime.UtcNow;
+            var sessionId = Guid.NewGuid();
+
+            var baseJwtBuilder = JwtBuilder.Create()
+                .WithAlgorithmFactory(factory)
+                .AddClaim("session_id", sessionId.ToString())
+                .Issuer("Security Guy")
+                .Audience("Strict access perimeter")
+                .IssuedAt(now)
+                .ExpirationTime(now.AddMinutes(30));
+
+            var token = baseJwtBuilder.Encode();
+
+            Console.WriteLine($"Token: {token}");
+        }
+#endif        
+
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>
