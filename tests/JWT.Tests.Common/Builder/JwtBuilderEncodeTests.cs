@@ -394,17 +394,18 @@ namespace JWT.Tests.Builder
             var now = DateTime.UtcNow;
             var sessionId = Guid.NewGuid();
 
-            var baseJwtBuilder = JwtBuilder.Create()
-                .WithAlgorithmFactory(factory)
-                .AddClaim("session_id", sessionId.ToString())
-                .Issuer("Security Guy")
-                .Audience("Strict access perimeter")
-                .IssuedAt(now)
-                .ExpirationTime(now.AddMinutes(30));
+            var builder = JwtBuilder.Create()
+                                    .WithAlgorithmFactory(factory)
+                                    .AddClaim("session_id", sessionId.ToString())
+                                    .Issuer("Security Guy")
+                                    .Audience("Strict access perimeter")
+                                    .IssuedAt(now)
+                                    .ExpirationTime(now.AddMinutes(30));
 
-            var token = baseJwtBuilder.Encode();
+            var token = builder.Encode();
 
-            Console.WriteLine($"Token: {token}");
+            token.Should()
+                 .NotBeNullOrEmty();
         }
 #endif        
 
