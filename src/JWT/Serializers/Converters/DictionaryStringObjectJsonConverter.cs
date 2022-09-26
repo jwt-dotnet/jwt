@@ -1,5 +1,6 @@
 #if MODERN_DOTNET
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -104,16 +105,17 @@ namespace JWT.Serializers.Converters
                     writer.WriteEndObject();
                     break;
                 }
-                case object[] arr:
+                case IEnumerable enumerable:
                 {
                     writer.WriteStartArray();
-                    foreach (var item in arr)
+                    foreach (var item in enumerable)
                     {
                         HandleValue(writer, item);
                     }
+
                     writer.WriteEndArray();
                     break;
-                }
+                }                    
                 default:
                 {
                     var dic = objectValue.GetType()

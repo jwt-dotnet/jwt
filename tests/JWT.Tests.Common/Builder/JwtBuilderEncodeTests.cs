@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -378,6 +381,49 @@ namespace JWT.Tests.Builder
                  .HaveCount(3, "because the token should consist of three parts");
         }
         
+#if NETSTANDARD2_0 || NET6_0
+        [TestMethod]
+        public void Encode_Test_Bug438()
+        {
+            var privateKey = ECDsa.Create();
+            var publicKey = ECDsa.Create();;
+            
+            var algo = new ES256Algorithm(publicKey, privateKey);
+
+            var factory = new DelegateAlgorithmFactory(() => algo);
+
+            var now = DateTime.UtcNow;
+            var sessionId = Guid.NewGuid();
+
+            IEnumerable<string> enumerable = new List<string>
+            {
+                "string1",
+                "string2"
+            };
+
+            var array = new string[]
+            {
+                "one",
+                "two"
+            };
+            
+            var builder = JwtBuilder.Create()
+                                    .WithAlgorithmFactory(factory)
+                                    .AddClaim("session_id", sessionId.ToString())
+                                    .AddClaim("enumerable", enumerable)
+                                    .AddClaim("array", array)
+                                    .Issuer("Security Guy")
+                                    .Audience("Strict access perimeter")
+                                    .IssuedAt(now)
+                                    .ExpirationTime(now.AddMinutes(30));
+
+            var token = builder.Encode();
+
+            token.Should()
+                 .NotBeNullOrEmpty();
+        }
+#endif
+
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>

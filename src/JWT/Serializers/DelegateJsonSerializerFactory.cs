@@ -1,6 +1,6 @@
 using System;
 
-﻿namespace JWT.Serializers
+namespace JWT.Serializers
 {
     internal sealed class DelegateJsonSerializerFactory : IJsonSerializerFactory
     {
