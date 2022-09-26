@@ -1,9 +1,6 @@
 #if MODERN_DOTNET
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -40,100 +37,8 @@ namespace JWT.Serializers.Converters
 
         public override void Write(Utf8JsonWriter writer, Dictionary<string, object> value, JsonSerializerOptions options)
         {
-            writer.WriteStartObject();
-            foreach (var key in value.Keys)
-            {
-                HandleValue(writer, key, value[key]);
-            }
-            writer.WriteEndObject();
+            throw new NotSupportedException("Use the built in logic for serializing to json.");
         }
-
-        private static void HandleValue(Utf8JsonWriter writer, string key, object objectValue)
-        {
-            if (key is object)
-                writer.WritePropertyName(key);
-
-            switch (objectValue)
-            {
-                case string stringValue:
-                {
-                    writer.WriteStringValue(stringValue);
-                    break;
-                }
-                case DateTime dateTime:
-                {
-                    writer.WriteStringValue(dateTime);
-                    break;
-                }
-                case long longValue:
-                {
-                    writer.WriteNumberValue(longValue);
-                    break;
-                }
-                case int intValue:
-                {
-                    writer.WriteNumberValue(intValue);
-                    break;
-                }
-                case float floatValue:
-                {
-                    writer.WriteNumberValue(floatValue);
-                    break;
-                }
-                case double doubleValue:
-                {
-                    writer.WriteNumberValue(doubleValue);
-                    break;
-                }
-                case decimal decimalValue:
-                {
-                    writer.WriteNumberValue(decimalValue);
-                    break;
-                }
-                case bool boolValue:
-                {
-                    writer.WriteBooleanValue(boolValue);
-                    break;
-                }
-                case Dictionary<string, object> dic:
-                {
-                    writer.WriteStartObject();
-                    foreach (var item in dic)
-                    {
-                        HandleValue(writer, item.Key, item.Value);
-                    }
-                    writer.WriteEndObject();
-                    break;
-                }
-                case IEnumerable enumerable:
-                {
-                    writer.WriteStartArray();
-                    foreach (var item in enumerable)
-                    {
-                        HandleValue(writer, item);
-                    }
-
-                    writer.WriteEndArray();
-                    break;
-                }                    
-                default:
-                {
-                    var dic = objectValue.GetType()
-                                         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                         .ToDictionary(p => p.Name, p => p.GetValue(objectValue, null));
-                    writer.WriteStartObject();
-                    foreach (var p in dic)
-                    {
-                        HandleValue(writer, p.Key, p.Value);
-                    }
-                    writer.WriteEndObject();
-                    break;
-                }
-            }
-        }
-
-        private static void HandleValue(Utf8JsonWriter writer, object value) =>
-            HandleValue(writer, null, value);
 
         private object ExtractValue(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {

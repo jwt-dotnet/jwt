@@ -10,7 +10,9 @@ namespace JWT.Serializers
     /// </summary>
     public class SystemTextSerializer : IJsonSerializer
     {
-        private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions _optionsForSserialize = new JsonSerializerOptions();
+
+        private static readonly JsonSerializerOptions _optionsForDeserialize = new JsonSerializerOptions
         {
             Converters =
             {
@@ -25,7 +27,7 @@ namespace JWT.Serializers
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
-            return JsonSerializer.Serialize(obj, _options);
+            return JsonSerializer.Serialize(obj, _optionsForSserialize);
         }
 
 
@@ -39,7 +41,7 @@ namespace JWT.Serializers
             if (String.IsNullOrEmpty(json))
                 throw new ArgumentException(nameof(json));
 
-            return JsonSerializer.Deserialize(json, type, _options);
+            return JsonSerializer.Deserialize(json, type, _optionsForDeserialize);
         }
     }
 }
