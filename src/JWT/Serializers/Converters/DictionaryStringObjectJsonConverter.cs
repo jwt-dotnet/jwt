@@ -105,14 +105,15 @@ namespace JWT.Serializers.Converters
                     writer.WriteEndObject();
                     break;
                 }
-                case object[] arr:
-                {
-                    WriteArray(writer, arr);
-                    break;
-                }
                 case IEnumerable enumerable:
                 {
-                    WriteArray(writer, enumerable);
+                    writer.WriteStartArray();
+                    foreach (var item in enumerable)
+                    {
+                        HandleValue(writer, item);
+                    }
+
+                    writer.WriteEndArray();
                     break;
                 }                    
                 default:
@@ -129,17 +130,6 @@ namespace JWT.Serializers.Converters
                     break;
                 }
             }
-        }
-
-        private static void WriteArray(Utf8JsonWriter writer, IEnumerable arr)
-        {
-            writer.WriteStartArray();
-            foreach (var item in arr)
-            {
-                HandleValue(writer, item);
-            }
-
-            writer.WriteEndArray();
         }
 
         private static void HandleValue(Utf8JsonWriter writer, object value) =>

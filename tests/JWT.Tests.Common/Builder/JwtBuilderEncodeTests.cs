@@ -400,11 +400,18 @@ namespace JWT.Tests.Builder
                 "string1",
                 "string2"
             };
+
+            var array = new string[]
+            {
+                "one",
+                "two"
+            };
             
             var builder = JwtBuilder.Create()
                                     .WithAlgorithmFactory(factory)
                                     .AddClaim("session_id", sessionId.ToString())
-                .AddClaim("enumerable", enumerable)
+                                    .AddClaim("enumerable", enumerable)
+                                    .AddClaim("array", array)
                                     .Issuer("Security Guy")
                                     .Audience("Strict access perimeter")
                                     .IssuedAt(now)
