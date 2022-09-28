@@ -1,7 +1,7 @@
 #if MODERN_DOTNET
 using System;
 using System.Text.Json;
-using JWT.Serializers.Converters;
+using JOS.SystemTextJson.DictionaryStringObject.JsonConverter;
 
 namespace JWT.Serializers
 {
@@ -16,7 +16,7 @@ namespace JWT.Serializers
         {
             Converters =
             {
-                new DictionaryStringObjectJsonConverterCustomWrite()
+                new DictionaryStringObjectJsonConverter()
             }
         };
         
