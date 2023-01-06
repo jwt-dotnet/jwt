@@ -11,7 +11,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization;dependenсy injection</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>2.2.0-beta4</Version>
+    <Version>2.2.0</Version>
     <FileVersion>2.0.0.0</FileVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
