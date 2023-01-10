@@ -58,8 +58,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 - .NET Framework 3.5
 - .NET Framework 4.0 - 4.8
-- .NET Standard 1.3
-- .NET Standard 2.0
+- .NET Standard 1.3, 2.0
 - .NET 6.0
 
 ## Jwt.NET
@@ -91,7 +90,6 @@ var token = JwtBuilder.Create()
                       .AddClaim("claim1", 0)
                       .AddClaim("claim2", "claim2-value")
                       .Encode();
-
 Console.WriteLine(token);
 ```
 ### Parsing (decoding) and verifying token
@@ -159,7 +157,7 @@ As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519
 
 >The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
 
-If it is present in the payload and is prior to the current time the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 UTC.
+If it is present in the payload and is prior to the current time, the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 00:00:00 UTC (see [RFC 7519, section 4.1.4](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4)).
 
 ```c#
 IDateTimeProvider provider = new UtcDateTimeProvider();
@@ -176,7 +174,7 @@ var token = encoder.Encode(payload);
 decoder.Decode(token); // throws TokenExpiredException
 ```
 
-Similarly, the `nbf` claim can be used to validate the token is not valid yet, as described in [RFC 7519 section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5).
+Similarly, the `nbf` claim can be used to validate whether the token is not valid yet (see [RFC 7519, section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5)).
 
 ### Parsing (decoding) token header
 
