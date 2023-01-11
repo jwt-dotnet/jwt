@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 - [Jwt.Net, a JWT (JSON Web Token) implementation for .NET](#jwtnet-a-jwt-json-web-token-implementation-for-net)
 - [Sponsor](#sponsor)
-- [Avaliable packages](#avaliable-packages)
+- [Avaliable NuGet packages](#avaliable-packages)
 - [Supported .NET versions:](#supported-net-versions)
 - [Jwt.NET](#jwtnet)
   - [Creating (encoding) token](#creating-encoding-token)
@@ -10,7 +10,7 @@
   - [Parsing (decoding) and verifying token](#parsing-decoding-and-verifying-token)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-1)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-2)
-  - [Set and validate token expiration](#set-and-validate-token-expiration)
+  - [Validate token expiration](#validate-token-expiration)
   - [Parsing (decoding) token header](#parsing-decoding-token-header)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-3)
   - [Turning off parts of token validation](#turning-off-parts-of-token-validation)
@@ -37,7 +37,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 |-|-|
 | [<img alt="Auth0 logo" src="https://cdn.auth0.com/blog/github-sponsorships/brand-evolution-logo-Auth0-horizontal-Indigo.png" height="91">](https://a0.to/try-auth0) | If you want to quickly implement a secure authentication to your JWT project, [create an Auth0 account](https://a0.to/try-auth0); it's Free! |
 
-## Avaliable packages
+## Avaliable NuGet packages
 
 1.  Jwt.Net
 
@@ -58,8 +58,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 - .NET Framework 3.5
 - .NET Framework 4.0 - 4.8
-- .NET Standard 1.3
-- .NET Standard 2.0
+- .NET Standard 1.3, 2.0
 - .NET 6.0
 
 ## Jwt.NET
@@ -91,7 +90,6 @@ var token = JwtBuilder.Create()
                       .AddClaim("claim1", 0)
                       .AddClaim("claim2", "claim2-value")
                       .Encode();
-
 Console.WriteLine(token);
 ```
 ### Parsing (decoding) and verifying token
@@ -153,13 +151,13 @@ var payload = JwtBuilder.Create()
                         .Decode<IDictionary<string, object>>(token);     
 ```
 
-### Set and validate token expiration
+### Validate token expiration
 
 As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519#section-4.1.4):
 
 >The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
 
-If it is present in the payload and is prior to the current time the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 UTC.
+If it is present in the payload and is past the current time, the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 00:00:00 UTC.
 
 ```c#
 IDateTimeProvider provider = new UtcDateTimeProvider();
@@ -176,7 +174,11 @@ var token = encoder.Encode(payload);
 decoder.Decode(token); // throws TokenExpiredException
 ```
 
-Similarly, the `nbf` claim can be used to validate the token is not valid yet, as described in [RFC 7519 section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5).
+Then, as described in the [RFC 7519 section 4.1.5](https://tools.ietf.org/html/rfc7519#section-4.1.5):
+
+>The "nbf" (not before) claim identifies the time before which the JWT MUST NOT be accepted for processing
+
+If it is present in the payload and is prior to the current time, the token will fail verification.
 
 ### Parsing (decoding) token header
 
