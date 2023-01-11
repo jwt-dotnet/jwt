@@ -10,7 +10,7 @@
   - [Parsing (decoding) and verifying token](#parsing-decoding-and-verifying-token)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-1)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-2)
-  - [Set and validate token expiration](#set-and-validate-token-expiration)
+  - [Validate token expiration](#validate-token-expiration)
   - [Parsing (decoding) token header](#parsing-decoding-token-header)
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-3)
   - [Turning off parts of token validation](#turning-off-parts-of-token-validation)
@@ -151,13 +151,13 @@ var payload = JwtBuilder.Create()
                         .Decode<IDictionary<string, object>>(token);     
 ```
 
-### Set and validate token expiration
+### Validate token expiration
 
 As described in the [RFC 7519 section 4.1.4](https://tools.ietf.org/html/rfc7519#section-4.1.4):
 
 >The `exp` claim identifies the expiration time on or after which the JWT MUST NOT be accepted for processing.
 
-If it is present in the payload and is prior to the current time, the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 00:00:00 UTC (see [RFC 7519, section 4.1.4](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4)).
+If it is present in the payload and is past the current time, the token will fail verification. The value must be specified as the number of seconds since the [Unix epoch](https://en.wikipedia.org/wiki/Unix_time), 1/1/1970 00:00:00 UTC.
 
 ```c#
 IDateTimeProvider provider = new UtcDateTimeProvider();
@@ -174,7 +174,11 @@ var token = encoder.Encode(payload);
 decoder.Decode(token); // throws TokenExpiredException
 ```
 
-Similarly, the `nbf` claim can be used to validate whether the token is not valid yet (see [RFC 7519, section 4.1.5](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5)).
+Then, as described in the [RFC 7519 section 4.1.5](https://tools.ietf.org/html/rfc7519#section-4.1.5):
+
+>The "nbf" (not before) claim identifies the time before which the JWT MUST NOT be accepted for processing
+
+If it is present in the payload and is prior to the current time, the token will fail verification.
 
 ### Parsing (decoding) token header
 
