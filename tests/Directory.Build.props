@@ -29,4 +29,13 @@
     <RootNamespace>JWT.Tests</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+  </ItemGroup>
+
 </Project>
