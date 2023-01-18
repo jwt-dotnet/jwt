@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard2.0;net6.0;net35;net40;net462;</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net6.0;net462;</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'net35' OR '$(TargetFramework)' == 'net40' OR '$(TargetFramework)' == 'net46'">
@@ -20,7 +20,7 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
-    <Version>10.0.0</Version>
+    <Version>10.0.1</Version>
     <FileVersion>10.0.0.0</FileVersion>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
@@ -38,8 +38,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Condition="$(DefineConstants.Contains(MODERN_DOTNET))" Include="System.Text.Json" Version="6.0.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Condition="$(DefineConstants.Contains(MODERN_DOTNET))" Include="System.Text.Json" Version="6.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">

@@ -21,7 +21,7 @@ namespace JWT.Builder
         /// <summary>
         /// Creates a new instance of <see cref="JwtData" />
         /// </summary>
-        /// <param name="payload">Dictionary that contans the payload</param>
+        /// <param name="payload">Dictionary that contains the payload</param>
         public JwtData(IDictionary<string, object> payload)
         : this(null, payload)
         {
@@ -31,7 +31,7 @@ namespace JWT.Builder
         /// Creates a new instance of <see cref="JwtData" />
         /// </summary>
         /// <param name="header">Dictionary that contains the headers</param>
-        /// <param name="payload">Dictionary that contans the payload</param>
+        /// <param name="payload">Dictionary that contains the payload</param>
         public JwtData(IDictionary<string, object> header, IDictionary<string, object> payload)
         {
             this.Header = header ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
+using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -82,7 +83,7 @@ namespace JWT.Tests.Builder
         }
 
         [TestMethod]
-        public void Decode_Using_Signature_Is_Not_Accepted_For_None_Algorithm()
+        public void Decode_Using_Signature_For_None_Algorithm_Should_Throw_Exception()
         {
             Action action =
                 () => JwtBuilder.Create()
@@ -107,7 +108,7 @@ namespace JWT.Tests.Builder
         }
         
         [TestMethod]
-        public void Decode_With_MustVerifySignature_Should_Not_Be_Allowed_For_For_None_Algorithm()
+        public void Decode_With_MustVerifySignature_For_None_Algorithm_Should_Throw_Exception()
         {
             Action action =
                 () => JwtBuilder.Create()
@@ -118,9 +119,31 @@ namespace JWT.Tests.Builder
             action.Should()
                   .Throw<InvalidOperationException>("verify signature is not supported for none algorithm");
         }
-        
+
         [TestMethod]
-        public void Decode_Using_No_Secret_Should_Work_For_None_Algorithm()
+        public void Decode_Should_Return_Token_For_None_Algorithm()
+        {
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new NoneAlgorithm())
+                                  .WithSecret(TestData.Secret)
+                                  .WithJsonSerializer(new JsonNetSerializer());
+
+            var encodedModel = token.Encode(TestData.Customer);
+            encodedModel.Should()
+                        .NotBeNullOrEmpty();
+
+             token = JwtBuilder.Create()
+                               .WithAlgorithm(new NoneAlgorithm())
+                               .WithSecret(TestData.Secret)
+                               .WithJsonSerializer(new JsonNetSerializer());
+
+            var decodedModel = token.Decode<Customer>(encodedModel);
+            decodedModel.Should()
+                        .NotBeNull();
+        }
+
+        [TestMethod]
+        public void Decode_With_No_Secret_Should_Return_Token_For_None_Algorithm()
         {
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(new NoneAlgorithm())
