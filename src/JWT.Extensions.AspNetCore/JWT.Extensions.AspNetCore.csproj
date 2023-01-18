@@ -11,7 +11,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.0.0</Version>
+    <Version>10.0.1</Version>
     <FileVersion>10.0.0.0</FileVersion>
     <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
-    <PackageReference Condition="$(DefineConstants.Contains(MODERN_DOTNET))" Include="System.Text.Json" Version="6.0.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.7" Condition="$(DefineConstants.Contains(MODERN_DOTNET))" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>

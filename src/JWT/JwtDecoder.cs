@@ -294,6 +294,13 @@ namespace JWT
         private void ValidateNoneAlgorithm(JwtParts jwt)
         {
             var header = DecodeHeader<JwtHeader>(jwt);
+
+            if (String.IsNullOrEmpty(header.Type) &&
+                String.IsNullOrEmpty(header.Algorithm))
+            {
+                throw new InvalidOperationException("Error deserializing JWT header, all mandatory properties are null or empty");
+            }
+
             if (String.Equals(header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) &&
                 !String.IsNullOrEmpty(jwt.Signature))
             {

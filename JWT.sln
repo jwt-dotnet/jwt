@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{513CE2B5-E0D6-43
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		CHANGELOG.md = CHANGELOG.md
 		Directory.Build.props = Directory.Build.props
 		JWT.sln.DotSettings = JWT.sln.DotSettings
 		JwtStrongNameKey.snk = JwtStrongNameKey.snk
