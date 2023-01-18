@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 - [Jwt.Net, a JWT (JSON Web Token) implementation for .NET](#jwtnet-a-jwt-json-web-token-implementation-for-net)
 - [Sponsor](#sponsor)
-- [Avaliable NuGet packages](#avaliable-packages)
+- [Avaliable NuGet packages](#avaliable-nuget-packages)
 - [Supported .NET versions:](#supported-net-versions)
 - [Jwt.NET](#jwtnet)
   - [Creating (encoding) token](#creating-encoding-token)
