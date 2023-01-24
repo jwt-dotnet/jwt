@@ -23,6 +23,14 @@ namespace JWT.Tests.Models
             public string AccessToken { get; set; }
         }
         
+#if NETSTANDARD2_0 || NET6_0 || NET7_0
+        public class TestDataSystemTextSerializerDecorated
+        {
+            [System.Text.Json.Serialization.JsonPropertyName("AT")]
+            public string AccessToken { get; set; }
+        }
+#endif
+        
         public const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public const string Secret2 = "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT";
 

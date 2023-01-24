@@ -277,7 +277,7 @@ namespace JWT.Builder
             EnsureCanEncode();
 
             var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                 .ToDictionary(GetPropName, prop => prop.GetValue(payload, null));
+                                 .ToDictionary(info => GetPropName(info, _jsonSerializerFactory), prop => prop.GetValue(payload, null));
 
             foreach (var pair in dic)
             {
@@ -287,14 +287,31 @@ namespace JWT.Builder
             return Encode();
         }
 
-        private static string GetPropName(MemberInfo prop)
+        private static string GetPropName(MemberInfo prop, IJsonSerializerFactory jsonSerializerFactory)
         {
             var customAttributes = prop.GetCustomAttributes(true);
             foreach (var attribute in customAttributes)
             {
-                if (attribute is JsonPropertyAttribute jsonNetProperty)
+                if (jsonSerializerFactory.Create() is JsonNetSerializer)
                 {
-                    return jsonNetProperty.PropertyName;
+                    if (attribute is JsonPropertyAttribute jsonNetProperty)
+                    {
+                        return jsonNetProperty.PropertyName;
+                    }
+                }
+#if MODERN_DOTNET
+                else if (jsonSerializerFactory.Create() is SystemTextSerializer)
+                {
+                    if (attribute is System.Text.Json.Serialization.JsonPropertyNameAttribute systemTextSerializerProperty)
+                    {
+                        return systemTextSerializerProperty.Name;
+                    }
+                }
+#endif
+                else
+                {
+                    throw new NotSupportedException(
+                        $"{jsonSerializerFactory.Create().GetType().Name} is not supported");
                 }
             }
             
