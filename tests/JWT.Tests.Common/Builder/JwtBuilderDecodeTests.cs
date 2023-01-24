@@ -433,5 +433,28 @@ namespace JWT.Tests.Builder
             action.Should()
                   .Throw<ArgumentNullException>();
         }
+        
+        [TestMethod]
+        public void Encode_Decode_ToJsonNetDecoratedType_Should_UseDecoratedName()
+        {
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new JsonNetSerializer());
+
+            var model = new TestData.TestDataJsonNetDecorated
+            {
+                AccessToken = "abc123",
+            };
+            
+            var encoded = token.Encode(model);
+            Assert.IsNotNull(encoded);
+
+            token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new JsonNetSerializer());
+
+            var payloadDecoded = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
+            Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
 using JWT.Serializers;
+using Newtonsoft.Json;
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Builder
@@ -276,7 +277,7 @@ namespace JWT.Builder
             EnsureCanEncode();
 
             var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                 .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
+                                 .ToDictionary(GetPropName, prop => prop.GetValue(payload, null));
 
             foreach (var pair in dic)
             {
@@ -284,6 +285,20 @@ namespace JWT.Builder
             }
 
             return Encode();
+        }
+
+        private static string GetPropName(MemberInfo prop)
+        {
+            var customAttributes = prop.GetCustomAttributes(true);
+            foreach (var attribute in customAttributes)
+            {
+                if (attribute is JsonPropertyAttribute jsonNetProperty)
+                {
+                    return jsonNetProperty.PropertyName;
+                }
+            }
+            
+            return prop.Name;
         }
 
         /// <summary>

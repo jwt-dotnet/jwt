@@ -381,7 +381,7 @@ namespace JWT.Tests.Builder
                  .HaveCount(3, "because the token should consist of three parts");
         }
         
-#if NETSTANDARD2_0 || NET6_0
+#if NETSTANDARD2_0 || NET6_0 || NET7_0
         [TestMethod]
         public void Encode_Test_Bug438()
         {
