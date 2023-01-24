@@ -13,6 +13,9 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <TargetFrameworkIdentifier>.NETFramework,Version=6.0</TargetFrameworkIdentifier>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <TargetFrameworkIdentifier>.NETFramework,Version=7.0</TargetFrameworkIdentifier>
+  </PropertyGroup>
 
   <PropertyGroup>
     <Copyright>Public Domain</Copyright>
