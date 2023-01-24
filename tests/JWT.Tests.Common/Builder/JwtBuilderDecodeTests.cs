@@ -433,5 +433,53 @@ namespace JWT.Tests.Builder
             action.Should()
                   .Throw<ArgumentNullException>();
         }
+        
+        [TestMethod]
+        public void Encode_Decode_ToJsonNetDecoratedType_Should_UseDecoratedName_Bug456()
+        {
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new JsonNetSerializer());
+
+            var model = new TestData.TestDataJsonNetDecorated
+            {
+                AccessToken = "abc123",
+            };
+            
+            var encoded = token.Encode(model);
+            Assert.IsNotNull(encoded);
+
+            token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new JsonNetSerializer());
+
+            var payloadDecoded = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
+            Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
+        }
+#if NETSTANDARD2_0 || NET6_0 || NET7_0
+
+        [TestMethod]
+        public void Encode_Decode_ToSystemTextSerializerDecoratedType_Should_UseDecoratedName_Bug456()
+        {
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new SystemTextSerializer());
+
+            var model = new TestData.TestDataSystemTextSerializerDecorated
+            {
+                AccessToken = "abc123",
+            };
+            
+            var encoded = token.Encode(model);
+            Assert.IsNotNull(encoded);
+
+            token = JwtBuilder.Create()
+                .WithAlgorithm(new NoneAlgorithm())
+                .WithJsonSerializer(new SystemTextSerializer());
+
+            var payloadDecoded = token.Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
+            Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
+        }
+#endif
     }
 }
