@@ -437,48 +437,54 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Encode_Decode_ToJsonNetDecoratedType_Should_UseDecoratedName_Bug456()
         {
-            var token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithJsonSerializer(new JsonNetSerializer());
+            var serializer = new JsonNetSerializer();
+            var alg = new NoneAlgorithm();
 
-            var model = new TestData.TestDataJsonNetDecorated
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(alg)
+                                  .WithJsonSerializer(serializer);
+
+            var expected = new TestData.TestDataJsonNetDecorated
             {
                 City = "Amsterdam",
             };
             
-            var encoded = token.Encode(model);
-            Assert.IsNotNull(encoded);
+            var encoded = token.Encode(expected);
+            encoded.Should().NotBeNullOrEmpty();
 
             token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithJsonSerializer(new JsonNetSerializer());
+                              .WithAlgorithm(alg)
+                              .WithJsonSerializer(serializer);
 
-            var payloadDecoded = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
-            Assert.AreEqual(model.City, payloadDecoded.City);
+            var actual = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
+            actual.Should().BeEquivalentTo(expected);
         }
 
 #if NETSTANDARD2_0 || NET6_0
         [TestMethod]
         public void Encode_Decode_ToSystemTextSerializerDecoratedType_Should_UseDecoratedName_Bug456()
         {
-            var token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithJsonSerializer(new SystemTextSerializer());
+            var serializer = new SystemTextSerializer();
+            var alg = new NoneAlgorithm();
 
-            var model = new TestData.TestDataSystemTextSerializerDecorated
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(alg)
+                                  .WithJsonSerializer(serializer);
+
+            var expected = new TestData.TestDataSystemTextSerializerDecorated
             {
                 City = "Amsterdam",
             };
             
-            var encoded = token.Encode(model);
-            Assert.IsNotNull(encoded);
+            var encoded = token.Encode(expected);
+            encoded.Should().NotBeNullOrEmpty();
 
             token = JwtBuilder.Create()
-                .WithAlgorithm(new NoneAlgorithm())
-                .WithJsonSerializer(new SystemTextSerializer());
+                              .WithAlgorithm(alg)
+                              .WithJsonSerializer(serializer);
 
-            var payloadDecoded = token.Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
-            Assert.AreEqual(model.City, payloadDecoded.City);
+            var actual = token.Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
+            actual.Should().BeEquivalentTo(expected);
         }
 #endif
     }
