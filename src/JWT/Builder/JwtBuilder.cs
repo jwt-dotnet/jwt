@@ -1,9 +1,14 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
 using JWT.Serializers;
 using Newtonsoft.Json;
+
+#if MODERN_DOTNET
+using System.Text.Json.Serialization;
+#endif
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Builder
@@ -287,12 +292,14 @@ namespace JWT.Builder
             return Encode();
         }
 
-        private static string GetPropName(MemberInfo prop, IJsonSerializerFactory jsonSerializerFactory)
+        private string GetPropName(MemberInfo prop)
         {
+           var jsonSerializer = _jsonSerializerFactory.Create();
+        
             var customAttributes = prop.GetCustomAttributes(true);
             foreach (var attribute in customAttributes)
             {
-                if (jsonSerializerFactory.Create() is JsonNetSerializer)
+                if (jsonSerializer is JsonNetSerializer)
                 {
                     if (attribute is JsonPropertyAttribute jsonNetProperty)
                     {
@@ -300,18 +307,17 @@ namespace JWT.Builder
                     }
                 }
 #if MODERN_DOTNET
-                else if (jsonSerializerFactory.Create() is SystemTextSerializer)
+                else if (jsonSerializer is SystemTextSerializer)
                 {
-                    if (attribute is System.Text.Json.Serialization.JsonPropertyNameAttribute systemTextSerializerProperty)
+                    if (attribute is JsonPropertyNameAttribute stjProperty)
                     {
-                        return systemTextSerializerProperty.Name;
+                        return stjProperty.Name;
                     }
                 }
 #endif
                 else
                 {
-                    throw new NotSupportedException(
-                        $"{jsonSerializerFactory.Create().GetType().Name} is not supported");
+                    throw new NotSupportedException($"{jsonSerializer.GetType().Name} is not supported");
                 }
             }
             
