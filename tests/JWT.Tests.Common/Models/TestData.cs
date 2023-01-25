@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using JWT.Algorithms;
 
-#if NETSTANDARD2_1 || NET6_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
 using System.Security.Cryptography;
 #endif
 
@@ -92,7 +92,7 @@ namespace JWT.Tests.Models
         public static readonly X509Certificate2 CertificateWithPublicKeyEcdsa = new X509Certificate2(
             Convert.FromBase64String(ServerPublicKeyEcdsa));
 
-#if NETSTANDARD2_1 || NET6_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
         public static readonly X509Certificate2 CertificateWithPrivateKey = CreateCertificate();
 
         private static X509Certificate2 CreateCertificate()
