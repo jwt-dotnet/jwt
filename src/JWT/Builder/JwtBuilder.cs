@@ -504,7 +504,7 @@ namespace JWT.Builder
 #endif
                     default:
                     {
-                        throw new NotSupportedException($"{jsonSerializer.GetType()} is not supported");
+                        return prop.Name;
                     }
                 }
             }

@@ -382,6 +382,35 @@ namespace JWT.Tests.Builder
         }
         
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
+
+        [TestMethod]
+        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_SystemTextSerializer()
+        {
+            var serializer = new SystemTextSerializer();
+
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(key)
+                                  .WithJsonSerializer(serializer)
+                                  .AddHeader("version", 1)
+                                  .Encode(
+                                      new
+                                      {
+                                          ExtraClaim = new
+                                          {
+                                              NestedProperty1 = "Foo",
+                                              NestedProperty2 = 3
+                                          },
+                                          FirstName = "Jesus",
+                                          Age = 33
+                                      });
+
+            token.Should()
+                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
+        }
+
         [TestMethod]
         public void Encode_Test_Bug438()
         {
