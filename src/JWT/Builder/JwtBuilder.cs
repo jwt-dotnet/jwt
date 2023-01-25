@@ -482,25 +482,30 @@ namespace JWT.Builder
             var customAttributes = prop.GetCustomAttributes(inherit: true);
             foreach (var attribute in customAttributes)
             {
-                if (jsonSerializer is JsonNetSerializer)
+                switch (jsonSerializer)
                 {
-                    if (attribute is JsonPropertyAttribute jsonNetProperty)
+                    case JsonNetSerializer:
                     {
-                        return jsonNetProperty.PropertyName;
+                        if (attribute is JsonPropertyAttribute jsonNetProperty)
+                        {
+                            return jsonNetProperty.PropertyName;
+                        }
+                        break;
                     }
-                }
 #if MODERN_DOTNET
-                else if (jsonSerializer is SystemTextSerializer)
-                {
-                    if (attribute is JsonPropertyNameAttribute stjProperty)
+                    case SystemTextSerializer:
                     {
-                        return stjProperty.Name;
+                        if (attribute is JsonPropertyNameAttribute stjProperty)
+                        {
+                            return stjProperty.Name;
+                        }
+                        break;
                     }
-                }
 #endif
-                else
-                {
-                    throw new NotSupportedException($"{jsonSerializer.GetType().Name} is not supported");
+                    default:
+                    {
+                        throw new NotSupportedException($"{jsonSerializer.GetType()} is not supported");
+                    }
                 }
             }
 
