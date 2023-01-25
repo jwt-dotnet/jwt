@@ -1,4 +1,4 @@
-#if NETSTANDARD2_1 || NET6_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
