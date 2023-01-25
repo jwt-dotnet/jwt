@@ -17,6 +17,11 @@ namespace JWT.Tests.Models
             Age = 33
         };
 
+        public class PayloadWithNestedJsonNetData
+        {
+            public TestDataJsonNetDecorated Data { get; set; }
+        }
+        
         public class TestDataJsonNetDecorated
         {
             [Newtonsoft.Json.JsonProperty("AT")]
@@ -24,6 +29,11 @@ namespace JWT.Tests.Models
         }
         
 #if NETSTANDARD2_0 || NET6_0
+        public class PayloadWithNestedSystemTextSerializerData
+        {
+            public TestDataSystemTextSerializerDecorated Data { get; set; }
+        }
+        
         public class TestDataSystemTextSerializerDecorated
         {
             [System.Text.Json.Serialization.JsonPropertyName("AT")]

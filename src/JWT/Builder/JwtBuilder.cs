@@ -326,6 +326,14 @@ namespace JWT.Builder
             return _decoder.DecodeHeader<T>(token);
         }
 
+        public object Decode(string token, Type type)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeToObject(type, token, _secrets, _valParams.ValidateSignature);
+        }
+        
+        
         /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
