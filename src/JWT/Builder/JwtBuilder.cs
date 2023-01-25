@@ -292,38 +292,6 @@ namespace JWT.Builder
             return Encode();
         }
 
-        private string GetPropName(MemberInfo prop)
-        {
-           var jsonSerializer = _jsonSerializerFactory.Create();
-        
-            var customAttributes = prop.GetCustomAttributes(true);
-            foreach (var attribute in customAttributes)
-            {
-                if (jsonSerializer is JsonNetSerializer)
-                {
-                    if (attribute is JsonPropertyAttribute jsonNetProperty)
-                    {
-                        return jsonNetProperty.PropertyName;
-                    }
-                }
-#if MODERN_DOTNET
-                else if (jsonSerializer is SystemTextSerializer)
-                {
-                    if (attribute is JsonPropertyNameAttribute stjProperty)
-                    {
-                        return stjProperty.Name;
-                    }
-                }
-#endif
-                else
-                {
-                    throw new NotSupportedException($"{jsonSerializer.GetType().Name} is not supported");
-                }
-            }
-            
-            return prop.Name;
-        }
-
         /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
@@ -505,6 +473,38 @@ namespace JWT.Builder
                 return false;
 
             return true;
+        }
+
+        private string GetPropName(MemberInfo prop)
+        {
+            var jsonSerializer = _jsonSerializerFactory.Create();
+
+            var customAttributes = prop.GetCustomAttributes(inherit: true);
+            foreach (var attribute in customAttributes)
+            {
+                if (jsonSerializer is JsonNetSerializer)
+                {
+                    if (attribute is JsonPropertyAttribute jsonNetProperty)
+                    {
+                        return jsonNetProperty.PropertyName;
+                    }
+                }
+#if MODERN_DOTNET
+                else if (jsonSerializer is SystemTextSerializer)
+                {
+                    if (attribute is JsonPropertyNameAttribute stjProperty)
+                    {
+                        return stjProperty.Name;
+                    }
+                }
+#endif
+                else
+                {
+                    throw new NotSupportedException($"{jsonSerializer.GetType().Name} is not supported");
+                }
+            }
+
+            return prop.Name;
         }
     }
 }
