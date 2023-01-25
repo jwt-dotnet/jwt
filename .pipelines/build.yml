@@ -23,10 +23,17 @@ steps:
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: UseDotNet@2
-  displayName: 'Install .NET 6.0.x'
+  displayName: 'Install .NET 6.x'
   inputs:
     packageType: sdk
-    version: '6.0.x'
+    version: '6.x'
+    installationPath: '$(Agent.ToolsDirectory)/dotnet'
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 7.x'
+  inputs:
+    packageType: sdk
+    version: '7.x'
     installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: NuGetToolInstaller@1
