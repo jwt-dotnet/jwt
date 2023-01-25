@@ -23,7 +23,7 @@ namespace JWT.Tests.Models
             public string AccessToken { get; set; }
         }
         
-#if NETSTANDARD2_0 || NET6_0 || NET7_0
+#if NETSTANDARD2_0 || NET6_0
         public class TestDataSystemTextSerializerDecorated
         {
             [System.Text.Json.Serialization.JsonPropertyName("AT")]

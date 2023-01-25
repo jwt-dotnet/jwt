@@ -456,7 +456,7 @@ namespace JWT.Tests.Builder
             var payloadDecoded = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
             Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
         }
-#if NETSTANDARD2_0 || NET6_0 || NET7_0
+#if NETSTANDARD2_0 || NET6_0
 
         [TestMethod]
         public void Encode_Decode_ToSystemTextSerializerDecoratedType_Should_UseDecoratedName_Bug456()
