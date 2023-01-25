@@ -18,6 +18,8 @@ namespace JWT
         /// <param name="key">The key bytes used to sign the token</param>
         /// <returns>The generated JWT</returns>
         string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key);
+
+        string Encode(IDictionary<string, object> extraHeaders, object[] payloads, byte[] key);
     }
 
     /// <summary>

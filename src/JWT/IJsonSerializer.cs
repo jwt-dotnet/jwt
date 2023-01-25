@@ -21,6 +21,14 @@ namespace JWT
         /// <param name="json">The JSON string deserialize.</param>
         /// <returns>Strongly-typed object.</returns>
         object Deserialize(Type type, string json);
+
+        /// <summary>
+        /// Merges two objects into a single JSON string.
+        /// </summary>
+        /// <param name="obj1">The first object to serialize</param>
+        /// <param name="obj2">The second object to serialize, note that any existing property in obj1 will be
+        /// <returns>JSON string</returns>
+        string MergeObjects(object obj1, object obj2);
     }
 
     /// <summary>

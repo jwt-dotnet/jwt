@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace JWT.Serializers
 {
@@ -57,6 +58,15 @@ namespace JWT.Serializers
             using var stringReader = new StringReader(json);
             using var jsonReader = new JsonTextReader(stringReader);
             return _serializer.Deserialize(jsonReader, type);
+        }
+
+        public string MergeObjects(object obj1, object obj2)
+        {
+            var jObject1 = JObject.Parse(Serialize(obj1));
+            var jObject2 = JObject.Parse(Serialize(obj2));
+
+            jObject1.Merge(jObject2);
+            return jObject1.ToString(Formatting.None);
         }
     }
 }
