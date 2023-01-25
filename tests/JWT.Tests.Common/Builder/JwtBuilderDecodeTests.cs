@@ -443,7 +443,7 @@ namespace JWT.Tests.Builder
 
             var model = new TestData.TestDataJsonNetDecorated
             {
-                AccessToken = "abc123",
+                City = "Amsterdam",
             };
             
             var encoded = token.Encode(model);
@@ -454,10 +454,10 @@ namespace JWT.Tests.Builder
                 .WithJsonSerializer(new JsonNetSerializer());
 
             var payloadDecoded = token.Decode<TestData.TestDataJsonNetDecorated>(encoded);
-            Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
+            Assert.AreEqual(model.City, payloadDecoded.City);
         }
-#if NETSTANDARD2_0 || NET6_0
 
+#if NETSTANDARD2_0 || NET6_0
         [TestMethod]
         public void Encode_Decode_ToSystemTextSerializerDecoratedType_Should_UseDecoratedName_Bug456()
         {
@@ -467,7 +467,7 @@ namespace JWT.Tests.Builder
 
             var model = new TestData.TestDataSystemTextSerializerDecorated
             {
-                AccessToken = "abc123",
+                City = "Amsterdam",
             };
             
             var encoded = token.Encode(model);
@@ -478,7 +478,7 @@ namespace JWT.Tests.Builder
                 .WithJsonSerializer(new SystemTextSerializer());
 
             var payloadDecoded = token.Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
-            Assert.AreEqual(model.AccessToken, payloadDecoded.AccessToken);
+            Assert.AreEqual(model.City, payloadDecoded.City);
         }
 #endif
     }

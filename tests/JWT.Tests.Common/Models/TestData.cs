@@ -20,14 +20,14 @@ namespace JWT.Tests.Models
         public class TestDataJsonNetDecorated
         {
             [Newtonsoft.Json.JsonProperty("AT")]
-            public string AccessToken { get; set; }
+            public string City { get; set; }
         }
         
 #if NETSTANDARD2_0 || NET6_0
         public class TestDataSystemTextSerializerDecorated
         {
             [System.Text.Json.Serialization.JsonPropertyName("AT")]
-            public string AccessToken { get; set; }
+            public string City { get; set; }
         }
 #endif
         
