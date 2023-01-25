@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -480,7 +480,7 @@ namespace JWT.Tests.Builder
             encoded.Should().NotBeNullOrEmpty();
             Console.WriteLine(encoded);
             var jwtBuilder = JwtBuilder.Create()
-                .WithAlgorithm(alg)
+                                       .WithAlgorithm(alg)
                 .WithJsonSerializer(serializer)
                 .WithJsonSerializer(serializer);
 
@@ -500,23 +500,21 @@ namespace JWT.Tests.Builder
             var serializer = new SystemTextSerializer();
             var alg = new NoneAlgorithm();
 
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(alg)
-                                  .WithJsonSerializer(serializer);
-
             var expected = new TestData.TestDataSystemTextSerializerDecorated
             {
                 City = "Amsterdam",
             };
             
-            var encoded = token.Encode(expected);
+            var encoded = JwtBuilder.Create()
+                                    .WithAlgorithm(alg)
+                                    .WithJsonSerializer(serializer)
+                                   .Encode(expected);
             encoded.Should().NotBeNullOrEmpty();
 
-            token = JwtBuilder.Create()
-                              .WithAlgorithm(alg)
-                              .WithJsonSerializer(serializer);
-
-            var actual = token.Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
+            var actual = JwtBuilder.Create()
+                                   .WithAlgorithm(alg)
+                                   .WithJsonSerializer(serializer)
+                                   .Decode<TestData.TestDataSystemTextSerializerDecorated>(encoded);
             actual.Should().BeEquivalentTo(expected);
         }
         
@@ -532,19 +530,17 @@ namespace JWT.Tests.Builder
             };
 
             var encoded = JwtBuilder.Create()
-                .WithAlgorithm(alg)
-                .WithJsonSerializer(serializer)
-                .AddClaim<TestData.TestDataSystemTextSerializerDecorated>("Data", expected)
-                .Encode();
-
+                                    .WithAlgorithm(alg)
+                                    .WithJsonSerializer(serializer)
+                                    .AddClaim<TestData.TestDataSystemTextSerializerDecorated>("Data", expected)
+                                    .Encode();
             encoded.Should().NotBeNullOrEmpty();
-            Console.WriteLine(encoded);
-            var jwtBuilder = JwtBuilder.Create()
-                .WithAlgorithm(alg)
-                .WithJsonSerializer(serializer)
-                .WithJsonSerializer(serializer);
 
-            var actual = jwtBuilder.Decode<TestData.PayloadWithNestedSystemTextSerializerData>(encoded);
+            var actual = JwtBuilder.Create()
+                                   .WithAlgorithm(alg)
+                                   .WithJsonSerializer(serializer)
+                                   .WithJsonSerializer(serializer)
+                                   .Decode<TestData.PayloadWithNestedSystemTextSerializerData>(encoded);
             actual.Data.Should().BeEquivalentTo(expected);
         }
 #endif
