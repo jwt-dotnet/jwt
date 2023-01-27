@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -493,7 +493,7 @@ namespace JWT.Tests.Builder
             actual.Data.Should().BeEquivalentTo(expected);
         }
         
-#if NETSTANDARD2_0 || NET6_0
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
         [TestMethod]
         public void Encode_Decode_ToSystemTextSerializerDecoratedType_Should_UseDecoratedName_Bug456()
         {
