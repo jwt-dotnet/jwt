@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using JWT.Algorithms;
 
 using static JWT.Internal.EncodingHelper;
@@ -40,46 +39,6 @@ namespace JWT
         {
         }
 
-        public string Encode(IDictionary<string, object> extraHeaders, object[] payloads, byte[] key)
-        {
-            if (payloads is null)
-                throw new ArgumentNullException(nameof(payloads));
-
-            if (!payloads.Any() || payloads.Length != 2)
-            {
-                throw new NotSupportedException("Only two payloads are supported");
-            }
-            
-            var algorithm = _algFactory.Create(null);
-            if (algorithm is null)
-                throw new ArgumentNullException(nameof(algorithm));
-            if (!algorithm.IsAsymmetric() && key is null && algorithm is not NoneAlgorithm)
-                throw new ArgumentNullException(nameof(key));
-
-            var header = extraHeaders is null ?
-                new Dictionary<string, object>(2, StringComparer.OrdinalIgnoreCase) :
-                new Dictionary<string, object>(extraHeaders, StringComparer.OrdinalIgnoreCase);
-
-            if (!header.ContainsKey("typ"))
-            {
-                header.Add("typ", "JWT");
-            }
-            header.Add("alg", algorithm.Name);
-
-            var headerBytes = GetBytes(_jsonSerializer.Serialize(header));
-
-            var payloadBytes = GetBytes(_jsonSerializer.MergeObjects(payloads[0], payloads[1]));
-
-            var headerSegment = _urlEncoder.Encode(headerBytes);
-            var payloadSegment = _urlEncoder.Encode(payloadBytes);
-
-            var stringToSign = headerSegment + "." + payloadSegment;
-            var bytesToSign = GetBytes(stringToSign);
-
-            var signatureSegment = GetSignatureSegment(algorithm, key, bytesToSign);
-            return stringToSign + "." + signatureSegment;
-        }
-        
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
         public string Encode(IDictionary<string, object> extraHeaders, object payload, byte[] key)

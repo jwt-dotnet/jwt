@@ -278,16 +278,18 @@ namespace JWT.Builder
                 throw new ArgumentNullException(nameof(payloadType));
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
-
-            // Preserve old behaviour checking the type, is it needed?
-            if (payloadType != payload.GetType())
-            {
-                throw new NotSupportedException("Object does not match target type.");
-            }
             
             EnsureCanEncode();
 
-            return _encoder.Encode(_jwt.Header, new[] {_jwt.Payload, payload}, _secrets?[0]);
+            var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                 .ToDictionary(prop => GetPropName(prop), prop => prop.GetValue(payload, null));
+
+            foreach (var pair in dic)
+            {
+                _jwt.Payload.Add(pair.Key, pair.Value);
+            }
+
+            return Encode();
         }
 
         /// <summary>
@@ -479,6 +481,43 @@ namespace JWT.Builder
                 return false;
 
             return true;
+        }
+
+        private string GetPropName(MemberInfo prop)
+        {
+            var jsonSerializer = _jsonSerializerFactory.Create();
+
+            var customAttributes = prop.GetCustomAttributes(inherit: true);
+            foreach (var attribute in customAttributes)
+            {
+                switch (jsonSerializer)
+                {
+                    case JsonNetSerializer:
+                    {
+                        if (attribute is JsonPropertyAttribute jsonNetProperty)
+                        {
+                            return jsonNetProperty.PropertyName;
+                        }
+                        break;
+                    }
+#if MODERN_DOTNET
+                    case SystemTextSerializer:
+                    {
+                        if (attribute is JsonPropertyNameAttribute stjProperty)
+                        {
+                            return stjProperty.Name;
+                        }
+                        break;
+                    }
+#endif
+                    default:
+                    {
+                        return prop.Name;
+                    }
+                }
+            }
+
+            return prop.Name;
         }
     }
 }
