@@ -278,8 +278,7 @@ namespace JWT.Builder
 
             if (_jwt.Payload.Any())
             {
-                throw new NotSupportedException(
-                    "Having JWT as a key-value store and implicit payload is not supported.");
+                throw new NotSupportedException("Supplying both key-value pairs and implicit payload is not supported.");
             }
 
             return _encoder.Encode(_jwt.Header, payload, _secrets?[0]);
