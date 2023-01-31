@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using JWT.Algorithms;
 
-#if NETSTANDARD2_1 || NET6_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
 using System.Security.Cryptography;
 #endif
 
@@ -17,6 +17,30 @@ namespace JWT.Tests.Models
             Age = 33
         };
 
+        public class PayloadWithNestedJsonNetData
+        {
+            public TestDataJsonNetDecorated Data { get; set; }
+        }
+        
+        public class TestDataJsonNetDecorated
+        {
+            [Newtonsoft.Json.JsonProperty("AT")]
+            public string City { get; set; }
+        }
+        
+#if NETSTANDARD2_0 || NET6_0
+        public class PayloadWithNestedSystemTextSerializerData
+        {
+            public TestDataSystemTextSerializerDecorated Data { get; set; }
+        }
+        
+        public class TestDataSystemTextSerializerDecorated
+        {
+            [System.Text.Json.Serialization.JsonPropertyName("AT")]
+            public string City { get; set; }
+        }
+#endif
+        
         public const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public const string Secret2 = "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT";
 
@@ -68,7 +92,7 @@ namespace JWT.Tests.Models
         public static readonly X509Certificate2 CertificateWithPublicKeyEcdsa = new X509Certificate2(
             Convert.FromBase64String(ServerPublicKeyEcdsa));
 
-#if NETSTANDARD2_1 || NET6_0
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
         public static readonly X509Certificate2 CertificateWithPrivateKey = CreateCertificate();
 
         private static X509Certificate2 CreateCertificate()

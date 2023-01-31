@@ -1,8 +1,14 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
 using JWT.Serializers;
+using Newtonsoft.Json;
+
+#if MODERN_DOTNET
+using System.Text.Json.Serialization;
+#endif
+
 using static JWT.Internal.EncodingHelper;
 
 namespace JWT.Builder
@@ -263,27 +269,19 @@ namespace JWT.Builder
             return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets?[0]);
         }
 
-        public string Encode<T>(T payload) =>
-            Encode(typeof(T), payload);
-        
-        public string Encode(Type payloadType, object payload)
+        public string Encode(object payload)
         {
-            if (payloadType is null)
-                throw new ArgumentNullException(nameof(payloadType));
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
-            
+
             EnsureCanEncode();
 
-            var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                 .ToDictionary(prop => prop.Name, prop => prop.GetValue(payload, null));
-
-            foreach (var pair in dic)
+            if (_jwt.Payload.Any())
             {
-                _jwt.Payload.Add(pair.Key, pair.Value);
+                throw new NotSupportedException("Supplying both key-value pairs and implicit payload is not supported.");
             }
 
-            return Encode();
+            return _encoder.Encode(_jwt.Header, payload, _secrets?[0]);
         }
 
         /// <summary>
@@ -320,6 +318,14 @@ namespace JWT.Builder
             return _decoder.DecodeHeader<T>(token);
         }
 
+        public object Decode(string token, Type type)
+        {
+            EnsureCanDecode();
+
+            return _decoder.DecodeToObject(type, token, _secrets, _valParams.ValidateSignature);
+        }
+        
+        
         /// <summary>
         /// Decodes a token using the supplied dependencies.
         /// </summary>
@@ -467,6 +473,43 @@ namespace JWT.Builder
                 return false;
 
             return true;
+        }
+
+        private string GetPropName(MemberInfo prop)
+        {
+            var jsonSerializer = _jsonSerializerFactory.Create();
+
+            var customAttributes = prop.GetCustomAttributes(inherit: true);
+            foreach (var attribute in customAttributes)
+            {
+                switch (jsonSerializer)
+                {
+                    case JsonNetSerializer:
+                    {
+                        if (attribute is JsonPropertyAttribute jsonNetProperty)
+                        {
+                            return jsonNetProperty.PropertyName;
+                        }
+                        break;
+                    }
+#if MODERN_DOTNET
+                    case SystemTextSerializer:
+                    {
+                        if (attribute is JsonPropertyNameAttribute stjProperty)
+                        {
+                            return stjProperty.Name;
+                        }
+                        break;
+                    }
+#endif
+                    default:
+                    {
+                        return prop.Name;
+                    }
+                }
+            }
+
+            return prop.Name;
         }
     }
 }
