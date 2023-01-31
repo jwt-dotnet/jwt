@@ -472,17 +472,16 @@ namespace JWT.Tests.Builder
             };
 
             var encoded = JwtBuilder.Create()
-                .WithAlgorithm(alg)
-                .WithJsonSerializer(serializer)
-                .AddClaim<TestData.TestDataJsonNetDecorated>("Data", expected)
-                .Encode();
+                                     .WithAlgorithm(alg)
+                                     .WithJsonSerializer(serializer)
+                                     .AddClaim<TestData.TestDataJsonNetDecorated>("Data", expected)
+                                     .Encode();
 
             encoded.Should().NotBeNullOrEmpty();
             Console.WriteLine(encoded);
             var jwtBuilder = JwtBuilder.Create()
                                        .WithAlgorithm(alg)
-                .WithJsonSerializer(serializer)
-                .WithJsonSerializer(serializer);
+                                       .WithJsonSerializer(serializer);
 
             var payloadType = new TestData.PayloadWithNestedJsonNetData
             {
