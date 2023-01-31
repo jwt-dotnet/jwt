@@ -236,11 +236,11 @@ namespace JWT.Tests.Builder
 
             Action action = () =>
                 JwtBuilder.Create()
-                           .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                           .WithSecret(key)
-                           .AddHeader("version", 1)
-                           .AddClaim("ExtraClaim", "ValueClaim")
-                           .Encode(TestData.Customer);
+                          .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                          .WithSecret(key)
+                          .AddHeader("version", 1)
+                          .AddClaim("ExtraClaim", "ValueClaim")
+                          .Encode(TestData.Customer);
 
             action.Should()
                   .Throw<NotSupportedException>("because using both Encode(payload) and AddClaim is not supported");
@@ -259,11 +259,11 @@ namespace JWT.Tests.Builder
                 };
                 
                 JwtBuilder.Create()
-                           .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                           .WithSecret(key)
-                           .AddHeader("version", 1)
-                           .AddClaims(claims)
-                           .Encode(TestData.Customer);
+                          .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                          .WithSecret(key)
+                          .AddHeader("version", 1)
+                          .AddClaims(claims)
+                          .Encode(TestData.Customer);
             };
 
             action.Should()
