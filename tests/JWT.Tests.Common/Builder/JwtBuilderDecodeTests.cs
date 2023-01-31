@@ -472,10 +472,10 @@ namespace JWT.Tests.Builder
             };
 
             var encoded = JwtBuilder.Create()
-                                     .WithAlgorithm(alg)
-                                     .WithJsonSerializer(serializer)
-                                     .AddClaim<TestData.TestDataJsonNetDecorated>("Data", expected)
-                                     .Encode();
+                                    .WithAlgorithm(alg)
+                                    .WithJsonSerializer(serializer)
+                                    .AddClaim<TestData.TestDataJsonNetDecorated>("Data", expected)
+                                    .Encode();
 
             encoded.Should().NotBeNullOrEmpty();
             Console.WriteLine(encoded);
@@ -507,7 +507,7 @@ namespace JWT.Tests.Builder
             var encoded = JwtBuilder.Create()
                                     .WithAlgorithm(alg)
                                     .WithJsonSerializer(serializer)
-                                   .Encode(expected);
+                                    .Encode(expected);
             encoded.Should().NotBeNullOrEmpty();
 
             var actual = JwtBuilder.Create()
