@@ -230,78 +230,46 @@ namespace JWT.Tests.Builder
         }
         
         [TestMethod]
-        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims()
-        {
-            const string key = TestData.Secret;
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                  .WithSecret(key)
-                                  .AddHeader("version", 1)
-                                  .AddClaim("ExtraClaim", "ValueClaim")
-                                  .Encode(TestData.Customer);
-
-            token.Should()
-                 .Be(TestData.TokenWithCustomTypeHeader3AndClaim, "because the same data encoded with the same key must result in the same token");
-        }
-        
-        [TestMethod]
-        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims_With_Nested()
-        {
-            const string key = TestData.Secret;
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                  .WithSecret(key)
-                                  .AddHeader("version", 1)
-                                  .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
-                                  .Encode(TestData.Customer);
-
-            token.Should()
-                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
-        }
-        
-        [TestMethod]
-        public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload_And_Claims_With_Nested_TypesMatch()
-        {
-            const string key = TestData.Secret;
-
-            var token = JwtBuilder.Create()
-                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                  .WithSecret(key)
-                                  .AddHeader("version", 1)
-                                  .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
-                                  .Encode(typeof(Customer), TestData.Customer);
-
-            token.Should()
-                 .Be(TestData.TokenWithCustomTypeHeader3AndClaimNested, "because the same data encoded with the same key must result in the same token");
-        }
-        
-        [TestMethod]
-        public void Encode_Should_Return_ThrowTargetException_Encode_TypesMatch()
+        public void Encode_Should_Throw_NotSupportedException_When_Using_EncodePayload_WithAddClaim()
         {
             const string key = TestData.Secret;
 
             Action action = () =>
                 JwtBuilder.Create()
-                          .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                          .WithSecret(key)
-                          .AddHeader("version", 1)
-                          .AddClaim("ExtraClaim", new { NestedProperty1 = "Foo", NestedProperty2 = 3 })
-                          .Encode(typeof(string), TestData.Customer);
+                    .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                    .WithSecret(key)
+                    .AddHeader("version", 1)
+                    .AddClaim("ExtraClaim", "ValueClaim")
+                    .Encode(TestData.Customer);
 
-            if (IsRunningOnMono())
-            {
-                action.Should()
-                      .Throw<TargetInvocationException>("Exception has been thrown by the target of an invocation.");
-            }
-            else
-            {
-                action.Should()
-                      .Throw<TargetException>("Object does not match target type.");
-            }
+            action.Should()
+                .Throw<NotSupportedException>("because using both Encode(payload) and AddClaim is not supported");
         }
+        
+        [TestMethod]
+        public void Encode_Should_Throw_NotSupportedException_When_Using_EncodePayload_WithAddClaims()
+        {
+            const string key = TestData.Secret;
 
+            Action action = () =>
+            {
+                var claims = new Dictionary<string, object>
+                {
+                    {"Key" , "Value"}
+                };
+                
+                JwtBuilder.Create()
+                    .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                    .WithSecret(key)
+                    .AddHeader("version", 1)
+                    .AddClaims(claims)
+                    .Encode(TestData.Customer);
+            };
+
+            action.Should()
+                .Throw<NotSupportedException>("because using both Encode(payload) and AddClaims is not supported");
+        }
+        
         /// <summary>
         /// Copied from: https://stackoverflow.com/a/7077620/2890855
         /// </summary>

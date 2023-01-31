@@ -269,27 +269,20 @@ namespace JWT.Builder
             return _encoder.Encode(_jwt.Header, _jwt.Payload, _secrets?[0]);
         }
 
-        public string Encode<T>(T payload) =>
-            Encode(typeof(T), payload);
-        
-        public string Encode(Type payloadType, object payload)
+        public string Encode(object payload)
         {
-            if (payloadType is null)
-                throw new ArgumentNullException(nameof(payloadType));
             if (payload is null)
                 throw new ArgumentNullException(nameof(payload));
-            
+
             EnsureCanEncode();
 
-            var dic = payloadType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                                 .ToDictionary(prop => GetPropName(prop), prop => prop.GetValue(payload, null));
-
-            foreach (var pair in dic)
+            if (_jwt.Payload.Any())
             {
-                _jwt.Payload.Add(pair.Key, pair.Value);
+                throw new NotSupportedException(
+                    "Having JWT as a key-value store and implicit payload is not supported.");
             }
 
-            return Encode();
+            return _encoder.Encode(_jwt.Header, payload, _secrets?[0]);
         }
 
         /// <summary>
