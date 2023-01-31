@@ -236,14 +236,14 @@ namespace JWT.Tests.Builder
 
             Action action = () =>
                 JwtBuilder.Create()
-                    .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                    .WithSecret(key)
-                    .AddHeader("version", 1)
-                    .AddClaim("ExtraClaim", "ValueClaim")
-                    .Encode(TestData.Customer);
+                           .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                           .WithSecret(key)
+                           .AddHeader("version", 1)
+                           .AddClaim("ExtraClaim", "ValueClaim")
+                           .Encode(TestData.Customer);
 
             action.Should()
-                .Throw<NotSupportedException>("because using both Encode(payload) and AddClaim is not supported");
+                  .Throw<NotSupportedException>("because using both Encode(payload) and AddClaim is not supported");
         }
         
         [TestMethod]
@@ -255,19 +255,19 @@ namespace JWT.Tests.Builder
             {
                 var claims = new Dictionary<string, object>
                 {
-                    {"Key" , "Value"}
+                    { "key" , "value" }
                 };
                 
                 JwtBuilder.Create()
-                    .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                    .WithSecret(key)
-                    .AddHeader("version", 1)
-                    .AddClaims(claims)
-                    .Encode(TestData.Customer);
+                           .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                           .WithSecret(key)
+                           .AddHeader("version", 1)
+                           .AddClaims(claims)
+                           .Encode(TestData.Customer);
             };
 
             action.Should()
-                .Throw<NotSupportedException>("because using both Encode(payload) and AddClaims is not supported");
+                  .Throw<NotSupportedException>("because using both Encode(payload) and AddClaims() is not supported");
         }
         
         /// <summary>
