@@ -2,6 +2,10 @@
 
 - TBD
 
+# 10.0.2
+
+- Disallowed Encode(payload) with AddClaim(s)
+
 # 10.0.1
 
 - Fixed deserializing JWT header
