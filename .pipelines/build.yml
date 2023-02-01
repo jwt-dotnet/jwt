@@ -10,6 +10,9 @@ pool:
   vmImage: windows-latest
 
 parameters:
+- name: solutionName
+  type: string
+  default: 'JWT.sln'
 - name: buildConfiguration
   type: string
   default: 'Release'
@@ -23,15 +26,10 @@ parameters:
   - '6.x'
   - '7.x'
 
-variables:
-  solution: 'JWT.sln'
- 
-
 steps:
-
 - ${{ each targetFramework in parameters.targetFrameworks }}:
   - task: UseDotNet@2
-    displayName: ${{ format(''Install .NET {0}', targetFramework) }}
+    displayName: ${{ format('Install .NET {0}', targetFramework) }}
     inputs:
       packageType: sdk
       version: ${{ targetFramework }}
@@ -43,31 +41,31 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+    command: restore
+    projects: ${{ parameters.solutionName }}
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet packages for .NET Framework'
   inputs:
-    command: 'restore'
-    restoreSolution: $(solution)
+    command: restore
+    restoreSolution: ${{ parameters.solutionName }}
 
 - task: DotNetCoreCLI@2
   displayName: 'Build solution'
   inputs:
-    command: 'build'
-    projects: '$(solution)'
+    command: build
+    projects: ${{ parameters.solutionName }}
     arguments: '-c ${{ parameters.buildConfiguration }} --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
   inputs:
-    command: 'test'
+    command: test
     projects: 'tests/**/*.csproj'
     arguments: ' -c ${{ parameters.buildConfiguration }} --no-build --no-restore'
-    testRunner: 'VSTest'
+    testRunner: VSTest
+    testResultsFormat: VSTest
     testResultsFiles: '**/*.trx'
-    testResultsFormat: 'VSTest'
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
