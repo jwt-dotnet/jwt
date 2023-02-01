@@ -81,9 +81,9 @@ steps:
   displayName: 'Copy changelog'
   inputs:
     sourceFolder: $(Build.SourcesDirectory)
+    targetFolder: $(Build.ArtifactStagingDirectory)
     contents: |
       CHANGELOG.md
-    targetFolder: $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish build artifacts'
