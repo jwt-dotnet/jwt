@@ -78,7 +78,7 @@ steps:
     nobuild: true
 
 - task: task: CopyFiles@2
-  displayName: 'Copy changelog'\
+  displayName: 'Copy changelog'
   inputs:
     sourceFolder: $(Build.SourcesDirectory)
     contents: |
