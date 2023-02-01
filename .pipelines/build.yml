@@ -9,32 +9,33 @@ trigger:
 pool:
   vmImage: windows-latest
 
+parameters:
+- name: buildConfiguration
+  type: string
+  default: 'Release'
+- name: buildPlatform
+  type: string
+  default: 'Any CPU'
+- name: targetFrameworks
+  type: object
+  default:
+  - '3.1.x'
+  - '6.x'
+  - '7.x'
+
 variables:
   solution: 'JWT.sln'
-  buildConfiguration: 'Release'
-  buildPlatform: 'Any CPU'
+ 
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET Core 3.1.x'
-  inputs:
-    packageType: sdk
-    version: '3.1.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
-- task: UseDotNet@2
-  displayName: 'Install .NET 6.x'
-  inputs:
-    packageType: sdk
-    version: '6.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
-
-- task: UseDotNet@2
-  displayName: 'Install .NET 7.x'
-  inputs:
-    packageType: sdk
-    version: '7.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
+- ${{ each targetFramework in parameters.targetFrameworks }}:
+  - task: UseDotNet@2
+    displayName: ${{ format(''Install .NET {0}', targetFramework) }}
+    inputs:
+      packageType: sdk
+      version: ${{ targetFramework }}
+      installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: NuGetToolInstaller@1
   displayName: 'Install NuGet'
@@ -56,14 +57,14 @@ steps:
   inputs:
     command: 'build'
     projects: '$(solution)'
-    arguments: '-c $(buildConfiguration) --no-restore'
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
   inputs:
     command: 'test'
     projects: 'tests/**/*.csproj'
-    arguments: ' -c $(buildConfiguration) --no-build --no-restore'
+    arguments: ' -c ${{ parameters.buildConfiguration }} --no-build --no-restore'
     testRunner: 'VSTest'
     testResultsFiles: '**/*.trx'
     testResultsFormat: 'VSTest'
@@ -74,7 +75,7 @@ steps:
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'
-    configuration: $(BuildConfiguration)
+    configuration: ${{ parameters.buildConfiguration }}
     nobuild: true
 
 - task: CopyFiles@2
