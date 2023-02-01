@@ -9,32 +9,31 @@ trigger:
 pool:
   vmImage: windows-latest
 
-variables:
-  solution: 'JWT.sln'
-  buildConfiguration: 'Release'
-  buildPlatform: 'Any CPU'
+parameters:
+- name: solutionName
+  type: string
+  default: 'JWT.sln'
+- name: buildConfiguration
+  type: string
+  default: 'Release'
+- name: buildPlatform
+  type: string
+  default: 'Any CPU'
+- name: targetFrameworks
+  type: object
+  default:
+  - '3.1.x'
+  - '6.x'
+  - '7.x'
 
 steps:
-- task: UseDotNet@2
-  displayName: 'Install .NET Core 3.1.x'
-  inputs:
-    packageType: sdk
-    version: '3.1.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
-
-- task: UseDotNet@2
-  displayName: 'Install .NET 6.x'
-  inputs:
-    packageType: sdk
-    version: '6.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
-
-- task: UseDotNet@2
-  displayName: 'Install .NET 7.x'
-  inputs:
-    packageType: sdk
-    version: '7.x'
-    installationPath: '$(Agent.ToolsDirectory)/dotnet'
+- ${{ each targetFramework in parameters.targetFrameworks }}:
+  - task: UseDotNet@2
+    displayName: ${{ format('Install .NET {0}', targetFramework) }}
+    inputs:
+      packageType: sdk
+      version: ${{ targetFramework }}
+      installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - task: NuGetToolInstaller@1
   displayName: 'Install NuGet'
@@ -42,31 +41,31 @@ steps:
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
   inputs:
-    command: 'restore'
-    projects: '**/*.csproj'
+    command: restore
+    projects: ${{ parameters.solutionName }}
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet packages for .NET Framework'
   inputs:
-    command: 'restore'
-    restoreSolution: $(solution)
+    command: restore
+    restoreSolution: ${{ parameters.solutionName }}
 
 - task: DotNetCoreCLI@2
   displayName: 'Build solution'
   inputs:
-    command: 'build'
-    projects: '$(solution)'
-    arguments: '-c $(buildConfiguration) --no-restore'
+    command: build
+    projects: ${{ parameters.solutionName }}
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
   inputs:
-    command: 'test'
+    command: test
     projects: 'tests/**/*.csproj'
-    arguments: ' -c $(buildConfiguration) --no-build --no-restore'
-    testRunner: 'VSTest'
+    arguments: ' -c ${{ parameters.buildConfiguration }} --no-build --no-restore'
+    testRunner: VSTest
+    testResultsFormat: VSTest
     testResultsFiles: '**/*.trx'
-    testResultsFormat: 'VSTest'
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
@@ -74,7 +73,7 @@ steps:
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'
-    configuration: $(BuildConfiguration)
+    configuration: ${{ parameters.buildConfiguration }}
     nobuild: true
 
 - task: CopyFiles@2
