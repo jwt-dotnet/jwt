@@ -14,6 +14,7 @@
 
 # 10.0.0
 
+- **Breaking:** System.Text.Json is now the default serializer
 - Made NoneAlgorithm not requiring any keys as it is not signed
 - Added option to select default serializer, Newtonsoft.Json or System.Text.Json (#433)
 - Renamed default IdentityFactory in Jwt.Extensions.AspNetCore, opened up for inheritance, extension (#428)
