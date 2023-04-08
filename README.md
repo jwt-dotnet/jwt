@@ -318,7 +318,7 @@ public void ConfigureServices(IServiceCollection services)
   services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(algorithm));
 
   // or use the generic version AddJwt<TFactory() to use a custom implementation of IAlgorithmFactory
-  .AddJwt<MyCustomAlgorithmFactory(options => ...);
+  .AddJwt<MyCustomAlgorithmFactory>(options => ...);
 }
 
 public void Configure(IApplicationBuilder app)
