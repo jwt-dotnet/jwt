@@ -20,11 +20,14 @@
     <Authors>Alexander Batishchev, John Sheehan, Michael Lehenbauer</Authors>
     <PackageTags>jwt;json;authorization</PackageTags>
     <PackageLicenseExpression>CC0-1.0</PackageLicenseExpression>
-    <Version>10.0.2</Version>
-    <FileVersion>10.0.0.0</FileVersion>
-    <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>10.0.3</Version>
+    <FileVersion>10.0.0.0</FileVersion>
+    <AssemblyVersion>10.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
