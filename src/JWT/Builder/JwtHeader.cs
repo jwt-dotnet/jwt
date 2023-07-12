@@ -11,6 +11,13 @@ namespace JWT.Builder
     /// </summary>
     public class JwtHeader
     {
+#if MODERN_DOTNET
+        [JsonConstructor]
+        public JwtHeader()
+        {
+        }
+#endif        
+
         [JsonProperty("typ")]
 #if MODERN_DOTNET
         [JsonPropertyName("typ")]
@@ -52,10 +59,5 @@ namespace JWT.Builder
         [JsonPropertyName("x5t")]
 #endif
         public string X5t { get; set; }
-
-#if MODERN_DOTNET
-        [System.Text.Json.Serialization.JsonConstructor]
-#endif
-        public JwtHeader() { }
     }
 }
