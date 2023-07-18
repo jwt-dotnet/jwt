@@ -21,7 +21,7 @@ namespace JWT.Tests
             var expected = decoder.DecodeHeader<JwtHeader>(token);
             expected.Should().NotBeNull();
 
-            var json = serializer.Serialize(header);
+            var json = serializer.Serialize(expected);
             var actual = serializer.Deserialize<JwtHeader>(json);
             
             actual.Should()
