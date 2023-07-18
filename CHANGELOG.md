@@ -2,6 +2,10 @@
 
 - TBD
 
+# 10.0.3
+
+- Added default ctor to JwtHeader and decorated it with `[JsonConstructor]`
+
 # 10.0.2
 
 - Disallowed Encode(payload) with AddClaim(s)

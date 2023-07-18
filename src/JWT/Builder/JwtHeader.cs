@@ -11,6 +11,12 @@ namespace JWT.Builder
     /// </summary>
     public class JwtHeader
     {
+#if MODERN_DOTNET
+        [System.Text.Json.Serialization.JsonConstructor]
+        public JwtHeader()
+        {
+        }
+#endif        
         [JsonProperty("typ")]
 #if MODERN_DOTNET
         [JsonPropertyName("typ")]

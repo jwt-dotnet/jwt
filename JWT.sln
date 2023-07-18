@@ -55,7 +55,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C86A941F-F65
 		src\Directory.Build.targets = src\Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWT.Tests.Net70", "tests\JWT.Tests.Net70\JWT.Tests.Net70.csproj", "{D7F24AC9-D178-4BAB-BF93-4BAD8028416D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net70", "tests\JWT.Tests.Net70\JWT.Tests.Net70.csproj", "{D7F24AC9-D178-4BAB-BF93-4BAD8028416D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
