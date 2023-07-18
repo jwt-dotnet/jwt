@@ -270,13 +270,6 @@ namespace JWT.Tests.Builder
                   .Throw<NotSupportedException>("because using both Encode(payload) and AddClaims() is not supported");
         }
         
-        /// <summary>
-        /// Copied from: https://stackoverflow.com/a/7077620/2890855
-        /// </summary>
-        /// <returns></returns>
-        private static bool IsRunningOnMono() => 
-            Type.GetType("Mono.Runtime") is not null;
-        
         [TestMethod]
         public void Encode_Should_Return_Token_With_Custom_Extra_Headers_Full_Payload2()
         {
