@@ -21,10 +21,10 @@ namespace JWT.Tests
             var expected = decoder.DecodeHeader<JwtHeader>(token);
             expected.Should().NotBeNull();
 
-            var json = serializer.Serialize(expected);
-            var actual = serializer.Deserialize<JwtHeader>(json);
+            var serializedHeader = serializer.Serialize(expected);
+            var actual = serializer.Deserialize<JwtHeader>(serializedHeader);
             
-            actual.Should().Be(expected);
+            actual.Should().BeEquivalentTo(expected);
         }
     }
 }
