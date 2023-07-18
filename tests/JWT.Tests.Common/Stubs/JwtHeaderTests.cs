@@ -3,18 +3,14 @@ using JWT.Builder;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace JWT.Tests.Stubs
 {
     [TestClass]
     public class JwtHeaderTests
     {
-        public void JwtHeader_Should_Create()
-        {
-            var header = new JwtHeader();
-            header.Should().NotBeNull();
-        }
         [TestMethod]
-        public void JwtHeader_Should_Serialize()
+        public void JwtHeader_Should_Be_Serializable()
         {
             const string token = TestData.TokenByAsymmetricAlgorithm;
 
@@ -22,11 +18,14 @@ namespace JWT.Tests.Stubs
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, urlEncoder);
 
-            var header = decoder.DecodeHeader<JwtHeader>(token);
-            header.Should().NotBeNull();
+            var expected = decoder.DecodeHeader<JwtHeader>(token);
+            expected.Should().NotBeNull();
 
-            var serializedHeader = serializer.Serialize(header);
-            header.Should().Equals(serializer.Deserialize<JwtHeader>(serializedHeader)));
+            var json = serializer.Serialize(header);
+            var actual = serializer.Deserialize<JwtHeader>(json))
+            
+            actual.Should()
+                  .Be(expected);
         }
     }
 }
