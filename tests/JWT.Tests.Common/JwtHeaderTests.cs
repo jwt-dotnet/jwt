@@ -24,8 +24,7 @@ namespace JWT.Tests
             var json = serializer.Serialize(expected);
             var actual = serializer.Deserialize<JwtHeader>(json);
             
-            actual.Should()
-                  .Be(expected);
+            actual.Should().Be(expected);
         }
     }
 }
