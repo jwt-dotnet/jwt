@@ -22,7 +22,7 @@ namespace JWT.Tests
             expected.Should().NotBeNull();
 
             var json = serializer.Serialize(header);
-            var actual = serializer.Deserialize<JwtHeader>(json))
+            var actual = serializer.Deserialize<JwtHeader>(json);
             
             actual.Should()
                   .Be(expected);
