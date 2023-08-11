@@ -1,13 +1,9 @@
-using System;
 using System.Security.Cryptography;
 
 namespace JWT.Algorithms
 {
-    [Obsolete(ObsoleteMessage, error: false)]
     public abstract class HMACSHAAlgorithm : IJwtAlgorithm
     {
-        internal const string ObsoleteMessage = "HMAC SHA based algorithms are not secure to protect modern web applications. Consider switching to RSASSA or ECDSA.";
-
         /// <inheritdoc />
         public abstract string Name { get; }
 

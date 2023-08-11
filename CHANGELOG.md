@@ -1,6 +1,8 @@
 # Unreleased
 
-- TBD
+# 10.1.0
+
+- Unmarked HMAC SHA based algorithms as insecure and obsolete (was done in 9.0.0-beta4)
 
 # 10.0.3
 
