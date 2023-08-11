@@ -3,7 +3,6 @@
 namespace JWT.Algorithms
 {
     /// <inheritdoc />
-    [Obsolete(HMACSHAAlgorithm.ObsoleteMessage, error: false)]
     public class HMACSHAAlgorithmFactory : JwtAlgorithmFactory
     {
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
