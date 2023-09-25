@@ -11,7 +11,7 @@ namespace JWT
         /// Use <see cref="Default"/> if you'd like to set all properties set to <see langword="true" />
         /// or use <see cref="None"/> if you'd like to set all properties set to <see langword="false" />.
         /// </remarks>>
-        private ValidationParameters()
+        public ValidationParameters()
         {
         }
 
