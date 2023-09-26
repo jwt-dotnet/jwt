@@ -1,5 +1,9 @@
 # Unreleased
 
+# 10.1.1
+
+- Updated ValidationParameters to allow instantiation; all validation mechanisms default to true but can be modified
+
 # 10.1.0
 
 - Unmarked HMAC SHA based algorithms as insecure and obsolete (was done in 9.0.0-beta4)

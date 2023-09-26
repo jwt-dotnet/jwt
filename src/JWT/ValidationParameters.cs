@@ -8,6 +8,7 @@ namespace JWT
     public class ValidationParameters
     {
         /// <remarks>
+        /// By default, all peroperties are set to <see langword="true" /> to ensure validation
         /// Use <see cref="Default"/> if you'd like to set all properties set to <see langword="true" />
         /// or use <see cref="None"/> if you'd like to set all properties set to <see langword="false" />.
         /// </remarks>>
@@ -18,33 +19,27 @@ namespace JWT
         /// <summary>
         /// Gets or sets whether to validate the validity of the token's signature.
         /// </summary>
-        public bool ValidateSignature { get; set; }
+        public bool ValidateSignature { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether to validate the validity of the token's expiration time.
         /// </summary>
-        public bool ValidateExpirationTime { get; set; }
+        public bool ValidateExpirationTime { get; set; } = true;
 
         /// <summary>
         /// Gets or sets whether to validate the validity of the token's issued time.
         /// </summary>
-        public bool ValidateIssuedTime { get; set; }
+        public bool ValidateIssuedTime { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the time margin in seconds for exp and nbf during token validation.
         /// </summary>
-        public int TimeMargin { get; set; }
+        public int TimeMargin { get; set; } = 0;
 
         /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="true" />.
         /// </summary>
-        public static ValidationParameters Default => new ValidationParameters
-        {
-            ValidateSignature = true,
-            ValidateExpirationTime = true,
-            ValidateIssuedTime = true,
-            TimeMargin = 0
-        };
+        public static ValidationParameters Default => new ValidationParameters();
 
         /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="false" />.

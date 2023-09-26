@@ -378,7 +378,73 @@ namespace JWT.Tests
                    .BeTrue("because token should be valid");
 
         }
-        
+
+        [TestMethod]
+        public void ValidationParameters_Ctor_Should_Set_All_Validation_To_True()
+        {
+            var validationParameters = new ValidationParameters();
+
+            validationParameters.ValidateSignature.Should()
+                .BeTrue("because ValidationParameters constructor should set ValidateSignature to true");
+            validationParameters.ValidateExpirationTime.Should()
+                .BeTrue("because ValidationParameters constructor should set ValidateExpirationTime to true");
+            validationParameters.ValidateIssuedTime.Should()
+                .BeTrue("because ValidationParameters constructor should set ValidateIssuedTime to true");
+            validationParameters.TimeMargin.Should()
+                .Be(0, "because ValidationParameters constructor should set TimeMargin to 0");
+        }
+
+        [TestMethod]
+        public void ValidationParameters_Ctor_Should_Allow_Default_Values_To_Be_Overriden()
+        {
+            var validationParameters = new ValidationParameters
+            {
+                ValidateSignature = false,
+                ValidateExpirationTime = false,
+                ValidateIssuedTime = false,
+                TimeMargin = 300
+            };
+
+            validationParameters.ValidateSignature.Should()
+                .BeFalse("because ValidationParameters constructor should allow ValidateSignature to be overridden");
+            validationParameters.ValidateExpirationTime.Should()
+                .BeFalse("because ValidationParameters constructor should allow ValidateExpirationTime to be overridden");
+            validationParameters.ValidateIssuedTime.Should()
+                .BeFalse("because ValidationParameters constructor should allow ValidateIssuedTime to be overridden");
+            validationParameters.TimeMargin.Should()
+                .Be(300, "because ValidationParameters constructor should allow TimeMargin to be overridden");
+        }
+
+        [TestMethod]
+        public void ValidationParameters_Default_Should_Set_All_Validation_To_True()
+        {
+            var validationParameters = ValidationParameters.Default;
+
+            validationParameters.ValidateSignature.Should()
+                .BeTrue("because ValidationParameters.Default should set ValidateSignature to true");
+            validationParameters.ValidateExpirationTime.Should()
+                .BeTrue("because ValidationParameters.Default should set ValidateExpirationTime to true");
+            validationParameters.ValidateIssuedTime.Should()
+                .BeTrue("because ValidationParameters.Default should set ValidateIssuedTime to true");
+            validationParameters.TimeMargin.Should()
+                .Be(0, "because ValidationParameters.Default should set TimeMargin to 0");
+        }
+
+        [TestMethod]
+        public void ValidationParameters_None_Should_Set_All_Validation_To_False()
+        {
+            var validationParameters = ValidationParameters.None;
+
+            validationParameters.ValidateSignature.Should()
+                .BeFalse("because ValidationParameters.None should set ValidateSignature to false");
+            validationParameters.ValidateExpirationTime.Should()
+                .BeFalse("because ValidationParameters.DefaNoneult should set ValidateExpirationTime to false");
+            validationParameters.ValidateIssuedTime.Should()
+                .BeFalse("because ValidationParameters.None should set ValidateIssuedTime to false");
+            validationParameters.TimeMargin.Should()
+                .Be(0, "because ValidationParameters.Default should set TimeMargin to 0");
+        }
+
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }
