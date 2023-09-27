@@ -2,7 +2,7 @@
 
 # 10.1.1
 
-- Updated ValidationParameters to allow instantiation; all validation mechanisms default to true but can be modified
+- Made ctor of ValidationParameters public, set default values for boolean properties to true
 
 # 10.1.0
 
