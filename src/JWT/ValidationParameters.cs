@@ -34,7 +34,7 @@ namespace JWT
         /// <summary>
         /// Gets or sets the time margin in seconds for exp and nbf during token validation.
         /// </summary>
-        public int TimeMargin { get; set; } = 0;
+        public int TimeMargin { get; set; }
 
         /// <summary>
         /// Returns a <see cref="ValidationParameters" /> with all properties set to <see langword="true" />.
