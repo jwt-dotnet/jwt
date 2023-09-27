@@ -1,5 +1,9 @@
 # Unreleased
 
+# 10.1.1
+
+- Made ctor of ValidationParameters public, set default values for boolean properties to true
+
 # 10.1.0
 
 - Unmarked HMAC SHA based algorithms as insecure and obsolete (was done in 9.0.0-beta4)
