@@ -8,7 +8,7 @@ namespace JWT
     public class ValidationParameters
     {
         /// <remarks>
-        /// By default, all peroperties are set to <see langword="true" /> to ensure validation
+        /// By default, all peroperties are set to <c>true</c> to ensure validation is enabled.
         /// Use <see cref="Default"/> if you'd like to set all properties set to <see langword="true" />
         /// or use <see cref="None"/> if you'd like to set all properties set to <see langword="false" />.
         /// </remarks>>
