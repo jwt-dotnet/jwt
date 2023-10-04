@@ -76,8 +76,9 @@ IJwtAlgorithm algorithm = new RS256Algorithm(certificate);
 IJsonSerializer serializer = new JsonNetSerializer();
 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
 IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
+const string key = null; // not needed if algorithm is asymmetric
 
-var token = encoder.Encode(payload);
+var token = encoder.Encode(payload, key);
 Console.WriteLine(token);
 ```
 
