@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
-    <PackageDescription>ASP.NET Core intergration package for Jwt.Net</PackageDescription>
+    <PackageDescription>ASP.NET Core integration package for Jwt.Net</PackageDescription>
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
