@@ -348,9 +348,9 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtEncoder)}. Call {nameof(WithUrlEncoder)}.");
 
-            if (_algorithm is object)
+            if (_algorithm is not null)
                 _encoder = new JwtEncoder(_algorithm, jsonSerializer, _urlEncoder);
-            else if (_algFactory is object)
+            else if (_algFactory is not null)
                 _encoder = new JwtEncoder(_algFactory, jsonSerializer, _urlEncoder);
         }
 
@@ -364,9 +364,9 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 throw new InvalidOperationException($"Can't instantiate {nameof(JwtDecoder)}. Call {nameof(WithUrlEncoder)}.");
 
-            if (_algorithm is object)
+            if (_algorithm is not null)
                 _decoder = new JwtDecoder(jsonSerializer, _validator, _urlEncoder, _algorithm);
-            else if (_algFactory is object)
+            else if (_algFactory is not null)
                 _decoder = new JwtDecoder(jsonSerializer, _validator, _urlEncoder, _algFactory);
             else if (!_valParams.ValidateSignature)
                 _decoder = new JwtDecoder(jsonSerializer, _urlEncoder);
@@ -385,7 +385,7 @@ namespace JWT.Builder
 
         private void TryCreateValidator()
         {
-            if (_validator is object)
+            if (_validator is not null)
                 return;
 
             var jsonSerializer = _jsonSerializerFactory.Create();
@@ -445,10 +445,10 @@ namespace JWT.Builder
         /// Checks whether enough dependencies were supplied to encode a new token.
         /// </summary>
         private bool CanEncode() =>
-            (_algorithm is object || _algFactory is object) &&
-            _jsonSerializerFactory is object &&
-            _urlEncoder is object &&
-            _jwt.Payload is object;
+            (_algorithm is not null || _algFactory is not null) &&
+            _jsonSerializerFactory is not null &&
+            _urlEncoder is not null &&
+            _jwt.Payload is not null;
 
         /// <summary>
         /// Checks whether enough dependencies were supplied to decode a token.
@@ -459,7 +459,7 @@ namespace JWT.Builder
                 return false;
 
             if (_valParams.ValidateSignature)
-                return _validator is object && (_algorithm is object || _algFactory is object);
+                return _validator is not null && (_algorithm is not null || _algFactory is not null);
 
             return true;
         }
@@ -469,10 +469,7 @@ namespace JWT.Builder
             if (_urlEncoder is null)
                 return false;
 
-            if (_jsonSerializerFactory is null)
-                return false;
-
-            return true;
+            return _jsonSerializerFactory is not null;
         }
 
         private string GetPropName(MemberInfo prop)
