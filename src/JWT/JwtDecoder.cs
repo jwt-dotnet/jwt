@@ -288,7 +288,18 @@ namespace JWT
             if (keys.Length == 0)
                 return false;
 
-            return Array.TrueForAll(keys, key => key.Length > 0);
+            return Array.TrueForAll(keys, key => KeyHasValue(key));
+        }
+
+        private static bool KeyHasValue(byte[] key)
+        {
+            if (key is null)
+                return false;
+
+            if (key.Length == 0)
+                return false;
+
+            return true;
         }
 
         private void ValidateNoneAlgorithm(JwtParts jwt)
