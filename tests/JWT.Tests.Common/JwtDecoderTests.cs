@@ -341,6 +341,40 @@ namespace JWT.Tests
         }
 
         [TestMethod]
+        public void DecodeToObject_Should_Throw_Exception_On_Key_Is_Null()
+        {
+            const string token = TestData.Token;
+            var key = (byte[])null;
+
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
+
+            Action action = () => decoder.DecodeToObject<Customer>(token, key, verify: true);
+
+            action.Should()
+                  .Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
+        public void DecodeToObject_Should_Throw_Exception_On_Multiple_Keys_Containing_Null()
+        {
+            const string token = TestData.Token;
+            var keys = new byte[][] { (byte[])null };
+
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
+
+            Action action = () => decoder.DecodeToObject<Customer>(token, keys, verify: true);
+
+            action.Should()
+                  .Throw<ArgumentOutOfRangeException>();
+        }
+
+        [TestMethod]
         public void DecodeToObject_Should_Throw_Exception_On_Invalid_Expiration_Claim()
         {
             const string key = TestData.Secret;
