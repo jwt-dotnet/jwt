@@ -73,7 +73,7 @@ namespace JWT
         public void Validate(string decodedPayload, string signature, params string[] decodedSignatures)
         {
             var ex = GetValidationException(decodedPayload, signature, decodedSignatures);
-            if (ex is object)
+            if (ex is not null)
                 throw ex;
         }
 
@@ -83,7 +83,7 @@ namespace JWT
         public void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
         {
             var ex = GetValidationException(alg, decodedPayload, bytesToSign, decodedSignature);
-            if (ex is object)
+            if (ex is not null)
                 throw ex;
         }
 

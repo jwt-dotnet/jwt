@@ -73,15 +73,15 @@ namespace JWT.Algorithms
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
         private IJwtAlgorithm CreateES256Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new ES256Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new ES256Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new ES256Algorithm(_publicKey);
             }
@@ -91,15 +91,15 @@ namespace JWT.Algorithms
 
         private IJwtAlgorithm CreateES384Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new ES384Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new ES384Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new ES384Algorithm(_publicKey);
             }
@@ -109,15 +109,15 @@ namespace JWT.Algorithms
 
         private IJwtAlgorithm CreateES512Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new ES512Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new ES512Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new ES512Algorithm(_publicKey);
             }
