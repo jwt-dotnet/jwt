@@ -34,7 +34,7 @@ namespace JWT
         /// <returns>The generated JWT</returns>
         /// <exception cref="ArgumentNullException" />
         public static string Encode(this IJwtEncoder encoder, object payload, string key) =>
-            encoder.Encode(null, payload, key is object ? GetBytes(key) : null);
+            encoder.Encode(null, payload, key is not null ? GetBytes(key) : null);
 
         /// <summary>
         /// Creates a JWT given a payload, the signing key, and the algorithm to use.

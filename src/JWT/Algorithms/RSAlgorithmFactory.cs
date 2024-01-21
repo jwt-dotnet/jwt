@@ -65,15 +65,15 @@ namespace JWT.Algorithms
 
         private RS256Algorithm CreateRS256Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS256Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS256Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS256Algorithm(_publicKey);
             }
@@ -83,15 +83,15 @@ namespace JWT.Algorithms
 
         private RS384Algorithm CreateRS384Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS384Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS384Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS384Algorithm(_publicKey);
             }
@@ -101,15 +101,15 @@ namespace JWT.Algorithms
 
         private RS512Algorithm CreateRS512Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS512Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS512Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS512Algorithm(_publicKey);
             }
@@ -119,15 +119,15 @@ namespace JWT.Algorithms
 
         private RS1024Algorithm CreateRS1024Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS1024Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS1024Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS1024Algorithm(_publicKey);
             }
@@ -137,15 +137,15 @@ namespace JWT.Algorithms
 
         private RS2048Algorithm CreateRS2048Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS2048Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS2048Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS2048Algorithm(_publicKey);
             }
@@ -155,15 +155,15 @@ namespace JWT.Algorithms
 
         private RS4096Algorithm CreateRS4096Algorithm()
         {
-            if (_certFactory is object)
+            if (_certFactory is not null)
             {
                 return new RS4096Algorithm(_certFactory());
             }
-            if (_publicKey is object && _privateKey is object)
+            if (_publicKey is not null && _privateKey is not null)
             {
                 return new RS4096Algorithm(_publicKey, _privateKey);
             }
-            if (_publicKey is object)
+            if (_publicKey is not null)
             {
                 return new RS4096Algorithm(_publicKey);
             }
