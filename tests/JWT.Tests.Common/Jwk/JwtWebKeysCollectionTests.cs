@@ -3,20 +3,21 @@ using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace JWT.Tests.Jwk;
-
-[TestClass]
-public class JwtWebKeysCollectionTests
+namespace JWT.Tests.Jwk
 {
-    [TestMethod]
-    public void Should_Find_Json_Web_Key_By_KeyId()
+    [TestClass]
+    public class JwtWebKeysCollectionTests
     {
-        var serializerFactory = new DefaultJsonSerializerFactory();
+        [TestMethod]
+        public void Should_Find_Json_Web_Key_By_KeyId()
+        {
+            var serializerFactory = new DefaultJsonSerializerFactory();
 
-        var collection = new JwtWebKeysCollection(TestData.JsonWebKeySet, serializerFactory);
+            var collection = new JwtWebKeysCollection(TestData.JsonWebKeySet, serializerFactory);
 
-        var jwk = collection.Find(TestData.ServerRsaPublicThumbprint1);
+            var jwk = collection.Find(TestData.ServerRsaPublicThumbprint1);
 
-        Assert.IsNotNull(jwk);
+            Assert.IsNotNull(jwk);
+        }
     }
 }

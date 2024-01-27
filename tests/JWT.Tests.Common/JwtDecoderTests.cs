@@ -5,6 +5,7 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
+using JWT.Jwk;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -571,7 +572,31 @@ namespace JWT.Tests
                   .Throw<SignatureVerificationException>()
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
-        
+
+#if NETSTANDARD2_1 || NET6_0_OR_GREATER
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys()
+        {
+            var serializer = CreateSerializer();
+
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(TestData.TokenByAsymmetricAlgorithm);
+
+            Assert.IsNotNull(customer);
+
+            customer
+                .Should()
+                .BeEquivalentTo(TestData.Customer);
+        } 
+#endif
+
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }
