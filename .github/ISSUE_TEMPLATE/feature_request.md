@@ -1,16 +1,17 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for the project
 ---
 
-**Current version**
-Version: 10.x.x
+**Version, target platform, OS**
+Which package and what version, is it the latest?
+What are the target platform and the OS?
 
 **Describe the problem you are trying to solve.**
-Summary of changes
+Summary of the proposed changes
 
 **Available workarounds**
+Is it possible to achieve what you're asking for in a different way?
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
-
+Add any other context or screenshots about the feature request
