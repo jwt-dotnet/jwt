@@ -1,13 +1,11 @@
 ## Description
 
-Resolves #issue.
+Resolves #xyz.
 
-Please include a summary of the change and which issue is fixed.
-
-## Breaking changes
-
+A summary of the changes and which issue it resolves.
 
 ## Checklist
 
 - [ ] Tests added
 - [ ] Version bumped
+- [ ] Changelog updated
