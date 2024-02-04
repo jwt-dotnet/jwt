@@ -60,6 +60,51 @@ namespace JWT.Jwk
         public string Exponent { get; set; }
 
         /// <summary>
+        /// The "p" parameter which represents a First Prime Factor for RSA algorithms
+        /// </summary>
+        [JsonProperty("p")]
+#if MODERN_DOTNET
+        [JsonPropertyName("p")]
+#endif
+        public string FirstPrimeFactor { get; set; }
+
+        /// <summary>
+        /// The "q" parameter which represents a Second Prime Factor exponent for RSA algorithms
+        /// </summary>
+        [JsonProperty("q")]
+#if MODERN_DOTNET
+        [JsonPropertyName("q")]
+#endif
+        public string SecondPrimeFactor { get; set; }
+
+        /// <summary>
+        /// The "dp" parameter which represents a First Factor CRT Exponent for RSA algorithms
+        /// </summary>
+        [JsonProperty("dp")]
+#if MODERN_DOTNET
+        [JsonPropertyName("dp")]
+#endif
+        public string FirstFactorCRTExponent { get; set; }
+
+        /// <summary>
+        /// The "dq" parameter which represents a Second Factor CRT Exponent for RSA algorithms
+        /// </summary>
+        [JsonProperty("dq")]
+#if MODERN_DOTNET
+        [JsonPropertyName("dq")]
+#endif
+        public string SecondFactorCRTExponent { get; set; }
+
+        /// <summary>
+        /// The "qi" parameter which represents a First CRT Coefficient for RSA algorithms
+        /// </summary>
+        [JsonProperty("qi")]
+#if MODERN_DOTNET
+        [JsonPropertyName("qi")]
+#endif
+        public string FirstCRTCoefficient { get; set; }
+
+        /// <summary>
         /// The "crv" (curve) parameter identifies the cryptographic curve used with the key. RFC7518 defines the following valid values:
         /// "P-256", "P-384", "P-521" <see cref="KeyType"/> ("kty") must be "EC"
         /// </summary>
