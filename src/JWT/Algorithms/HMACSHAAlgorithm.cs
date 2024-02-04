@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace JWT.Algorithms
 {
-    public abstract class HMACSHAAlgorithm : IJwtAlgorithm
+    public abstract class HMACSHAAlgorithm : ISymmetricAlgorithm
     {
         /// <inheritdoc />
         public abstract string Name { get; }
