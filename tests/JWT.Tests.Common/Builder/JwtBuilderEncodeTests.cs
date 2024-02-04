@@ -414,6 +414,19 @@ namespace JWT.Tests.Builder
         }
 #endif
 
+        [TestMethod]
+        public void Encode_With_Symmetrical_WebKey_From_WebKey_Set_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .WithJsonWebKey("OCT-Test-Key", JwtAlgorithmName.HS256)
+                .AddClaim<Customer>("Data", TestData.Customer)
+                .Encode();
+
+            token.Should()
+                .Be("eyJraWQiOiJPQ1QtVGVzdC1LZXkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJEYXRhIjp7IkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM319.GFNIchXNoTLYvKT2mvO_s1_MBW-aBSfkQqxHWp7L-wo");
+        }
+
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>
