@@ -600,13 +600,10 @@ namespace JWT.Tests
         [TestMethod]
         public void Should_Decode_With_Json_Web_Keys_EC()
         {
-            const string key = TestData.Secret;
-
             var ecDsa = ECDsa.Create(TestData.EllipticCurvesParameters);
 
             var token = JwtBuilder.Create()
                 .WithAlgorithm(new ES256Algorithm(ecDsa, ecDsa))
-                .WithSecret(key)
                 .AddHeader(HeaderName.KeyId, "EC-Test-Key")
                 .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
                 .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
