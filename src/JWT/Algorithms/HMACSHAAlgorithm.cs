@@ -4,6 +4,16 @@ namespace JWT.Algorithms
 {
     public abstract class HMACSHAAlgorithm : ISymmetricAlgorithm
     {
+        protected HMACSHAAlgorithm()
+        {
+            
+        }
+
+        protected HMACSHAAlgorithm(byte[] key)
+        {
+            this.Key = key;
+        }
+
         /// <inheritdoc />
         public abstract string Name { get; }
 
@@ -13,9 +23,11 @@ namespace JWT.Algorithms
         /// <inheritdoc />
         public byte[] Sign(byte[] key, byte[] bytesToSign)
         {
-            using var sha = CreateAlgorithm(key);
+            using var sha = CreateAlgorithm(key ?? this.Key);
             return sha.ComputeHash(bytesToSign);
         }
+
+        public byte[] Key { get; }
 
         protected abstract HMAC CreateAlgorithm(byte[] key);
     }
