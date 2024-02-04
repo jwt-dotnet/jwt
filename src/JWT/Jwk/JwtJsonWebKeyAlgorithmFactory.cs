@@ -59,7 +59,7 @@ namespace JWT.Jwk
                     X = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveX),
                     Y = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveY)
                 },
-                D = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurvePrivateKey)
+                D = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.D)
             };
 
             var key = ECDsa.Create(parameters);
