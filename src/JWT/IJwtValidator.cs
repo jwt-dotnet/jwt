@@ -29,6 +29,19 @@ namespace JWT
         void Validate(string decodedPayload, IAsymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature);
 
         /// <summary>
+        /// Given the JWT, verifies its signature correctness.
+        /// </summary>
+        /// <remarks>
+        /// Used by the symmetric algorithms only.
+        /// </remarks>
+        /// <param name="keys">The keys provided which one of them was used to sign the JWT</param>
+        /// <param name="decodedPayload"></param>
+        /// <param name="alg"></param>
+        /// <param name="bytesToSign"></param>
+        /// <param name="decodedSignature"></param>
+        void Validate(byte[][] keys, string decodedPayload, ISymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature);
+
+        /// <summary>
         /// Given the JWT, verifies its signature correctness without throwing an exception but returning it instead.
         /// </summary>
         /// <param name="payloadJson">>An arbitrary payload (already serialized to JSON)</param>

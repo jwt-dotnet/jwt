@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JWT.Algorithms;
 using JWT.Exceptions;
 
@@ -85,6 +86,22 @@ namespace JWT
             var ex = GetValidationException(alg, decodedPayload, bytesToSign, decodedSignature);
             if (ex is not null)
                 throw ex;
+        }
+
+        public void Validate(byte[][] keys, string decodedPayload, ISymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
+        {
+            if (keys is null)
+                throw new ArgumentNullException(nameof(keys));
+            if (!AllKeysHaveValues(keys))
+                throw new ArgumentOutOfRangeException(nameof(keys));
+
+            // the signature on the token, with the leading =
+            var rawSignature = Convert.ToBase64String(decodedSignature);
+
+            // the signatures re-created by the algorithm, with the leading =
+            var recreatedSignatures = keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign))).ToArray();
+
+            Validate(decodedPayload, rawSignature, recreatedSignatures);
         }
 
         /// <inheritdoc />
@@ -263,6 +280,30 @@ namespace JWT
             }
 
             return null;
+        }
+
+        
+
+        private static bool AllKeysHaveValues(byte[][] keys)
+        {
+            if (keys is null)
+                return false;
+
+            if (keys.Length == 0)
+                return false;
+
+            return Array.TrueForAll(keys, key => KeyHasValue(key));
+        }
+		
+        private static bool KeyHasValue(byte[] key)
+        {
+            if (key is null)
+                return false;
+
+            if (key.Length == 0)
+                return false;
+
+            return true;
         }
     }
 }
