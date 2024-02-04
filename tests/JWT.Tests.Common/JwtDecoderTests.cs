@@ -629,8 +629,40 @@ namespace JWT.Tests
             customer
                 .Should()
                 .BeEquivalentTo(TestData.Customer);
-        } 
+        }
 #endif
+
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys_()
+        {
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new HMACSHA256Algorithm())
+                .WithSecret(key)
+                .AddHeader(HeaderName.KeyId, "OCT-Test-Key")
+                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                .Encode();
+
+            var serializer = CreateSerializer();
+
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(token);
+
+            Assert.IsNotNull(customer);
+
+            customer
+                .Should()
+                .BeEquivalentTo(TestData.Customer);
+        }
 
         [TestMethod]
         public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Missing_In_Token()
