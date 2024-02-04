@@ -418,11 +418,16 @@ namespace JWT.Tests.Builder
             var token = JwtBuilder.Create()
                 .WithJsonWebKeySet(TestData.JsonWebKeySet)
                 .WithJsonWebKey("OCT-Test-Key", JwtAlgorithmName.HS256)
-                .AddClaim<Customer>("Data", TestData.Customer)
-                .Encode();
+                .Encode(TestData.Customer);
 
-            token.Should()
-                .Be("eyJraWQiOiJPQ1QtVGVzdC1LZXkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJEYXRhIjp7IkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM319.GFNIchXNoTLYvKT2mvO_s1_MBW-aBSfkQqxHWp7L-wo");
+            token.Should().NotBeNullOrEmpty();
+
+            var decoded = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .Decode<Customer>(token);
+
+            decoded.Should()
+                .BeEquivalentTo(TestData.Customer);
         }
 
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
