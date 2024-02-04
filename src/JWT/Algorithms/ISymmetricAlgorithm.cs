@@ -5,6 +5,6 @@ namespace JWT.Algorithms
     /// </summary>
     public interface ISymmetricAlgorithm : IJwtAlgorithm
     {
-
+        byte[] Key { get; }
     }
 }
