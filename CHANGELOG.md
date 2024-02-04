@@ -1,5 +1,7 @@
 # Unreleased
 
+# 10.2.0
+
 - Added JSON Web keys support
 
 It's possible to use JWKS with
