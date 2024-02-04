@@ -450,6 +450,24 @@ namespace JWT.Tests.Builder
         } 
 #endif
 
+        [TestMethod]
+        public void Encode_With_RSA_WebKey_From_WebKey_Set_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .WithJsonWebKey("CFAEAE2D650A6CA9862575DE54371EA980643849", JwtAlgorithmName.RS256)
+                .Encode(TestData.Customer);
+
+            token.Should().NotBeNullOrEmpty();
+
+            var decoded = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .Decode<Customer>(token);
+
+            decoded.Should()
+                .BeEquivalentTo(TestData.Customer);
+        }
+
         private sealed class CustomFactory : IAlgorithmFactory
         {
             public IJwtAlgorithm Create(JwtDecoderContext context) =>
