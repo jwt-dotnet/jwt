@@ -1,4 +1,3 @@
-using System;
 using System.Security.Cryptography;
 using JWT.Algorithms;
 using JWT.Exceptions;
@@ -51,7 +50,26 @@ namespace JWT.Jwk
 
         private IJwtAlgorithm CreateECDSAAlgorithm(JwtDecoderContext context)
         {
-            throw new NotImplementedException("TODO: implement me!");
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+            var parameters = new ECParameters
+            {
+                Curve = GetEllipticCurve(),
+                Q = new ECPoint
+                {
+                    X = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveX),
+                    Y = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveY)
+                }
+            };
+
+            var publicKey = ECDsa.Create(parameters);
+
+            var algorithmFactory = new ECDSAAlgorithmFactory(publicKey);
+#else
+            // will throw NotImplementedException on algorithmFactory.Create invocation. ECDSA algorithms are implemented for .NET Standard 2.0 or higher
+            var algorithmFactory = new ECDSAAlgorithmFactory();
+#endif
+
+            return algorithmFactory.Create(context);
         }
 
         private static IJwtAlgorithm CreateHMACSHAAlgorithm(JwtDecoderContext context)
@@ -60,5 +78,25 @@ namespace JWT.Jwk
 
             return algorithmFactory.Create(context);
         }
+
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        private ECCurve GetEllipticCurve()
+        {
+            switch (_key.EllipticCurveType)
+            {
+                case "P-256":
+                    return ECCurve.NamedCurves.nistP256;
+
+                case "P-384":
+                    return ECCurve.NamedCurves.nistP384;
+
+                case "P-521":
+                    return ECCurve.NamedCurves.nistP521;
+
+                default:
+                    throw new InvalidJsonWebKeyEllipticCurveTypeException(_key.EllipticCurveType);
+            }
+        }
+#endif
     }
 }
