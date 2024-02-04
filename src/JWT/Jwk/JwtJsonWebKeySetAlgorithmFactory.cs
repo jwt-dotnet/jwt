@@ -48,21 +48,19 @@ namespace JWT.Jwk
             if (key.KeyType != "RSA")
                 throw new NotSupportedException($"JSON Web key type {key.KeyType} currently is not supported");
 
-#if NETSTANDARD2_1 || NET6_0_OR_GREATER
             var rsaParameters = new RSAParameters
             {
                 Modulus = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(key.Modulus),
                 Exponent = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(key.Exponent)
             };
 
-            var rsa = RSA.Create(rsaParameters);
+            var rsa = RSA.Create();
+
+            rsa.ImportParameters(rsaParameters);
 
             var rsaAlgorithmFactory = new RSAlgorithmFactory(rsa);
 
             return rsaAlgorithmFactory.Create(context);
-#else
-            throw new NotImplementedException("Not implemented yet");
-#endif
         }
     }
 }

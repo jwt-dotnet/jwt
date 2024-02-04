@@ -573,7 +573,6 @@ namespace JWT.Tests
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
 
-#if NETSTANDARD2_1 || NET6_0_OR_GREATER
         [TestMethod]
         public void Should_Decode_With_Json_Web_Keys()
         {
@@ -594,8 +593,7 @@ namespace JWT.Tests
             customer
                 .Should()
                 .BeEquivalentTo(TestData.Customer);
-        } 
-#endif
+        }
 
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
