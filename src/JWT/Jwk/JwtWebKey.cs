@@ -90,6 +90,15 @@ namespace JWT.Jwk
         public string EllipticCurveY { get; set; }
 
         /// <summary>
+        /// The "d" parameter. Represents a private key for the Elliptic Curve algorithm. <see cref="KeyType"/> ("kty") must be "EC"
+        /// </summary>
+        [JsonProperty("d")]
+#if MODERN_DOTNET
+        [JsonPropertyName("d")]
+#endif
+        public string EllipticCurvePrivateKey { get; set; }
+
+        /// <summary>
         /// The "k" (key value) parameter contains the value of the symmetric (or other single-valued) key.  It is represented as the base64url
         /// encoding of the octet sequence containing the key value. <see cref="KeyType"/> ("kty") must be "oct"
         /// </summary>
