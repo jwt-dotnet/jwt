@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -574,7 +575,7 @@ namespace JWT.Tests
         }
 
         [TestMethod]
-        public void Should_Decode_With_Json_Web_Keys()
+        public void Should_Decode_With_Json_Web_Keys_RSA()
         {
             var serializer = CreateSerializer();
 
@@ -594,6 +595,42 @@ namespace JWT.Tests
                 .Should()
                 .BeEquivalentTo(TestData.Customer);
         }
+
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys_EC()
+        {
+            const string key = TestData.Secret;
+
+            var ecDsa = ECDsa.Create(TestData.EllipticCurvesParameters);
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(new ES256Algorithm(ecDsa, ecDsa))
+                .WithSecret(key)
+                .AddHeader(HeaderName.KeyId, "EC-Test-Key")
+                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                .Encode();
+
+            var serializer = CreateSerializer();
+
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(token);
+
+            Assert.IsNotNull(customer);
+
+            customer
+                .Should()
+                .BeEquivalentTo(TestData.Customer);
+        } 
+#endif
 
         [TestMethod]
         public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Missing_In_Token()
