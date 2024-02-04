@@ -35,6 +35,8 @@ namespace JWT.Builder
         private IAlgorithmFactory _algFactory;
         private byte[][] _secrets;
 
+        private JwtWebKeysCollection _webKeysCollection;
+
         /// <summary>
         /// Creates a new instance of instance <see cref="JwtBuilder" />
         /// </summary>
@@ -178,6 +180,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance.</returns>
         public JwtBuilder WithJsonWebKeySet(JwtWebKeysCollection webKeysCollection)
         {
+            _webKeysCollection = webKeysCollection;
             _algFactory = new JwtJsonWebKeySetAlgorithmFactory(webKeysCollection);
             return this;
         }
@@ -189,8 +192,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance.</returns>
         public JwtBuilder WithJsonWebKeySet(Func<JwtWebKeysCollection> getJsonWebKeys)
         {
-            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(getJsonWebKeys);
-            return this;
+            return WithJsonWebKeySet(getJsonWebKeys());
         }
 
         /// <summary>
@@ -200,8 +202,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance.</returns>
         public JwtBuilder WithJsonWebKeySet(IJwtWebKeysCollectionFactory webKeysCollectionFactory)
         {
-            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(webKeysCollectionFactory);
-            return this;
+            return WithJsonWebKeySet(webKeysCollectionFactory.CreateKeys());
         }
 
         /// <summary>
@@ -211,8 +212,55 @@ namespace JWT.Builder
         /// <returns>Current builder instance.</returns>
         public JwtBuilder WithJsonWebKeySet(string keySet)
         {
-            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(keySet, _jsonSerializerFactory);
-            return this;
+            return WithJsonWebKeySet(new JwtWebKeysCollection(keySet, _jsonSerializerFactory));
+        }
+
+        /// <summary>
+        /// Sets Json Web Key
+        /// </summary>
+        /// <param name="keyId">Key id in the JSON Web Key Set</param>
+        /// <param name="algorithmName">JWT algorithm name</param>
+        /// <returns>Current builder instance</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public JwtBuilder WithJsonWebKey(string keyId, JwtAlgorithmName algorithmName)
+        {
+            if (_webKeysCollection == null)
+                throw new InvalidOperationException("JSON Web Key Set collection has not been initialized yet");
+
+            var key = _webKeysCollection.Find(keyId);
+
+            if (key == null)
+                throw new InvalidOperationException("The key id is not presented in the JSON Web key set");
+
+            return WithJsonWebKey(key, algorithmName);
+        }
+
+        /// <summary>
+        /// Sets Json Web Key
+        /// </summary>
+        /// <param name="key">JSON Web Key</param>
+        /// <param name="algorithmName">JWT algorithm name</param>
+        /// <returns>Current builder instance</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public JwtBuilder WithJsonWebKey(JwtWebKey key, JwtAlgorithmName algorithmName)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key), "JSON Web Key has not been provided");
+
+            var factory = new JwtJsonWebKeyAlgorithmFactory(key);
+
+            var context = new JwtDecoderContext
+            {
+                Header = new JwtHeader
+                {
+                    Algorithm = algorithmName.ToString(),
+                    KeyId = key.KeyId
+                }
+            };
+
+            _algorithm = factory.Create(context);
+
+            return AddHeader(HeaderName.KeyId, key.KeyId);
         }
 
         /// <summary>
