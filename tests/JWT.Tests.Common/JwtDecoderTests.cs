@@ -615,6 +615,36 @@ namespace JWT.Tests
                 .WithMessage("The key id is missing in the token header");
         }
 
+        [TestMethod]
+        public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Not_In_Collection()
+        {
+            var serializer = CreateSerializer();
+
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            const string key = TestData.Secret;
+
+            var token = JwtBuilder.Create()
+                .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                .WithSecret(key)
+                .AddHeader(HeaderName.KeyId, "42")
+                .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                .Encode();
+
+            Action action = () => decoder.DecodeToObject<Customer>(token);
+
+            action.Should()
+                .Throw<SignatureVerificationException>()
+                .WithMessage("The key id is not presented in the JSON Web key set");
+        }
+
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }
