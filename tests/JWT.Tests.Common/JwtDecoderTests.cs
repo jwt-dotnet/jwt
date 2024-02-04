@@ -595,6 +595,26 @@ namespace JWT.Tests
                 .BeEquivalentTo(TestData.Customer);
         }
 
+        [TestMethod]
+        public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Missing_In_Token()
+        {
+            var serializer = CreateSerializer();
+
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+
+            var urlEncoder = new JwtBase64UrlEncoder();
+
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            Action action = () => decoder.DecodeToObject<Customer>(TestData.Token);
+
+            action.Should()
+                .Throw<SignatureVerificationException>()
+                .WithMessage("The key id is missing in the token header");
+        }
+
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }
