@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
@@ -426,6 +424,26 @@ namespace JWT.Tests.Builder
             token.Should()
                 .Be("eyJraWQiOiJPQ1QtVGVzdC1LZXkiLCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJEYXRhIjp7IkZpcnN0TmFtZSI6Ikplc3VzIiwiQWdlIjozM319.GFNIchXNoTLYvKT2mvO_s1_MBW-aBSfkQqxHWp7L-wo");
         }
+
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        [TestMethod]
+        public void Encode_With_Elliptic_Curve_WebKey_From_WebKey_Set_Should_Return_Token()
+        {
+            var token = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .WithJsonWebKey("EC-Test-Key", JwtAlgorithmName.ES256)
+                .Encode(TestData.Customer);
+
+            token.Should().NotBeNullOrEmpty();
+
+            var decoded = JwtBuilder.Create()
+                .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                .Decode<Customer>(token);
+
+            decoded.Should()
+                .BeEquivalentTo(TestData.Customer);
+        } 
+#endif
 
         private sealed class CustomFactory : IAlgorithmFactory
         {
