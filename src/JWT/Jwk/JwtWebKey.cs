@@ -61,5 +61,11 @@ namespace JWT.Jwk
         [JsonPropertyName("y")]
 #endif
         public string EllipticCurveY { get; set; }
+
+        [JsonProperty("k")]
+#if MODERN_DOTNET
+        [JsonPropertyName("k")]
+#endif
+        public string SymmetricKey { get; set; }
     }
 }
