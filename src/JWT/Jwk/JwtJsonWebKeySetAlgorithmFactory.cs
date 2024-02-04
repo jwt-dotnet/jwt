@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography;
 using JWT.Algorithms;
 using JWT.Exceptions;
 using JWT.Serializers;
@@ -45,22 +44,9 @@ namespace JWT.Jwk
             if (key == null)
                 throw new SignatureVerificationException("The key id is not presented in the JSON Web key set");
 
-            if (key.KeyType != "RSA")
-                throw new NotSupportedException($"JSON Web key type {key.KeyType} currently is not supported");
+            var algorithmFactory = new JwtJsonWebKeyAlgorithmFactory(key);
 
-            var rsaParameters = new RSAParameters
-            {
-                Modulus = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(key.Modulus),
-                Exponent = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(key.Exponent)
-            };
-
-            var rsa = RSA.Create();
-
-            rsa.ImportParameters(rsaParameters);
-
-            var rsaAlgorithmFactory = new RSAlgorithmFactory(rsa);
-
-            return rsaAlgorithmFactory.Create(context);
+            return algorithmFactory.Create(context);
         }
     }
 }
