@@ -43,5 +43,23 @@ namespace JWT.Jwk
         [JsonPropertyName("e")]
 #endif
         public string Exponent { get; set; }
+
+        [JsonProperty("crv")]
+#if MODERN_DOTNET
+        [JsonPropertyName("crv")]
+#endif
+        public string EllipticCurveType { get; set; }
+
+        [JsonProperty("x")]
+#if MODERN_DOTNET
+        [JsonPropertyName("x")]
+#endif
+        public string EllipticCurveX { get; set; }
+
+        [JsonProperty("y")]
+#if MODERN_DOTNET
+        [JsonPropertyName("y")]
+#endif
+        public string EllipticCurveY { get; set; }
     }
 }
