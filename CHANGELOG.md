@@ -1,5 +1,22 @@
 # Unreleased
 
+- Added JSON Web keys support
+
+It's possible to use JWKS with
+```cs
+var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(webkeySetJsonString, serializer);
+
+var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+var json = decoder.Decode(token);
+```
+or using the fluent builder API:
+```cs
+var decoded = JwtBuilder.Create()
+    .WithJsonWebKeySet(webkeySetJsonString)
+    .Decode<Customer>(token);
+```
+
 # 10.1.1
 
 - Made ctor of ValidationParameters public, set default values for boolean properties to true
