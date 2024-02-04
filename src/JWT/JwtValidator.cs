@@ -92,7 +92,7 @@ namespace JWT
         {
             if (keys is null)
                 throw new ArgumentNullException(nameof(keys));
-            if (!AllKeysHaveValues(keys))
+            if (alg.Key == null && !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
 
             // the signature on the token, with the leading =
