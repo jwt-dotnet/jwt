@@ -72,9 +72,11 @@ namespace JWT.Jwk
             return algorithmFactory.Create(context);
         }
 
-        private static IJwtAlgorithm CreateHMACSHAAlgorithm(JwtDecoderContext context)
+        private IJwtAlgorithm CreateHMACSHAAlgorithm(JwtDecoderContext context)
         {
-            var algorithmFactory = new HMACSHAAlgorithmFactory();
+            var key = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.SymmetricKey);
+
+            var algorithmFactory = new HMACSHAAlgorithmFactory(key);
 
             return algorithmFactory.Create(context);
         }
