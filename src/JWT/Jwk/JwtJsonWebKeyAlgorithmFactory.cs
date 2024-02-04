@@ -33,9 +33,9 @@ namespace JWT.Jwk
 
         private IJwtAlgorithm CreateRSAAlgorithm(JwtDecoderContext context)
         {
-            var publicKey = CreateRSAPublicKey();
+            var publicKey = CreateRSAKey(false);
 
-            var privateKey = CreateRSAPrivateKey();
+            var privateKey = CreateRSAKey(true);
 
             var algorithmFactory = privateKey == null
                 ? new RSAlgorithmFactory(publicKey)
@@ -80,38 +80,23 @@ namespace JWT.Jwk
             return algorithmFactory.Create(context);
         }
 
-        private RSA CreateRSAPublicKey()
-        {
-            var rsaParameters = new RSAParameters
-            {
-                Modulus = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.Modulus),
-                Exponent = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.Exponent)
-            };
-
-            var key = RSA.Create();
-
-            key.ImportParameters(rsaParameters);
-
-            return key;
-        }
-
-        private RSA CreateRSAPrivateKey()
+        private RSA CreateRSAKey(bool privateKey)
         {
             var firstPrimeFactor = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.FirstPrimeFactor);
 
-            if (firstPrimeFactor == null)
+            if (privateKey && firstPrimeFactor == null)
                 return null;
 
             var rsaParameters = new RSAParameters
             {
                 Modulus = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.Modulus),
                 Exponent = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.Exponent),
-                P = firstPrimeFactor,
-                Q = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.SecondPrimeFactor),
-                D = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.D),
-                DP = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.FirstFactorCRTExponent),
-                DQ = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.SecondFactorCRTExponent),
-                InverseQ = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.FirstCRTCoefficient)
+                P = privateKey ? firstPrimeFactor : null,
+                Q = privateKey ? JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.SecondPrimeFactor) : null,
+                D = privateKey ? JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.D) : null,
+                DP = privateKey ? JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.FirstFactorCRTExponent) : null,
+                DQ = privateKey ? JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.SecondFactorCRTExponent) : null,
+                InverseQ = privateKey ? JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.FirstCRTCoefficient) : null
             };
 
             var key = RSA.Create();
