@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using JWT.Algorithms;
+using JWT.Jwk;
 using JWT.Serializers;
 using Newtonsoft.Json;
 
@@ -167,6 +168,50 @@ namespace JWT.Builder
         public JwtBuilder WithAlgorithmFactory(IAlgorithmFactory algFactory)
         {
             _algFactory = algFactory;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets Json Web Key Set
+        /// </summary>
+        /// <param name="webKeysCollection"></param>
+        /// <returns>Current builder instance.</returns>
+        public JwtBuilder WithJsonWebKeySet(JwtWebKeysCollection webKeysCollection)
+        {
+            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(webKeysCollection);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets Json Web Key Set
+        /// </summary>
+        /// <param name="getJsonWebKeys"></param>
+        /// <returns>Current builder instance.</returns>
+        public JwtBuilder WithJsonWebKeySet(Func<JwtWebKeysCollection> getJsonWebKeys)
+        {
+            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(getJsonWebKeys);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets Json Web Key Set
+        /// </summary>
+        /// <param name="webKeysCollectionFactory"></param>
+        /// <returns>Current builder instance.</returns>
+        public JwtBuilder WithJsonWebKeySet(IJwtWebKeysCollectionFactory webKeysCollectionFactory)
+        {
+            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(webKeysCollectionFactory);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets Json Web Key Set
+        /// </summary>
+        /// <param name="keySet"></param>
+        /// <returns>Current builder instance.</returns>
+        public JwtBuilder WithJsonWebKeySet(string keySet)
+        {
+            _algFactory = new JwtJsonWebKeySetAlgorithmFactory(keySet, _jsonSerializerFactory);
             return this;
         }
 
