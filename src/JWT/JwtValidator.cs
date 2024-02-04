@@ -90,7 +90,7 @@ namespace JWT
 
         public void Validate(byte[][] keys, string decodedPayload, ISymmetricAlgorithm alg, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (keys is null)
+            if (alg.Key == null && keys is null)
                 throw new ArgumentNullException(nameof(keys));
             if (alg.Key == null && !AllKeysHaveValues(keys))
                 throw new ArgumentOutOfRangeException(nameof(keys));
@@ -99,7 +99,9 @@ namespace JWT
             var rawSignature = Convert.ToBase64String(decodedSignature);
 
             // the signatures re-created by the algorithm, with the leading =
-            var recreatedSignatures = keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign))).ToArray();
+            var recreatedSignatures = keys != null
+                ? keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign))).ToArray()
+                : new string[] { Convert.ToBase64String(alg.Sign(null, bytesToSign)) };
 
             Validate(decodedPayload, rawSignature, recreatedSignatures);
         }
