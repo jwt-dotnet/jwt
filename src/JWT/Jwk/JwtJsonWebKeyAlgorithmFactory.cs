@@ -58,12 +58,15 @@ namespace JWT.Jwk
                 {
                     X = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveX),
                     Y = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurveY)
-                }
+                },
+                D = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode(_key.EllipticCurvePrivateKey)
             };
 
-            var publicKey = ECDsa.Create(parameters);
+            var key = ECDsa.Create(parameters);
 
-            var algorithmFactory = new ECDSAAlgorithmFactory(publicKey);
+            var algorithmFactory = parameters.D == null
+                ? new ECDSAAlgorithmFactory(key)
+                : new ECDSAAlgorithmFactory(key, key);
 #else
             // will throw NotImplementedException on algorithmFactory.Create invocation. ECDSA algorithms are implemented for .NET Standard 2.0 or higher
             var algorithmFactory = new ECDSAAlgorithmFactory();
