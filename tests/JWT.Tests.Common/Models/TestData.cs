@@ -5,6 +5,7 @@ using JWT.Algorithms;
 
 #if NETSTANDARD2_1 || NET6_0_OR_GREATER
 using System.Security.Cryptography;
+using JWT.Jwk;
 #endif
 
 namespace JWT.Tests.Models
@@ -67,6 +68,8 @@ namespace JWT.Tests.Models
 
         public const string TokenByAsymmetricAlgorithm = "eyJraWQiOiJDRkFFQUUyRDY1MEE2Q0E5ODYyNTc1REU1NDM3MUVBOTgwNjQzODQ5IiwidHlwIjoiSldUIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJ0ZXN0IiwiZXhwIjoyMTQ3NDgzNjQ4LCJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.ZeGfWN3kBHZLiSh4jzzn6kx7F6lNu5OsowZW0Sv-_wpSgQO2_QXFUPLx23wm4J9rjMGQlSksEtCLd_X3iiBOBLbxAUWzdj59iJIAh485unZj12sBJ7KHDVsOMc6DcSJdwRo9S9yiJ_RJ57R-dn4uRdZTBXBZHrrmb35UjaAG6hFfu5d1Ap4ZjLxqDJGl0Wo4j5l6vR8HFpmiFHvqPQ4apjqkBGnitJ7oghbeRX0SIVNSkXbBDp3i9pC-hxzs2oHZC9ys0rJlfpxLls3MV4oQbQ7m6W9MrwwsdObJHI7PiTNfObLKdgySi6WkQS7rwXVz0DqRa8TXv8_USkvhsyGLMQ";
 
+        public const string JsonWebKeySet = "{\"keys\":[{\"kty\":\"RSA\",\"kid\":\"CFAEAE2D650A6CA9862575DE54371EA980643849\",\"use\":\"sig\",\"n\":\"uYTPtHCIztKC3MUDxnZ0ktGVSQ0jVbD5rYl4pki4RCD3M22d-TklmvTyPj0SM7a_8o7cI05QhEuBI8hKCfC2CEJhlS3WFeVC0vwsl1aYFqQ3Ykr-kDsAdqjL95ioj3JmiscvqKOM34oQahpAgukJ7Kcr1BT2Ylk8fOgKcN7t1qgURNx0Pj4zJ4w0p1nT2gLG--bYutUVPvamI9wcMQyUesZwGmM9UUpMRzsOPk8vv7TbTm62Zkx-5rFUaVe5DFNUIMg92NvyU0392FFNCwptSflidHDG1ayCwL1ZTkJ0Z9yJXCNSzi_3ulxMhE-bVcpr_EuRKCYxn9qPFZ07Bd77bQ\",\"e\":\"AQAB\",\"p\":\"2Mrzzbb8Gh7aoW0YXdtdO7WEZ7-pOvbxdp4Qw8sp8dF5cF5vss3I2FoJ9kssy_DsUsreBUhD0HKrADBus7BHKXp7Q_9hhu1nAJxpng255cUfngVD9k1xQdfWEHCeWrr7XJHcplTkh4ysH4nWK-8S-RoCpiuphkJJqVxPzDaY1-M\",\"q\":\"2xHwflmaMbNs9dXi3wx10SyG5KQJeRIXlKkhlUYlAU-7598AdmTiUPHfhj4WDRCmcJGHjSWqdiuQuwmRYsBXRhtk7XjGAjcefloSpXSR9G-tpVFuIthBU337g2pK1o8z_29LKiWZvcytgxQLEWwGIyduj2I9BoDw1jgFmVd_IG8\",\"d\":\"lJyKkl3vidZilB2Sh6IOgio371wB6Twq1lQgfPwV-CV8QQtXl_SqZjY_85GSijCkFNdSC0pJ_6BIY_SnMs1L1NPwPcOJEuMjo8X0porsrH6CC1BOGhXZqjRPqBj3NmoLMLKdP_c7-zorKgO7l-K8W4IS_wKH2ILpjJmI-5_pYKDI66CD9wbgrpKXjnajboDDEMGp64cT3lJnUsr_DucmYIx1VD646ErMiAxwr1qiBg9jpTSjRuubJJhnzN_j192RkqCOgc0j0SE1Ww0AZTVct4IvrvE3S5fnE1apRlzEAfrfMVn2rbrUTRgIKBpTWGY_m0weQzMmisIBiauUmi2nFQ\",\"dp\":\"b9n-ghO37G4g1QqpeLtWVhkoEDNFyANiv5V8BtjKclZmdoBy1ujviBikbSuKGErcUzcR593KB0EyUu2qIBGCFbd447NeiTPxYdJRd9eTIyZaUrhawThhh9wpOOAyA5PXXoJvOm4wXnNI1xjRpGc7_cPavAto8rk-sh_LmAxPPYs\",\"dq\":\"b2l2N6v2IWSw-22lje5WVOUiTVGnh61N1MsXS0V7OGmGlOvy3kN8XdJE7Y7RxB89pm480-neAW8ykgzRpblQKVVxRNxxR1sk5PmGFiNsvzW0yCjbrFjzEDU4HqOGIAyAU14UigDJaZ-YdttQrbGUhXheYAmEI7SbxzaCknPPMX0\",\"qi\":\"SpRpqI-Z4g3jMbb0iE0oD-FAUaBXGp00DjKVbeYH8WQl2rVGFkspFYeN69u3ZFUL3JJd4rCF6zbuLq6iyDJq_F-Jo4zSzXChepr_dSEH1TszaA6imdqFyj3pjOT_ZXNK4YPCRijRM3fy8GdNybZDQljL1djY8D1YK3CWEtKuogs\"},{\"kty\":\"EC\",\"kid\":\"EC-Test-Key\",\"use\":\"sig\",\"crv\":\"P-256\",\"x\":\"gI0GAILBdu7T53akrFmMyGcsF3n5dO7MmwNBHKW5SV0\",\"y\":\"SLW_xSffzlPWrHEVI30DHM_4egVwt3NQqeUD7nMFpps\",\"d\":\"0_NxaRPUMQoAJt50Gz8YiTr8gRTwyEaCumd-MToTmIo\"},{\"kty\":\"oct\",\"kid\":\"OCT-Test-Key\",\"use\":\"sig\",\"k\":\"R1FEc3RjS3N4ME5IalBPdVhPWWc1TWJlSjFYVDB1Rml3RFZ2VkJyaw\"}]}";
+
         public static readonly IDictionary<string, object> DictionaryPayload = new Dictionary<string, object>
         {
             { nameof(Customer.FirstName), Customer.FirstName },
@@ -94,6 +97,18 @@ namespace JWT.Tests.Models
 
 #if NETSTANDARD2_1 || NET6_0_OR_GREATER
         public static readonly X509Certificate2 CertificateWithPrivateKey = CreateCertificate();
+
+        // RFC7518. Appendix C sample
+        public static readonly ECParameters EllipticCurvesParameters = new ECParameters
+        {
+            Curve = ECCurve.NamedCurves.nistP256,
+            Q = new ECPoint
+            {
+                X = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode("gI0GAILBdu7T53akrFmMyGcsF3n5dO7MmwNBHKW5SV0"),
+                Y = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode("SLW_xSffzlPWrHEVI30DHM_4egVwt3NQqeUD7nMFpps")
+            },
+            D = JwtWebKeyPropertyValuesEncoder.Base64UrlDecode("0_NxaRPUMQoAJt50Gz8YiTr8gRTwyEaCumd-MToTmIo")
+        };
 
         private static X509Certificate2 CreateCertificate()
         {

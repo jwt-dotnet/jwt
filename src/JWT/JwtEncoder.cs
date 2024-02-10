@@ -49,7 +49,8 @@ namespace JWT
             var algorithm = _algFactory.Create(null);
             if (algorithm is null)
                 throw new ArgumentNullException(nameof(algorithm));
-            if (!algorithm.IsAsymmetric() && key is null && algorithm is not NoneAlgorithm)
+
+            if (algorithm is ISymmetricAlgorithm symmetricAlgorithm && key is null && symmetricAlgorithm.Key is null)
                 throw new ArgumentNullException(nameof(key));
 
             var header = extraHeaders is null ?

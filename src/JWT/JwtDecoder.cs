@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
@@ -249,9 +248,9 @@ namespace JWT
             {
                 _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
             }
-            else
+            else if (algorithm is ISymmetricAlgorithm symmAlg)
             {
-                ValidSymmetricAlgorithm(keys, decodedPayload, algorithm, bytesToSign, decodedSignature);
+                _jwtValidator.Validate(keys, decodedPayload, symmAlg, bytesToSign, decodedSignature);
             }
         }
 
@@ -262,44 +261,6 @@ namespace JWT
 
             var decoded = _urlEncoder.Decode(jwt.Payload);
             return GetString(decoded);
-        }
-
-        private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
-        {
-            if (keys is null)
-                throw new ArgumentNullException(nameof(keys));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
-
-            // the signature on the token, with the leading =
-            var rawSignature = Convert.ToBase64String(decodedSignature);
-
-            // the signatures re-created by the algorithm, with the leading =
-            var recreatedSignatures = keys.Select(key => Convert.ToBase64String(algorithm.Sign(key, bytesToSign))).ToArray();
-
-            _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
-        }
-
-        private static bool AllKeysHaveValues(byte[][] keys)
-        {
-            if (keys is null)
-                return false;
-
-            if (keys.Length == 0)
-                return false;
-
-            return Array.TrueForAll(keys, key => KeyHasValue(key));
-        }
-
-        private static bool KeyHasValue(byte[] key)
-        {
-            if (key is null)
-                return false;
-
-            if (key.Length == 0)
-                return false;
-
-            return true;
         }
 
         private void ValidateNoneAlgorithm(JwtParts jwt)
