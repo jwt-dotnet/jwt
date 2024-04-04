@@ -8,6 +8,11 @@ namespace JWT.Extensions.AspNetCore
 {
     public class JwtAuthenticationOptions : AuthenticationSchemeOptions
     {
+        public JwtAuthenticationOptions()
+        {
+            Events = new JwtAuthenticationEvents();
+        }
+
         /// <summary>
         /// The keys used to sign the JWT.
         /// </summary>
@@ -26,41 +31,46 @@ namespace JWT.Extensions.AspNetCore
         /// Handles missing authentication header.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="JwtAuthenticationHandler.OnMissingHeader" />.
+        /// For the default behavior <see cref="JwtAuthenticationEvents.OnMissingHeader" />.
         /// </remarks>
-        public Func<ILogger, AuthenticateResult> OnMissingHeader { get; set; } = JwtAuthenticationHandler.OnMissingHeader;
+        [Obsolete("Use Events.OnMissingHeader")]
+        public Func<ILogger, AuthenticateResult> OnMissingHeader { get; set; } = JwtAuthenticationEvents.OnMissingHeader;
 
         /// <summary>
         /// Handles incorrect authentication scheme.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="JwtAuthenticationHandler.OnIncorrectScheme" />.
+        /// For the default behavior <see cref="JwtAuthenticationEvents.OnIncorrectScheme" />.
         /// </remarks>
-        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme { get; set; } = JwtAuthenticationHandler.OnIncorrectScheme;
+        [Obsolete("Use Events.OnIncorrectScheme")]
+        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme { get; set; } = JwtAuthenticationEvents.OnIncorrectScheme;
 
         /// <summary>
         /// Handles empty authentication header.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="JwtAuthenticationHandler.OnEmptyHeader" />.
+        /// For the default behavior <see cref="JwtAuthenticationEvents.OnEmptyHeader" />.
         /// </remarks>
-        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader { get; set; } = JwtAuthenticationHandler.OnEmptyHeader;
+        [Obsolete("Use Events.OnEmptyHeader")]
+        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader { get; set; } = JwtAuthenticationEvents.OnEmptyHeader;
 
         /// <summary>
         /// Handles successful authentication header.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="JwtAuthenticationHandler.OnSuccessfulTicket" />.
+        /// For the default behavior <see cref="JwtAuthenticationEvents.OnSuccessfulTicket" />.
         /// </remarks>
-        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket { get; set; } = JwtAuthenticationHandler.OnSuccessfulTicket;
+        [Obsolete("Use Events.OnSuccessfulTicket")]
+        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket { get; set; } = JwtAuthenticationEvents.OnSuccessfulTicket;
 
         /// <summary>
         /// Handles failed authentication header.
         /// </summary>
         /// <remarks>
-        /// For the default behavior <see cref="JwtAuthenticationHandler.OnFailedTicket" />.
+        /// For the default behavior <see cref="JwtAuthenticationEvents.OnFailedTicket" />.
         /// </remarks>
-        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = JwtAuthenticationHandler.OnFailedTicket;
+        [Obsolete("Use Events.OnFailedTicket")]
+        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = JwtAuthenticationEvents.OnFailedTicket;
 
         /// <summary>
         /// Whether to include by default AuthenticationScheme into the resulting <see cref="ClaimsIdentity" />.
@@ -77,5 +87,15 @@ namespace JWT.Extensions.AspNetCore
         /// The default value is <see cref="Dictionary{String, String}" />.
         /// </remarks>
         public Type PayloadType { get; set; } = typeof(Dictionary<string, object>);
+
+
+        /// <summary>
+        /// Custom Event Overrides
+        /// </summary>
+        public new JwtAuthenticationEvents Events
+        {
+            get => (JwtAuthenticationEvents)base.Events!;
+            set => base.Events = value;
+        }
     }
 }
