@@ -1,10 +1,10 @@
+using System;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
+
 namespace JWT.Extensions.AspNetCore
 {
-    using System;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Net.Http.Headers;
-
     public class JwtAuthenticationEvents
     {
         private static readonly Action<ILogger, Exception> _logMissingHeader;
