@@ -31,7 +31,6 @@ namespace JWT.Extensions.AspNetCore
             _ticketFactory = ticketFactory;
         }
 
-
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var header = this.Context.Request.Headers[HeaderNames.Authorization];
@@ -74,6 +73,5 @@ namespace JWT.Extensions.AspNetCore
             get => (JwtAuthenticationEvents)base.Events!;
             set => base.Events = value;
         }
-
     }
 }

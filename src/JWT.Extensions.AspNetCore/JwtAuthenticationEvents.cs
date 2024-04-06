@@ -41,35 +41,38 @@ namespace JWT.Extensions.AspNetCore
                 "Error decoding JWT: {0}, returning failure");
         }
 
-        public static AuthenticateResult OnMissingHeader(ILogger logger)
-        {
-            _logMissingHeader(logger, null);
-            return AuthenticateResult.NoResult();
-        }
+        public Func<ILogger, AuthenticateResult> OnMissingHeader { get; set; } =
+            logger =>
+            {
+                _logMissingHeader(logger, null);
+                return AuthenticateResult.NoResult();
+            };
 
-        public static AuthenticateResult OnIncorrectScheme(ILogger logger, string actualScheme, string expectedScheme)
-        {
-            _logIncorrectScheme(logger, actualScheme, expectedScheme, null);
-            return AuthenticateResult.NoResult();
-        }
+        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme { get; set; } =
+            (logger, actualScheme, expectedScheme) =>
+            {
+                _logIncorrectScheme(logger, actualScheme, expectedScheme, null);
+                return AuthenticateResult.NoResult();
+            };
 
-        public static AuthenticateResult OnEmptyHeader(ILogger logger, string header)
+        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader { get; set; } = (logger, header) =>
         {
             _logEmptyHeader(logger, null);
             return AuthenticateResult.NoResult();
-        }
+        };
 
-        public static AuthenticateResult OnSuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
-        {
-            _logSuccessfulTicket(logger, null);
-            return AuthenticateResult.Success(ticket);
-        }
+        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket { get; set; } =
+            (logger, ticket) =>
+            {
+                _logSuccessfulTicket(logger, null);
+                return AuthenticateResult.Success(ticket);
+            };
 
-        public static AuthenticateResult OnFailedTicket(ILogger logger, Exception ex)
+        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = (logger, ex) =>
         {
             _logFailedTicket(logger, ex.Message, ex);
             return AuthenticateResult.Fail(ex);
-        }
+        };
 
         public virtual AuthenticateResult SuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
         {

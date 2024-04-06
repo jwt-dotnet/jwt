@@ -57,7 +57,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         }
 
         [TestMethod]
-        public async Task Request_Should_Return_Ok_When_Token_Is_Valid()
+        public async Task Request_Should_Fire_Events()
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(

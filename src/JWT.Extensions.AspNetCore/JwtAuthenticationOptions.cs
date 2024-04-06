@@ -34,7 +34,11 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnMissingHeader" />.
         /// </remarks>
         [Obsolete("Use Events.OnMissingHeader")]
-        public Func<ILogger, AuthenticateResult> OnMissingHeader { get; set; } = JwtAuthenticationEvents.OnMissingHeader;
+        public Func<ILogger, AuthenticateResult> OnMissingHeader
+        {
+            get => Events.OnMissingHeader;
+            set => Events.OnMissingHeader = value;
+        }
 
         /// <summary>
         /// Handles incorrect authentication scheme.
@@ -43,7 +47,11 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnIncorrectScheme" />.
         /// </remarks>
         [Obsolete("Use Events.OnIncorrectScheme")]
-        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme { get; set; } = JwtAuthenticationEvents.OnIncorrectScheme;
+        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme
+        {
+            get => Events.OnIncorrectScheme;
+            set => Events.OnIncorrectScheme = value;
+        }
 
         /// <summary>
         /// Handles empty authentication header.
@@ -52,7 +60,11 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnEmptyHeader" />.
         /// </remarks>
         [Obsolete("Use Events.OnEmptyHeader")]
-        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader { get; set; } = JwtAuthenticationEvents.OnEmptyHeader;
+        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader
+        {
+            get => Events.OnEmptyHeader;
+            set => Events.OnEmptyHeader = value;
+        }
 
         /// <summary>
         /// Handles successful authentication header.
@@ -61,7 +73,10 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnSuccessfulTicket" />.
         /// </remarks>
         [Obsolete("Use Events.OnSuccessfulTicket")]
-        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket { get; set; } = JwtAuthenticationEvents.OnSuccessfulTicket;
+        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket {
+            get => Events.OnSuccessfulTicket;
+            set => Events.OnSuccessfulTicket = value;
+        }
 
         /// <summary>
         /// Handles failed authentication header.
@@ -70,7 +85,11 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnFailedTicket" />.
         /// </remarks>
         [Obsolete("Use Events.OnFailedTicket")]
-        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = JwtAuthenticationEvents.OnFailedTicket;
+        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket
+        {
+            get => Events.OnFailedTicket;
+            set => Events.OnFailedTicket = value;
+        }
 
         /// <summary>
         /// Whether to include by default AuthenticationScheme into the resulting <see cref="ClaimsIdentity" />.
