@@ -1,6 +1,5 @@
 namespace JWT.Extensions.AspNetCore
 {
-
     using System;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.Extensions.Logging;
