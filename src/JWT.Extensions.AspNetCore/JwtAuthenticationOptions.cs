@@ -73,9 +73,9 @@ namespace JWT.Extensions.AspNetCore
         /// For the default behavior <see cref="JwtAuthenticationEvents.OnSuccessfulTicket" />.
         /// </remarks>
         [Obsolete("Use Events.OnSuccessfulTicket")]
-        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket {
-            get => Events.OnSuccessfulTicket;
-            set => Events.OnSuccessfulTicket = value;
+        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket
+        {
+            set => Events.OnSuccessfulTicket = (context) => value(context.Logger, context.Ticket);
         }
 
         /// <summary>
@@ -87,8 +87,7 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnFailedTicket")]
         public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket
         {
-            get => Events.OnFailedTicket;
-            set => Events.OnFailedTicket = value;
+            set => Events.OnFailedTicket = context => value(context.Logger, context.Exception);
         }
 
         /// <summary>

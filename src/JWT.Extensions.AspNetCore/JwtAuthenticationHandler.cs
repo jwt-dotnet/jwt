@@ -56,11 +56,13 @@ namespace JWT.Extensions.AspNetCore
                 var identity = _identityFactory.CreateIdentity(this.Options.PayloadType, payload);
                 var ticket = _ticketFactory.CreateTicket(identity, this.Scheme);
 
-                return this.Events.SuccessfulTicket(this.Logger, ticket);
+                var successContext = new SuccessfulTicketContext(this.Logger, ticket, this.Context, this.Options);
+                return this.Events.SuccessfulTicket(successContext);
             }
             catch (Exception ex)
             {
-                return this.Events.FailedTicket(this.Logger, ex);
+                var failedContext = new FailedTicketContext(this.Logger, ex, this.Context, this.Options);
+                return this.Events.FailedTicket(failedContext);
             }
         }
 

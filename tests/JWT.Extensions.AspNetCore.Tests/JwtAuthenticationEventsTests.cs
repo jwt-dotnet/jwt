@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Extensions.AspNetCore.Tests
@@ -22,57 +21,63 @@ namespace JWT.Extensions.AspNetCore.Tests
     [TestClass]
     public class JwtAuthenticationEventsTests
     {
-        private static readonly Fixture _fixture = new Fixture();
-        private static TestServer _server;
+        private static bool _backwardsCompat;
 
-        private HttpClient _client;
-
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
-        {
-            var options = new JwtAuthenticationOptions
-            {
-                Keys = TestData.Secrets,
-                VerifySignature = true
-            };
-            _server = CreateServer(options);
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _server.Dispose();
-        }
-
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            _client = _server.CreateClient();
-        }
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            _client.Dispose();
-        }
 
         [TestMethod]
         public async Task Request_Should_Fire_Events()
         {
+            using var server = CreateServer(options =>
+            {
+                options.Keys = TestData.Secrets;
+                options.VerifySignature = true;
+                options.EventsType = typeof(MyEvents);
+            });
+
+            using var client = server.CreateClient();
+
             // Arrange
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 JwtAuthenticationDefaults.AuthenticationScheme,
                 TestData.TokenByAsymmetricAlgorithm);
 
             // Act
-            var response = await _client.GetAsync("https://example.com/");
+            using var response = await client.GetAsync("https://example.com/");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             MyEventsDependency.HandledSuccessfulTicket.Should().BeTrue();
         }
 
-        private static TestServer CreateServer(JwtAuthenticationOptions configureOptions)
+        [TestMethod]
+        public async Task Backwards_Compat_Request_Should_Fire_Events()
+        {
+            using var server = CreateServer(options =>
+            {
+                options.Keys = TestData.Secrets;
+                options.VerifySignature = true;
+                options.OnSuccessfulTicket = (logger, ticket) =>
+                {
+                    _backwardsCompat = true;
+                    return AuthenticateResult.Success(ticket);
+                };
+            });
+            using var client = server.CreateClient();
+
+            // Arrange
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                JwtAuthenticationDefaults.AuthenticationScheme,
+                TestData.TokenByAsymmetricAlgorithm);
+
+            // Act
+            using var response = await client.GetAsync("https://example.com/");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            _backwardsCompat.Should().BeTrue();
+        }
+
+        private static TestServer CreateServer(Action<JwtAuthenticationOptions> configureOptions)
         {
             var builder = new WebHostBuilder()
                 .Configure(app =>
@@ -107,9 +112,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                         })
                         .AddJwt(options =>
                         {
-                            options.Keys = null;
-                            options.VerifySignature = configureOptions.VerifySignature;
-                            options.EventsType = typeof(MyEvents);
+                            configureOptions(options);
                         });
                     services.AddTransient<MyEventsDependency>();
                     services.AddTransient<MyEvents>();
@@ -138,10 +141,10 @@ namespace JWT.Extensions.AspNetCore.Tests
                 _dependency = dependency;
             }
 
-            public override AuthenticateResult SuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
+            public override AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context)
             {
                 _dependency.Mark();
-                return base.SuccessfulTicket(logger, ticket);
+                return base.SuccessfulTicket(context);
             }
         }
     }

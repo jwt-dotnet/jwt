@@ -61,27 +61,27 @@ namespace JWT.Extensions.AspNetCore
             return AuthenticateResult.NoResult();
         };
 
-        public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket { get; set; } =
-            (logger, ticket) =>
+        public Func<SuccessfulTicketContext, AuthenticateResult> OnSuccessfulTicket { get; set; } =
+            (context) =>
             {
-                _logSuccessfulTicket(logger, null);
-                return AuthenticateResult.Success(ticket);
+                _logSuccessfulTicket(context.Logger, null);
+                return AuthenticateResult.Success(context.Ticket);
             };
 
-        public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket { get; set; } = (logger, ex) =>
+        public Func<FailedTicketContext, AuthenticateResult> OnFailedTicket { get; set; } = context =>
         {
-            _logFailedTicket(logger, ex.Message, ex);
-            return AuthenticateResult.Fail(ex);
+            _logFailedTicket(context.Logger, context.Exception.Message, context.Exception);
+            return AuthenticateResult.Fail(context.Exception);
         };
 
-        public virtual AuthenticateResult SuccessfulTicket(ILogger logger, AuthenticationTicket ticket)
+        public virtual AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context)
         {
-            return OnSuccessfulTicket(logger, ticket);
+            return OnSuccessfulTicket(context);
         }
 
-        public virtual AuthenticateResult FailedTicket(ILogger logger, Exception exception)
+        public virtual AuthenticateResult FailedTicket(FailedTicketContext context)
         {
-            return OnFailedTicket(logger, exception);
+            return OnFailedTicket(context);
         }
 
         public virtual AuthenticateResult EmptyHeader(ILogger logger, string header)
