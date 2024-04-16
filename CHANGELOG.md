@@ -1,5 +1,7 @@
 # Unreleased
 
+- Remove STJ for Net 6 as provided by framework
+
 # 10.1.1
 
 - Made ctor of ValidationParameters public, set default values for boolean properties to true
