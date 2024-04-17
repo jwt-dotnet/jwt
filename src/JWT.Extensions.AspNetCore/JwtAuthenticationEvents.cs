@@ -61,12 +61,11 @@ namespace JWT.Extensions.AspNetCore
             return AuthenticateResult.NoResult();
         };
 
-        public Func<SuccessfulTicketContext, AuthenticateResult> OnSuccessfulTicket { get; set; } =
-            (context) =>
-            {
-                _logSuccessfulTicket(context.Logger, null);
-                return AuthenticateResult.Success(context.Ticket);
-            };
+        public Func<SuccessfulTicketContext, AuthenticateResult> OnSuccessfulTicket { get; set; } = context =>
+        {
+            _logSuccessfulTicket(context.Logger, null);
+            return AuthenticateResult.Success(context.Ticket);
+        };
 
         public Func<FailedTicketContext, AuthenticateResult> OnFailedTicket { get; set; } = context =>
         {
@@ -74,30 +73,15 @@ namespace JWT.Extensions.AspNetCore
             return AuthenticateResult.Fail(context.Exception);
         };
 
-        public virtual AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context)
-        {
-            return OnSuccessfulTicket(context);
-        }
+        public virtual AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context) => OnSuccessfulTicket(context);
 
-        public virtual AuthenticateResult FailedTicket(FailedTicketContext context)
-        {
-            return OnFailedTicket(context);
-        }
+        public virtual AuthenticateResult FailedTicket(FailedTicketContext context) => OnFailedTicket(context);
 
-        public virtual AuthenticateResult EmptyHeader(ILogger logger, string header)
-        {
-            return OnEmptyHeader(logger, header);
+        public virtual AuthenticateResult EmptyHeader(ILogger logger, string header) => OnEmptyHeader(logger, header);
 
-        }
+        public virtual AuthenticateResult IncorrectScheme(ILogger logger, string actualScheme, string expectedScheme) => OnIncorrectScheme(logger, actualScheme, expectedScheme);
 
-        public virtual AuthenticateResult IncorrectScheme(ILogger logger, string actualScheme, string expectedScheme)
-        {
-            return OnIncorrectScheme(logger, actualScheme, expectedScheme);
-        }
+        public virtual AuthenticateResult MissingHeader(ILogger logger) => OnMissingHeader(logger);
 
-        public virtual AuthenticateResult MissingHeader(ILogger logger)
-        {
-            return OnMissingHeader(logger);
-        }
     }
 }
