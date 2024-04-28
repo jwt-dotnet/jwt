@@ -8,6 +8,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageReference Include="System.Text.Json" Version="6.0.9" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />

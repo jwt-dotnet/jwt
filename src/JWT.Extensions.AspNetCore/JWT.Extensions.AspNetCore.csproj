@@ -10,9 +10,9 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>10.1.1</Version>
-    <FileVersion>10.0.0.0</FileVersion>
-    <AssemblyVersion>10.0.0.0</AssemblyVersion>
+    <Version>11.0.0-beta1</Version>
+    <FileVersion>11.0.0.0</FileVersion>
+    <AssemblyVersion>11.0.0.0</AssemblyVersion>
     <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -28,21 +28,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.10" />
-    <PackageReference Include="System.Text.Json" Version="6.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.32" />
+    <PackageReference Include="System.Text.Json" Version="6.0.9" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.13 " />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.29 " />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\JWT\JWT.csproj" />
+    <ProjectReference Include="..\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

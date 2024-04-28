@@ -1,6 +1,9 @@
 # Unreleased
 
-- Remove STJ for Net 6 as provided by framework
+# 11.0.0-beta1
+- Remove System.Text.Json when referring .NET 6 and higher as it's provided by the framework
+- Updated Newtonsoft.Json to version to 13.0.3
+- Updated System.Text.Json to version 6.0.9
 
 # 10.1.1
 
