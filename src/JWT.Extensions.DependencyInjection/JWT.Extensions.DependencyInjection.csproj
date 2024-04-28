@@ -32,10 +32,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <PackageReference Include="System.Text.Json" Version="6.0.9" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\JWT\JWT.csproj" />
   </ItemGroup>
