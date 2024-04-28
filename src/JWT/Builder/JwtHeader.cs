@@ -1,4 +1,4 @@
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System.Text.Json.Serialization;
 #endif
 
@@ -11,50 +11,50 @@ namespace JWT.Builder
     /// </summary>
     public class JwtHeader
     {
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [System.Text.Json.Serialization.JsonConstructor]
         public JwtHeader()
         {
         }
-#endif        
+#endif
         [JsonProperty("typ")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("typ")]
 #endif
         public string Type { get; set; }
 
         [JsonProperty("cty")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("cty")]
 #endif
         public string ContentType { get; set; }
 
         [JsonProperty("alg")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("alg")]
 #endif
         public string Algorithm { get; set; }
 
         [JsonProperty("kid")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("kid")]
 #endif
         public string KeyId { get; set; }
 
         [JsonProperty("x5u")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("x5u")]
 #endif
         public string X5u { get; set; }
 
         [JsonProperty("x5c")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("x5c")]
 #endif
         public string[] X5c { get; set; }
 
         [JsonProperty("x5t")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("x5t")]
 #endif
         public string X5t { get; set; }
