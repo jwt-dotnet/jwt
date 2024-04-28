@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" Version="6.0.9" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
@@ -58,7 +58,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
