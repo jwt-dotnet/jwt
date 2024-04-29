@@ -31,12 +31,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         [TestMethod]
         public async Task Request_Should_Fire_Events()
         {
-            using var server = CreateServer(options =>
-            {
-                options.Keys = TestData.Secrets;
-                options.VerifySignature = true;
-                options.EventsType = typeof(MyEvents);
-            });
+            using var server = CreateServer(options => options.EventsType = typeof(MyEvents));
 
             using var client = server.CreateClient();
 
@@ -59,16 +54,11 @@ namespace JWT.Extensions.AspNetCore.Tests
         {
             bool backwardsCompat = false;
 
-            using var server = CreateServer(options =>
-            {
-                options.Keys = TestData.Secrets;
-                options.VerifySignature = true;
-                options.OnSuccessfulTicket = (_, ticket) =>
+            using var server = CreateServer(options => options.OnSuccessfulTicket = (_, ticket) =>
                 {
                     backwardsCompat = true;
                     return AuthenticateResult.Success(ticket);
-                };
-            });
+                });
             using var client = server.CreateClient();
 
             // Arrange
@@ -117,10 +107,15 @@ namespace JWT.Extensions.AspNetCore.Tests
                             // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
                             options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
                         })
-                        .AddJwt(options => configureOptions(options));
+                        .AddJwt(options =>
+                        {
+                            options.Keys = TestData.Secrets;
+                            options.VerifySignature = true;
+                            configureOptions(options);
+                        });
 
-                    services.AddTransient<MyEventsDependency>()
-                            .AddTransient<MyEvents>()
+                    services.AddSingleton<MyEventsDependency>()
+                            .AddSingleton<MyEvents>()
                             .AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
                 });
             return new TestServer(builder);
