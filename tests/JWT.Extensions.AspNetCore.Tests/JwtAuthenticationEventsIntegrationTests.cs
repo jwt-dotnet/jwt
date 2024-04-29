@@ -1,10 +1,9 @@
 using System;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Tests.Models;
@@ -19,10 +18,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace JWT.Extensions.AspNetCore.Tests
 {
     [TestClass]
-    public class JwtAuthenticationEventsTests
+    public class JwtAuthenticationEventsIntegrationTests
     {
-        private static bool _backwardsCompat;
+        private static CancellationToken _cancellationToken;
 
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            _cancellationToken = context.CancellationTokenSource.Token;
+        }
 
         [TestMethod]
         public async Task Request_Should_Fire_Events()
@@ -42,23 +46,26 @@ namespace JWT.Extensions.AspNetCore.Tests
                 TestData.TokenByAsymmetricAlgorithm);
 
             // Act
-            using var response = await client.GetAsync("https://example.com/");
+            using var response = await client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            MyEventsDependency.HandledSuccessfulTicket.Should().BeTrue();
+
+            server.Services.GetRequiredService<MyEventsDependency>().HandledSuccessfulTicket.Should().BeTrue();
         }
 
         [TestMethod]
         public async Task Backwards_Compat_Request_Should_Fire_Events()
         {
+            bool backwardsCompat = false;
+
             using var server = CreateServer(options =>
             {
                 options.Keys = TestData.Secrets;
                 options.VerifySignature = true;
-                options.OnSuccessfulTicket = (logger, ticket) =>
+                options.OnSuccessfulTicket = (_, ticket) =>
                 {
-                    _backwardsCompat = true;
+                    backwardsCompat = true;
                     return AuthenticateResult.Success(ticket);
                 };
             });
@@ -70,11 +77,11 @@ namespace JWT.Extensions.AspNetCore.Tests
                 TestData.TokenByAsymmetricAlgorithm);
 
             // Act
-            using var response = await client.GetAsync("https://example.com/");
+            using var response = await client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            _backwardsCompat.Should().BeTrue();
+            backwardsCompat.Should().BeTrue();
         }
 
         private static TestServer CreateServer(Action<JwtAuthenticationOptions> configureOptions)
@@ -84,7 +91,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 {
                     app.UseAuthentication();
 
-                    app.Use(async (HttpContext context, Func<Task> next) =>
+                    app.Use(async (HttpContext context, Func<Task> _) =>
                     {
                         var authenticationResult = await context.AuthenticateAsync();
                         if (authenticationResult.Succeeded)
@@ -110,40 +117,33 @@ namespace JWT.Extensions.AspNetCore.Tests
                             // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
                             options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
                         })
-                        .AddJwt(options =>
-                        {
-                            configureOptions(options);
-                        });
-                    services.AddTransient<MyEventsDependency>();
-                    services.AddTransient<MyEvents>();
-                    services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
-                });
+                        .AddJwt(options => configureOptions(options));
 
+                    services.AddTransient<MyEventsDependency>()
+                            .AddTransient<MyEvents>()
+                            .AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
+                });
             return new TestServer(builder);
         }
 
-        public class MyEventsDependency
+        private sealed class MyEventsDependency
         {
-            public static bool HandledSuccessfulTicket = false;
+            public bool HandledSuccessfulTicket { get; private set; }
 
-            public void Mark()
-            {
-                HandledSuccessfulTicket = true;
-            }
+            public void Set() =>
+                this.HandledSuccessfulTicket = true;
         }
 
-        public class MyEvents : JwtAuthenticationEvents
+        private sealed class MyEvents : JwtAuthenticationEvents
         {
             private readonly MyEventsDependency _dependency;
 
-            public MyEvents(MyEventsDependency dependency)
-            {
+            public MyEvents(MyEventsDependency dependency) =>
                 _dependency = dependency;
-            }
 
             public override AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context)
             {
-                _dependency.Mark();
+                _dependency.Set();
                 return base.SuccessfulTicket(context);
             }
         }
