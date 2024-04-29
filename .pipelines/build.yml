@@ -24,7 +24,7 @@ parameters:
   default:
   - '3.1.x'
   - '6.x'
-  - '7.x'
+  - '8.x'
 
 steps:
 - ${{ each targetFramework in parameters.targetFrameworks }}:

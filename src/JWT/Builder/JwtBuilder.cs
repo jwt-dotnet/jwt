@@ -6,7 +6,7 @@ using JWT.Jwk;
 using JWT.Serializers;
 using Newtonsoft.Json;
 
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System.Text.Json.Serialization;
 #endif
 
@@ -582,7 +582,7 @@ namespace JWT.Builder
                         }
                         break;
                     }
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
                     case SystemTextSerializer:
                     {
                         if (attribute is JsonPropertyNameAttribute stjProperty)

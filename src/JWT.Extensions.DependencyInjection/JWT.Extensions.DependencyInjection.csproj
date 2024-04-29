@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+    <TargetFrameworks>net6.0;net8.0;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,9 +10,9 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization;dependenсy injection</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>2.2.3</Version>
-    <FileVersion>2.0.0.0</FileVersion>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Version>3.0.0-beta2</Version>
+    <FileVersion>3.0.0.0</FileVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
     <RootNamespace>JWT</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -29,9 +28,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.32" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="System.Text.Json" Version="6.0.7" Condition="$(DefineConstants.Contains(MODERN_DOTNET))" />
   </ItemGroup>
 
   <ItemGroup>

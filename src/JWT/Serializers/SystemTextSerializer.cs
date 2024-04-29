@@ -1,4 +1,4 @@
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System;
 using System.Text.Json;
 using JWT.Serializers.Converters;
