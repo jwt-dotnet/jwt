@@ -1,8 +1,19 @@
 # Unreleased
 
-# JWT.Extensions.AspNetCore 11.0.0
+# JWT.Extensions.AspNetCore 11.0.0-beta3
 
 - Converted to use the event model to allow dependency injection with custom event classes.
+
+# JWT 11.0.0-beta2, JWT.Extensions.AspNetCore 11.0.0-beta2, JWT.Extensions.DependencyInjection 3.0.0-beta2
+
+- Replaced .NET 7 with .NET 8 whenever applicable
+- Updated System.Text.Json to version 8.0.3
+
+# JWT 11.0.0-beta1, JWT.Extensions.AspNetCore 11.0.0-beta1, JWT.Extensions.DependencyInjection 3.0.0-beta1
+
+- Remove System.Text.Json when referring .NET 6 and higher as it's provided by the framework
+- Updated Newtonsoft.Json to version to 13.0.3
+- Updated System.Text.Json to version 6.0.9
 
 # JWT 10.1.1
 
