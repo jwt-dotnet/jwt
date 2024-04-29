@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
@@ -21,6 +22,7 @@ namespace JWT.Extensions.AspNetCore.Tests
     [TestClass]
     public class JwtAuthenticationHandlerIntegrationTests
     {
+        private static CancellationToken _cancellationToken;
         private static readonly Fixture _fixture = new Fixture();
         private static TestServer _server;
 
@@ -29,6 +31,7 @@ namespace JWT.Extensions.AspNetCore.Tests
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
+            _cancellationToken = context.CancellationTokenSource.Token;
             var options = new JwtAuthenticationOptions
             {
                 Keys = TestData.Secrets,
@@ -64,7 +67,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 TestData.TokenByAsymmetricAlgorithm);
 
             // Act
-            var response = await _client.GetAsync("https://example.com/");
+            var response = await _client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -79,7 +82,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 String.Empty);
 
             // Act
-            var response = await _client.GetAsync("https://example.com/");
+            var response = await _client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -94,7 +97,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 TestData.TokenWithIncorrectSignature);
 
             // Act
-            var response = await _client.GetAsync("https://example.com/");
+            var response = await _client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -109,7 +112,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 _fixture.Create<string>());
 
             // Act
-            var response = await _client.GetAsync("https://example.com/");
+            var response = await _client.GetAsync("https://example.com/", _cancellationToken);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -122,7 +125,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                     {
                         app.UseAuthentication();
 
-                        app.Use(async (HttpContext context, Func<Task> next) =>
+                        app.Use(async (HttpContext context, Func<Task> _) =>
                         {
                             var authenticationResult = await context.AuthenticateAsync();
                             if (authenticationResult.Succeeded)
@@ -130,7 +133,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                                 context.Response.StatusCode = StatusCodes.Status200OK;
                                 context.Response.ContentType = new ContentType("text/json").MediaType;
 
-                                await context.Response.WriteAsync("Hello");
+                                await context.Response.WriteAsync("Hello", _cancellationToken);
                             }
                             else
                             {
@@ -150,12 +153,11 @@ namespace JWT.Extensions.AspNetCore.Tests
                         })
                         .AddJwt(options =>
                         {
-                            options.Keys = null;
+                            options.Keys = configureOptions.Keys;
                             options.VerifySignature = configureOptions.VerifySignature;
                         });
                         services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
                     });
-
             return new TestServer(builder);
         }
     }
