@@ -34,7 +34,7 @@ This library supports generating and decoding [JSON Web Tokens](https://tools.ie
 
 ## Sponsor
 
-[Sponsor wanted](https://github.com/sponsors/abatishchev) or just [b,uy me a coffee](https://buymeacoffee.com/abatishchev). Thanks!
+[Sponsor wanted](https://github.com/sponsors/abatishchev) or just [buy me a coffee](https://buymeacoffee.com/abatishchev). Thanks!
 
 ## Avaliable NuGet packages
 
