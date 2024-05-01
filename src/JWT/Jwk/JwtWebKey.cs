@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System.Text.Json.Serialization;
 #endif
 
@@ -12,7 +12,7 @@ namespace JWT.Jwk
     /// </summary>
     public sealed class JwtWebKey
     {
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [System.Text.Json.Serialization.JsonConstructor]
         public JwtWebKey()
         {
@@ -25,7 +25,7 @@ namespace JWT.Jwk
         /// Valid values are "EC" (Elliptic Curve), "RSA" and "oct" (octet sequence used to represent symmetric keys)
         /// </summary>
         [JsonProperty("kty")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("kty")]
 #endif
         public string KeyType { get; set; }
@@ -34,7 +34,7 @@ namespace JWT.Jwk
         /// The "kid" parameter which defines key id
         /// </summary>
         [JsonProperty("kid")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("kid")]
 #endif
         public string KeyId { get; set; }
@@ -44,7 +44,7 @@ namespace JWT.Jwk
         /// <see cref="KeyType"/> ("kty") must be "RSA"
         /// </summary>
         [JsonProperty("n")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("n")]
 #endif
         public string Modulus { get; set; }
@@ -54,7 +54,7 @@ namespace JWT.Jwk
         /// <see cref="KeyType"/> ("kty") must be "RSA"
         /// </summary>
         [JsonProperty("e")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("e")]
 #endif
         public string Exponent { get; set; }
@@ -63,7 +63,7 @@ namespace JWT.Jwk
         /// The "p" parameter which represents a First Prime Factor for RSA algorithms
         /// </summary>
         [JsonProperty("p")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("p")]
 #endif
         public string FirstPrimeFactor { get; set; }
@@ -72,7 +72,7 @@ namespace JWT.Jwk
         /// The "q" parameter which represents a Second Prime Factor exponent for RSA algorithms
         /// </summary>
         [JsonProperty("q")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("q")]
 #endif
         public string SecondPrimeFactor { get; set; }
@@ -81,7 +81,7 @@ namespace JWT.Jwk
         /// The "dp" parameter which represents a First Factor CRT Exponent for RSA algorithms
         /// </summary>
         [JsonProperty("dp")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("dp")]
 #endif
         public string FirstFactorCRTExponent { get; set; }
@@ -90,7 +90,7 @@ namespace JWT.Jwk
         /// The "dq" parameter which represents a Second Factor CRT Exponent for RSA algorithms
         /// </summary>
         [JsonProperty("dq")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("dq")]
 #endif
         public string SecondFactorCRTExponent { get; set; }
@@ -99,7 +99,7 @@ namespace JWT.Jwk
         /// The "qi" parameter which represents a First CRT Coefficient for RSA algorithms
         /// </summary>
         [JsonProperty("qi")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("qi")]
 #endif
         public string FirstCRTCoefficient { get; set; }
@@ -109,7 +109,7 @@ namespace JWT.Jwk
         /// "P-256", "P-384", "P-521" <see cref="KeyType"/> ("kty") must be "EC"
         /// </summary>
         [JsonProperty("crv")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("crv")]
 #endif
         public string EllipticCurveType { get; set; }
@@ -119,7 +119,7 @@ namespace JWT.Jwk
         /// the octet string representation of the coordinate. <see cref="KeyType"/> ("kty") must be "EC"
         /// </summary>
         [JsonProperty("x")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("x")]
 #endif
         public string EllipticCurveX { get; set; }
@@ -129,7 +129,7 @@ namespace JWT.Jwk
         /// the octet string representation of the coordinate. <see cref="KeyType"/> ("kty") must be "EC"
         /// </summary>
         [JsonProperty("y")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("y")]
 #endif
         public string EllipticCurveY { get; set; }
@@ -140,7 +140,7 @@ namespace JWT.Jwk
         /// "RSA" then it represents a private exponent parameter value
         /// </summary>
         [JsonProperty("d")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("d")]
 #endif
         public string D { get; set; }
@@ -150,7 +150,7 @@ namespace JWT.Jwk
         /// encoding of the octet sequence containing the key value. <see cref="KeyType"/> ("kty") must be "oct"
         /// </summary>
         [JsonProperty("k")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("k")]
 #endif
         public string SymmetricKey { get; set; }

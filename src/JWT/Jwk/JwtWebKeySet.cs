@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
 using System.Text.Json.Serialization;
 #endif
 
@@ -14,7 +14,7 @@ namespace JWT.Jwk
     /// </summary>
     public sealed class JwtWebKeySet
     {
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [System.Text.Json.Serialization.JsonConstructor]
         public JwtWebKeySet()
         {
@@ -23,7 +23,7 @@ namespace JWT.Jwk
 #endif
 
         [JsonProperty("keys")]
-#if MODERN_DOTNET
+#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("keys")]
 #endif
         public IEnumerable<JwtWebKey> Keys { get; set; } = null!;
