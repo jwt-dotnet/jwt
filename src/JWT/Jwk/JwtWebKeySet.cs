@@ -15,10 +15,9 @@ namespace JWT.Jwk
     public sealed class JwtWebKeySet
     {
 #if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
-        [System.Text.Json.Serialization.JsonConstructor]
+        [JsonConstructor]
         public JwtWebKeySet()
         {
-
         } 
 #endif
 
