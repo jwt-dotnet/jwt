@@ -1,59 +1,60 @@
 using System;
 
-namespace JWT.Jwk;
-
-/// <summary>
-/// Based on Microsoft.AspNetCore.WebUtilities.WebEncoders
-/// </summary>
-internal static class JwtWebKeyPropertyValuesEncoder
+namespace JWT.Jwk
 {
-    public static byte[] Base64UrlDecode(string input)
+    /// <summary>
+    /// Based on Microsoft.AspNetCore.WebUtilities.WebEncoders
+    /// </summary>
+    internal static class JwtWebKeyPropertyValuesEncoder
     {
-        if (input == null)
-            return null;
-
-        var inputLength = input.Length;
-
-        var paddingCharsCount = GetNumBase64PaddingCharsToAddForDecode(inputLength);
-
-        var buffer = new char[inputLength + paddingCharsCount];
-
-        for (var i = 0; i < inputLength; ++i)
+        public static byte[] Base64UrlDecode(string input)
         {
-            var symbol = input[i];
-
-            switch (symbol)
+            if (input is null)
+                return null;
+    
+            var paddingCharsCount = GetNumBase64PaddingCharsToAddForDecode(input.Length);
+            var buffer = new char[input.Length + paddingCharsCount];
+    
+            for (var i = 0; i < input.Length; ++i)
             {
-                case '-':
-                    buffer[i] = '+';
-                    break;
-                case '_':
-                    buffer[i] = '/';
-                    break;
+                char ch = DecodeCharacter(input[i]);
+                buffer[i] = ch;
+            }
+    
+            for (var i = input.Length; i < buffer.Length; ++i) 
+            {
+                buffer[i] = '=';
+            }
+    
+            return Convert.FromBase64CharArray(buffer, 0, buffer.Length);
+        }
+    
+        private static int GetNumBase64PaddingCharsToAddForDecode(int length)
+        {
+            switch (length % 4)
+            {
+                case 0:
+                    return 0;
+                case 2:
+                    return 2;
+                case 3:
+                    return 1;
                 default:
-                    buffer[i] = symbol;
-                    break;
+                    throw new ArgumentOutOfRangeException (nameof(length), $"Malformed input: {length} is an invalid input length.");
             }
         }
-
-        for (var i = input.Length; i < buffer.Length; ++i) 
-            buffer[i] = '=';
-
-        return Convert.FromBase64CharArray(buffer, 0, buffer.Length);
-    }
-
-    private static int GetNumBase64PaddingCharsToAddForDecode(int inputLength)
-    {
-        switch (inputLength % 4)
+    
+        private static char DecodeCharacter(char ch)
         {
-            case 0:
-                return 0;
-            case 2:
-                return 2;
-            case 3:
-                return 1;
-            default:
-                throw new FormatException($"Malformed input: {inputLength} is an invalid input length.");
+            switch (ch)
+            {
+                case '-':
+                    return '+';
+                case '_':
+                    return '/';
+                default:
+                    return ch;
+            }
         }
     }
 }
