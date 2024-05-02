@@ -416,18 +416,18 @@ namespace JWT.Tests.Builder
         public void Encode_With_Symmetrical_WebKey_From_WebKey_Set_Should_Return_Token()
         {
             var token = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .WithJsonWebKey("OCT-Test-Key", JwtAlgorithmName.HS256)
-                .Encode(TestData.Customer);
+                                  .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                  .WithJsonWebKey("OCT-Test-Key", JwtAlgorithmName.HS256)
+                                  .Encode(TestData.Customer);
 
             token.Should().NotBeNullOrEmpty();
 
             var decoded = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .Decode<Customer>(token);
+                                    .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                    .Decode<Customer>(token);
 
             decoded.Should()
-                .BeEquivalentTo(TestData.Customer);
+                   .BeEquivalentTo(TestData.Customer);
         }
 
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
@@ -435,18 +435,18 @@ namespace JWT.Tests.Builder
         public void Encode_With_Elliptic_Curve_WebKey_From_WebKey_Set_Should_Return_Token()
         {
             var token = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .WithJsonWebKey("EC-Test-Key", JwtAlgorithmName.ES256)
-                .Encode(TestData.Customer);
+                                  .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                  .WithJsonWebKey("EC-Test-Key", JwtAlgorithmName.ES256)
+                                  .Encode(TestData.Customer);
 
             token.Should().NotBeNullOrEmpty();
 
             var decoded = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .Decode<Customer>(token);
+                                    .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                    .Decode<Customer>(token);
 
             decoded.Should()
-                .BeEquivalentTo(TestData.Customer);
+                  .BeEquivalentTo(TestData.Customer);
         } 
 #endif
 
@@ -454,18 +454,18 @@ namespace JWT.Tests.Builder
         public void Encode_With_RSA_WebKey_From_WebKey_Set_Should_Return_Token()
         {
             var token = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .WithJsonWebKey("CFAEAE2D650A6CA9862575DE54371EA980643849", JwtAlgorithmName.RS256)
-                .Encode(TestData.Customer);
+                                  .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                  .WithJsonWebKey("CFAEAE2D650A6CA9862575DE54371EA980643849", JwtAlgorithmName.RS256)
+                                  .Encode(TestData.Customer);
 
             token.Should().NotBeNullOrEmpty();
 
             var decoded = JwtBuilder.Create()
-                .WithJsonWebKeySet(TestData.JsonWebKeySet)
-                .Decode<Customer>(token);
+                                    .WithJsonWebKeySet(TestData.JsonWebKeySet)
+                                    .Decode<Customer>(token);
 
             decoded.Should()
-                .BeEquivalentTo(TestData.Customer);
+                  .BeEquivalentTo(TestData.Customer);
         }
 
         private sealed class CustomFactory : IAlgorithmFactory
