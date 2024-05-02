@@ -13,13 +13,6 @@ namespace JWT.Jwk
     /// </summary>
     public sealed class JwtWebKeySet
     {
-#if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
-        [JsonConstructor]
-        public JwtWebKeySet()
-        {
-        } 
-#endif
-
         [JsonProperty("keys")]
 #if NET462_OR_GREATER || NET6_0_OR_GREATER || NETSTANDARD2_0_OR_GREATER
         [JsonPropertyName("keys")]
