@@ -99,9 +99,9 @@ namespace JWT
             var rawSignature = Convert.ToBase64String(decodedSignature);
 
             // the signatures re-created by the algorithm, with the leading =
-            var recreatedSignatures = keys != null
-                ? keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign))).ToArray()
-                : new string[] { Convert.ToBase64String(alg.Sign(null, bytesToSign)) };
+            var recreatedSignatures = keys is not null ?
+                keys.Select(key => Convert.ToBase64String(alg.Sign(key, bytesToSign))).ToArray()
+                [Convert.ToBase64String(alg.Sign(null, bytesToSign))];
 
             Validate(decodedPayload, rawSignature, recreatedSignatures);
         }
@@ -283,8 +283,6 @@ namespace JWT
 
             return null;
         }
-
-        
 
         private static bool AllKeysHaveValues(byte[][] keys)
         {
