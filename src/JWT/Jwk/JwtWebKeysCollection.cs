@@ -4,7 +4,7 @@ using JWT.Serializers;
 
 namespace JWT.Jwk
 {
-    public class JwtWebKeysCollection : IJwtWebKeysCollection
+    public sealed class JwtWebKeysCollection : IJwtWebKeysCollection
     {
         private readonly Dictionary<string, JwtWebKey> _keys;
 
