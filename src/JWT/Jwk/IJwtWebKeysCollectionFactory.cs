@@ -1,6 +1,7 @@
-namespace JWT.Jwk;
-
-public interface IJwtWebKeysCollectionFactory
+namespace JWT.Jwk
 {
-    JwtWebKeysCollection CreateKeys();
+    public interface IJwtWebKeysCollectionFactory
+    {
+        JwtWebKeysCollection CreateKeys();
+    }
 }
