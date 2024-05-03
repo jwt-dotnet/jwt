@@ -8,10 +8,7 @@ namespace JWT.Jwk
     {
         private readonly JwtWebKey _key;
 
-        public JwtJsonWebKeyAlgorithmFactory(JwtWebKey key)
-        {
-            _key = key;
-        }
+        public JwtJsonWebKeyAlgorithmFactory(JwtWebKey key) => _key = key;
 
         public IJwtAlgorithm Create(JwtDecoderContext context)
         {

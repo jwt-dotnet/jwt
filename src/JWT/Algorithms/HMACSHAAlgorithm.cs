@@ -5,14 +5,10 @@ namespace JWT.Algorithms
     public abstract class HMACSHAAlgorithm : ISymmetricAlgorithm
     {
         protected HMACSHAAlgorithm()
-        {
-            
+        {   
         }
 
-        protected HMACSHAAlgorithm(byte[] key)
-        {
-            this.Key = key;
-        }
+        protected HMACSHAAlgorithm(byte[] key) => this.Key = key;
 
         /// <inheritdoc />
         public abstract string Name { get; }

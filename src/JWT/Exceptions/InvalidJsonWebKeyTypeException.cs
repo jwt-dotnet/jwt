@@ -7,7 +7,6 @@ namespace JWT.Exceptions
         public InvalidJsonWebKeyTypeException(string keyType)
             : base($"{keyType} is not defined in RFC7518")
         {
-            
         }
     }
 }

@@ -7,7 +7,6 @@ namespace JWT.Exceptions
         public InvalidJsonWebKeyEllipticCurveTypeException(string ellipticCurveType)
             : base($"{ellipticCurveType} is not defined in RFC751")
         {
-            
         }
     }
 }

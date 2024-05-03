@@ -9,12 +9,10 @@ namespace JWT.Algorithms
     {   
         public HMACSHA512Algorithm()
         {
-            
         }
 
         internal HMACSHA512Algorithm(byte[] key) : base(key)
         {
-            
         }
 
         /// <inheritdoc />

@@ -9,13 +9,9 @@ namespace JWT.Algorithms
 
         public HMACSHAAlgorithmFactory()
         {
-            
         }
 
-        public HMACSHAAlgorithmFactory(byte[] key)
-        {
-            _key = key;
-        }
+        public HMACSHAAlgorithmFactory(byte[] key) => _key = key;
 
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {

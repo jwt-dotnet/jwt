@@ -16,7 +16,6 @@ namespace JWT.Jwk
         [System.Text.Json.Serialization.JsonConstructor]
         public JwtWebKey()
         {
-
         } 
 #endif
 
