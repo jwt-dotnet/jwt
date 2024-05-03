@@ -239,18 +239,21 @@ namespace JWT
 
             var header = DecodeHeader<JwtHeader>(jwt);
             var algorithm = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
-            if (algorithm is null)
-                throw new ArgumentNullException(nameof(algorithm));
 
             var bytesToSign = GetBytes(jwt.Header, '.', jwt.Payload);
 
-            if (algorithm is IAsymmetricAlgorithm asymmAlg)
+            switch (algorithm)
             {
-                _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
-            }
-            else if (algorithm is ISymmetricAlgorithm symmAlg)
-            {
-                _jwtValidator.Validate(keys, decodedPayload, symmAlg, bytesToSign, decodedSignature);
+                case IAsymmetricAlgorithm asymmAlg:
+                    _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
+                    break;
+
+                case ISymmetricAlgorithm symmAlg:
+                    _jwtValidator.Validate(keys, decodedPayload, symmAlg, bytesToSign, decodedSignature);
+                    break;
+
+                case null:
+                    throw new ArgumentNullException(nameof(algorithm));
             }
         }
 
