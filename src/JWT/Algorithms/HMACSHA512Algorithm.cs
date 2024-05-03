@@ -6,7 +6,15 @@ namespace JWT.Algorithms
     /// HMAC using SHA-512
     /// </summary>
     public sealed class HMACSHA512Algorithm : HMACSHAAlgorithm
-    {
+    {   
+        public HMACSHA512Algorithm()
+        {
+        }
+
+        internal HMACSHA512Algorithm(byte[] key) : base(key)
+        {
+        }
+
         /// <inheritdoc />
         public override string Name => nameof(JwtAlgorithmName.HS512);
 

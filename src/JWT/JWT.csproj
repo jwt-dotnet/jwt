@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>11.0.0-beta2</Version>
+    <Version>11.0.0-beta3</Version>
     <FileVersion>11.0.0.0</FileVersion>
     <AssemblyVersion>11.0.0.0</AssemblyVersion>
   </PropertyGroup>

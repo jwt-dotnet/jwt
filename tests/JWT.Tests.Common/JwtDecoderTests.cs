@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using AutoFixture;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
+using JWT.Jwk;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -487,6 +489,7 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Decode_Token_On_Exp_Claim_After_Year2038()
         {
             const string key = TestData.Secret;
+
             var dateTimeProvider = new UtcDateTimeProvider();
             var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, dateTimeProvider);
@@ -531,7 +534,6 @@ namespace JWT.Tests
         public void DecodeToObject_Should_Decode_Token_After_NotBefore_Becomes_Valid()
         {
             var dateTimeProvider = new UtcDateTimeProvider();
-            const string key = TestData.Secret;
 
             var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -543,9 +545,9 @@ namespace JWT.Tests
             var nbf = UnixEpoch.GetSecondsSince(now);
 
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
-            var token = encoder.Encode(new { nbf }, key);
+            var token = encoder.Encode(new { nbf }, TestData.Secret);
 
-            var dic = decoder.DecodeToObject<Dictionary<string, object>>(token, key, verify: true);
+            var dic = decoder.DecodeToObject<Dictionary<string, object>>(token, TestData.Secret, verify: true);
 
             dic.Should()
                .Contain("nbf", nbf);
@@ -558,7 +560,6 @@ namespace JWT.Tests
 
             var serializer = CreateSerializer();
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
-
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
@@ -571,7 +572,110 @@ namespace JWT.Tests
                   .Throw<SignatureVerificationException>()
                   .WithMessage("Claim 'nbf' must be a number.", "because the invalid 'nbf' must result in an exception on decoding");
         }
-        
+
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys_RSA()
+        {
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(TestData.TokenByAsymmetricAlgorithm);
+
+            customer.Should()
+                    .BeEquivalentTo(TestData.Customer);
+        }
+
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys_EC()
+        {
+            var ecDsa = ECDsa.Create(TestData.EllipticCurvesParameters);
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new ES256Algorithm(ecDsa, ecDsa))
+                                  .AddHeader(HeaderName.KeyId, "EC-Test-Key")
+                                  .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                  .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                  .Encode();
+
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(token);
+
+            customer.Should()
+                    .BeEquivalentTo(TestData.Customer);
+        }
+#endif
+
+        [TestMethod]
+        public void Should_Decode_With_Json_Web_Keys_()
+        {
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(new HMACSHA256Algorithm())
+                                  .WithSecret(TestData.Secret)
+                                  .AddHeader(HeaderName.KeyId, "OCT-Test-Key")
+                                  .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                  .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                  .Encode();
+
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var customer = decoder.DecodeToObject<Customer>(token);
+
+            customer.Should()
+                    .BeEquivalentTo(TestData.Customer);
+        }
+
+        [TestMethod]
+        public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Missing_In_Token()
+        {
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            Action action = () => decoder.DecodeToObject<Customer>(TestData.Token);
+
+            action.Should()
+                  .Throw<SignatureVerificationException>()
+                  .WithMessage("The key id is missing in the token header");
+        }
+
+        [TestMethod]
+        public void DecodeToObject_With_Json_Web_keys_Should_Throw_Exception_If_Key_Is_Not_In_Collection()
+        {
+            var serializer = CreateSerializer();
+            var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+            var urlEncoder = new JwtBase64UrlEncoder();
+            var algorithmFactory = new JwtJsonWebKeySetAlgorithmFactory(TestData.JsonWebKeySet, serializer);
+            var decoder = new JwtDecoder(serializer, validator, urlEncoder, algorithmFactory);
+
+            var token = JwtBuilder.Create()
+                                  .WithAlgorithm(TestData.HMACSHA256Algorithm)
+                                  .WithSecret(TestData.Secret)
+                                  .AddHeader(HeaderName.KeyId, "42")
+                                  .AddClaim(nameof(TestData.Customer.FirstName), TestData.Customer.FirstName)
+                                  .AddClaim(nameof(TestData.Customer.Age), TestData.Customer.Age)
+                                  .Encode();
+
+            Action action = () => decoder.DecodeToObject<Customer>(token);
+
+            action.Should()
+                  .Throw<SignatureVerificationException>()
+                  .WithMessage("The key id is not presented in the JSON Web key set");
+        }
+
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
     }

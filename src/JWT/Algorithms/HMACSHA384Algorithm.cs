@@ -7,6 +7,14 @@ namespace JWT.Algorithms
     /// </summary>
     public sealed class HMACSHA384Algorithm : HMACSHAAlgorithm
     {
+        public HMACSHA384Algorithm()
+        {
+        }
+
+        internal HMACSHA384Algorithm(byte[] key) : base(key)
+        {   
+        }
+
         /// <inheritdoc />
         public override string Name => nameof(JwtAlgorithmName.HS384);
 

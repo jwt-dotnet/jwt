@@ -5,16 +5,24 @@ namespace JWT.Algorithms
     /// <inheritdoc />
     public class HMACSHAAlgorithmFactory : JwtAlgorithmFactory
     {
+        private readonly byte[] _key;
+
+        public HMACSHAAlgorithmFactory()
+        {
+        }
+
+        public HMACSHAAlgorithmFactory(byte[] key) => _key = key;
+
         protected override IJwtAlgorithm Create(JwtAlgorithmName algorithm)
         {
             switch (algorithm)
             {
                 case JwtAlgorithmName.HS256:
-                    return new HMACSHA256Algorithm();
+                    return new HMACSHA256Algorithm(_key);
                 case JwtAlgorithmName.HS384:
-                    return new HMACSHA384Algorithm();
+                    return new HMACSHA384Algorithm(_key);
                 case JwtAlgorithmName.HS512:
-                    return new HMACSHA512Algorithm();
+                    return new HMACSHA512Algorithm(_key);
                 case JwtAlgorithmName.RS256:
                 case JwtAlgorithmName.RS384:
                 case JwtAlgorithmName.RS512:
