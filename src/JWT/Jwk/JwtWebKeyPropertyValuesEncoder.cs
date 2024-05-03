@@ -17,7 +17,7 @@ namespace JWT.Jwk
     
             for (var i = 0; i < input.Length; ++i)
             {
-                char ch = DecodeCharacter(input[i]);
+                char ch = Transform(input[i]);
                 buffer[i] = ch;
             }
     
@@ -44,16 +44,16 @@ namespace JWT.Jwk
             }
         }
     
-        private static char DecodeCharacter(char ch)
+        private static char Transform(char symbol)
         {
-            switch (ch)
+            switch (symbol)
             {
                 case '-':
                     return '+';
                 case '_':
                     return '/';
                 default:
-                    return ch;
+                    return symbol;
             }
         }
     }
