@@ -34,9 +34,7 @@ namespace JWT.Jwk
 
             var privateKey = CreateRSAKey(true);
 
-            var algorithmFactory = privateKey == null
-                ? new RSAlgorithmFactory(publicKey)
-                : new RSAlgorithmFactory(publicKey, privateKey);
+            var algorithmFactory = privateKey == null ? new RSAlgorithmFactory(publicKey) : new RSAlgorithmFactory(publicKey, privateKey);
 
             return algorithmFactory.Create(context);
         }
