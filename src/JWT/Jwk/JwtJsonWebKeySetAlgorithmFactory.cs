@@ -9,30 +9,20 @@ namespace JWT.Jwk
     {
         private readonly JwtWebKeysCollection _webKeysCollection;
 
-        public JwtJsonWebKeySetAlgorithmFactory(JwtWebKeysCollection webKeysCollection)
-        {
+        public JwtJsonWebKeySetAlgorithmFactory(JwtWebKeysCollection webKeysCollection) =>
             _webKeysCollection = webKeysCollection;
-        }
 
-        public JwtJsonWebKeySetAlgorithmFactory(Func<JwtWebKeysCollection> getJsonWebKeys)
-        {
+        public JwtJsonWebKeySetAlgorithmFactory(Func<JwtWebKeysCollection> getJsonWebKeys) =>
             _webKeysCollection = getJsonWebKeys();
-        }
 
-        public JwtJsonWebKeySetAlgorithmFactory(IJwtWebKeysCollectionFactory webKeysCollectionFactory)
-        {
+        public JwtJsonWebKeySetAlgorithmFactory(IJwtWebKeysCollectionFactory webKeysCollectionFactory) =>
             _webKeysCollection = webKeysCollectionFactory.CreateKeys();
-        }
 
-        public JwtJsonWebKeySetAlgorithmFactory(string keySet, IJsonSerializer serializer)
-        {
+        public JwtJsonWebKeySetAlgorithmFactory(string keySet, IJsonSerializer serializer) =>
             _webKeysCollection = new JwtWebKeysCollection(keySet, serializer);
-        }
 
-        public JwtJsonWebKeySetAlgorithmFactory(string keySet, IJsonSerializerFactory jsonSerializerFactory)
-        {
+        public JwtJsonWebKeySetAlgorithmFactory(string keySet, IJsonSerializerFactory jsonSerializerFactory) =>
             _webKeysCollection = new JwtWebKeysCollection(keySet, jsonSerializerFactory);
-        }
 
         public IJwtAlgorithm Create(JwtDecoderContext context)
         {

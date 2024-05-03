@@ -8,10 +8,7 @@ namespace JWT.Jwk
     {
         private readonly Dictionary<string, JwtWebKey> _keys;
 
-        public JwtWebKeysCollection(IEnumerable<JwtWebKey> keys)
-        {
-            _keys = keys.ToDictionary(x => x.KeyId);
-        }
+        public JwtWebKeysCollection(IEnumerable<JwtWebKey> keys) => _keys = keys.ToDictionary(x => x.KeyId);
 
         public JwtWebKeysCollection(JwtWebKeySet keySet) : this(keySet.Keys)
         {
@@ -30,9 +27,6 @@ namespace JWT.Jwk
             
         }
 
-        public JwtWebKey Find(string keyId)
-        {
-            return _keys.TryGetValue(keyId, out var key) ? key : null;
-        }
+        public JwtWebKey Find(string keyId) => _keys.TryGetValue(keyId, out var key) ? key : null;
     }
 }
