@@ -35,10 +35,10 @@ namespace JWT.Extensions.AspNetCore
         {
             var header = this.Context.Request.Headers[HeaderNames.Authorization];
             var result = GetAuthenticationResult(header);
-            return Task.FromResult(result);
+            return result;
         }
 
-        private AuthenticateResult GetAuthenticationResult(string header)
+        private Task<AuthenticateResult> GetAuthenticationResult(string header)
         {
             if (String.IsNullOrEmpty(header))
                 return this.Events.MissingHeader(this.Logger);

@@ -136,7 +136,7 @@ namespace JWT.Extensions.AspNetCore.Tests
             public MyEvents(MyEventsDependency dependency) =>
                 _dependency = dependency;
 
-            public override AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context)
+            public override Task<AuthenticateResult> SuccessfulTicket(SuccessfulTicketContext context)
             {
                 _dependency.Set();
                 return base.SuccessfulTicket(context);
