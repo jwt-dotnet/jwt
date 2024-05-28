@@ -37,7 +37,7 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnMissingHeader")]
         public Func<ILogger, AuthenticateResult> OnMissingHeader
         {
-            set => Events.OnMissingHeader = (logger) =>
+            set => Events.OnMissingHeader = logger =>
             {
                 var result = value.Invoke(logger);
                 return Task.FromResult(result);
@@ -85,7 +85,7 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnSuccessfulTicket")]
         public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket
         {
-            set => Events.OnSuccessfulTicket = (context) =>
+            set => Events.OnSuccessfulTicket = context =>
             {
                 var result = value(context.Logger, context.Ticket);
                 return Task.FromResult(result);
@@ -101,7 +101,7 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnFailedTicket")]
         public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket
         {
-            set => Events.OnFailedTicket = (context) =>
+            set => Events.OnFailedTicket = context =>
             {
                 var result = value(context.Logger, context.Exception);
                 return Task.FromResult(result);
