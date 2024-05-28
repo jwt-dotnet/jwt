@@ -2,7 +2,7 @@
 
 # JWT.Extensions.AspNetCore 11.0.0-beta4
 
-- Makes the event model support async await
+- Make the event model support async-await
 
 # JWT.Extensions.AspNetCore 11.0.0-beta3
 
