@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
@@ -41,47 +42,47 @@ namespace JWT.Extensions.AspNetCore
                 "Error decoding JWT: {0}, returning failure");
         }
 
-        public Func<ILogger, AuthenticateResult> OnMissingHeader { get; set; } =
+        public Func<ILogger, Task<AuthenticateResult>> OnMissingHeader { get; set; } =
             logger =>
             {
                 _logMissingHeader(logger, null);
-                return AuthenticateResult.NoResult();
+                return Task.FromResult(AuthenticateResult.NoResult());
             };
 
-        public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme { get; set; } =
+        public Func<ILogger, string, string, Task<AuthenticateResult>> OnIncorrectScheme { get; set; } =
             (logger, actualScheme, expectedScheme) =>
             {
                 _logIncorrectScheme(logger, actualScheme, expectedScheme, null);
-                return AuthenticateResult.NoResult();
+                return Task.FromResult(AuthenticateResult.NoResult());
             };
 
-        public Func<ILogger, string, AuthenticateResult> OnEmptyHeader { get; set; } = (logger, header) =>
+        public Func<ILogger, string, Task<AuthenticateResult>> OnEmptyHeader { get; set; } = (logger, header) =>
         {
             _logEmptyHeader(logger, null);
-            return AuthenticateResult.NoResult();
+            return Task.FromResult(AuthenticateResult.NoResult());
         };
 
-        public Func<SuccessfulTicketContext, AuthenticateResult> OnSuccessfulTicket { get; set; } = context =>
+        public Func<SuccessfulTicketContext, Task<AuthenticateResult>> OnSuccessfulTicket { get; set; } = context =>
         {
             _logSuccessfulTicket(context.Logger, null);
-            return AuthenticateResult.Success(context.Ticket);
+            return Task.FromResult(AuthenticateResult.Success(context.Ticket));
         };
 
-        public Func<FailedTicketContext, AuthenticateResult> OnFailedTicket { get; set; } = context =>
+        public Func<FailedTicketContext, Task<AuthenticateResult>> OnFailedTicket { get; set; } = context =>
         {
             _logFailedTicket(context.Logger, context.Exception.Message, context.Exception);
-            return AuthenticateResult.Fail(context.Exception);
+            return Task.FromResult(AuthenticateResult.Fail(context.Exception));
         };
 
-        public virtual AuthenticateResult SuccessfulTicket(SuccessfulTicketContext context) => OnSuccessfulTicket(context);
+        public virtual Task<AuthenticateResult> SuccessfulTicket(SuccessfulTicketContext context) => OnSuccessfulTicket(context);
 
-        public virtual AuthenticateResult FailedTicket(FailedTicketContext context) => OnFailedTicket(context);
+        public virtual Task<AuthenticateResult> FailedTicket(FailedTicketContext context) => OnFailedTicket(context);
 
-        public virtual AuthenticateResult EmptyHeader(ILogger logger, string header) => OnEmptyHeader(logger, header);
+        public virtual Task<AuthenticateResult> EmptyHeader(ILogger logger, string header) => OnEmptyHeader(logger, header);
 
-        public virtual AuthenticateResult IncorrectScheme(ILogger logger, string actualScheme, string expectedScheme) => OnIncorrectScheme(logger, actualScheme, expectedScheme);
+        public virtual Task<AuthenticateResult> IncorrectScheme(ILogger logger, string actualScheme, string expectedScheme) => OnIncorrectScheme(logger, actualScheme, expectedScheme);
 
-        public virtual AuthenticateResult MissingHeader(ILogger logger) => OnMissingHeader(logger);
+        public virtual Task<AuthenticateResult> MissingHeader(ILogger logger) => OnMissingHeader(logger);
 
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
@@ -36,8 +37,11 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnMissingHeader")]
         public Func<ILogger, AuthenticateResult> OnMissingHeader
         {
-            get => Events.OnMissingHeader;
-            set => Events.OnMissingHeader = value;
+            set => Events.OnMissingHeader = logger =>
+            {
+                var result = value.Invoke(logger);
+                return Task.FromResult(result);
+            };
         }
 
         /// <summary>
@@ -49,8 +53,11 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnIncorrectScheme")]
         public Func<ILogger, string, string, AuthenticateResult> OnIncorrectScheme
         {
-            get => Events.OnIncorrectScheme;
-            set => Events.OnIncorrectScheme = value;
+            set => Events.OnIncorrectScheme = (logger, actualScheme, expectedScheme) =>
+            {
+                var result = value.Invoke(logger, actualScheme, expectedScheme);
+                return Task.FromResult(result);
+            };
         }
 
         /// <summary>
@@ -62,8 +69,11 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnEmptyHeader")]
         public Func<ILogger, string, AuthenticateResult> OnEmptyHeader
         {
-            get => Events.OnEmptyHeader;
-            set => Events.OnEmptyHeader = value;
+            set => Events.OnEmptyHeader = (logger, header) =>
+            {
+                var result = value.Invoke(logger, header);
+                return Task.FromResult(result);
+            };
         }
 
         /// <summary>
@@ -75,7 +85,11 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnSuccessfulTicket")]
         public Func<ILogger, AuthenticationTicket, AuthenticateResult> OnSuccessfulTicket
         {
-            set => Events.OnSuccessfulTicket = (context) => value(context.Logger, context.Ticket);
+            set => Events.OnSuccessfulTicket = context =>
+            {
+                var result = value(context.Logger, context.Ticket);
+                return Task.FromResult(result);
+            };
         }
 
         /// <summary>
@@ -87,7 +101,11 @@ namespace JWT.Extensions.AspNetCore
         [Obsolete("Use Events.OnFailedTicket")]
         public Func<ILogger, Exception, AuthenticateResult> OnFailedTicket
         {
-            set => Events.OnFailedTicket = context => value(context.Logger, context.Exception);
+            set => Events.OnFailedTicket = context =>
+            {
+                var result = value(context.Logger, context.Exception);
+                return Task.FromResult(result);
+            };
         }
 
         /// <summary>

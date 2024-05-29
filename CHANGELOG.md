@@ -1,5 +1,9 @@
 # Unreleased
 
+# JWT.Extensions.AspNetCore 11.0.0-beta4
+
+- Make the event model support async-await
+
 # JWT.Extensions.AspNetCore 11.0.0-beta3
 
 - Converted to use the event model to allow dependency injection with custom event classes.
