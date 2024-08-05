@@ -55,7 +55,7 @@ steps:
   inputs:
     command: build
     projects: ${{ parameters.solutionName }}
-    arguments: '-c ${{ parameters.buildConfiguration }} --no-restore'
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-restore -p:ContinuousIntegrationBuild=true'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
