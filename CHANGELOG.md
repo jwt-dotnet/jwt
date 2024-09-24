@@ -1,5 +1,9 @@
 # Unreleased
 
+# JWT 11.0.0-beta3
+
+- Updated System.Text.Json to version 8.0.4
+
 # JWT.Extensions.AspNetCore 11.0.0-beta4
 
 - Make the event model support async-await
