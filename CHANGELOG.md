@@ -1,5 +1,9 @@
 # Unreleased
 
+# JWT 11.0.0
+
+- Updated System.Text.Json to version 9.0.0
+
 # JWT 11.0.0-beta3
 
 - Updated System.Text.Json to version 8.0.4
