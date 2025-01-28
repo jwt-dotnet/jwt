@@ -6,7 +6,7 @@ using JWT.Serializers.Converters;
 namespace JWT.Serializers
 {
     /// <summary>
-    /// JSON serializer using Newtonsoft.Json implementation.
+    /// JSON serializer using System.Text.Json implementation.
     /// </summary>
     public class SystemTextSerializer : IJsonSerializer
     {
