@@ -4,3 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      mstest-packages:
+        patterns:
+          - "MSTest.*"
+    commit-message:
+      include: "release-notes"
