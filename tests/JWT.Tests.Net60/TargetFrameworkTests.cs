@@ -9,7 +9,7 @@ namespace JWT.Tests
         public void Build_Must_Fail_When_TargetFramework_Is_Incorrect()
         {
 #if NET6_0_OR_GREATER
-            Assert.ThrowsExactly<System.InvalidOperationException>(() => { throw new System.InvalidOperationException(); });
+            Assert.Throws<System.InvalidOperationException>(() => { throw new System.InvalidOperationException(); });
 #endif
         }
     }
