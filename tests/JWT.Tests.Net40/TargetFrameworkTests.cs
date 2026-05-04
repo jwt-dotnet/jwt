@@ -6,13 +6,10 @@ namespace JWT.Tests
     public class TargetFrameworkTests
     {
         [TestMethod]
-#if NET40
-        [ExpectedException(typeof(System.InvalidOperationException))]
-#endif
         public void Build_Must_Fail_When_TargetFramework_Is_Incorrect()
         {
 #if NET40
-            throw new System.InvalidOperationException();
+            Assert.ThrowsExactly<System.InvalidOperationException>(() => { throw new System.InvalidOperationException(); });
 #endif
         }
     }
