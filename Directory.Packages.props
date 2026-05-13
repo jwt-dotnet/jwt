@@ -6,12 +6,13 @@
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.300" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="System.ComponentModel.Primitives" Version="4.3.0" />
     <PackageVersion Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageVersion Include="System.Security.Cryptography.Csp" Version="4.3.0" />
-    <PackageVersion Include="System.Text.Json" Version="9.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,30 +26,24 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.33" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.8" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="3.1.32" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.8" />
-  </ItemGroup>
 </Project>
