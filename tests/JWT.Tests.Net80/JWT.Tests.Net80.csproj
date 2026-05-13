@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
-    <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\JWT.Tests.Net60\*Tests.cs" />
   </ItemGroup>
 
@@ -20,6 +15,9 @@
     <PackageReference Include="Moq" />
     <PackageReference Include="MSTest.TestAdapter" />
     <PackageReference Include="MSTest.TestFramework" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -29,5 +27,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\JWT\JWT.csproj" />
+    <ProjectReference Include="..\JWT.Tests.Common\JWT.Tests.Common.csproj" />
+  </ItemGroup>
+
 </Project>
