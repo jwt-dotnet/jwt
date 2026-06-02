@@ -18,9 +18,6 @@
   <ItemGroup>
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
     <PackageVersion Include="FluentAssertions" Version="8.10.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.33" Condition="'$(TargetFramework)' == 'net6.0'" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.8" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="3.1.32" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="MSTest.TestAdapter" Version="3.11.1" />
@@ -35,11 +32,17 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+ <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="3.1.32"/>
+  </ItemGroup>
+
+<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.33" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.8" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
