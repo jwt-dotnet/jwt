@@ -10,6 +10,7 @@
     <Authors>Alexander Batishchev</Authors>
     <PackageTags>jwt;json;asp.net;asp.net core;.net core;authorization</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Version>11.1.0-beta1</Version>
     <FileVersion>11.0.0.0</FileVersion>
     <AssemblyVersion>11.0.0.0</AssemblyVersion>
@@ -49,6 +50,10 @@
   <ItemGroup>
     <ProjectReference Include="..\JWT\JWT.csproj" />
     <ProjectReference Include="..\JWT.Extensions.DependencyInjection\JWT.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
