@@ -1,17 +1,9 @@
 # Unreleased
 
-# JWT 11.1.0
+# JWT 11.1.0, JWT.Extensions.AspNetCore 11.1.0, JWT.Extensions.DependencyInjection 3.1.0
 
 - Updated Newtonsoft.Json to version 13.0.4
 - Updated System.Text.Json to version 10.0.8
-
-# JWT.Extensions.AspNetCore 11.1.0
-
-- Updated Newtonsoft.Json to version 13.0.4
-
-# JWT.Extensions.DependencyInjection 3.1.0
-
-- Updated Newtonsoft.Json to version 13.0.4
 - Updated Microsoft.Extensions.DependencyInjection.Abstractions to version 10.0.8
 
 # JWT 11.0.0
