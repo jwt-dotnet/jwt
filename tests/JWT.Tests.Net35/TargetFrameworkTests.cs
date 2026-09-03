@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests
 {
@@ -9,7 +10,7 @@ namespace JWT.Tests
         public void Build_Must_Fail_When_TargetFramework_Is_Incorrect()
         {
 #if NET35
-            Assert.Throws<System.InvalidOperationException>(() => throw new System.InvalidOperationException());
+            Assert.Throws<InvalidOperationException>(() => throw new InvalidOperationException());
 #endif
         }
     }
