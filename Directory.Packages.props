@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
-    <PackageVersion Update="MSTest.TestAdapter" Version="4.4.0" />
-    <PackageVersion Update="MSTest.TestFramework" Version="4.4.0" />
+    <PackageVersion Update="MSTest.TestAdapter" Version="4.5.3" />
+    <PackageVersion Update="MSTest.TestFramework" Version="4.5.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
@@ -56,8 +56,8 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.8" />
-    <PackageVersion Include="MSTest.TestAdapter" Version="4.4.0" />
-    <PackageVersion Include="MSTest.TestFramework" Version="4.4.0" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="4.5.3" />
+    <PackageVersion Include="MSTest.TestFramework" Version="4.5.3" />
   </ItemGroup>
 
 </Project>
