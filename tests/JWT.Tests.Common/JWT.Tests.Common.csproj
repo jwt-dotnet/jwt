@@ -36,4 +36,11 @@
     <Content Include="**\*Tests.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Wycheproof\testvectors_v1\json_web_crypto_test.json;Wycheproof\testvectors_v1\json_web_signature_test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Wycheproof\%(Filename)%(Extension)</Link>
+    </Content>
+  </ItemGroup>
+
 </Project>
