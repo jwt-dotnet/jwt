@@ -67,17 +67,57 @@ namespace JWT.Tests
 
             if (parts[0].Length == 0 || parts[2].Length == 0)
             {
-                var actual = true;
+                byte[] malformedSecret;
+                IDisposable malformedDisposableKey;
+                var malformedAlgorithm = CreateAlgorithm(algorithmName, key, out malformedSecret, out malformedDisposableKey);
+
                 try
                 {
-                    UrlEncoder.Decode(parts[0].Length == 0 ? parts[0] : parts[2]);
+                    var serializer = new DefaultJsonSerializerFactory().Create();
+                    var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
+                    var algorithmFactory = new DelegateAlgorithmFactory(context =>
+                        String.Equals(context.Header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase)
+                            ? new NoneAlgorithm()
+                            : malformedAlgorithm);
+                    var decoder = new JwtDecoder(serializer, validator, UrlEncoder, algorithmFactory);
+                    var actual = true;
+                    try
+                    {
+                        decoder.Decode(new JwtParts(token), malformedSecret ?? new byte[] { 0 }, verify: true);
+                    }
+                    catch (ArgumentException)
+                    {
+                        actual = false;
+                    }
+                    catch (FormatException)
+                    {
+                        actual = false;
+                    }
+                    catch (JsonException)
+                    {
+                        actual = false;
+                    }
+                    catch (SignatureVerificationException)
+                    {
+                        actual = false;
+                    }
+                    catch (CryptographicException)
+                    {
+                        actual = false;
+                    }
+                    catch (NotSupportedException)
+                    {
+                        actual = false;
+                    }
+
+                    AssertResult(actual, expected, file, groupIndex, testIndex);
                 }
-                catch (ArgumentException)
+                finally
                 {
-                    actual = false;
+                    if (malformedDisposableKey != null)
+                        malformedDisposableKey.Dispose();
                 }
 
-                AssertResult(actual, expected, file, groupIndex, testIndex);
                 return;
             }
 
