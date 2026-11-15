@@ -19,9 +19,9 @@ namespace JWT.Tests
         private static readonly JwtBase64UrlEncoder UrlEncoder = new JwtBase64UrlEncoder();
         private static readonly Dictionary<string, JObject> VectorFiles = LoadVectorFiles();
 
-        [DataTestMethod]
         [DynamicData(nameof(GetVectors), DynamicDataSourceType.Method)]
-        public void Verify_Wycheproof_Jws_Vector(string file, int groupIndex, int testIndex)
+        [TestMethod]
+        public void Verify_Wycheproof_Jws_Vector_Should_Match_Expected_Result(string file, int groupIndex, int testIndex)
         {
             var group = (JObject)((JArray)VectorFiles[file]["testGroups"])[groupIndex];
             var test = (JObject)((JArray)group["tests"])[testIndex];
