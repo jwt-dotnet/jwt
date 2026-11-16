@@ -18,6 +18,13 @@ namespace JWT.Tests
     public class WycheproofTests
     {
         private static readonly JwtBase64UrlEncoder UrlEncoder = new JwtBase64UrlEncoder();
+        private static readonly HashSet<string> EncryptionKeyOperations = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "encrypt",
+            "decrypt",
+            "wrapKey",
+            "unwrapKey"
+        };
         private static readonly Dictionary<string, JObject> VectorFiles = LoadVectorFiles();
 
         [DynamicData(nameof(GetVectors), DynamicDataSourceType.Method)]
@@ -31,7 +38,7 @@ namespace JWT.Tests
             if (tokenNode is null)
                 Assert.Inconclusive("JWT implements compact JWS signatures and does not implement JWE encryption vectors.");
 
-            var token = (tokenNode is JValue ? (string)tokenNode : tokenNode.ToString(Formatting.None))
+            var token = (tokenNode is not JValue ? tokenNode.ToString(Formatting.None) : (string)tokenNode)
                 ?? throw new InvalidDataException("Wycheproof vector JWS must not be null.");
             var expected = (string)test["result"]
                 ?? throw new InvalidDataException("Wycheproof vector result must not be null.");
@@ -73,11 +80,7 @@ namespace JWT.Tests
 
             var keyOperations = key["key_ops"] as JArray;
             if (String.Equals((string)key["use"], "enc", StringComparison.OrdinalIgnoreCase) ||
-                (keyOperations is not null && keyOperations.Any(operation =>
-                    String.Equals((string)operation, "encrypt", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals((string)operation, "decrypt", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals((string)operation, "wrapKey", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals((string)operation, "unwrapKey", StringComparison.OrdinalIgnoreCase))))
+                (keyOperations is not null && keyOperations.Any(operation => EncryptionKeyOperations.Contains((string)operation))))
             {
                 Assert.Inconclusive("This vector provides an encryption key rather than a signing key.");
             }
