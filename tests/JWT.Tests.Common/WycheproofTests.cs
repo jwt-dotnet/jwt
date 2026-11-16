@@ -18,14 +18,14 @@ namespace JWT.Tests
     public class WycheproofTests
     {
         private static readonly JwtBase64UrlEncoder UrlEncoder = new JwtBase64UrlEncoder();
-        private static readonly HashSet<string> EncryptionKeyOperations = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly ISet<string> EncryptionKeyOperations = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "encrypt",
             "decrypt",
             "wrapKey",
             "unwrapKey"
         };
-        private static readonly Dictionary<string, JObject> VectorFiles = LoadVectorFiles();
+        private static readonly IReadOnlyDictionary<string, JObject> VectorFiles = LoadVectorFiles();
 
         [DynamicData(nameof(GetVectors), DynamicDataSourceType.Method)]
         [TestMethod]
@@ -78,7 +78,7 @@ namespace JWT.Tests
             if (key["keys"] is JArray)
                 Assert.Inconclusive("JWT's signature API does not accept JWK sets.");
 
-            var keyOperations = key["key_ops"] as JArray;
+            var keyOperations = key["key_ops"] as IEnumerable<JToken>;
             if (String.Equals((string)key["use"], "enc", StringComparison.OrdinalIgnoreCase) ||
                 (keyOperations is not null && keyOperations.Any(operation => EncryptionKeyOperations.Contains((string)operation))))
             {
@@ -179,38 +179,20 @@ namespace JWT.Tests
 
         private static IEnumerable<object[]> GetVectors()
         {
-            string[] files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
-            foreach (var file in files)
-            {
-                var groups = (JArray)VectorFiles[file]["testGroups"];
-                var groupIndex = 0;
-
-                foreach (JObject group in groups)
-                {
-                    var tests = (JArray)group["tests"];
-                    var testIndex = 0;
-
-                    foreach (var test in tests)
-                    {
-                        yield return [file, groupIndex, testIndex];
-                        testIndex++;
-                    }
-
-                    groupIndex++;
-                }
-            }
+            IEnumerable<string> files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
+            return files.SelectMany(file =>
+                ((JArray)VectorFiles[file]["testGroups"])
+                .SelectMany((group, groupIndex) =>
+                    ((JArray)((JObject)group)["tests"])
+                    .Select((_, testIndex) => (object[])[file, groupIndex, testIndex])));
         }
 
-        private static Dictionary<string, JObject> LoadVectorFiles()
+        private static IReadOnlyDictionary<string, JObject> LoadVectorFiles()
         {
-            var vectorFiles = new Dictionary<string, JObject>();
-            string[] files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
-            foreach (var file in files)
-            {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", file);
-                vectorFiles.Add(file, JObject.Parse(File.ReadAllText(path)));
-            }
-            return vectorFiles;
+            IEnumerable<string> files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
+            return files.ToDictionary(
+                file => file,
+                file => JObject.Parse(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", file))));
         }
 
         private static IJwtAlgorithm CreateAlgorithm(string algorithmName, JObject key, out byte[] secret, out IDisposable disposableKey)
