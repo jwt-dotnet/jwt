@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
@@ -26,17 +27,16 @@ namespace JWT.Tests
             var group = (JObject)((JArray)VectorFiles[file]["testGroups"])[groupIndex];
             var test = (JObject)((JArray)group["tests"])[testIndex];
             var key = (JObject)(group["public"] ?? group["private"] ?? group["key"]);
-            var algorithmName = key == null ? String.Empty : (string)key["alg"] ?? String.Empty;
             var tokenNode = test["jws"];
-            if (tokenNode == null)
+            if (tokenNode is null)
                 Assert.Inconclusive("JWT implements compact JWS signatures and does not implement JWE encryption vectors.");
 
-            var token = tokenNode is JValue ? (string)tokenNode : tokenNode?.ToString(Formatting.None);
-            var expected = (string)test["result"] ?? String.Empty;
-            var comment = (string)test["comment"] ?? String.Empty;
-
-            if (String.IsNullOrEmpty(algorithmName))
-                Assert.Inconclusive("This vector has no signing algorithm key for the JWT signature API.");
+            var token = (tokenNode is JValue ? (string)tokenNode : tokenNode.ToString(Formatting.None))
+                ?? throw new InvalidDataException("Wycheproof vector JWS must not be null.");
+            var expected = (string)test["result"]
+                ?? throw new InvalidDataException("Wycheproof vector result must not be null.");
+            var comment = (string)test["comment"]
+                ?? throw new InvalidDataException("Wycheproof vector comment must not be null.");
 
             if (comment.IndexOf("RocaVulnerability", StringComparison.OrdinalIgnoreCase) >= 0)
                 Assert.Inconclusive("JWT accepts caller supplied RSA keys and does not implement JWK ROCA key screening.");
@@ -65,13 +65,35 @@ namespace JWT.Tests
                 return;
             }
 
+            if (key is null)
+                Assert.Fail("This compact JWS vector must provide a signing key.");
+
+            if (key["keys"] is JArray)
+                Assert.Inconclusive("JWT's signature API does not accept JWK sets.");
+
+            var keyOperations = key["key_ops"] as JArray;
+            if (String.Equals((string)key["use"], "enc", StringComparison.OrdinalIgnoreCase) ||
+                (keyOperations is not null && keyOperations.Any(operation =>
+                    String.Equals((string)operation, "encrypt", StringComparison.OrdinalIgnoreCase) ||
+                    String.Equals((string)operation, "decrypt", StringComparison.OrdinalIgnoreCase) ||
+                    String.Equals((string)operation, "wrapKey", StringComparison.OrdinalIgnoreCase) ||
+                    String.Equals((string)operation, "unwrapKey", StringComparison.OrdinalIgnoreCase))))
+            {
+                Assert.Inconclusive("This vector provides an encryption key rather than a signing key.");
+            }
+
+            if (key["alg"] is null)
+                Assert.Fail("This compact JWS signing key must provide an algorithm.");
+
+            var algorithmName = (string)key["alg"];
+
             if (parts[0].Length == 0 || parts[2].Length == 0)
             {
                 byte[] malformedSecret;
                 IDisposable malformedDisposableKey;
                 var malformedAlgorithm = CreateAlgorithm(algorithmName, key, out malformedSecret, out malformedDisposableKey);
 
-                try
+                using (malformedDisposableKey)
                 {
                     var serializer = new DefaultJsonSerializerFactory().Create();
                     var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -83,7 +105,7 @@ namespace JWT.Tests
                     var actual = true;
                     try
                     {
-                        decoder.Decode(new JwtParts(token), malformedSecret ?? new byte[] { 0 }, verify: true);
+                        decoder.Decode(new JwtParts(token), malformedSecret ?? [0], verify: true);
                     }
                     catch (ArgumentException)
                     {
@@ -112,11 +134,6 @@ namespace JWT.Tests
 
                     AssertResult(actual, expected, file, groupIndex, testIndex);
                 }
-                finally
-                {
-                    if (malformedDisposableKey != null)
-                        malformedDisposableKey.Dispose();
-                }
 
                 return;
             }
@@ -130,10 +147,10 @@ namespace JWT.Tests
             byte[] secret;
             IDisposable disposableKey;
             var algorithm = CreateAlgorithm(algorithmName, key, out secret, out disposableKey);
-            if (algorithm == null)
+            if (algorithm is null)
                 Assert.Inconclusive("JWT does not implement the " + algorithmName + " signing algorithm on this target framework.");
 
-            try
+            using (disposableKey)
             {
                 var signingInput = Encoding.ASCII.GetBytes(parts[0] + "." + parts[1]);
                 var signature = UrlEncoder.Decode(parts[2]);
@@ -155,27 +172,28 @@ namespace JWT.Tests
 
                 AssertResult(actual, expected, file, groupIndex, testIndex);
             }
-            finally
-            {
-                if (disposableKey != null)
-                    disposableKey.Dispose();
-            }
         }
 
         private static IEnumerable<object[]> GetVectors()
         {
-            foreach (var file in new[] { "json_web_crypto_test.json", "json_web_signature_test.json" })
+            string[] files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
+            foreach (var file in files)
             {
                 var groups = (JArray)VectorFiles[file]["testGroups"];
+                var groupIndex = 0;
 
-                for (var groupIndex = 0; groupIndex < groups.Count; groupIndex++)
+                foreach (JObject group in groups)
                 {
-                    var tests = (JArray)((JObject)groups[groupIndex])["tests"];
+                    var tests = (JArray)group["tests"];
+                    var testIndex = 0;
 
-                    for (var testIndex = 0; testIndex < tests.Count; testIndex++)
+                    foreach (var test in tests)
                     {
-                        yield return new object[] { file, groupIndex, testIndex };
+                        yield return [file, groupIndex, testIndex];
+                        testIndex++;
                     }
+
+                    groupIndex++;
                 }
             }
         }
@@ -183,7 +201,8 @@ namespace JWT.Tests
         private static Dictionary<string, JObject> LoadVectorFiles()
         {
             var vectorFiles = new Dictionary<string, JObject>();
-            foreach (var file in new[] { "json_web_crypto_test.json", "json_web_signature_test.json" })
+            string[] files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
+            foreach (var file in files)
             {
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", file);
                 vectorFiles.Add(file, JObject.Parse(File.ReadAllText(path)));
@@ -199,17 +218,24 @@ namespace JWT.Tests
             switch (algorithmName)
             {
                 case "HS256":
+                {
                     secret = UrlEncoder.Decode((string)key["k"]);
                     return new HMACSHA256Algorithm();
+                }
                 case "HS384":
+                {
                     secret = UrlEncoder.Decode((string)key["k"]);
                     return new HMACSHA384Algorithm();
+                }
                 case "HS512":
+                {
                     secret = UrlEncoder.Decode((string)key["k"]);
                     return new HMACSHA512Algorithm();
+                }
                 case "RS256":
                 case "RS384":
                 case "RS512":
+                {
                     var rsa = RSA.Create();
                     rsa.ImportParameters(new RSAParameters
                     {
@@ -220,9 +246,11 @@ namespace JWT.Tests
                     if (algorithmName == "RS256") return new RS256Algorithm(rsa);
                     if (algorithmName == "RS384") return new RS384Algorithm(rsa);
                     return new RS512Algorithm(rsa);
+                }
                 case "ES256":
                 case "ES384":
                 case "ES512":
+                {
 #if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
                     var ecdsa = ECDsa.Create();
                     ecdsa.ImportParameters(new ECParameters
@@ -241,8 +269,11 @@ namespace JWT.Tests
 #else
                     return null;
 #endif
+                }
                 default:
+                {
                     return null;
+                }
             }
         }
 
@@ -285,10 +316,22 @@ namespace JWT.Tests
         {
             switch (curve)
             {
-                case "P-256": return ECCurve.NamedCurves.nistP256;
-                case "P-384": return ECCurve.NamedCurves.nistP384;
-                case "P-521": return ECCurve.NamedCurves.nistP521;
-                default: throw new NotSupportedException(curve);
+                case "P-256":
+                {
+                    return ECCurve.NamedCurves.nistP256;
+                }
+                case "P-384":
+                {
+                    return ECCurve.NamedCurves.nistP384;
+                }
+                case "P-521":
+                {
+                    return ECCurve.NamedCurves.nistP521;
+                }
+                default:
+                {
+                    throw new NotSupportedException(curve);
+                }
             }
         }
 #endif
