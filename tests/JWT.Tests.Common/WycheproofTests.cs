@@ -38,7 +38,7 @@ namespace JWT.Tests
             if (tokenNode is null)
                 Assert.Inconclusive("JWT implements compact JWS signatures and does not implement JWE encryption vectors.");
 
-            var token = (tokenNode is not JValue ? tokenNode.ToString(Formatting.None) : (string)tokenNode)
+            var token = (tokenNode is JValue ? (string)tokenNode : tokenNode.ToString(Formatting.None))
                 ?? throw new InvalidDataException("Wycheproof vector JWS must not be null.");
             var expected = (string)test["result"]
                 ?? throw new InvalidDataException("Wycheproof vector result must not be null.");
@@ -78,9 +78,9 @@ namespace JWT.Tests
             if (key["keys"] is JArray)
                 Assert.Inconclusive("JWT's signature API does not accept JWK sets.");
 
-            var keyOperations = key["key_ops"] as IEnumerable<JToken>;
+            var keyOperations = key["key_ops"] is JArray operations ? operations : null;
             if (String.Equals((string)key["use"], "enc", StringComparison.OrdinalIgnoreCase) ||
-                (keyOperations is not null && keyOperations.Any(operation => EncryptionKeyOperations.Contains((string)operation))))
+                (keyOperations is not null && keyOperations.Any(static o => EncryptionKeyOperations.Contains((string)o))))
             {
                 Assert.Inconclusive("This vector provides an encryption key rather than a signing key.");
             }
@@ -179,20 +179,22 @@ namespace JWT.Tests
 
         private static IEnumerable<object[]> GetVectors()
         {
-            IEnumerable<string> files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
-            return files.SelectMany(file =>
-                ((JArray)VectorFiles[file]["testGroups"])
-                .SelectMany((group, groupIndex) =>
-                    ((JArray)((JObject)group)["tests"])
-                    .Select((_, testIndex) => (object[])[file, groupIndex, testIndex])));
+            var files = new[] { "json_web_crypto_test.json", "json_web_signature_test.json" };
+            return files.SelectMany(
+                    static f => ((JArray)VectorFiles[f]["testGroups"])
+                        .Select(static (g, i) => (Group: (JObject)g, Index: i)),
+                    static (f, g) => (File: f, g.Group, GroupIndex: g.Index))
+                .SelectMany(
+                    static x => ((JArray)x.Group["tests"]).Select(static (_, i) => i),
+                    static (x, i) => (object[])[x.File, x.GroupIndex, i]);
         }
 
         private static IReadOnlyDictionary<string, JObject> LoadVectorFiles()
         {
-            IEnumerable<string> files = ["json_web_crypto_test.json", "json_web_signature_test.json"];
+            var files = new[] { "json_web_crypto_test.json", "json_web_signature_test.json" };
             return files.ToDictionary(
-                file => file,
-                file => JObject.Parse(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", file))));
+                static f => f,
+                static f => JObject.Parse(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", f))));
         }
 
         private static IJwtAlgorithm CreateAlgorithm(string algorithmName, JObject key, out byte[] secret, out IDisposable disposableKey)
