@@ -371,17 +371,9 @@ namespace JWT.Tests
 
             public IJwtAlgorithm Create(JwtDecoderContext context)
             {
-                switch (context.Header.Algorithm)
-                {
-                    case string algorithm when String.Equals(algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase):
-                    {
-                        return new NoneAlgorithm();
-                    }
-                    default:
-                    {
-                        return _algorithm;
-                    }
-                }
+                return String.Equals(context.Header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase)
+                    ? new NoneAlgorithm()
+                    : _algorithm;
             }
         }
 
