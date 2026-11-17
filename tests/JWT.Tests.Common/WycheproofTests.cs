@@ -122,9 +122,7 @@ namespace JWT.Tests
                     Assert.Inconclusive("JwtBase64UrlEncoder.Decode delegates padding handling to the standard Base64 decoder.");
                 }
 
-                byte[] secret;
-                IDisposable disposableKey;
-                var algorithm = CreateAlgorithm(algorithmName, key, out secret, out disposableKey);
+                var (algorithm, secret, disposableKey) = CreateAlgorithm(algorithmName, key);
                 if (algorithm is null)
                 {
                     Assert.Inconclusive("JWT does not implement the " + algorithmName + " signing algorithm on this target framework.");
@@ -174,7 +172,7 @@ namespace JWT.Tests
 
         private static void VerifyMalformedJwsSignature(string token, string expected, string file, int groupIndex, int testIndex, string algorithmName, JObject key)
         {
-            var malformedAlgorithm = CreateAlgorithm(algorithmName, key, out var malformedSecret, out var malformedDisposableKey);
+            var (malformedAlgorithm, malformedSecret, malformedDisposableKey) = CreateAlgorithm(algorithmName, key);
             using var malformedDisposableKeyScope = malformedDisposableKey;
 
             var serializer = new DefaultJsonSerializerFactory().Create();
@@ -234,52 +232,49 @@ namespace JWT.Tests
                 static f => JObject.Parse(File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Wycheproof", f))));
         }
 
-        private static IJwtAlgorithm CreateAlgorithm(string algorithmName, JObject key, out byte[] secret, out IDisposable disposableKey)
+        private static (IJwtAlgorithm Algorithm, byte[] Secret, IDisposable DisposableKey) CreateAlgorithm(string algorithmName, JObject key)
         {
-            secret = null;
-            disposableKey = null;
-
             switch (algorithmName)
             {
                 case "HS256":
                 {
-                    secret = UrlEncoder.Decode((string)key["k"]);
-                    return new HMACSHA256Algorithm();
+                    var secret = UrlEncoder.Decode((string)key["k"]);
+                    return (new HMACSHA256Algorithm(), secret, null);
                 }
                 case "HS384":
                 {
-                    secret = UrlEncoder.Decode((string)key["k"]);
-                    return new HMACSHA384Algorithm();
+                    var secret = UrlEncoder.Decode((string)key["k"]);
+                    return (new HMACSHA384Algorithm(), secret, null);
                 }
                 case "HS512":
                 {
-                    secret = UrlEncoder.Decode((string)key["k"]);
-                    return new HMACSHA512Algorithm();
+                    var secret = UrlEncoder.Decode((string)key["k"]);
+                    return (new HMACSHA512Algorithm(), secret, null);
                 }
                 case "RS256":
                 case "RS384":
                 case "RS512":
                 {
                     var rsa = RSA.Create();
-                    rsa.ImportParameters(new RSAParameters
-                    {
-                        Modulus = UrlEncoder.Decode((string)key["n"]),
-                        Exponent = UrlEncoder.Decode((string)key["e"])
-                    });
-                    disposableKey = rsa;
+                    rsa.ImportParameters(
+                        new RSAParameters
+                        {
+                            Modulus = UrlEncoder.Decode((string)key["n"]),
+                            Exponent = UrlEncoder.Decode((string)key["e"])
+                        });
                     switch (algorithmName)
                     {
                         case "RS256":
                         {
-                            return new RS256Algorithm(rsa);
+                            return (new RS256Algorithm(rsa), null, rsa);
                         }
                         case "RS384":
                         {
-                            return new RS384Algorithm(rsa);
+                            return (new RS384Algorithm(rsa), null, rsa);
                         }
                         default:
                         {
-                            return new RS512Algorithm(rsa);
+                            return (new RS512Algorithm(rsa), null, rsa);
                         }
                     }
                 }
@@ -288,35 +283,35 @@ namespace JWT.Tests
                 case "ES512":
                 {
                     var ecdsa = ECDsa.Create();
-                    ecdsa.ImportParameters(new ECParameters
-                    {
-                        Curve = GetCurve((string)key["crv"]),
-                        Q = new ECPoint
+                    ecdsa.ImportParameters(
+                        new ECParameters
                         {
-                            X = UrlEncoder.Decode((string)key["x"]),
-                            Y = UrlEncoder.Decode((string)key["y"])
-                        }
-                    });
-                    disposableKey = ecdsa;
+                            Curve = GetCurve((string)key["crv"]),
+                            Q = new ECPoint
+                            {
+                                X = UrlEncoder.Decode((string)key["x"]),
+                                Y = UrlEncoder.Decode((string)key["y"])
+                            }
+                        });
                     switch (algorithmName)
                     {
                         case "ES256":
                         {
-                            return new ES256Algorithm(ecdsa);
+                            return (new ES256Algorithm(ecdsa), null, ecdsa);
                         }
                         case "ES384":
                         {
-                            return new ES384Algorithm(ecdsa);
+                            return (new ES384Algorithm(ecdsa), null, ecdsa);
                         }
                         default:
                         {
-                            return new ES512Algorithm(ecdsa);
+                            return (new ES512Algorithm(ecdsa), null, ecdsa);
                         }
                     }
                 }
                 default:
                 {
-                    return null;
+                    return (null, null, null);
                 }
             }
         }
@@ -355,8 +350,8 @@ namespace JWT.Tests
 
         private static void AssertResult(bool actual, string expected, string file, int groupIndex, int testIndex)
         {
-            var expectedValid = String.Equals(expected, "valid", StringComparison.Ordinal) ||
-                                String.Equals(expected, "acceptable", StringComparison.Ordinal);
+            expected.Should().BeOneOf("valid", "acceptable", "invalid");
+            var expectedValid = !String.Equals(expected, "invalid", StringComparison.Ordinal);
             actual.Should().Be(expectedValid, "Wycheproof {0}, group {1}, case {2}, expects {3}", file, groupIndex, testIndex, expected);
         }
 
@@ -369,12 +364,8 @@ namespace JWT.Tests
                 _algorithm = algorithm;
             }
 
-            public IJwtAlgorithm Create(JwtDecoderContext context)
-            {
-                return String.Equals(context.Header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase)
-                    ? new NoneAlgorithm()
-                    : _algorithm;
-            }
+            public IJwtAlgorithm Create(JwtDecoderContext context) =>
+                String.Equals(context.Header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase) ? new NoneAlgorithm() : _algorithm;
         }
 
         private static ECCurve GetCurve(string curve)
