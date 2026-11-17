@@ -14,10 +14,11 @@ using Newtonsoft.Json.Linq;
 
 namespace JWT.Tests
 {
+#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
     [TestClass]
     public class WycheproofTests
     {
-        private static readonly JwtBase64UrlEncoder UrlEncoder = new JwtBase64UrlEncoder();
+        private static readonly IBase64UrlEncoder UrlEncoder = new JwtBase64UrlEncoder();
         private static readonly ISet<string> EncryptionKeyOperations = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "encrypt",
@@ -216,14 +217,13 @@ namespace JWT.Tests
         private static IEnumerable<object[]> GetVectors()
         {
             var files = new[] { "json_web_crypto_test.json", "json_web_signature_test.json" };
-            return files
-                .SelectMany(
+            return files.SelectMany(
                     static f => ((JArray)VectorFiles[f]["testGroups"])
                         .Select(static (g, i) => (Group: (JObject)g, Index: i)),
                     static (f, g) => (File: f, g.Group, GroupIndex: g.Index))
-                .SelectMany(
-                    static v => ((JArray)v.Group["tests"]).Select(static (_, i) => i),
-                    static (v, i) => (object[])[v.File, v.GroupIndex, i]);
+                        .SelectMany(
+                            static v => ((JArray)v.Group["tests"]).Select(static (_, i) => i),
+                            static (v, i) => (object[])[v.File, v.GroupIndex, i]);
         }
 
         private static IReadOnlyDictionary<string, JObject> LoadVectorFiles()
@@ -267,21 +267,26 @@ namespace JWT.Tests
                         Exponent = UrlEncoder.Decode((string)key["e"])
                     });
                     disposableKey = rsa;
-                    if (algorithmName == "RS256")
+                    switch (algorithmName)
                     {
-                        return new RS256Algorithm(rsa);
+                        case "RS256":
+                        {
+                            return new RS256Algorithm(rsa);
+                        }
+                        case "RS384":
+                        {
+                            return new RS384Algorithm(rsa);
+                        }
+                        default:
+                        {
+                            return new RS512Algorithm(rsa);
+                        }
                     }
-                    if (algorithmName == "RS384")
-                    {
-                        return new RS384Algorithm(rsa);
-                    }
-                    return new RS512Algorithm(rsa);
                 }
                 case "ES256":
                 case "ES384":
                 case "ES512":
                 {
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
                     var ecdsa = ECDsa.Create();
                     ecdsa.ImportParameters(new ECParameters
                     {
@@ -293,18 +298,21 @@ namespace JWT.Tests
                         }
                     });
                     disposableKey = ecdsa;
-                    if (algorithmName == "ES256")
+                    switch (algorithmName)
                     {
-                        return new ES256Algorithm(ecdsa);
+                        case "ES256":
+                        {
+                            return new ES256Algorithm(ecdsa);
+                        }
+                        case "ES384":
+                        {
+                            return new ES384Algorithm(ecdsa);
+                        }
+                        default:
+                        {
+                            return new ES512Algorithm(ecdsa);
+                        }
                     }
-                    if (algorithmName == "ES384")
-                    {
-                        return new ES384Algorithm(ecdsa);
-                    }
-                    return new ES512Algorithm(ecdsa);
-#else
-                    return null;
-#endif
                 }
                 default:
                 {
@@ -333,7 +341,7 @@ namespace JWT.Tests
 
             try
             {
-                return UrlEncoder.Encode(UrlEncoder.Decode(value)) == value;
+                return String.Equals(UrlEncoder.Encode(UrlEncoder.Decode(value)), value, StringComparison.Ordinal);
             }
             catch (ArgumentException)
             {
@@ -347,7 +355,8 @@ namespace JWT.Tests
 
         private static void AssertResult(bool actual, string expected, string file, int groupIndex, int testIndex)
         {
-            var expectedValid = expected == "valid" || expected == "acceptable";
+            var expectedValid = String.Equals(expected, "valid", StringComparison.Ordinal) ||
+                                String.Equals(expected, "acceptable", StringComparison.Ordinal);
             actual.Should().Be(expectedValid, "Wycheproof {0}, group {1}, case {2}, expects {3}", file, groupIndex, testIndex, expected);
         }
 
@@ -362,16 +371,20 @@ namespace JWT.Tests
 
             public IJwtAlgorithm Create(JwtDecoderContext context)
             {
-                if (String.Equals(context.Header.Algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase))
+                switch (context.Header.Algorithm)
                 {
-                    return new NoneAlgorithm();
+                    case string algorithm when String.Equals(algorithm, nameof(JwtAlgorithmName.None), StringComparison.OrdinalIgnoreCase):
+                    {
+                        return new NoneAlgorithm();
+                    }
+                    default:
+                    {
+                        return _algorithm;
+                    }
                 }
-
-                return _algorithm;
             }
         }
 
-#if NETCOREAPP3_1_OR_GREATER || NET6_0_OR_GREATER
         private static ECCurve GetCurve(string curve)
         {
             switch (curve)
@@ -394,6 +407,6 @@ namespace JWT.Tests
                 }
             }
         }
-#endif
     }
+#endif
 }
