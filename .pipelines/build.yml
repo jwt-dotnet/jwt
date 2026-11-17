@@ -27,6 +27,9 @@ parameters:
   - '8.x'
 
 steps:
+- checkout: self
+  submodules: true
+
 - ${{ each targetFramework in parameters.targetFrameworks }}:
   - task: UseDotNet@2
     displayName: ${{ format('Install .NET {0}', targetFramework) }}

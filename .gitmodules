@@ -1,0 +1,3 @@
+[submodule "tests/JWT.Tests.Common/Wycheproof"]
+	path = tests/JWT.Tests.Common/Wycheproof
+	url = https://github.com/C2SP/wycheproof.git
