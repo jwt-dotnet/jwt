@@ -8,6 +8,7 @@ using JWT;
 [assembly: InternalsVisibleTo("JWT.Tests.Net46, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net60, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Tests.Net80, PublicKey=" + AssemblyInfo.PublicKey)]
+[assembly: InternalsVisibleTo("JWT.Tests.Net100, PublicKey=" + AssemblyInfo.PublicKey)]
 [assembly: InternalsVisibleTo("JWT.Extensions.AspNetCore.Tests, PublicKey=" + AssemblyInfo.PublicKey)]
 
 namespace JWT

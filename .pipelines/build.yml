@@ -33,10 +33,17 @@ parameters:
   default:
   - '6.x'
   - '8.x'
+  - '10.x'
 - name: windowsTargetFrameworks
   type: object
   default:
   - '3.1.x'
+- name: testTargetFrameworks
+  type: object
+  default:
+  - 'net6.0'
+  - 'net8.0'
+  - 'net10.0'
 
 steps:
 - checkout: self
@@ -95,33 +102,20 @@ steps:
     testResultsFiles: '**/*.trx'
     failTaskOnFailedTests: true
 
-- task: DotNetCoreCLI@2
-  displayName: 'Run tests for net6.0'
-  condition: ne(variables['Agent.OS'], 'Windows_NT')
-  inputs:
-    command: test
-    projects: |
-      tests/JWT.Tests.Net60/*.csproj
-      tests/JWT.Extensions.*.Tests/*.csproj
-    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net6.0'
-    testRunner: VSTest
-    testResultsFormat: VSTest
-    testResultsFiles: '**/*.trx'
-    failTaskOnFailedTests: true
-
-- task: DotNetCoreCLI@2
-  displayName: 'Run tests for net8.0'
-  condition: ne(variables['Agent.OS'], 'Windows_NT')
-  inputs:
-    command: test
-    projects: |
-      tests/JWT.Tests.Net80/*.csproj
-      tests/JWT.Extensions.*.Tests/*.csproj
-    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net8.0'
-    testRunner: VSTest
-    testResultsFormat: VSTest
-    testResultsFiles: '**/*.trx'
-    failTaskOnFailedTests: true
+- ${{ each targetFramework in parameters.testTargetFrameworks }}:
+  - task: DotNetCoreCLI@2
+    displayName: ${{ format('Run tests for {0}', targetFramework) }}
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      command: test
+      projects: |
+        tests/JWT.Tests.${{ replace(replace(targetFramework, '.', ''), 'net', 'Net') }}/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f ${{ targetFramework }}'
+      testRunner: VSTest
+      testResultsFormat: VSTest
+      testResultsFiles: '**/*.trx'
+      failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
   displayName: 'Create NuGet packages'
