@@ -340,7 +340,7 @@ namespace JWT.Tests.Builder
             Action action =
                 () => JwtBuilder.Create()
                                 .WithAlgorithm(TestData.HMACSHA256Algorithm)
-                                .WithSecret(Array.Empty<byte>(), new byte[1])
+                                .WithSecret([], new byte[1])
                                 .MustVerifySignature()
                                 .Decode(TestData.Token);
 

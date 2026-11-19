@@ -132,7 +132,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var actual = decoder.Decode(token, new[] { key }, verify: true);
+            var actual = decoder.Decode(token, [key], verify: true);
 
             var expected = serializer.Serialize(payload);
             actual.Should()
@@ -227,7 +227,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var actual = decoder.DecodeToObject(token, new[] { key }, verify: true);
+            var actual = decoder.DecodeToObject(token, [key], verify: true);
 
             actual.Should()
                   .Equal(expected, "because the JWT should have been correctly deserialized to the correct object");
@@ -264,7 +264,7 @@ namespace JWT.Tests
             var urlEncoder = new JwtBase64UrlEncoder();
             var decoder = new JwtDecoder(serializer, validator, urlEncoder, TestData.HMACSHA256Algorithm);
 
-            var actual = decoder.DecodeToObject<Customer>(token, new[] { key }, verify: true);
+            var actual = decoder.DecodeToObject<Customer>(token, [key], verify: true);
 
             actual.Should()
                   .BeEquivalentTo(TestData.Customer, "because the JWT should have been correctly deserialized to the same customer object");
@@ -409,7 +409,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = _fixture.Create<string>() }, key1);
 
-            Action action = () => decoder.DecodeToObject<Customer>(token, new[] { key1, key2 }, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, [key1, key2], verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>("because the invalid 'exp' must result in an exception on decoding");
@@ -451,7 +451,7 @@ namespace JWT.Tests
             var encoder = new JwtEncoder(TestData.HMACSHA256Algorithm, serializer, urlEncoder);
             var token = encoder.Encode(new { exp = (object)null }, key1);
 
-            Action action = () => decoder.DecodeToObject<Customer>(token, new[] { key1, key2 }, verify: true);
+            Action action = () => decoder.DecodeToObject<Customer>(token, [key1, key2], verify: true);
 
             action.Should()
                   .Throw<SignatureVerificationException>()

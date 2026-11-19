@@ -193,7 +193,7 @@ namespace JWT.Builder
         /// <returns>Current builder instance</returns>
         public JwtBuilder WithSecret(params string[] secrets)
         {
-            _secrets = secrets.Select(s => GetBytes(s)).ToArray();
+            _secrets = [.. secrets.Select(s => GetBytes(s))];
             return this;
         }
 

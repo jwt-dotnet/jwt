@@ -20,7 +20,7 @@ namespace JWT.Tests.Algorithms
         {
             using var privateKey = CreateKey(keySize);
 
-            Action action = () => algFactory(null, privateKey);
+            Action action = () => algFactory(null, privateKey!);
 
             action.Should()
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
@@ -120,46 +120,107 @@ namespace JWT.Tests.Algorithms
         }
 
         private static ECDsa CreateKey(int keySize) =>
-            ECDsa.Create(keySize switch
-            {
-                256 => ECCurve.NamedCurves.nistP256,
-                384 => ECCurve.NamedCurves.nistP384,
-                521 => ECCurve.NamedCurves.nistP521,
-                _ => throw new ArgumentOutOfRangeException(nameof(keySize))
-            });
+            ECDsa.Create(
+                keySize switch
+                {
+                    256 => ECCurve.NamedCurves.nistP256,
+                    384 => ECCurve.NamedCurves.nistP384,
+                    521 => ECCurve.NamedCurves.nistP521,
+                    _ => throw new ArgumentOutOfRangeException(nameof(keySize))
+                });
 
         private static IEnumerable<object[]> GetFactoryWithPublicKey()
         {
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES256Algorithm(publicKey)), 256 };
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES384Algorithm(publicKey)), 384 };
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES512Algorithm(publicKey)), 521 };
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES256Algorithm(publicKey)),
+                    256
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES384Algorithm(publicKey)),
+                    384
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES512Algorithm(publicKey)),
+                    521
+                ];
         }
 
         private static IEnumerable<object[]> GetFactoryWithPublicPrivateKey()
         {
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES256Algorithm(publicKey, privateKey)), 256 };
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES384Algorithm(publicKey, privateKey)), 384 };
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES512Algorithm(publicKey, privateKey)), 521 };
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES256Algorithm(publicKey, privateKey)),
+                    256
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES384Algorithm(publicKey, privateKey)),
+                    384
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES512Algorithm(publicKey, privateKey)),
+                    521
+                ];
         }
 
         private static IEnumerable<object[]> GetFactoryWithPublicKeyAndMismatchedKeySize()
         {
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES256Algorithm(publicKey)), 384 };
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES384Algorithm(publicKey)), 521 };
-            yield return new object[] { new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES512Algorithm(publicKey)), 256 };
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES256Algorithm(publicKey)),
+                    384
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES384Algorithm(publicKey)),
+                    521
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDSAAlgorithm>(static publicKey => new ES512Algorithm(publicKey)),
+                    256
+                ];
         }
 
         private static IEnumerable<object[]> GetFactoryWithPublicPrivateKeyAndMismatchedKeySize()
         {
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES256Algorithm(publicKey, privateKey)), 521, 256, "publicKey" };
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES384Algorithm(publicKey, privateKey)), 384, 256, "privateKey" };
-            yield return new object[] { new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES512Algorithm(publicKey, privateKey)), 256, 256, "publicKey" };
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES256Algorithm(publicKey, privateKey)),
+                    521,
+                    256,
+                    "publicKey"
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES384Algorithm(publicKey, privateKey)),
+                    384,
+                    256,
+                    "privateKey"
+                ];
+            yield return
+                [
+                    new Func<ECDsa, ECDsa, ECDSAAlgorithm>(static (publicKey, privateKey) => new ES512Algorithm(publicKey, privateKey)),
+                    256,
+                    256,
+                    "publicKey"
+                ];
         }
 
         private static IEnumerable<object[]> GetFactoryWithMismatchedCert()
         {
-            yield return new object[] { new Func<X509Certificate2, ECDSAAlgorithm>(static cert => new ES384Algorithm(cert)) };
-            yield return new object[] { new Func<X509Certificate2, ECDSAAlgorithm>(static cert => new ES512Algorithm(cert)) };
+            yield return
+                [
+                    new Func<X509Certificate2, ECDSAAlgorithm>(static cert => new ES384Algorithm(cert))
+                ];
+            yield return
+                [
+                    new Func<X509Certificate2, ECDSAAlgorithm>(static cert => new ES512Algorithm(cert))
+                ];
         }
     }
 }
