@@ -28,7 +28,7 @@ namespace JWT.Tests
         };
         private static readonly IReadOnlyDictionary<string, JObject> VectorFiles = LoadVectorFiles();
 
-        [DynamicData(nameof(GetVectors), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetVectors))]
         [TestMethod]
         public void Verify_Wycheproof_Jws_Vector_Should_Match_Expected_Result(string file, int groupIndex, int testIndex)
         {

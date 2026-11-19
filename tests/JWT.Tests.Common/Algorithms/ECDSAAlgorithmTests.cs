@@ -14,19 +14,19 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class ECDSAAlgorithmTests
     {
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKey))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null(Func<ECDsa, ECDsa, ECDSAAlgorithm> algFactory, int keySize)
         {
             using var privateKey = CreateKey(keySize);
 
-            Action action = () => algFactory(null, privateKey!);
+            Action action = () => algFactory(null, privateKey);
 
             action.Should()
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKey))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<ECDsa, ECDsa, ECDSAAlgorithm> algFactory, int keySize)
         {
@@ -38,7 +38,7 @@ namespace JWT.Tests.Algorithms
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicKey))]
         [TestMethod]
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<ECDsa, ECDSAAlgorithm> algFactory, int keySize)
         {
@@ -64,7 +64,7 @@ namespace JWT.Tests.Algorithms
                .NotBeNull();
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKey))]
         [TestMethod]
         public void Verify_Should_Return_True_When_Key_Curve_Matches_Algorithm(Func<ECDsa, ECDsa, ECDSAAlgorithm> algFactory, int keySize)
         {
@@ -79,7 +79,7 @@ namespace JWT.Tests.Algorithms
                .BeTrue("because a key on the curve required by the algorithm must sign and verify the data");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicKeyAndMismatchedKeySize), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicKeyAndMismatchedKeySize))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Curve_Does_Not_Match_Algorithm(Func<ECDsa, ECDSAAlgorithm> algFactory, int keySize)
         {
@@ -92,7 +92,7 @@ namespace JWT.Tests.Algorithms
                   .WithParameterName("publicKey");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKeyAndMismatchedKeySize), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKeyAndMismatchedKeySize))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicPrivateKey_Curve_Does_Not_Match_Algorithm(Func<ECDsa, ECDsa, ECDSAAlgorithm> algFactory, int publicKeySize, int privateKeySize, string paramName)
         {
@@ -106,7 +106,7 @@ namespace JWT.Tests.Algorithms
                   .WithParameterName(paramName);
         }
 
-        [DynamicData(nameof(GetFactoryWithMismatchedCert), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithMismatchedCert))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_Certificate_Curve_Does_Not_Match_Algorithm(Func<X509Certificate2, ECDSAAlgorithm> algFactory)
         {
