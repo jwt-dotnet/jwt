@@ -1,8 +1,8 @@
 # Unreleased
 
-# JWT 11.1.1
+# JWT 11.2.0
 
-- ES256, ES384 and ES512 algorithms now reject keys whose size does not match the curve required by RFC 7518 (P-256, P-384 and P-521 respectively)
+- ES256, ES384 and ES512 algorithms now reject keys whose size does not match the curve required by RFC 7518 (P-256, P-384, and P-521 respectively)
 
 # JWT 11.1.0, JWT.Extensions.AspNetCore 11.1.0, JWT.Extensions.DependencyInjection 3.1.0
 
