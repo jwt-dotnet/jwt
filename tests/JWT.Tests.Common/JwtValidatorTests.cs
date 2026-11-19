@@ -49,12 +49,12 @@ namespace JWT.Tests
         }
 
 
-        [DataTestMethod]
         [DataRow(null, null, null)]
         [DataRow("", null, null)]
         [DataRow("{}", null, null)]
         [DataRow("{}", TestData.Token, null)]
         [DataRow("{}", TestData.Token, "")]
+        [TestMethod]
         public void Validate_Should_Throw_Exception_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
             var jsonSerializer = CreateSerializer();
@@ -118,12 +118,12 @@ namespace JWT.Tests
             jwtValidator.Validate(payloadJson, decodedCrypto, decodedSignature);
         }
 
-        [DataTestMethod]
         [DataRow(null, null, null)]
         [DataRow("", null, null)]
         [DataRow("{}", null, null)]
         [DataRow("{}", TestData.Token, null)]
         [DataRow("{}", TestData.Token, "")]
+        [TestMethod]
         public void TryValidate_Should_Return_False_And_Exception_Not_Null_When_Argument_Is_Null_Or_Empty(string payloadJson, string decodedCrypto, string decodedSignature)
         {
             var jsonSerializer = CreateSerializer();
