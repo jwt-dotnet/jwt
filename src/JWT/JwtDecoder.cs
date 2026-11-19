@@ -113,7 +113,7 @@ namespace JWT
         /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
         public string Decode(JwtParts jwt, byte[] key, bool verify) =>
-            Decode(jwt, new[] { key }, verify);
+            Decode(jwt, [key], verify);
 
         /// <inheritdoc />
         /// <exception cref="ArgumentException" />

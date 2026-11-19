@@ -1,4 +1,5 @@
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
+using System;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
@@ -14,9 +15,12 @@ namespace JWT.Algorithms
         /// </summary>
         /// <param name="publicKey">The public key for verifying the data.</param>
         /// <param name="privateKey">The private key for signing the data.</param>
+        /// <exception cref="ArgumentException">A key does not have the size required by the algorithm.</exception>
         protected ECDSAAlgorithm(ECDsa publicKey, ECDsa privateKey)
             : base(publicKey, privateKey)
         {
+            EnsureKeySize(publicKey, nameof(publicKey));
+            EnsureKeySize(privateKey, nameof(privateKey));
         }
 
         /// <summary>
@@ -26,19 +30,28 @@ namespace JWT.Algorithms
         /// An instance created using this constructor can only be used for verifying the data, not for signing it.
         /// </remarks>
         /// <param name="publicKey">The public key for verifying the data.</param>
+        /// <exception cref="ArgumentException">The key does not have the size required by the algorithm.</exception>
         protected ECDSAAlgorithm(ECDsa publicKey)
             : base(publicKey)
         {
+            EnsureKeySize(publicKey, nameof(publicKey));
         }
 
         /// <summary>
         /// Creates an instance using the provided certificate.
         /// </summary>
         /// <param name="cert">The certificate having a public key and an optional private key.</param>
+        /// <exception cref="ArgumentException">The certificate's public key does not have the size required by the algorithm.</exception>
         protected ECDSAAlgorithm(X509Certificate2 cert)
             : base(cert)
         {
+            EnsureKeySize(_publicKey, nameof(cert));
         }
+
+        /// <summary>
+        /// The key size, in bits, of the curve required by the algorithm (RFC 7518, section 3.4).
+        /// </summary>
+        protected abstract int RequiredKeySize { get; }
 
         protected override ECDsa GetPublicKey(X509Certificate2 cert) =>
             cert.GetECDsaPublicKey();
@@ -52,6 +65,14 @@ namespace JWT.Algorithms
 
         protected override bool VerifyData(byte[] bytesToSign, byte[] signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
+
+        private void EnsureKeySize(ECDsa key, string paramName)
+        {
+            if (key.KeySize != this.RequiredKeySize)
+            {
+                throw new ArgumentException($"Algorithm {this.Name} requires a key of size {this.RequiredKeySize} bits but the provided key has size {key.KeySize} bits.", paramName);
+            }
+        }
     }
 }
 #endif

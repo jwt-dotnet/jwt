@@ -44,7 +44,7 @@ namespace JWT.Tests.Models
         public const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
         public const string Secret2 = "QWORIJkmQWEDIHbjhOIHAUSDFOYnUGWEYT";
 
-        public static readonly string[] Secrets = { Secret, Secret2 };
+        public static readonly string[] Secrets = [Secret, Secret2];
 
         public const string Token =  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.jBdQNPhChZpZSMZX6Z5okc7YJ3dc5esWp4YCtasYXFU";
         public const string TokenWithoutSignature = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJGaXJzdE5hbWUiOiJKZXN1cyIsIkFnZSI6MzN9.";

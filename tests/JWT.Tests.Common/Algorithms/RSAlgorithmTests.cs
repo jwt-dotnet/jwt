@@ -12,7 +12,7 @@ namespace JWT.Tests.Algorithms
     [TestClass]
     public class RSAlgorithmTests
     {
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKey))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PublicKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
@@ -24,7 +24,7 @@ namespace JWT.Tests.Algorithms
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without public key");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicPrivateKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicPrivateKey))]
         [TestMethod]
         public void Ctor_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSA, RSAlgorithm> algFactory)
         {
@@ -36,7 +36,7 @@ namespace JWT.Tests.Algorithms
                   .Throw<ArgumentNullException>("because asymmetric algorithm cannot be constructed without private key");
         }
 
-        [DynamicData(nameof(GetFactoryWithPublicKey), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithPublicKey))]
         [TestMethod]
         public void Sign_Should_Throw_Exception_When_PrivateKey_Is_Null(Func<RSA, RSAlgorithm> algFactory)
         {
@@ -51,7 +51,7 @@ namespace JWT.Tests.Algorithms
                   .Throw<InvalidOperationException>("because asymmetric algorithm cannot sign data without private key");
         }
 
-        [DynamicData(nameof(GetFactoryWithCert), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(GetFactoryWithCert))]
         [TestMethod]
         public void Ctor_Should_Not_Throw_Exception_When_Certificate_Has_No_PrivateKey(Func<X509Certificate2, RSAlgorithm> algFactory)
         {

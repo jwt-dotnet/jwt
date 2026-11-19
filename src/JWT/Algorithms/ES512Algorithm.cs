@@ -45,6 +45,9 @@ namespace JWT.Algorithms
 
         /// <inheritdoc />
         public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA512;
+
+        /// <inheritdoc />
+        protected override int RequiredKeySize => 521;
     }
 }
 #endif
