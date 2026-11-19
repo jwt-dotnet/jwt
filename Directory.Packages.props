@@ -37,6 +37,12 @@
     <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
   </ItemGroup>
 
+  <!-- Pin patched versions of vulnerable packages pulled in transitively by NETStandard.Library 1.6.1 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageVersion Include="System.Net.Http" Version="4.3.4" />
+    <PackageVersion Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+
   <!-- netcoreapp3.1 consumes the netstandard2.0 build, so keep both on the newest version that supports netcoreapp3.1 -->
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
