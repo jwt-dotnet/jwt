@@ -4,11 +4,6 @@
     <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-    <!-- Current System.Runtime.CompilerServices.Unsafe and System.Threading.Tasks.Extensions no longer support EOL net461 -->
-    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="AutoFixture" />
     <PackageReference Include="FluentAssertions" />

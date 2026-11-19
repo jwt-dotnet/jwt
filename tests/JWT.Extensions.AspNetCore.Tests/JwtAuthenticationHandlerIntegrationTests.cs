@@ -124,11 +124,11 @@ namespace JWT.Extensions.AspNetCore.Tests
             return new HostBuilder()
                 .ConfigureWebHost(webHost => webHost
                     .UseTestServer()
-                    .Configure(app =>
+                    .Configure(static app =>
                         {
                             app.UseAuthentication();
 
-                            app.Use(async (HttpContext context, Func<Task> _) =>
+                            app.Use(static async (HttpContext context, Func<Task> _) =>
                             {
                                 var authenticationResult = await context.AuthenticateAsync();
                                 if (authenticationResult.Succeeded)
@@ -146,7 +146,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                         })
                     .ConfigureServices(services =>
                         {
-                            services.AddAuthentication(options =>
+                            services.AddAuthentication(static options =>
                             {
                                 // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
                                 options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
