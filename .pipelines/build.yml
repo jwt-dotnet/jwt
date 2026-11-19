@@ -10,10 +10,20 @@ strategy:
   matrix:
     windows:
       imageName: windows-latest
+      testProjects: 'tests/**/*.csproj'
+      testFramework: ''
     linux:
       imageName: ubuntu-latest
+      testProjects: |
+        tests/JWT.Tests.Net60/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testFramework: '-f net6.0'
     macos:
       imageName: macos-latest
+      testProjects: |
+        tests/JWT.Tests.Net60/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testFramework: '-f net6.0'
 
 pool:
   vmImage: $(imageName)
@@ -85,39 +95,10 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
-  condition: eq(variables['Agent.OS'], 'Windows_NT')
   inputs:
     command: test
-    projects: 'tests/**/*.csproj'
-    arguments: ' -c ${{ parameters.buildConfiguration }} --no-build --no-restore'
-    testRunner: VSTest
-    testResultsFormat: VSTest
-    testResultsFiles: '**/*.trx'
-    failTaskOnFailedTests: true
-
-- task: DotNetCoreCLI@2
-  displayName: 'Run tests for net6.0'
-  condition: ne(variables['Agent.OS'], 'Windows_NT')
-  inputs:
-    command: test
-    projects: |
-      tests/JWT.Tests.Net60/*.csproj
-      tests/JWT.Extensions.*.Tests/*.csproj
-    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net6.0'
-    testRunner: VSTest
-    testResultsFormat: VSTest
-    testResultsFiles: '**/*.trx'
-    failTaskOnFailedTests: true
-
-- task: DotNetCoreCLI@2
-  displayName: 'Run tests for net8.0'
-  condition: ne(variables['Agent.OS'], 'Windows_NT')
-  inputs:
-    command: test
-    projects: |
-      tests/JWT.Tests.Net80/*.csproj
-      tests/JWT.Extensions.*.Tests/*.csproj
-    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net8.0'
+    projects: $(testProjects)
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore $(testFramework)'
     testRunner: VSTest
     testResultsFormat: VSTest
     testResultsFiles: '**/*.trx'
