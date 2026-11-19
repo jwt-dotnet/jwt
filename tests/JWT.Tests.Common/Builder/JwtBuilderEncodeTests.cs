@@ -375,8 +375,8 @@ namespace JWT.Tests.Builder
         [TestMethod]
         public void Encode_Test_Bug438()
         {
-            var privateKey = ECDsa.Create();
-            var publicKey = ECDsa.Create();
+            var privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var publicKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
             
             var algo = new ES256Algorithm(publicKey, privateKey);
 

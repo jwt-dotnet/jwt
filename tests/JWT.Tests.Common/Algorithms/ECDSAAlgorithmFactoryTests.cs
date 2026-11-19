@@ -15,7 +15,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_ES256Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES256_And_Targeting_NetStandard20()
         {
-            var publicKey = ECDsa.Create();
+            var publicKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
             var factory = new ECDSAAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -33,7 +33,7 @@ namespace JWT.Tests.Algorithms
         [TestMethod]
         public void Create_Should_Return_Instance_Of_ES384Algorithm_When_Algorithm_Specified_In_Jwt_Header_Is_ES384_And_Targeting_NetStandard20()
         {
-            var publicKey = ECDsa.Create();
+            var publicKey = ECDsa.Create(ECCurve.NamedCurves.nistP384);
             var factory = new ECDSAAlgorithmFactory(publicKey);
             var context = new JwtDecoderContext
             {
@@ -46,6 +46,25 @@ namespace JWT.Tests.Algorithms
 
             alg.Should()
                .BeOfType<ES384Algorithm>("because Create should return an instance of ES384Algorithm when the algorithm name in the header is 'ES384'");
+        }
+
+        [TestMethod]
+        public void Create_Should_Throw_Exception_When_Key_Curve_Does_Not_Match_Algorithm_Specified_In_Jwt_Header()
+        {
+            using var publicKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var factory = new ECDSAAlgorithmFactory(publicKey);
+            var context = new JwtDecoderContext
+            {
+                Header = new JwtHeader
+                {
+                    Algorithm = JwtAlgorithmName.ES512.ToString()
+                }
+            };
+
+            Action action = () => factory.Create(context);
+
+            action.Should()
+                  .Throw<ArgumentException>("because a P-256 key cannot be used with the algorithm ES512 specified in the header");
         }
 #endif
     }
