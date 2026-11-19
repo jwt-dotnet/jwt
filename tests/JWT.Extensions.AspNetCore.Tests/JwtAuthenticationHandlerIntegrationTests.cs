@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Extensions.AspNetCore.Tests
@@ -24,7 +25,7 @@ namespace JWT.Extensions.AspNetCore.Tests
     {
         private static CancellationToken _cancellationToken;
         private static readonly Fixture _fixture = new Fixture();
-        private static TestServer _server;
+        private static IHost _host;
 
         private HttpClient _client;
 
@@ -37,19 +38,19 @@ namespace JWT.Extensions.AspNetCore.Tests
                 Keys = TestData.Secrets,
                 VerifySignature = true
             };
-            _server = CreateServer(options);
+            _host = CreateHost(options);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            _server.Dispose();
+            _host.Dispose();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _client = _server.CreateClient();
+            _client = _host.GetTestClient();
         }
 
         [TestCleanup]
@@ -118,47 +119,49 @@ namespace JWT.Extensions.AspNetCore.Tests
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
-        private static TestServer CreateServer(JwtAuthenticationOptions configureOptions)
+        private static IHost CreateHost(JwtAuthenticationOptions configureOptions)
         {
-            var builder = new WebHostBuilder()
-                .Configure(app =>
-                    {
-                        app.UseAuthentication();
-
-                        app.Use(async (HttpContext context, Func<Task> _) =>
+            return new HostBuilder()
+                .ConfigureWebHost(webHost => webHost
+                    .UseTestServer()
+                    .Configure(app =>
                         {
-                            var authenticationResult = await context.AuthenticateAsync();
-                            if (authenticationResult.Succeeded)
-                            {
-                                context.Response.StatusCode = StatusCodes.Status200OK;
-                                context.Response.ContentType = new ContentType("text/json").MediaType;
+                            app.UseAuthentication();
 
-                                await context.Response.WriteAsync("Hello", _cancellationToken);
-                            }
-                            else
+                            app.Use(async (HttpContext context, Func<Task> _) =>
                             {
-                                await context.ChallengeAsync();
-                            }
-                        });
-                    })
-                .ConfigureServices(services =>
-                    {
-                        services.AddAuthentication(options =>
-                        {
-                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-                            options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                var authenticationResult = await context.AuthenticateAsync();
+                                if (authenticationResult.Succeeded)
+                                {
+                                    context.Response.StatusCode = StatusCodes.Status200OK;
+                                    context.Response.ContentType = new ContentType("text/json").MediaType;
 
-                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-                            options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                    await context.Response.WriteAsync("Hello", _cancellationToken);
+                                }
+                                else
+                                {
+                                    await context.ChallengeAsync();
+                                }
+                            });
                         })
-                        .AddJwt(options =>
+                    .ConfigureServices(services =>
                         {
-                            options.Keys = configureOptions.Keys;
-                            options.VerifySignature = configureOptions.VerifySignature;
-                        });
-                        services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
-                    });
-            return new TestServer(builder);
+                            services.AddAuthentication(options =>
+                            {
+                                // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+                                options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+
+                                // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                                options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                            })
+                            .AddJwt(options =>
+                            {
+                                options.Keys = configureOptions.Keys;
+                                options.VerifySignature = configureOptions.VerifySignature;
+                            });
+                            services.AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
+                        }))
+                .Start();
         }
     }
 }

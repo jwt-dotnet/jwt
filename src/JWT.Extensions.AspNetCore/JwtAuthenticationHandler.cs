@@ -70,7 +70,7 @@ namespace JWT.Extensions.AspNetCore
         /// The handler calls methods on the events which give the application control at certain points where processing is occurring.
         /// If it is not provided, a default instance is supplied which does nothing when the methods are called.
         /// </summary>
-        protected new JwtAuthenticationEvents Events
+        private new JwtAuthenticationEvents Events
         {
             get => (JwtAuthenticationEvents)base.Events!;
             set => base.Events = value;

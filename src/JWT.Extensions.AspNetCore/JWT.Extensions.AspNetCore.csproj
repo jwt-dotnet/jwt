@@ -4,6 +4,11 @@
     <TargetFrameworks>net6.0;net8.0;net10.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <!-- JWT's netstandard2.0 dependency on System.Text.Json no longer supports EOL netcoreapp3.1 -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
   <PropertyGroup>
     <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
     <PackageDescription>ASP.NET Core integration package for Jwt.Net</PackageDescription>

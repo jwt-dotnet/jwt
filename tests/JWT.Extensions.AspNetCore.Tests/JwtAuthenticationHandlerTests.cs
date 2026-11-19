@@ -134,7 +134,7 @@ namespace JWT.Extensions.AspNetCore.Tests
                 {
                     Headers =
                     {
-                        { HeaderNames.Authorization, header }
+                        [HeaderNames.Authorization] = header
                     }
                 }
             };

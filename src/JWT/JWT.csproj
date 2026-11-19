@@ -10,6 +10,10 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3' OR '$(TargetFramework)' == 'netstandard2.0'">
     <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <!-- Silence NETSDK1215; dropping netstandard1.3 would be a breaking change -->
+    <CheckNotRecommendedTargetFramework>false</CheckNotRecommendedTargetFramework>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0'">
     <TargetFrameworkIdentifier>.NETFramework,Version=6.0</TargetFrameworkIdentifier>
   </PropertyGroup>
