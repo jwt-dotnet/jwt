@@ -10,10 +10,32 @@ strategy:
   matrix:
     windows:
       imageName: windows-latest
+      testProjects: 'tests/**/*.csproj'
+      testArguments: ''
     linux:
       imageName: ubuntu-latest
+      testProjects: |
+        tests/JWT.Tests.Net60/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testArguments: '-f net6.0'
+    linuxNet8:
+      imageName: ubuntu-latest
+      testProjects: |
+        tests/JWT.Tests.Net80/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testArguments: '-f net8.0'
     macos:
       imageName: macos-latest
+      testProjects: |
+        tests/JWT.Tests.Net60/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testArguments: '-f net6.0'
+    macosNet8:
+      imageName: macos-latest
+      testProjects: |
+        tests/JWT.Tests.Net80/*.csproj
+        tests/JWT.Extensions.*.Tests/*.csproj
+      testArguments: '-f net8.0'
 
 pool:
   vmImage: $(imageName)
@@ -83,54 +105,16 @@ steps:
     projects: ${{ parameters.solutionName }}
     arguments: '-c ${{ parameters.buildConfiguration }} --no-restore -p:ContinuousIntegrationBuild=true'
 
-- task: PowerShell@2
+- task: DotNetCoreCLI@2
   displayName: 'Run tests'
   inputs:
-    targetType: inline
-    pwsh: true
-    script: |
-      $resultsDirectory = '$(Agent.TempDirectory)/test-results'
-      Remove-Item -Path $resultsDirectory -Recurse -Force -ErrorAction SilentlyContinue
-      New-Item -Path $resultsDirectory -ItemType Directory -Force | Out-Null
-
-      function Invoke-Test($projectPath, $framework) {
-        $dotnetArgs = @('test', $projectPath, '-c', '${{ parameters.buildConfiguration }}', '--no-build', '--no-restore', '--logger', 'trx', '--results-directory', $resultsDirectory)
-        if ($framework) {
-          $dotnetArgs += @('-f', $framework)
-        }
-        & dotnet @dotnetArgs
-        if ($LASTEXITCODE -ne 0) {
-          throw "dotnet test failed for $projectPath ($framework)"
-        }
-      }
-
-      if ('$(Agent.OS)' -eq 'Windows_NT') {
-        Get-ChildItem -Path 'tests' -Filter '*.csproj' -File -Recurse | ForEach-Object {
-          Invoke-Test $_.FullName ''
-        }
-      } else {
-        $testGroups = @(
-          @{ Framework = 'net6.0'; Projects = @('tests/JWT.Tests.Net60/*.csproj', 'tests/JWT.Extensions.*.Tests/*.csproj') },
-          @{ Framework = 'net8.0'; Projects = @('tests/JWT.Tests.Net80/*.csproj', 'tests/JWT.Extensions.*.Tests/*.csproj') }
-        )
-        foreach ($testGroup in $testGroups) {
-          foreach ($pattern in $testGroup.Projects) {
-            Get-ChildItem -Path $pattern -File | ForEach-Object {
-              Invoke-Test $_.FullName $testGroup.Framework
-            }
-          }
-        }
-      }
-
-- task: PublishTestResults@2
-  displayName: 'Publish test results'
-  condition: succeededOrFailed()
-  inputs:
+    command: test
+    projects: $(testProjects)
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore $(testArguments)'
+    testRunner: VSTest
     testResultsFormat: VSTest
-    testResultsFiles: '*.trx'
-    searchFolder: $(Agent.TempDirectory)/test-results
+    testResultsFiles: '**/*.trx'
     failTaskOnFailedTests: true
-    mergeTestResults: true
 
 - task: DotNetCoreCLI@2
   displayName: 'Create NuGet packages'
