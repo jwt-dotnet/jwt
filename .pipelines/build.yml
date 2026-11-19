@@ -6,8 +6,17 @@ trigger:
     exclude:
     - '**/*.md'
 
+strategy:
+  matrix:
+    windows:
+      imageName: windows-latest
+    linux:
+      imageName: ubuntu-latest
+    macos:
+      imageName: macos-latest
+
 pool:
-  vmImage: windows-latest
+  vmImage: $(imageName)
 
 parameters:
 - name: solutionName
@@ -22,13 +31,25 @@ parameters:
 - name: targetFrameworks
   type: object
   default:
-  - '3.1.x'
   - '6.x'
   - '8.x'
+- name: windowsTargetFrameworks
+  type: object
+  default:
+  - '3.1.x'
 
 steps:
 - checkout: self
   submodules: true
+
+- ${{ each targetFramework in parameters.windowsTargetFrameworks }}:
+  - task: UseDotNet@2
+    displayName: ${{ format('Install .NET {0}', targetFramework) }}
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    inputs:
+      packageType: sdk
+      version: ${{ targetFramework }}
+      installationPath: '$(Agent.ToolsDirectory)/dotnet'
 
 - ${{ each targetFramework in parameters.targetFrameworks }}:
   - task: UseDotNet@2
@@ -40,6 +61,7 @@ steps:
 
 - task: NuGetToolInstaller@1
   displayName: 'Install NuGet'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
 
 - task: DotNetCoreCLI@2
   displayName: 'Restore NuGet packages for .NET Core'
@@ -49,6 +71,7 @@ steps:
 
 - task: NuGetCommand@2
   displayName: 'Restore NuGet packages for .NET Framework'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   inputs:
     command: restore
     restoreSolution: ${{ parameters.solutionName }}
@@ -62,6 +85,7 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   inputs:
     command: test
     projects: 'tests/**/*.csproj'
@@ -72,7 +96,36 @@ steps:
     failTaskOnFailedTests: true
 
 - task: DotNetCoreCLI@2
+  displayName: 'Run tests for net6.0'
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
+  inputs:
+    command: test
+    projects: |
+      tests/JWT.Tests.Net60/*.csproj
+      tests/JWT.Extensions.*.Tests/*.csproj
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net6.0'
+    testRunner: VSTest
+    testResultsFormat: VSTest
+    testResultsFiles: '**/*.trx'
+    failTaskOnFailedTests: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run tests for net8.0'
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
+  inputs:
+    command: test
+    projects: |
+      tests/JWT.Tests.Net80/*.csproj
+      tests/JWT.Extensions.*.Tests/*.csproj
+    arguments: '-c ${{ parameters.buildConfiguration }} --no-build --no-restore -f net8.0'
+    testRunner: VSTest
+    testResultsFormat: VSTest
+    testResultsFiles: '**/*.trx'
+    failTaskOnFailedTests: true
+
+- task: DotNetCoreCLI@2
   displayName: 'Create NuGet packages'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   inputs:
     command: pack
     packagesToPack: 'src/**/*.csproj'
@@ -81,6 +134,7 @@ steps:
 
 - task: CopyFiles@2
   displayName: 'Copy changelog'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   inputs:
     sourceFolder: $(Build.SourcesDirectory)
     targetFolder: $(Build.ArtifactStagingDirectory)
@@ -89,3 +143,4 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish build artifacts'
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
