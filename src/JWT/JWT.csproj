@@ -24,10 +24,6 @@
     <TargetFrameworkIdentifier>.NETFramework,Version=10.0</TargetFrameworkIdentifier>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <IsAotCompatible>true</IsAotCompatible>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Copyright>Public Domain</Copyright>
     <PackageDescription>Jwt.Net, a JWT (JSON Web Token) implementation for .NET</PackageDescription>

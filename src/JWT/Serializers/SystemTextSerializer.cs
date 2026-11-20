@@ -108,7 +108,7 @@ namespace JWT.Serializers
         {
             var options = source is null ? new JsonSerializerOptions() : new JsonSerializerOptions(source);
             options.TypeInfoResolver = source?.TypeInfoResolver is { } resolver ?
-                JsonTypeInfoResolver.Combine(resolver, JwtJsonSerializerContext.Default) :
+                JsonTypeInfoResolver.Combine(resolver, JwtNetJsonSerializerContext.Default) :
                 CreateDefaultTypeInfoResolver();
 
             if (forDeserialize)
@@ -125,7 +125,7 @@ namespace JWT.Serializers
             if (JsonSerializer.IsReflectionEnabledByDefault)
                 return new DefaultJsonTypeInfoResolver();
 
-            return JwtJsonSerializerContext.Default;
+            return JwtNetJsonSerializerContext.Default;
         }
 #endif
     }

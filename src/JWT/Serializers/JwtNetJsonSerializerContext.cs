@@ -46,7 +46,7 @@ namespace JWT.Serializers
     [JsonSerializable(typeof(JsonNode))]
     [JsonSerializable(typeof(JsonObject))]
     [JsonSerializable(typeof(JsonArray))]
-    internal sealed partial class JwtJsonSerializerContext : JsonSerializerContext
+    internal sealed partial class JwtNetJsonSerializerContext : JsonSerializerContext
     {
     }
 }

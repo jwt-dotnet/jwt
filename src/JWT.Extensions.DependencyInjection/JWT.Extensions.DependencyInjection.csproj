@@ -4,10 +4,6 @@
     <TargetFrameworks>net6.0;net8.0;net10.0;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <IsAotCompatible>true</IsAotCompatible>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
     <PackageDescription>Microsoft Dependency Injection container integration package for Jwt.Net</PackageDescription>

@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
+using JWT.Tests.Stubs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.Serializers
@@ -20,7 +20,7 @@ namespace JWT.Tests.Serializers
 
         // Same resolver the default constructor uses when reflection-based serialization is disabled (trimmed and Native AOT apps)
         private static SystemTextSerializer CreateReflectionFreeSerializer() =>
-            new SystemTextSerializer(new JsonSerializerOptions { TypeInfoResolver = JwtJsonSerializerContext.Default });
+            new SystemTextSerializer(new JsonSerializerOptions { TypeInfoResolver = JwtNetJsonSerializerContext.Default });
 
         [TestMethod]
         public void Ctor_Should_Throw_When_Options_Is_Null()
@@ -62,13 +62,13 @@ namespace JWT.Tests.Serializers
         [TestMethod]
         public void Deserialize_Should_Throw_When_Metadata_For_Type_Is_Missing()
         {
-            var serializer = new SystemTextSerializer(CustomerJsonSerializerContext.Default.Options);
+            var serializer = CreateReflectionFreeSerializer();
 
-            Action action = () => serializer.Deserialize(typeof(TypeWithoutMetadata), "{}");
+            Action action = () => serializer.Deserialize(typeof(Customer), "{}");
 
             action.Should()
                   .Throw<NotSupportedException>()
-                  .WithMessage("*TypeWithoutMetadata*");
+                  .WithMessage("*Customer*");
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace JWT.Tests.Serializers
         [TestMethod]
         public void Serialize_Without_Reflection_Should_Produce_Same_Json_As_Default()
         {
-            var payload = CreatePayloadWithCommonClaimTypes();
+            var payload = TestData.PayloadWithCommonClaimTypes;
 
             var expected = new SystemTextSerializer().Serialize(payload);
             var actual = CreateReflectionFreeSerializer().Serialize(payload);
@@ -104,7 +104,7 @@ namespace JWT.Tests.Serializers
                                     .WithJsonSerializer(serializer);
 
             var token = builder.AddHeader(HeaderName.KeyId, "kid-1")
-                               .AddClaims(CreatePayloadWithCommonClaimTypes())
+                               .AddClaims(TestData.PayloadWithCommonClaimTypes)
                                .ExpirationTime(DateTime.UtcNow.AddHours(1))
                                .Encode();
 
@@ -157,42 +157,6 @@ namespace JWT.Tests.Serializers
             action.Should()
                   .Throw<TokenExpiredException>();
         }
-
-        private static Dictionary<string, object> CreatePayloadWithCommonClaimTypes() =>
-            new Dictionary<string, object>
-            {
-                { "string", "value" },
-                { "long", 42L },
-                { "double", 1.5 },
-                { "bool", true },
-                { "date", new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc) },
-                { "guid", new Guid("1f0a3f9e-4b8c-4a63-9b8e-7d4c2b1a0f11") },
-                { "array", new[] { "a", "b" } },
-                { "intList", new List<int> { 1, 2 } },
-                { "longList", new List<long> { 3 } },
-                { "doubleList", new List<double> { 0.5 } },
-                { "boolList", new List<bool> { true } },
-                { "boolArray", new[] { false } },
-                { "nested", new Dictionary<string, object> { { "inner", 1 } } }
-            };
-
-        public sealed class TypeWithoutMetadata
-        {
-        }
-
-        private sealed class FixedOutputObjectConverter : JsonConverter<object>
-        {
-            public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
-                throw new NotSupportedException();
-
-            public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options) =>
-                writer.WriteStringValue("fixed");
-        }
-    }
-
-    [JsonSerializable(typeof(Customer))]
-    internal sealed partial class CustomerJsonSerializerContext : JsonSerializerContext
-    {
     }
 }
 #endif

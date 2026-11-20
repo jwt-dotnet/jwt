@@ -9,10 +9,6 @@
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <IsAotCompatible>true</IsAotCompatible>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Copyright>Copyright (c) Jwt.Net Maintainers and Contributors</Copyright>
     <PackageDescription>ASP.NET Core integration package for Jwt.Net</PackageDescription>
