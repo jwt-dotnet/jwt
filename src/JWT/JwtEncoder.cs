@@ -103,9 +103,10 @@ namespace JWT
             var stringToSignLength = JwtBase64UrlEncoder.GetEncodedLength(headerByteCount) + 1 + JwtBase64UrlEncoder.GetEncodedLength(payloadByteCount);
 
             var json = ArrayPool<byte>.Shared.Rent(Math.Max(headerByteCount, payloadByteCount));
-            var token = ArrayPool<byte>.Shared.Rent(stringToSignLength + 1 + JwtBase64UrlEncoder.GetEncodedLength(SpanAlgorithmExtensions.MaxStackSignatureSize));
+            byte[] token = null;
             try
             {
+                token = ArrayPool<byte>.Shared.Rent(stringToSignLength + 1 + JwtBase64UrlEncoder.GetEncodedLength(SpanAlgorithmExtensions.MaxStackSignatureSize));
                 var length = JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(headerJson, json)), token);
                 token[length++] = (byte)'.';
                 length += JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(payloadJson, json)), token.AsSpan(length));
@@ -132,7 +133,8 @@ namespace JWT
             finally
             {
                 ArrayPool<byte>.Shared.Return(json, clearArray: true);
-                ArrayPool<byte>.Shared.Return(token, clearArray: true);
+                if (token is not null)
+                    ArrayPool<byte>.Shared.Return(token, clearArray: true);
             }
         }
 #endif

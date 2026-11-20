@@ -9,7 +9,7 @@ namespace JWT.Algorithms
     internal interface ISpanAlgorithm : IJwtAlgorithm
     {
         /// <summary>
-        /// Signs the data into <paramref name="destination" />, returning <c>false</c> if it's too small.
+        /// Signs the data into <paramref name="destination" />, returning false if it's too small.
         /// </summary>
         bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten);
     }
@@ -30,7 +30,7 @@ namespace JWT.Algorithms
         public const int MaxStackSignatureSize = 512;
 
         /// <summary>
-        /// Returns the algorithm if it's built-in and can sign spans, otherwise <c>null</c>.
+        /// Returns the algorithm if it's built-in and can sign spans, otherwise null.
         /// </summary>
         /// <remarks>
         /// Subclasses from other assemblies can override how data is signed or verified, so they keep using arrays.
