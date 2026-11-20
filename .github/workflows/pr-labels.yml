@@ -20,10 +20,11 @@ permissions:
   issues: read
   pull-requests: write
 
-# labeler replaces the PR's label set, so runs for the same PR must not overlap.
+# labeler replaces the PR's label set, so runs for the same PR must not overlap. Queue instead of
+# cancelling, so a quick push cannot cancel the opened run, the only one that asks Copilot.
 concurrency:
   group: pr-labels-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   label:
