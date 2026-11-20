@@ -134,7 +134,7 @@ namespace JWT
         /// <summary>
         /// Same as <see cref="Validate(string, IAsymmetricAlgorithm, byte[], byte[])" /> without arrays.
         /// </summary>
-        internal void Validate(string decodedPayload, ISpanAsymmetricAlgorithm alg, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        internal void Validate(string decodedPayload, IAsymmetricAlgorithm alg, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
         {
             if (_valParams.ValidateSignature && !alg.Verify(bytesToSign, decodedSignature))
                 throw new SignatureVerificationException("The signature is invalid according to the validation procedure.");
@@ -147,7 +147,7 @@ namespace JWT
         /// <summary>
         /// Same as <see cref="Validate(string, string, string[])" /> with the signatures computed from the keys, without arrays.
         /// </summary>
-        internal void Validate(string decodedPayload, ISpanAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        internal void Validate(string decodedPayload, IJwtAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
         {
             if (_valParams.ValidateSignature && !IsAnySignatureValid(alg, keys, bytesToSign, decodedSignature))
                 throw CreateSignatureVerificationException(alg, keys, bytesToSign.ToArray(), decodedSignature);
@@ -162,7 +162,7 @@ namespace JWT
                 Convert.ToBase64String(decodedSignature),
                 Array.ConvertAll(keys, key => Convert.ToBase64String(alg.Sign(key, bytesToSign))));
 
-        private static bool IsAnySignatureValid(ISpanAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        private static bool IsAnySignatureValid(IJwtAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
         {
             Span<byte> buffer = stackalloc byte[SpanAlgorithmExtensions.MaxStackSignatureSize];
             foreach (var key in keys)

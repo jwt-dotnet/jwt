@@ -272,6 +272,20 @@ namespace JWT.Tests
             algorithm.VerifyCount.Should()
                      .Be(1, "because the derived algorithm must verify the token");
         }
+
+        [TestMethod]
+        public void Encode_And_Decode_Should_Use_Derived_ECDSAAlgorithm()
+        {
+            var algorithm = new RecordingECDSAAlgorithm(ECDsa.Create(ECCurve.NamedCurves.nistP256));
+
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key);
+
+            algorithm.SignCount.Should()
+                     .Be(1, "because the derived algorithm must sign the token");
+            algorithm.VerifyCount.Should()
+                     .Be(1, "because the derived algorithm must verify the token");
+        }
 #endif
 
         private static IEnumerable<object[]> GetAlgorithms()
@@ -429,6 +443,36 @@ namespace JWT.Tests
             public override string Name => nameof(JwtAlgorithmName.RS256);
 
             public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA256;
+
+            protected override byte[] SignData(byte[] bytesToSign)
+            {
+                this.SignCount++;
+                return base.SignData(bytesToSign);
+            }
+
+            protected override bool VerifyData(byte[] bytesToSign, byte[] signature)
+            {
+                this.VerifyCount++;
+                return base.VerifyData(bytesToSign, signature);
+            }
+        }
+
+        private sealed class RecordingECDSAAlgorithm : ECDSAAlgorithm
+        {
+            public RecordingECDSAAlgorithm(ECDsa key)
+                : base(key, key)
+            {
+            }
+
+            public int SignCount { get; private set; }
+
+            public int VerifyCount { get; private set; }
+
+            public override string Name => nameof(JwtAlgorithmName.ES256);
+
+            public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA256;
+
+            protected override int RequiredKeySize => 256;
 
             protected override byte[] SignData(byte[] bytesToSign)
             {

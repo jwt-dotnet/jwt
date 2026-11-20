@@ -68,8 +68,7 @@ namespace JWT
 
             var headerJson = _jsonSerializer.Serialize(header);
 #if NET8_0_OR_GREATER
-            if (_urlEncoder is JwtBase64UrlEncoder && !String.IsNullOrEmpty(headerJson) &&
-                (algorithm is NoneAlgorithm || algorithm.AsSpanAlgorithm() is not null))
+            if (CanEncodeWithSpans(algorithm, headerJson))
             {
                 var payloadJson = _jsonSerializer.Serialize(payload);
                 if (!String.IsNullOrEmpty(payloadJson))
@@ -96,6 +95,11 @@ namespace JWT
         }
 
 #if NET8_0_OR_GREATER
+        private bool CanEncodeWithSpans(IJwtAlgorithm algorithm, string headerJson) =>
+            _urlEncoder is JwtBase64UrlEncoder &&
+            !String.IsNullOrEmpty(headerJson) &&
+            (algorithm is NoneAlgorithm || algorithm.CanUseSpans());
+
         private static string EncodeWithSpans(IJwtAlgorithm algorithm, byte[] key, string headerJson, string payloadJson)
         {
             var headerByteCount = GetByteCount(headerJson);
@@ -116,7 +120,7 @@ namespace JWT
                 Span<byte> signatureBuffer = stackalloc byte[SpanAlgorithmExtensions.MaxStackSignatureSize];
                 var signature = algorithm is NoneAlgorithm ?
                     ReadOnlySpan<byte>.Empty :
-                    ((ISpanAlgorithm)algorithm).Sign(key, bytesToSign, signatureBuffer);
+                    algorithm.Sign(key, bytesToSign, signatureBuffer);
 
                 var tokenLength = length + 1 + JwtBase64UrlEncoder.GetEncodedLength(signature.Length);
                 if (tokenLength > token.Length)

@@ -4,9 +4,6 @@ using System.Security.Cryptography;
 namespace JWT.Algorithms
 {
     public abstract class HMACSHAAlgorithm : IJwtAlgorithm
-#if NET8_0_OR_GREATER
-        , ISpanAlgorithm
-#endif
     {
         /// <inheritdoc />
         public abstract string Name { get; }
@@ -24,14 +21,19 @@ namespace JWT.Algorithms
         protected abstract HMAC CreateAlgorithm(byte[] key);
 
 #if NET8_0_OR_GREATER
-        bool ISpanAlgorithm.TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
-            this switch
-            {
-                HMACSHA256Algorithm => HMACSHA256.TryHashData(key, bytesToSign, destination, out bytesWritten),
-                HMACSHA384Algorithm => HMACSHA384.TryHashData(key, bytesToSign, destination, out bytesWritten),
-                HMACSHA512Algorithm => HMACSHA512.TryHashData(key, bytesToSign, destination, out bytesWritten),
-                _ => throw new NotSupportedException($"Algorithm {this.Name} can't sign spans.")
-            };
+        /// <summary>
+        /// Same as <see cref="Sign" /> without arrays.
+        /// </summary>
+        /// <remarks>
+        /// Each built-in algorithm overrides it. It's virtual rather than abstract so that classes deriving from this one
+        /// in other assemblies keep working: they can't override it, so they keep using <see cref="CreateAlgorithm" />.
+        /// </remarks>
+        /// <returns><see langword="false" /> if the algorithm can't sign spans or <paramref name="destination" /> is too small.</returns>
+        internal virtual bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten)
+        {
+            bytesWritten = 0;
+            return false;
+        }
 #endif
     }
 }
