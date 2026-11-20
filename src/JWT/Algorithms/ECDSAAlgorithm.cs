@@ -9,9 +9,6 @@ namespace JWT.Algorithms
     /// Abstract base class for all ECDSA algorithms
     /// </summary>
     public abstract class ECDSAAlgorithm : CertificateAlgorithm<ECDsa>
-#if NET8_0_OR_GREATER
-        , ISpanAsymmetricAlgorithm
-#endif
     {
         /// <summary>
         /// Creates an instance of <see cref="ECDSAAlgorithm" /> using the provided pair of public and private keys.
@@ -70,10 +67,17 @@ namespace JWT.Algorithms
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
 
 #if NET8_0_OR_GREATER
-        bool ISpanAlgorithm.TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+        /// <summary>
+        /// Same as <see cref="SignData(byte[])" /> without arrays.
+        /// </summary>
+        /// <returns><see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+        internal bool TrySignData(ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
             GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, out bytesWritten);
 
-        bool ISpanAsymmetricAlgorithm.Verify(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
+        /// <summary>
+        /// Same as <see cref="VerifyData(byte[], byte[])" /> without arrays.
+        /// </summary>
+        internal bool VerifyData(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
 #endif
 

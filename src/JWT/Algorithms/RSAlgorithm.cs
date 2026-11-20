@@ -8,9 +8,6 @@ namespace JWT.Algorithms
     /// RSASSA-PKCS1-v1_5 using SHA-256
     /// </summary>
     public abstract class RSAlgorithm : CertificateAlgorithm<RSA>
-#if NET8_0_OR_GREATER
-        , ISpanAsymmetricAlgorithm
-#endif
     {
         /// <summary>
         /// Creates an instance of <see cref="RSAlgorithm" /> using the provided pair of public and private keys.
@@ -72,10 +69,17 @@ namespace JWT.Algorithms
 #endif
 
 #if NET8_0_OR_GREATER
-        bool ISpanAlgorithm.TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+        /// <summary>
+        /// Same as <see cref="SignData(byte[])" /> without arrays.
+        /// </summary>
+        /// <returns><see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+        internal bool TrySignData(ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
             GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, RSASignaturePadding.Pkcs1, out bytesWritten);
 
-        bool ISpanAsymmetricAlgorithm.Verify(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
+        /// <summary>
+        /// Same as <see cref="VerifyData(byte[], byte[])" /> without arrays.
+        /// </summary>
+        internal bool VerifyData(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
 #endif
     }

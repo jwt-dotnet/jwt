@@ -283,8 +283,7 @@ namespace JWT
                 var header = DecodeHeader<JwtHeader>(jwt);
                 var algorithm = CreateAlgorithm(header, decodedPayload, jwt);
 
-                var spanAlgorithm = algorithm.AsSpanAlgorithm();
-                if (spanAlgorithm is null)
+                if (!algorithm.CanUseSpans())
                 {
                     ValidateSignature(keys, decodedPayload, algorithm, GetBytes(jwt.Header, '.', jwt.Payload), decodedSignature.ToArray());
                     return;
@@ -294,14 +293,14 @@ namespace JWT
                 rentedBytesToSign = ArrayPool<byte>.Shared.Rent(bytesToSignLength);
                 var bytesToSign = rentedBytesToSign.AsSpan(0, GetBytes(jwt.Header, '.', jwt.Payload, rentedBytesToSign));
 
-                if (spanAlgorithm is ISpanAsymmetricAlgorithm asymmAlg)
+                if (algorithm is IAsymmetricAlgorithm asymmAlg)
                 {
                     jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
                 }
                 else
                 {
                     EnsureKeys(keys);
-                    jwtValidator.Validate(decodedPayload, spanAlgorithm, keys, bytesToSign, decodedSignature);
+                    jwtValidator.Validate(decodedPayload, algorithm, keys, bytesToSign, decodedSignature);
                 }
             }
             finally
