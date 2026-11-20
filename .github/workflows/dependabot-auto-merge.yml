@@ -1,0 +1,34 @@
+name: Dependabot auto-merge
+
+# Patch and minor Dependabot PRs merge by themselves once a maintainer approves and the required checks pass.
+# Major updates are always merged by hand.
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'jwt-dotnet/jwt'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Fetch Dependabot metadata
+      id: metadata
+      uses: dependabot/fetch-metadata@v3
+
+    - name: Enable auto-merge
+      if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+      run: gh pr merge --auto --squash "$PR_URL"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Dependabot can update an open grouped PR in place, e.g. adding a major bump to it
+    - name: Disable auto-merge
+      if: github.event.pull_request.auto_merge && steps.metadata.outputs.update-type != 'version-update:semver-patch' && steps.metadata.outputs.update-type != 'version-update:semver-minor'
+      run: gh pr merge --disable-auto "$PR_URL"
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
