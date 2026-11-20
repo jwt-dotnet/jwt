@@ -54,10 +54,10 @@ jobs:
               repository(owner: $owner, name: $name) {
                 pullRequest(number: $number) {
                   id
-                  closingIssuesReferences(first: 25) {
+                  closingIssuesReferences(first: 100) {
                     nodes {
                       repository { nameWithOwner }
-                      labels(first: 50) { nodes { id name } }
+                      labels(first: 100) { nodes { id name } }
                     }
                   }
                 }
@@ -113,7 +113,7 @@ jobs:
           gh api "repos/$REPO/pulls/$PR_NUMBER" \
             --jq '"Title: \(.title)\n\nDescription:\n\((.body // "")[0:4000])\n"'
           echo "Changed files:"
-          gh api "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename'
+          gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename'
         } > "$prompt"
         echo "file=$prompt" >> "$GITHUB_OUTPUT"
 
