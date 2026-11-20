@@ -42,6 +42,7 @@
   <!-- netcoreapp3.1 consumes the netstandard2.0 build, so keep both on the newest version that supports netcoreapp3.1 -->
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.11.1" />
     <PackageVersion Include="MSTest.TestFramework" Version="3.11.1" />
   </ItemGroup>
 
