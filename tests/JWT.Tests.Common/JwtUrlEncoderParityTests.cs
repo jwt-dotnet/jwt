@@ -9,6 +9,7 @@ using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace JWT.Tests
 {
@@ -35,9 +36,15 @@ namespace JWT.Tests
             ["HS384"],
             ["HS512"],
             ["RS256"],
+            ["RS384"],
+            ["RS512"],
+            ["RS1024"],
+            ["RS2048"],
+            ["RS4096"],
             ["RS512 4608"],
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
             ["ES256"],
+            ["ES384"],
             ["ES512"],
 #endif
         ];
@@ -140,6 +147,155 @@ namespace JWT.Tests
         }
 #endif
 
+        [DataRow(0, "", true)]
+        [DataRow(0, "A", true)]
+        [DataRow(0, "abc!", false)]
+        [DataRow(0, "ab c", true)]
+        [DataRow(1, "", false)]
+        [DataRow(1, "A", false)]
+        [DataRow(1, "abc!", true)]
+        [DataRow(1, "ab\tc", true)]
+        [DataRow(1, "ab+/", true)]
+        [TestMethod]
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Header_Or_Payload_Is_Malformed(int partIndex, string part, bool verify)
+        {
+            var algorithm = CreateAlgorithm("HS256");
+            var parts = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key).Split('.');
+            parts[partIndex] = part;
+            var malformedToken = String.Join(".", parts);
+
+            var expected = CatchException(() => CreateDecoder(algorithm, new CustomUrlEncoder()).Decode(malformedToken, Key, verify));
+
+            var actual = CatchException(() => CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(malformedToken, Key, verify));
+
+            actual.Should()
+                  .NotBeNull("because the malformed segment must be rejected");
+            AssertSameException(actual, expected);
+        }
+
+        [DataRow(1)]
+        [DataRow(2)]
+        [DataRow(4)]
+        [TestMethod]
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Segment_Count_Is_Wrong(int segmentCount)
+        {
+            var algorithm = CreateAlgorithm("HS256");
+            var parts = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key).Split('.');
+            var malformedToken = String.Join(".", Enumerable.Range(0, segmentCount).Select(i => parts[i % parts.Length]));
+
+            var expected = CatchException(() => CreateDecoder(algorithm, new CustomUrlEncoder()).Decode(malformedToken, Key));
+
+            var actual = CatchException(() => CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(malformedToken, Key));
+
+            actual.Should()
+                  .BeOfType<InvalidTokenPartsException>("because a token must have exactly three segments");
+            AssertSameException(actual, expected);
+        }
+
+        [DynamicData(nameof(Algorithms))]
+        [TestMethod]
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Truncated(string algorithmName)
+        {
+            var algorithm = CreateAlgorithm(algorithmName);
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            var parts = token.Split('.');
+            var signature = Convert.FromBase64String(Base64UrlToBase64(parts[2]));
+            var truncatedToken = $"{parts[0]}.{parts[1]}.{new JwtBase64UrlEncoder().Encode(signature.Take(signature.Length - 1).ToArray())}";
+
+            var expected = CatchException(() => CreateDecoder(algorithm, new CustomUrlEncoder()).Decode(truncatedToken, Key));
+
+            var actual = CatchException(() => CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(truncatedToken, Key));
+
+            actual.Should()
+                  .NotBeNull("because the truncated signature must be rejected");
+            AssertSameException(actual, expected);
+        }
+
+        [DynamicData(nameof(Algorithms))]
+        [TestMethod]
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Token_Is_Expired(string algorithmName)
+        {
+            var algorithm = CreateAlgorithm(algorithmName);
+            var payload = CreatePayload(10);
+            payload["exp"] = 1;
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(payload, Key);
+
+            var expected = CatchException(() => CreateDecoder(algorithm, new CustomUrlEncoder()).Decode(token, Key));
+
+            var actual = CatchException(() => CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key));
+
+            actual.Should()
+                  .BeOfType<TokenExpiredException>("because the token has expired");
+            AssertSameException(actual, expected);
+        }
+
+        [TestMethod]
+        public void Encode_Should_Use_Custom_Url_Encoder()
+        {
+            var urlEncoder = new CustomUrlEncoder();
+
+            CreateEncoder(CreateAlgorithm("HS256"), urlEncoder).Encode(TestData.DictionaryPayload, Key);
+
+            urlEncoder.EncodeCount.Should()
+                      .Be(3, "because the custom URL encoder must encode the header, the payload and the signature");
+        }
+
+        [DataRow("HS256")]
+        [DataRow("RS256")]
+        [TestMethod]
+        public void Decode_Should_Use_Custom_Url_Encoder(string algorithmName)
+        {
+            var algorithm = CreateAlgorithm(algorithmName);
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            var urlEncoder = new CustomUrlEncoder();
+
+            CreateDecoder(algorithm, urlEncoder).Decode(token, Key);
+
+            urlEncoder.DecodedSegments.Should()
+                      .Contain(token.Split('.'), "because the custom URL encoder must decode the header, the payload and the signature");
+        }
+
+        [TestMethod]
+        public void Decode_Should_Use_Custom_Validator_For_Symmetric_Algorithm()
+        {
+            var algorithm = CreateAlgorithm("HS256");
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            var validator = new Mock<IJwtValidator>();
+
+            new JwtDecoder(new JsonNetSerializer(), validator.Object, new JwtBase64UrlEncoder(), algorithm).Decode(token, Key);
+
+            validator.Verify(v => v.Validate(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void Decode_Should_Use_Custom_Validator_For_Asymmetric_Algorithm()
+        {
+            var algorithm = CreateAlgorithm("RS256");
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            var validator = new Mock<IJwtValidator>();
+
+            new JwtDecoder(new JsonNetSerializer(), validator.Object, new JwtBase64UrlEncoder(), algorithm).Decode(token, Key);
+
+            validator.Verify(v => v.Validate(It.IsAny<string>(), It.IsAny<IAsymmetricAlgorithm>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()), Times.Once());
+        }
+
+        // HashAlgorithmName is ambiguous in the net40 test project, which polyfills it
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        [TestMethod]
+        public void Encode_And_Decode_Should_Use_Derived_RSAlgorithm()
+        {
+            var algorithm = new RecordingRSAlgorithm(Rsa.Value);
+
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key);
+
+            algorithm.SignCount.Should()
+                     .Be(1, "because the derived algorithm must sign the token");
+            algorithm.VerifyCount.Should()
+                     .Be(1, "because the derived algorithm must verify the token");
+        }
+#endif
+
         private static IDictionary<string, object> CreatePayload(int nameLength) =>
             new Dictionary<string, object>
             {
@@ -155,9 +311,15 @@ namespace JWT.Tests
                 "HS384" => new HMACSHA384Algorithm(),
                 "HS512" => new HMACSHA512Algorithm(),
                 "RS256" => new RS256Algorithm(Rsa.Value, Rsa.Value),
+                "RS384" => new RS384Algorithm(Rsa.Value, Rsa.Value),
+                "RS512" => new RS512Algorithm(Rsa.Value, Rsa.Value),
+                "RS1024" => new RS1024Algorithm(Rsa.Value, Rsa.Value),
+                "RS2048" => new RS2048Algorithm(Rsa.Value, Rsa.Value),
+                "RS4096" => new RS4096Algorithm(Rsa.Value, Rsa.Value),
                 "RS512 4608" => new RS512Algorithm(LargeRsa.Value, LargeRsa.Value),
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
                 "ES256" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP256, key => new ES256Algorithm(key, key)),
+                "ES384" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP384, key => new ES384Algorithm(key, key)),
                 "ES512" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP521, key => new ES512Algorithm(key, key)),
 #endif
                 "none" => new NoneAlgorithm(),
@@ -227,14 +389,52 @@ namespace JWT.Tests
         {
             private readonly JwtBase64UrlEncoder _urlEncoder = new JwtBase64UrlEncoder();
 
-            public string Encode(byte[] input) =>
-                _urlEncoder.Encode(input);
+            public int EncodeCount { get; private set; }
 
-            public byte[] Decode(string input) =>
-                _urlEncoder.Decode(input);
+            public List<string> DecodedSegments { get; } = new List<string>();
+
+            public string Encode(byte[] input)
+            {
+                this.EncodeCount++;
+                return _urlEncoder.Encode(input);
+            }
+
+            public byte[] Decode(string input)
+            {
+                this.DecodedSegments.Add(input);
+                return _urlEncoder.Decode(input);
+            }
         }
 
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
+        private sealed class RecordingRSAlgorithm : RSAlgorithm
+        {
+            public RecordingRSAlgorithm(RSA key)
+                : base(key, key)
+            {
+            }
+
+            public int SignCount { get; private set; }
+
+            public int VerifyCount { get; private set; }
+
+            public override string Name => nameof(JwtAlgorithmName.RS256);
+
+            public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA256;
+
+            protected override byte[] SignData(byte[] bytesToSign)
+            {
+                this.SignCount++;
+                return base.SignData(bytesToSign);
+            }
+
+            protected override bool VerifyData(byte[] bytesToSign, byte[] signature)
+            {
+                this.VerifyCount++;
+                return base.VerifyData(bytesToSign, signature);
+            }
+        }
+
         private sealed class MismatchedHMACSHAAlgorithm : HMACSHAAlgorithm
         {
             public override string Name => nameof(JwtAlgorithmName.HS256);
