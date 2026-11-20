@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
 using JWT.Algorithms;
+using JWT.Builder;
 using JWT.Exceptions;
 using JWT.Serializers;
 using JWT.Tests.Models;
@@ -24,17 +26,18 @@ namespace JWT.Tests
 
         // Payload sizes in steps smaller than the base64url-encoded size of a signature, to cover buffer size boundaries
         private static readonly IDictionary<string, object>[] Payloads =
-            Enumerable.Range(0, 13).Select(static i => CreatePayload(i * 30)).Concat([CreatePayload(1024)]).ToArray();
+                Enumerable.Range(0, 13)
+                          .Select(static i => CreatePayload(i * 30))
+                          .Concat([CreatePayload(1024)])
+                          .ToArray();
 
-        private static readonly Lazy<RSA> Rsa = new Lazy<RSA>(static () => CreateRsa(2048));
-
-        private static readonly Lazy<RSA> LargeRsa = new Lazy<RSA>(static () => CreateRsa(4608));
+        private static readonly ConcurrentDictionary<int, RSA> RsaKeys = new ConcurrentDictionary<int, RSA>();
 
         [DynamicData(nameof(GetDeterministicAlgorithms))]
         [TestMethod]
-        public void Encode_Should_Return_Same_Token_As_Custom_Url_Encoder(string algorithmName)
+        public void Encode_Should_Return_Same_Token_As_Custom_Url_Encoder(JwtAlgorithmName algorithmName, int? keySize)
         {
-            var algorithm = CreateAlgorithm(algorithmName);
+            var algorithm = CreateAlgorithm(algorithmName, keySize);
 
             foreach (var payload in Payloads)
             {
@@ -49,9 +52,9 @@ namespace JWT.Tests
 
         [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
-        public void Decode_Should_Return_Same_Payload_As_Custom_Url_Encoder(string algorithmName)
+        public void Decode_Should_Return_Same_Payload_As_Custom_Url_Encoder(JwtAlgorithmName algorithmName, int? keySize)
         {
-            var algorithm = CreateAlgorithm(algorithmName);
+            var algorithm = CreateAlgorithm(algorithmName, keySize);
 
             foreach (var payload in Payloads)
             {
@@ -67,9 +70,9 @@ namespace JWT.Tests
 
         [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
-        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Invalid(string algorithmName)
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Invalid(JwtAlgorithmName algorithmName, int? keySize)
         {
-            var algorithm = CreateAlgorithm(algorithmName);
+            var algorithm = CreateAlgorithm(algorithmName, keySize);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             var parts = token.Split('.');
             var signature = Convert.FromBase64String(Base64UrlToBase64(parts[2]));
@@ -95,7 +98,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Segment_Is_Malformed(string signature)
         {
-            var algorithm = CreateAlgorithm("HS256");
+            var algorithm = CreateAlgorithm(JwtAlgorithmName.HS256);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             var malformedToken = token.Substring(0, token.LastIndexOf('.') + 1) + signature;
 
@@ -137,7 +140,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Header_Or_Payload_Is_Malformed(int partIndex, string part, bool verify)
         {
-            var algorithm = CreateAlgorithm("HS256");
+            var algorithm = CreateAlgorithm(JwtAlgorithmName.HS256);
             var parts = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key).Split('.');
             parts[partIndex] = part;
             var malformedToken = String.Join(".", parts);
@@ -157,7 +160,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Segment_Count_Is_Wrong(int segmentCount)
         {
-            var algorithm = CreateAlgorithm("HS256");
+            var algorithm = CreateAlgorithm(JwtAlgorithmName.HS256);
             var parts = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key).Split('.');
             var malformedToken = String.Join(".", Enumerable.Range(0, segmentCount).Select(i => parts[i % parts.Length]));
 
@@ -172,9 +175,9 @@ namespace JWT.Tests
 
         [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
-        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Truncated(string algorithmName)
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Truncated(JwtAlgorithmName algorithmName, int? keySize)
         {
-            var algorithm = CreateAlgorithm(algorithmName);
+            var algorithm = CreateAlgorithm(algorithmName, keySize);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             var parts = token.Split('.');
             var signature = Convert.FromBase64String(Base64UrlToBase64(parts[2]));
@@ -191,9 +194,9 @@ namespace JWT.Tests
 
         [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
-        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Token_Is_Expired(string algorithmName)
+        public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Token_Is_Expired(JwtAlgorithmName algorithmName, int? keySize)
         {
-            var algorithm = CreateAlgorithm(algorithmName);
+            var algorithm = CreateAlgorithm(algorithmName, keySize);
             var payload = CreatePayload(10);
             payload["exp"] = 1;
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(payload, Key);
@@ -212,16 +215,16 @@ namespace JWT.Tests
         {
             var urlEncoder = new CustomUrlEncoder();
 
-            CreateEncoder(CreateAlgorithm("HS256"), urlEncoder).Encode(TestData.DictionaryPayload, Key);
+            CreateEncoder(CreateAlgorithm(JwtAlgorithmName.HS256), urlEncoder).Encode(TestData.DictionaryPayload, Key);
 
             urlEncoder.EncodeCount.Should()
                       .Be(3, "because the custom URL encoder must encode the header, the payload and the signature");
         }
 
-        [DataRow("HS256")]
-        [DataRow("RS256")]
+        [DataRow(JwtAlgorithmName.HS256)]
+        [DataRow(JwtAlgorithmName.RS256)]
         [TestMethod]
-        public void Decode_Should_Use_Custom_Url_Encoder(string algorithmName)
+        public void Decode_Should_Use_Custom_Url_Encoder(JwtAlgorithmName algorithmName)
         {
             var algorithm = CreateAlgorithm(algorithmName);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
@@ -236,7 +239,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Decode_Should_Use_Custom_Validator_For_Symmetric_Algorithm()
         {
-            var algorithm = CreateAlgorithm("HS256");
+            var algorithm = CreateAlgorithm(JwtAlgorithmName.HS256);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             var validator = new Mock<IJwtValidator>();
 
@@ -248,7 +251,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Decode_Should_Use_Custom_Validator_For_Asymmetric_Algorithm()
         {
-            var algorithm = CreateAlgorithm("RS256");
+            var algorithm = CreateAlgorithm(JwtAlgorithmName.RS256);
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             var validator = new Mock<IJwtValidator>();
 
@@ -262,7 +265,7 @@ namespace JWT.Tests
         [TestMethod]
         public void Encode_And_Decode_Should_Use_Derived_RSAlgorithm()
         {
-            var algorithm = new RecordingRSAlgorithm(Rsa.Value);
+            var algorithm = new RecordingRSAlgorithm(GetRsa(2048));
 
             var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
             CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key);
@@ -288,22 +291,24 @@ namespace JWT.Tests
         }
 #endif
 
+        // The key size is the RSA modulus or the ECDSA curve in bits. HMAC uses Key and none has no key, so theirs is null.
         private static IEnumerable<object[]> GetAlgorithms()
         {
-            yield return ["HS256"];
-            yield return ["HS384"];
-            yield return ["HS512"];
-            yield return ["RS256"];
-            yield return ["RS384"];
-            yield return ["RS512"];
-            yield return ["RS1024"];
-            yield return ["RS2048"];
-            yield return ["RS4096"];
-            yield return ["RS512 4608"];
+            yield return [JwtAlgorithmName.HS256, null];
+            yield return [JwtAlgorithmName.HS384, null];
+            yield return [JwtAlgorithmName.HS512, null];
+            yield return [JwtAlgorithmName.RS256, 2048];
+            yield return [JwtAlgorithmName.RS384, 2048];
+            yield return [JwtAlgorithmName.RS512, 2048];
+            yield return [JwtAlgorithmName.RS1024, 2048];
+            yield return [JwtAlgorithmName.RS2048, 2048];
+            yield return [JwtAlgorithmName.RS4096, 2048];
+            // The signature is longer than the encoder's and validator's stack buffers
+            yield return [JwtAlgorithmName.RS512, 4608];
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
-            yield return ["ES256"];
-            yield return ["ES384"];
-            yield return ["ES512"];
+            yield return [JwtAlgorithmName.ES256, 256];
+            yield return [JwtAlgorithmName.ES384, 384];
+            yield return [JwtAlgorithmName.ES512, 521];
 #endif
         }
 
@@ -312,10 +317,10 @@ namespace JWT.Tests
         {
             foreach (var algorithm in GetAlgorithms())
             {
-                if (!((string)algorithm[0]).StartsWith("ES", StringComparison.Ordinal))
+                if ((JwtAlgorithmName)algorithm[0] is not (JwtAlgorithmName.ES256 or JwtAlgorithmName.ES384 or JwtAlgorithmName.ES512))
                     yield return algorithm;
             }
-            yield return ["none"];
+            yield return [JwtAlgorithmName.None, null];
         }
 
         private static IDictionary<string, object> CreatePayload(int nameLength) =>
@@ -326,32 +331,42 @@ namespace JWT.Tests
                 { "exp", 4102444800 }
             };
 
-        private static IJwtAlgorithm CreateAlgorithm(string name) =>
-            name switch
+        private static IJwtAlgorithm CreateAlgorithm(JwtAlgorithmName algorithm, int? keySize = null)
+        {
+            IAlgorithmFactory factory = algorithm switch
             {
-                "HS256" => new HMACSHA256Algorithm(),
-                "HS384" => new HMACSHA384Algorithm(),
-                "HS512" => new HMACSHA512Algorithm(),
-                "RS256" => new RS256Algorithm(Rsa.Value, Rsa.Value),
-                "RS384" => new RS384Algorithm(Rsa.Value, Rsa.Value),
-                "RS512" => new RS512Algorithm(Rsa.Value, Rsa.Value),
-                "RS1024" => new RS1024Algorithm(Rsa.Value, Rsa.Value),
-                "RS2048" => new RS2048Algorithm(Rsa.Value, Rsa.Value),
-                "RS4096" => new RS4096Algorithm(Rsa.Value, Rsa.Value),
-                "RS512 4608" => new RS512Algorithm(LargeRsa.Value, LargeRsa.Value),
+                JwtAlgorithmName.HS256 or JwtAlgorithmName.HS384 or JwtAlgorithmName.HS512 =>
+                    new HMACSHAAlgorithmFactory(),
+                JwtAlgorithmName.RS256 or JwtAlgorithmName.RS384 or JwtAlgorithmName.RS512 or
+                JwtAlgorithmName.RS1024 or JwtAlgorithmName.RS2048 or JwtAlgorithmName.RS4096 =>
+                    new RSAlgorithmFactory(GetRsa(keySize ?? 2048), GetRsa(keySize ?? 2048)),
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
-                "ES256" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP256, static key => new ES256Algorithm(key, key)),
-                "ES384" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP384, static key => new ES384Algorithm(key, key)),
-                "ES512" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP521, static key => new ES512Algorithm(key, key)),
+                JwtAlgorithmName.ES256 or JwtAlgorithmName.ES384 or JwtAlgorithmName.ES512 =>
+                    CreateEcdsaAlgorithmFactory(keySize ?? throw new ArgumentNullException(nameof(keySize))),
 #endif
-                "none" => new NoneAlgorithm(),
-                _ => throw new ArgumentOutOfRangeException(nameof(name))
+                JwtAlgorithmName.None =>
+                    new GenericAlgorithmFactory<NoneAlgorithm>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(algorithm))
             };
+            return factory.Create(new JwtDecoderContext { Header = new JwtHeader { Algorithm = algorithm.ToString() } });
+        }
 
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
-        private static IJwtAlgorithm CreateEcdsaAlgorithm(ECCurve curve, Func<ECDsa, ECDSAAlgorithm> algFactory) =>
-            algFactory(ECDsa.Create(curve));
+        private static ECDSAAlgorithmFactory CreateEcdsaAlgorithmFactory(int keySize)
+        {
+            var key = ECDsa.Create(keySize switch
+            {
+                256 => ECCurve.NamedCurves.nistP256,
+                384 => ECCurve.NamedCurves.nistP384,
+                521 => ECCurve.NamedCurves.nistP521,
+                _ => throw new ArgumentOutOfRangeException(nameof(keySize))
+            });
+            return new ECDSAAlgorithmFactory(key, key);
+        }
 #endif
+
+        private static RSA GetRsa(int keySize) =>
+            RsaKeys.GetOrAdd(keySize, static size => CreateRsa(size));
 
         private static RSA CreateRsa(int keySize)
         {

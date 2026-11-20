@@ -17,6 +17,8 @@ namespace JWT.Algorithms
         protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA384(key);
 
 #if NET8_0_OR_GREATER
+        private protected override bool SupportsSpans => true;
+
         internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
             HMACSHA384.TryHashData(key, bytesToSign, destination, out bytesWritten);
 #endif

@@ -4,7 +4,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace JWT.Algorithms
 {
-    public abstract class CertificateAlgorithm<T> : IAsymmetricAlgorithm
+    public abstract class CertificateAlgorithm<T> : JwtAlgorithm, IAsymmetricAlgorithm
         where T : class
     {
         protected readonly T _publicKey;
