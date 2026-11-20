@@ -121,7 +121,7 @@ namespace JWT
                 {
                     var larger = ArrayPool<byte>.Shared.Rent(tokenLength);
                     bytesToSign.CopyTo(larger);
-                    ArrayPool<byte>.Shared.Return(token);
+                    ArrayPool<byte>.Shared.Return(token, clearArray: true);
                     token = larger;
                 }
 
@@ -131,8 +131,8 @@ namespace JWT
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(json);
-                ArrayPool<byte>.Shared.Return(token);
+                ArrayPool<byte>.Shared.Return(json, clearArray: true);
+                ArrayPool<byte>.Shared.Return(token, clearArray: true);
             }
         }
 #endif
