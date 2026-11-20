@@ -26,7 +26,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 [![CI](https://github.com/jwt-dotnet/jwt/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jwt-dotnet/jwt/actions/workflows/ci.yml)
-[![Release status](https://abatishchev.vsrm.visualstudio.com/_apis/public/Release/badge/b7fc2610-91d5-4968-814c-97a9d76b03c4/2/2)](https://abatishchev.visualstudio.com/OpenSource/_release?_a=releases&view=mine&definitionId=2)
+[![Release](https://github.com/jwt-dotnet/jwt/actions/workflows/release.yml/badge.svg)](https://github.com/jwt-dotnet/jwt/actions/workflows/release.yml)
 
 ## Jwt.Net, a JWT (JSON Web Token) implementation for .NET
 
