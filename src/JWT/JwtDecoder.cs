@@ -306,9 +306,9 @@ namespace JWT
             finally
             {
                 if (rentedSignature is not null)
-                    ArrayPool<byte>.Shared.Return(rentedSignature);
+                    ArrayPool<byte>.Shared.Return(rentedSignature, clearArray: true);
                 if (rentedBytesToSign is not null)
-                    ArrayPool<byte>.Shared.Return(rentedBytesToSign);
+                    ArrayPool<byte>.Shared.Return(rentedBytesToSign, clearArray: true);
             }
         }
 #endif
@@ -358,7 +358,7 @@ namespace JWT
                 finally
                 {
                     if (rented is not null)
-                        ArrayPool<byte>.Shared.Return(rented);
+                        ArrayPool<byte>.Shared.Return(rented, clearArray: true);
                 }
             }
 #endif
