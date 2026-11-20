@@ -24,35 +24,13 @@ namespace JWT.Tests
 
         // Payload sizes in steps smaller than the base64url-encoded size of a signature, to cover buffer size boundaries
         private static readonly IDictionary<string, object>[] Payloads =
-            Enumerable.Range(0, 13).Select(i => CreatePayload(i * 30)).Concat([CreatePayload(1024)]).ToArray();
+            Enumerable.Range(0, 13).Select(static i => CreatePayload(i * 30)).Concat([CreatePayload(1024)]).ToArray();
 
-        private static readonly Lazy<RSA> Rsa = new Lazy<RSA>(() => CreateRsa(2048));
+        private static readonly Lazy<RSA> Rsa = new Lazy<RSA>(static () => CreateRsa(2048));
 
-        private static readonly Lazy<RSA> LargeRsa = new Lazy<RSA>(() => CreateRsa(4608));
+        private static readonly Lazy<RSA> LargeRsa = new Lazy<RSA>(static () => CreateRsa(4608));
 
-        public static IEnumerable<object[]> Algorithms =>
-        [
-            ["HS256"],
-            ["HS384"],
-            ["HS512"],
-            ["RS256"],
-            ["RS384"],
-            ["RS512"],
-            ["RS1024"],
-            ["RS2048"],
-            ["RS4096"],
-            ["RS512 4608"],
-#if NETSTANDARD2_0 || NET6_0_OR_GREATER
-            ["ES256"],
-            ["ES384"],
-            ["ES512"],
-#endif
-        ];
-
-        public static IEnumerable<object[]> DeterministicAlgorithms =>
-            Algorithms.Where(a => !((string)a[0]).StartsWith("ES", StringComparison.Ordinal)).Concat([["none"]]);
-
-        [DynamicData(nameof(DeterministicAlgorithms))]
+        [DynamicData(nameof(GetDeterministicAlgorithms))]
         [TestMethod]
         public void Encode_Should_Return_Same_Token_As_Custom_Url_Encoder(string algorithmName)
         {
@@ -69,7 +47,7 @@ namespace JWT.Tests
             }
         }
 
-        [DynamicData(nameof(Algorithms))]
+        [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
         public void Decode_Should_Return_Same_Payload_As_Custom_Url_Encoder(string algorithmName)
         {
@@ -87,7 +65,7 @@ namespace JWT.Tests
             }
         }
 
-        [DynamicData(nameof(Algorithms))]
+        [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Invalid(string algorithmName)
         {
@@ -192,7 +170,7 @@ namespace JWT.Tests
             AssertSameException(actual, expected);
         }
 
-        [DynamicData(nameof(Algorithms))]
+        [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Signature_Is_Truncated(string algorithmName)
         {
@@ -211,7 +189,7 @@ namespace JWT.Tests
             AssertSameException(actual, expected);
         }
 
-        [DynamicData(nameof(Algorithms))]
+        [DynamicData(nameof(GetAlgorithms))]
         [TestMethod]
         public void Decode_Should_Throw_Same_Exception_As_Custom_Url_Encoder_When_Token_Is_Expired(string algorithmName)
         {
@@ -264,7 +242,7 @@ namespace JWT.Tests
 
             new JwtDecoder(new JsonNetSerializer(), validator.Object, new JwtBase64UrlEncoder(), algorithm).Decode(token, Key);
 
-            validator.Verify(v => v.Validate(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>()), Times.Once());
+            validator.Verify(static v => v.Validate(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>()), Times.Once());
         }
 
         [TestMethod]
@@ -276,7 +254,7 @@ namespace JWT.Tests
 
             new JwtDecoder(new JsonNetSerializer(), validator.Object, new JwtBase64UrlEncoder(), algorithm).Decode(token, Key);
 
-            validator.Verify(v => v.Validate(It.IsAny<string>(), It.IsAny<IAsymmetricAlgorithm>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()), Times.Once());
+            validator.Verify(static v => v.Validate(It.IsAny<string>(), It.IsAny<IAsymmetricAlgorithm>(), It.IsAny<byte[]>(), It.IsAny<byte[]>()), Times.Once());
         }
 
         // HashAlgorithmName is ambiguous in the net40 test project, which polyfills it
@@ -295,6 +273,36 @@ namespace JWT.Tests
                      .Be(1, "because the derived algorithm must verify the token");
         }
 #endif
+
+        private static IEnumerable<object[]> GetAlgorithms()
+        {
+            yield return ["HS256"];
+            yield return ["HS384"];
+            yield return ["HS512"];
+            yield return ["RS256"];
+            yield return ["RS384"];
+            yield return ["RS512"];
+            yield return ["RS1024"];
+            yield return ["RS2048"];
+            yield return ["RS4096"];
+            yield return ["RS512 4608"];
+#if NETSTANDARD2_0 || NET6_0_OR_GREATER
+            yield return ["ES256"];
+            yield return ["ES384"];
+            yield return ["ES512"];
+#endif
+        }
+
+        // ECDSA signatures are randomized, so tokens can't be compared
+        private static IEnumerable<object[]> GetDeterministicAlgorithms()
+        {
+            foreach (var algorithm in GetAlgorithms())
+            {
+                if (!((string)algorithm[0]).StartsWith("ES", StringComparison.Ordinal))
+                    yield return algorithm;
+            }
+            yield return ["none"];
+        }
 
         private static IDictionary<string, object> CreatePayload(int nameLength) =>
             new Dictionary<string, object>
@@ -318,9 +326,9 @@ namespace JWT.Tests
                 "RS4096" => new RS4096Algorithm(Rsa.Value, Rsa.Value),
                 "RS512 4608" => new RS512Algorithm(LargeRsa.Value, LargeRsa.Value),
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
-                "ES256" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP256, key => new ES256Algorithm(key, key)),
-                "ES384" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP384, key => new ES384Algorithm(key, key)),
-                "ES512" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP521, key => new ES512Algorithm(key, key)),
+                "ES256" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP256, static key => new ES256Algorithm(key, key)),
+                "ES384" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP384, static key => new ES384Algorithm(key, key)),
+                "ES512" => CreateEcdsaAlgorithm(ECCurve.NamedCurves.nistP521, static key => new ES512Algorithm(key, key)),
 #endif
                 "none" => new NoneAlgorithm(),
                 _ => throw new ArgumentOutOfRangeException(nameof(name))

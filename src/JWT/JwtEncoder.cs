@@ -101,12 +101,13 @@ namespace JWT
             var headerByteCount = GetByteCount(headerJson);
             var payloadByteCount = GetByteCount(payloadJson);
             var stringToSignLength = JwtBase64UrlEncoder.GetEncodedLength(headerByteCount) + 1 + JwtBase64UrlEncoder.GetEncodedLength(payloadByteCount);
+            var tokenBufferLength = stringToSignLength + 1 + JwtBase64UrlEncoder.GetEncodedLength(SpanAlgorithmExtensions.MaxStackSignatureSize);
 
             var json = ArrayPool<byte>.Shared.Rent(Math.Max(headerByteCount, payloadByteCount));
             byte[] token = null;
             try
             {
-                token = ArrayPool<byte>.Shared.Rent(stringToSignLength + 1 + JwtBase64UrlEncoder.GetEncodedLength(SpanAlgorithmExtensions.MaxStackSignatureSize));
+                token = ArrayPool<byte>.Shared.Rent(tokenBufferLength);
                 var length = JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(headerJson, json)), token);
                 token[length++] = (byte)'.';
                 length += JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(payloadJson, json)), token.AsSpan(length));
