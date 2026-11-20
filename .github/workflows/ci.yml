@@ -71,45 +71,29 @@ jobs:
     - name: Build solution
       run: dotnet build ${{ env.SOLUTION_NAME }} -c ${{ env.BUILD_CONFIGURATION }} --no-restore -p:ContinuousIntegrationBuild=true
 
+    # Windows runs every test project; Linux and macOS have no .NET Framework, so each TFM is run explicitly.
+    # Projects are listed per TFM because SDK 8 VSTest fails on `dotnet test JWT.sln -f <tfm>`.
     - name: Run tests
-      if: runner.os == 'Windows'
+      env:
+        TEST_FRAMEWORKS: net6.0 net8.0 net10.0
       run: |
         failed=0
-        for project in tests/*/*.csproj; do
-          dotnet test "$project" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore \
+        run_test() {
+          dotnet test "$@" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore \
             --logger trx --results-directory TestResults || failed=1
-        done
-        exit $failed
-
-    # Test projects are listed explicitly: SDK 8 VSTest fails on `dotnet test JWT.sln -f <tfm>`
-    - name: Run tests for net6.0
-      if: runner.os != 'Windows'
-      run: |
-        failed=0
-        for project in tests/JWT.Tests.Net60/*.csproj tests/JWT.Extensions.*.Tests/*.csproj; do
-          dotnet test "$project" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore -f net6.0 \
-            --logger trx --results-directory TestResults || failed=1
-        done
-        exit $failed
-
-    - name: Run tests for net8.0
-      if: ${{ !cancelled() && runner.os != 'Windows' }}
-      run: |
-        failed=0
-        for project in tests/JWT.Tests.Net80/*.csproj tests/JWT.Extensions.*.Tests/*.csproj; do
-          dotnet test "$project" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore -f net8.0 \
-            --logger trx --results-directory TestResults || failed=1
-        done
-        exit $failed
-
-    - name: Run tests for net10.0
-      if: ${{ !cancelled() && runner.os != 'Windows' }}
-      run: |
-        failed=0
-        for project in tests/JWT.Tests.Net100/*.csproj tests/JWT.Extensions.*.Tests/*.csproj; do
-          dotnet test "$project" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore -f net10.0 \
-            --logger trx --results-directory TestResults || failed=1
-        done
+        }
+        if [ "$RUNNER_OS" = Windows ]; then
+          for project in tests/*/*.csproj; do
+            run_test "$project"
+          done
+        else
+          for tfm in $TEST_FRAMEWORKS; do
+            version=${tfm#net}
+            for project in tests/JWT.Tests.Net${version//./}/*.csproj tests/JWT.Extensions.*.Tests/*.csproj; do
+              run_test "$project" -f "$tfm"
+            done
+          done
+        fi
         exit $failed
 
     - name: Upload test results
