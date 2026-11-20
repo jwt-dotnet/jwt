@@ -1,6 +1,6 @@
 # Unreleased
 
-# JWT 12.0.0, JWT.Extensions.AspNetCore 11.3.0, JWT.Extensions.DependencyInjection 3.3.0
+# JWT 12.0.0, JWT.Extensions.AspNetCore 12.0.0, JWT.Extensions.DependencyInjection 4.0.0
 
 - Native AOT support on .NET 8+
 - Added `SystemTextSerializer(JsonSerializerOptions)` constructor to supply source-generated metadata for custom payload types
