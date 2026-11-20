@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net80", "tests\JW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.Net100", "tests\JWT.Tests.Net100\JWT.Tests.Net100.csproj", "{0FD4F91A-644B-45EA-BF6D-0E16FEC7D0F3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Tests.ReflectionDisabled", "tests\JWT.Tests.ReflectionDisabled\JWT.Tests.ReflectionDisabled.csproj", "{8A373224-727F-4D20-9CE6-F19E6052B9B3}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{E7F3756F-ABDA-436D-8C42-FADAF79012ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWT.Extensions.AspNetCore", "src\JWT.Extensions.AspNetCore\JWT.Extensions.AspNetCore.csproj", "{3AC25D69-9863-45ED-A767-2809C46CB5A1}"
@@ -107,6 +109,10 @@ Global
 		{0FD4F91A-644B-45EA-BF6D-0E16FEC7D0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FD4F91A-644B-45EA-BF6D-0E16FEC7D0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FD4F91A-644B-45EA-BF6D-0E16FEC7D0F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A373224-727F-4D20-9CE6-F19E6052B9B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A373224-727F-4D20-9CE6-F19E6052B9B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A373224-727F-4D20-9CE6-F19E6052B9B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A373224-727F-4D20-9CE6-F19E6052B9B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
