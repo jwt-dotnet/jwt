@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 #if NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -58,10 +58,10 @@ namespace JWT.Extensions.AspNetCore
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 #endif
             TFactory>(this AuthenticationBuilder builder, string authenticationScheme, Action<JwtAuthenticationOptions> configureOptions) where TFactory : class, IAlgorithmFactory
-            {
-                builder.Services.AddJwtDecoder<TFactory>();
+        {
+            builder.Services.AddJwtDecoder<TFactory>();
 
-               return builder.AddJwt(authenticationScheme, configureOptions);
-            }
+            return builder.AddJwt(authenticationScheme, configureOptions);
+        }
     }
 }
