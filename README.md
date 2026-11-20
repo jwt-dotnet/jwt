@@ -299,7 +299,7 @@ IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 
 On .NET 8 and later, JWT, JWT.Extensions.DependencyInjection and JWT.Extensions.AspNetCore are Native AOT-compatible.
 
-When reflection-based System.Text.Json serialization is disabled, as it is by default in Native AOT apps, the default `SystemTextSerializer` uses built-in source-generated metadata, with no configuration needed, for the header and for dictionary claims (`Dictionary<string, object>`) whose values are strings, numbers, booleans, `DateTime`, `DateTimeOffset`, `Guid`, arrays, lists or nested dictionaries.
+When reflection-based System.Text.Json serialization is disabled, as it is by default in Native AOT apps, the default `SystemTextSerializer` uses built-in source-generated metadata, with no configuration needed, for the header and for dictionary claims (`Dictionary<string, object>`) whose values are strings, numbers, booleans, `DateTime`, `DateTimeOffset`, `Guid`, `object[]`, `List<object>`, nested dictionaries, or arrays and lists of `string`, `int`, `long`, `double` or `bool`. Other claim value types, e.g. `HashSet<string>` or `List<Guid>`, need your own metadata as shown below.
 
 To use your own payload types, opt in explicitly: create a `SystemTextSerializer` from your source-generated `JsonSerializerContext` and pass it to the builder, encoder, decoder and validator:
 

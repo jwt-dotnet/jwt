@@ -116,6 +116,11 @@ namespace JWT.Tests.Serializers
             claims["date"].Should().Be(new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc));
             claims["guid"].Should().Be("1f0a3f9e-4b8c-4a63-9b8e-7d4c2b1a0f11");
             claims["array"].Should().BeEquivalentTo(new List<object> { "a", "b" });
+            claims["intList"].Should().BeEquivalentTo(new List<object> { 1m, 2m });
+            claims["longList"].Should().BeEquivalentTo(new List<object> { 3m });
+            claims["doubleList"].Should().BeEquivalentTo(new List<object> { 0.5m });
+            claims["boolList"].Should().BeEquivalentTo(new List<object> { true });
+            claims["boolArray"].Should().BeEquivalentTo(new List<object> { false });
             claims["nested"].Should().BeEquivalentTo(new Dictionary<string, object> { { "inner", 1m } });
         }
 
@@ -152,6 +157,11 @@ namespace JWT.Tests.Serializers
                 { "date", new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc) },
                 { "guid", new Guid("1f0a3f9e-4b8c-4a63-9b8e-7d4c2b1a0f11") },
                 { "array", new[] { "a", "b" } },
+                { "intList", new List<int> { 1, 2 } },
+                { "longList", new List<long> { 3 } },
+                { "doubleList", new List<double> { 0.5 } },
+                { "boolList", new List<bool> { true } },
+                { "boolArray", new[] { false } },
                 { "nested", new Dictionary<string, object> { { "inner", 1 } } }
             };
 
