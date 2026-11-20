@@ -101,7 +101,7 @@ jobs:
           exit 0
         fi
 
-        labels=$(gh api "repos/$REPO/issues/$PR_NUMBER/labels" --jq '.[].name')
+        labels=$(gh api --paginate "repos/$REPO/issues/$PR_NUMBER/labels?per_page=100" --jq '.[].name')
         if grep -qxE 'bug|enchantment|security' <<< "$labels"; then
           echo "PR already has a type label."
           exit 0
@@ -112,8 +112,9 @@ jobs:
         {
           gh api "repos/$REPO/pulls/$PR_NUMBER" \
             --jq '"Title: \(.title)\n\nDescription:\n\((.body // "")[0:4000])\n"'
-          echo "Changed files:"
-          gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename'
+          echo "Changed files (first 300):"
+          gh api --paginate "repos/$REPO/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename' \
+            | awk 'NR <= 300'
         } > "$prompt"
         echo "file=$prompt" >> "$GITHUB_OUTPUT"
 
