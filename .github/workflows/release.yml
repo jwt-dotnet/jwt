@@ -1,0 +1,64 @@
+name: Release
+
+# Publishing a GitHub release builds its tag, attaches the packages and pushes them to nuget.org.
+# Packages whose version is already on nuget.org are skipped.
+on:
+  release:
+    types:
+    - published
+
+permissions: {}
+
+jobs:
+  build:
+    if: github.repository == 'jwt-dotnet/jwt'
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  attach:
+    name: Attach packages to release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v8
+      with:
+        name: drop
+        path: drop
+
+    - name: Upload release assets
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        TAG: ${{ github.event.release.tag_name }}
+      run: gh release upload "$TAG" drop/* --clobber
+
+  publish:
+    name: Push packages to nuget.org
+    needs: build
+    runs-on: ubuntu-latest
+    environment: nuget
+    permissions:
+      id-token: write
+
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v8
+      with:
+        name: drop
+        path: drop
+
+    - name: NuGet login
+      id: login
+      uses: NuGet/login@v1
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Push packages
+      env:
+        NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+      run: dotnet nuget push "drop/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
