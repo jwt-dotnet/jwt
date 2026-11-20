@@ -5,6 +5,7 @@ using FluentAssertions;
 using JWT.Algorithms;
 using JWT.Builder;
 using JWT.Serializers;
+using JWT.Tests.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Tests.ReflectionDisabled
@@ -12,8 +13,6 @@ namespace JWT.Tests.ReflectionDisabled
     [TestClass]
     public class DefaultSerializerTests
     {
-        private const string Secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
-
         [ClassInitialize]
         public static void ClassInitialize(TestContext context) =>
             JsonSerializer.IsReflectionEnabledByDefault.Should().BeFalse("the project disables reflection-based serialization");
@@ -23,19 +22,10 @@ namespace JWT.Tests.ReflectionDisabled
         {
             var serializer = new SystemTextSerializer();
 
-            var json = serializer.Serialize(new Dictionary<string, object>
-            {
-                { "string", "value" },
-                { "long", 42L },
-                { "bool", true },
-                { "date", new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc) },
-                { "array", new[] { "a", "b" } },
-                { "intList", new List<int> { 1, 2 } },
-                { "nested", new Dictionary<string, object> { { "inner", 1 } } }
-            });
+            var json = serializer.Serialize(TestData.PayloadWithCommonClaimTypes);
 
             json.Should()
-                .Be("{\"string\":\"value\",\"long\":42,\"bool\":true,\"date\":\"2020-01-02T03:04:05Z\",\"array\":[\"a\",\"b\"],\"intList\":[1,2],\"nested\":{\"inner\":1}}");
+                .Be(TestData.PayloadWithCommonClaimTypesJson);
         }
 
         [TestMethod]
@@ -43,7 +33,7 @@ namespace JWT.Tests.ReflectionDisabled
         {
             var token = JwtBuilder.Create()
                                   .WithAlgorithm(new HMACSHA256Algorithm())
-                                  .WithSecret(Secret)
+                                  .WithSecret(TestData.Secret)
                                   .AddHeader(HeaderName.KeyId, "kid-1")
                                   .AddClaim("name", "value")
                                   .ExpirationTime(DateTime.UtcNow.AddHours(1))
@@ -53,7 +43,7 @@ namespace JWT.Tests.ReflectionDisabled
                                    .DecodeHeader<JwtHeader>(token);
             var claims = JwtBuilder.Create()
                                    .WithAlgorithm(new HMACSHA256Algorithm())
-                                   .WithSecret(Secret)
+                                   .WithSecret(TestData.Secret)
                                    .MustVerifySignature()
                                    .Decode<Dictionary<string, object>>(token);
 
@@ -67,15 +57,11 @@ namespace JWT.Tests.ReflectionDisabled
         {
             var serializer = new SystemTextSerializer();
 
-            Action action = () => serializer.Serialize(new PayloadWithoutMetadata());
+            Action action = () => serializer.Serialize(TestData.Customer);
 
             action.Should()
                   .Throw<NotSupportedException>()
-                  .WithMessage("*PayloadWithoutMetadata*");
-        }
-
-        public sealed class PayloadWithoutMetadata
-        {
+                  .WithMessage("*Customer*");
         }
     }
 }
