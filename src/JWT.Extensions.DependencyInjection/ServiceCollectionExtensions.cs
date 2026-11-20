@@ -56,8 +56,7 @@ namespace JWT
 #if NET8_0_OR_GREATER
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 #endif
-            TFactory>(this IServiceCollection services)
-            where TFactory : class, IAlgorithmFactory
+            TFactory>(this IServiceCollection services) where TFactory : class, IAlgorithmFactory
         {
             services.TryAddSingleton<IAlgorithmFactory, TFactory>();
 
