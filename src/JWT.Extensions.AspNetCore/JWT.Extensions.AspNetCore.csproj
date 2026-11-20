@@ -19,6 +19,8 @@
     <Version>11.2.0</Version>
     <FileVersion>11.0.0.0</FileVersion>
     <AssemblyVersion>11.0.0.0</AssemblyVersion>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>11.2.0</PackageValidationBaselineVersion>
     <RootNamespace>JWT.Extensions.AspNetCore</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
