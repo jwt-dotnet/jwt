@@ -1,7 +1,9 @@
 # Unreleased
 
-# JWT.Extensions.AspNetCore 11.3.0
+# JWT 12.0.0, JWT.Extensions.AspNetCore 11.3.0, JWT.Extensions.DependencyInjection 3.3.0
 
+- Native AOT support on .NET 8+
+- Added `SystemTextSerializer(JsonSerializerOptions)` constructor to supply source-generated metadata for custom payload types
 - Fixed `ClaimsIdentityFactory` failing on `null` claims, which now map to an empty claim of type `JSON_NULL`
 - Fixed `ClaimsIdentityFactory` ignoring the options and name of the authenticated scheme, via new `IIdentityFactory.CreateIdentity(Type, object, AuthenticationScheme)`
 
