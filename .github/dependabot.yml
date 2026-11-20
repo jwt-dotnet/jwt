@@ -8,8 +8,6 @@ updates:
       mstest-packages:
         patterns:
           - "MSTest.*"
-    commit-message:
-      include: "release-notes"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
