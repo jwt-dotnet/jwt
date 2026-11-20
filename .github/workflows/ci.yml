@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+    - '**/*.md'
+  pull_request:
+    paths-ignore:
+    - '**/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOLUTION_NAME: JWT.sln
+  BUILD_CONFIGURATION: Release
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    name: build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - windows-latest
+        - ubuntu-latest
+        - macos-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        submodules: true
+
+    - name: Install .NET 3.1.x
+      if: runner.os == 'Windows'
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Install .NET 6.x, 8.x, 10.x
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: |
+          6.x
+          8.x
+          10.x
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v6
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
+    # All projects are SDK-style (PackageReference), so dotnet restore also covers the .NET Framework targets
+    - name: Restore NuGet packages
+      run: dotnet restore ${{ env.SOLUTION_NAME }}
+
+    - name: Build solution
+      run: dotnet build ${{ env.SOLUTION_NAME }} -c ${{ env.BUILD_CONFIGURATION }} --no-restore -p:ContinuousIntegrationBuild=true
+
+    # Windows runs every test project; Linux and macOS have no .NET Framework, so each TFM is run explicitly.
+    # Projects are listed per TFM because SDK 8 VSTest fails on `dotnet test JWT.sln -f <tfm>`.
+    - name: Run tests
+      env:
+        TEST_FRAMEWORKS: net6.0 net8.0 net10.0
+      run: |
+        failed=0
+        run_test() {
+          dotnet test "$@" -c ${{ env.BUILD_CONFIGURATION }} --no-build --no-restore \
+            --logger trx --results-directory TestResults || failed=1
+        }
+        if [ "$RUNNER_OS" = Windows ]; then
+          for project in tests/*/*.csproj; do
+            run_test "$project"
+          done
+        else
+          for tfm in $TEST_FRAMEWORKS; do
+            version=${tfm#net}
+            for project in tests/JWT.Tests.Net${version//./}/*.csproj tests/JWT.Extensions.*.Tests/*.csproj; do
+              run_test "$project" -f "$tfm"
+            done
+          done
+        fi
+        exit $failed
+
+    - name: Upload test results
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: test-results-${{ runner.os }}
+        path: TestResults/*.trx
+        if-no-files-found: ignore
+
+    - name: Create NuGet packages
+      if: runner.os == 'Windows'
+      run: |
+        for project in src/*/*.csproj; do
+          dotnet pack "$project" -c ${{ env.BUILD_CONFIGURATION }} --no-build -o artifacts
+        done
+        cp CHANGELOG.md artifacts/
+
+    - name: Publish build artifacts
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v7
+      with:
+        name: drop
+        path: artifacts/
