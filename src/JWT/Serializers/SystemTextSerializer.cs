@@ -2,6 +2,11 @@
 using System;
 using System.Text.Json;
 using JWT.Serializers.Converters;
+#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
+#endif
 
 namespace JWT.Serializers
 {
@@ -10,6 +15,52 @@ namespace JWT.Serializers
     /// </summary>
     public class SystemTextSerializer : IJsonSerializer
     {
+#if NET8_0_OR_GREATER
+        // Same guard as JsonSerializerOptions.Default: the System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault
+        // feature switch is false by default in trimmed and Native AOT apps, so the reflection branch is removed there.
+        private const string ReflectionJustification = "Reflection is used only when JsonSerializer.IsReflectionEnabledByDefault is true, as with JsonSerializerOptions.Default.";
+
+        private static readonly JsonSerializerOptions _defaultOptionsForSerialize = CreateOptions(null, forDeserialize: false);
+        private static readonly JsonSerializerOptions _defaultOptionsForDeserialize = CreateOptions(null, forDeserialize: true);
+
+        private readonly JsonSerializerOptions _optionsForSerialize;
+        private readonly JsonSerializerOptions _optionsForDeserialize;
+
+        /// <summary>
+        /// Creates a new instance of <see cref="SystemTextSerializer" /> with the default options.
+        /// </summary>
+        /// <remarks>
+        /// When reflection-based serialization is disabled (trimmed and Native AOT apps), only the library's own types
+        /// and common claim value types are supported. Use <see cref="SystemTextSerializer(JsonSerializerOptions)" />
+        /// to supply metadata for custom types.
+        /// </remarks>
+        public SystemTextSerializer()
+        {
+            _optionsForSerialize = _defaultOptionsForSerialize;
+            _optionsForDeserialize = _defaultOptionsForDeserialize;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="SystemTextSerializer" /> with the supplied options.
+        /// </summary>
+        /// <param name="options">
+        /// The options to use, e.g. <c>MyJsonSerializerContext.Default.Options</c> of a source-generated
+        /// <see cref="JsonSerializerContext" /> for custom payload types. The options are copied, not modified.
+        /// </param>
+        /// <remarks>
+        /// Metadata for the library's own types is appended to <see cref="JsonSerializerOptions.TypeInfoResolver" />.
+        /// If no resolver is set, the same resolver as <see cref="SystemTextSerializer()" /> is used.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException" />
+        public SystemTextSerializer(JsonSerializerOptions options)
+        {
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            _optionsForSerialize = CreateOptions(options, forDeserialize: false);
+            _optionsForDeserialize = CreateOptions(options, forDeserialize: true);
+        }
+#else
         private static readonly JsonSerializerOptions _optionsForSerialize = new JsonSerializerOptions();
 
         private static readonly JsonSerializerOptions _optionsForDeserialize = new JsonSerializerOptions
@@ -19,7 +70,8 @@ namespace JWT.Serializers
                 new DictionaryStringObjectJsonConverterCustomWrite()
             }
         };
-        
+#endif
+
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException" />
         public string Serialize(object obj)
@@ -27,7 +79,11 @@ namespace JWT.Serializers
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
 
+#if NET8_0_OR_GREATER
+            return JsonSerializer.Serialize(obj, _optionsForSerialize.GetTypeInfo(obj.GetType()));
+#else
             return JsonSerializer.Serialize(obj, _optionsForSerialize);
+#endif
         }
 
 
@@ -41,8 +97,38 @@ namespace JWT.Serializers
             if (String.IsNullOrEmpty(json))
                 throw new ArgumentException(nameof(json));
 
+#if NET8_0_OR_GREATER
+            return JsonSerializer.Deserialize(json, _optionsForDeserialize.GetTypeInfo(type));
+#else
             return JsonSerializer.Deserialize(json, type, _optionsForDeserialize);
+#endif
         }
+
+#if NET8_0_OR_GREATER
+        private static JsonSerializerOptions CreateOptions(JsonSerializerOptions source, bool forDeserialize)
+        {
+            var options = source is null ? new JsonSerializerOptions() : new JsonSerializerOptions(source);
+            options.TypeInfoResolver = source?.TypeInfoResolver is { } resolver ?
+                JsonTypeInfoResolver.Combine(resolver, JwtJsonSerializerContext.Default) :
+                CreateDefaultTypeInfoResolver();
+
+            if (forDeserialize)
+                options.Converters.Add(new DictionaryStringObjectJsonConverterCustomWrite());
+
+            options.MakeReadOnly();
+            return options;
+        }
+
+        [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = ReflectionJustification)]
+        [UnconditionalSuppressMessage("AOT", "IL3050", Justification = ReflectionJustification)]
+        private static IJsonTypeInfoResolver CreateDefaultTypeInfoResolver()
+        {
+            if (JsonSerializer.IsReflectionEnabledByDefault)
+                return new DefaultJsonTypeInfoResolver();
+
+            return JwtJsonSerializerContext.Default;
+        }
+#endif
     }
 }
 #endif
