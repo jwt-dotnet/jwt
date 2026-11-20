@@ -290,7 +290,8 @@ namespace JWT
                     return;
                 }
 
-                rentedBytesToSign = ArrayPool<byte>.Shared.Rent(GetByteCount(jwt.Header) + 1 + GetByteCount(jwt.Payload));
+                var bytesToSignLength = GetByteCount(jwt.Header) + 1 + GetByteCount(jwt.Payload);
+                rentedBytesToSign = ArrayPool<byte>.Shared.Rent(bytesToSignLength);
                 var bytesToSign = rentedBytesToSign.AsSpan(0, GetBytes(jwt.Header, '.', jwt.Payload, rentedBytesToSign));
 
                 if (spanAlgorithm is ISpanAsymmetricAlgorithm asymmAlg)
