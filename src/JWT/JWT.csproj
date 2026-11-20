@@ -40,6 +40,11 @@
     <AssemblyVersion>11.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageValidationBaselineVersion>11.2.0</PackageValidationBaselineVersion>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
     <OutputPath>bin\Debug\</OutputPath>

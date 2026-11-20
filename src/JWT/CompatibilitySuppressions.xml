@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<!-- Long-shipped differences between targets; changing them would break a shipped target. -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- Polyfill on net35/net40; built into .NET Framework 4.6+ -->
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:System.Security.Cryptography.HashAlgorithmName</Target>
+    <Left>lib/net40/JWT.dll</Left>
+    <Right>lib/net462/JWT.dll</Right>
+  </Suppression>
+  <!-- IDictionary on net35/net40 (no IReadOnlyDictionary), IReadOnlyDictionary elsewhere -->
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JWT.Exceptions.TokenExpiredException.get_PayloadData</Target>
+    <Left>lib/net40/JWT.dll</Left>
+    <Right>lib/net462/JWT.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JWT.Exceptions.TokenNotYetValidException.get_PayloadData</Target>
+    <Left>lib/net40/JWT.dll</Left>
+    <Right>lib/net462/JWT.dll</Right>
+  </Suppression>
+  <!-- Implicit constructor on netstandard1.3, which has no ECDSA support -->
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:JWT.Algorithms.ECDSAAlgorithmFactory.#ctor</Target>
+    <Left>lib/netstandard1.3/JWT.dll</Left>
+    <Right>lib/netstandard2.0/JWT.dll</Right>
+  </Suppression>
+</Suppressions>
