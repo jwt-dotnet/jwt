@@ -69,17 +69,12 @@ namespace JWT.Algorithms
 #endif
 
 #if NET8_0_OR_GREATER
-        /// <summary>
-        /// Same as <see cref="SignData(byte[])" /> without arrays.
-        /// </summary>
-        /// <returns><see langword="false" /> if <paramref name="destination" /> is too small.</returns>
-        internal bool TrySignData(ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+        private protected override bool SupportsSpans => true;
+
+        internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
             GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, RSASignaturePadding.Pkcs1, out bytesWritten);
 
-        /// <summary>
-        /// Same as <see cref="VerifyData(byte[], byte[])" /> without arrays.
-        /// </summary>
-        internal bool VerifyData(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
+        internal override bool Verify(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
 #endif
     }
