@@ -1,0 +1,21 @@
+'build & deployment':
+- changed-files:
+  - any-glob-to-any-file:
+    - .github/**
+    - .pipelines/**
+
+dependencies:
+- changed-files:
+  - any-glob-to-any-file: Directory.Packages.props
+
+documentation:
+- changed-files:
+  - any-glob-to-any-file: '**/*.md'
+
+extensions:
+- changed-files:
+  - any-glob-to-any-file: src/JWT.Extensions.*/**
+
+core:
+- changed-files:
+  - any-glob-to-any-file: src/JWT/**
