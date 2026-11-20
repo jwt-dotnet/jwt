@@ -1,0 +1,25 @@
+# Categories for GitHub's auto-generated release notes.
+# A pull request is listed under the first category whose labels it has.
+changelog:
+  categories:
+    - title: Breaking changes
+      labels:
+        - "breaking change"
+    - title: Security
+      labels:
+        - security
+    - title: Bug fixes
+      labels:
+        - bug
+    - title: Enhancements
+      labels:
+        - enchantment
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Build & CI
+      labels:
+        - "build & deployment"
+    - title: Other changes
+      labels:
+        - "*"
