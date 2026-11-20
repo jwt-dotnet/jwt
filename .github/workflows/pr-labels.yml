@@ -1,7 +1,7 @@
 name: PR labels
 
-# Labels PRs by the files they change and the issues they close. If that leaves no type label
-# (bug, enchantment, security), Copilot picks one. Labels are only ever added.
+# Labels PRs by the files they change and the issues they close. If that leaves a newly opened PR
+# with no type label (bug, enchantment, security), Copilot picks one. Labels are only ever added.
 # pull_request_target gives fork PRs a token that can label; never check out or run PR code here.
 #
 # The Copilot step is skipped unless the COPILOT_PAT secret is set: a fine-grained PAT with
@@ -89,7 +89,8 @@ jobs:
 
     - name: Prepare type label prompt
       id: prompt
-      if: ${{ !cancelled() && steps.issues.outcome == 'success' }}
+      # Only on opened: the author can repeat every other event, and each run spends a Copilot request.
+      if: ${{ !cancelled() && steps.issues.outcome == 'success' && github.event.action == 'opened' }}
       env:
         GH_TOKEN: ${{ github.token }}
         REPO: ${{ github.repository }}
