@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <ParentDirectoryBuildTargets>$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)..\'))</ParentDirectoryBuildTargets>
+  </PropertyGroup>
+  <Import Project="$(ParentDirectoryBuildTargets)" Condition="Exists('$(ParentDirectoryBuildTargets)')" />
+
+  <!-- In targets rather than props so TargetFramework is set for single-target projects -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' OR '$(TargetFramework)' == 'net461'">
+    <!-- Current System.Text.Json and its dependencies no longer support EOL netcoreapp3.1 and net461 -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(IsCommonProject) AND '$(TargetFramework)' == 'netstandard2.0'">
+    <!-- MSTest.TestAdapter doesn't support netstandard2.0 -->
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+  </PropertyGroup>
+
+</Project>

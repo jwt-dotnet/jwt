@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWT.Extensions.AspNetCore.Tests
@@ -31,9 +32,9 @@ namespace JWT.Extensions.AspNetCore.Tests
         [TestMethod]
         public async Task Request_Should_Fire_Events()
         {
-            using var server = CreateServer(options => options.EventsType = typeof(MyEvents));
+            using var host = CreateHost(options => options.EventsType = typeof(MyEvents));
 
-            using var client = server.CreateClient();
+            using var client = host.GetTestClient();
 
             // Arrange
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
@@ -46,7 +47,7 @@ namespace JWT.Extensions.AspNetCore.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            server.Services.GetRequiredService<MyEventsDependency>().HandledSuccessfulTicket.Should().BeTrue();
+            host.Services.GetRequiredService<MyEventsDependency>().HandledSuccessfulTicket.Should().BeTrue();
         }
 
         [TestMethod]
@@ -54,12 +55,12 @@ namespace JWT.Extensions.AspNetCore.Tests
         {
             bool backwardsCompat = false;
 
-            using var server = CreateServer(options => options.OnSuccessfulTicket = (_, ticket) =>
+            using var host = CreateHost(options => options.OnSuccessfulTicket = (_, ticket) =>
                 {
                     backwardsCompat = true;
                     return AuthenticateResult.Success(ticket);
                 });
-            using var client = server.CreateClient();
+            using var client = host.GetTestClient();
 
             // Arrange
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
@@ -74,51 +75,53 @@ namespace JWT.Extensions.AspNetCore.Tests
             backwardsCompat.Should().BeTrue();
         }
 
-        private static TestServer CreateServer(Action<JwtAuthenticationOptions> configureOptions)
+        private static IHost CreateHost(Action<JwtAuthenticationOptions> configureOptions)
         {
-            var builder = new WebHostBuilder()
-                .Configure(app =>
-                {
-                    app.UseAuthentication();
-
-                    app.Use(async (HttpContext context, Func<Task> _) =>
+            return new HostBuilder()
+                .ConfigureWebHost(webHost => webHost
+                    .UseTestServer()
+                    .Configure(static app =>
                     {
-                        var authenticationResult = await context.AuthenticateAsync();
-                        if (authenticationResult.Succeeded)
-                        {
-                            context.Response.StatusCode = StatusCodes.Status200OK;
-                            context.Response.ContentType = new ContentType("text/json").MediaType;
+                        app.UseAuthentication();
 
-                            await context.Response.WriteAsync("Hello");
-                        }
-                        else
+                        app.Use(static async (HttpContext context, Func<Task> _) =>
                         {
-                            await context.ChallengeAsync();
-                        }
-                    });
-                })
-                .ConfigureServices(services =>
-                {
-                    services.AddAuthentication(options =>
-                        {
-                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
-                            options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                            var authenticationResult = await context.AuthenticateAsync();
+                            if (authenticationResult.Succeeded)
+                            {
+                                context.Response.StatusCode = StatusCodes.Status200OK;
+                                context.Response.ContentType = new ContentType("text/json").MediaType;
 
-                            // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
-                            options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
-                        })
-                        .AddJwt(options =>
-                        {
-                            options.Keys = TestData.Secrets;
-                            options.VerifySignature = true;
-                            configureOptions(options);
+                                await context.Response.WriteAsync("Hello");
+                            }
+                            else
+                            {
+                                await context.ChallengeAsync();
+                            }
                         });
+                    })
+                    .ConfigureServices(services =>
+                    {
+                        services.AddAuthentication(static options =>
+                            {
+                                // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultAuthenticateScheme found.
+                                options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
 
-                    services.AddSingleton<MyEventsDependency>()
-                            .AddSingleton<MyEvents>()
-                            .AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
-                });
-            return new TestServer(builder);
+                                // Prevents from System.InvalidOperationException: No authenticationScheme was specified, and there was no DefaultChallengeScheme found.
+                                options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                            })
+                            .AddJwt(options =>
+                            {
+                                options.Keys = TestData.Secrets;
+                                options.VerifySignature = true;
+                                configureOptions(options);
+                            });
+
+                        services.AddSingleton<MyEventsDependency>()
+                                .AddSingleton<MyEvents>()
+                                .AddSingleton<IAlgorithmFactory>(new DelegateAlgorithmFactory(TestData.RS256Algorithm));
+                    }))
+                .Start();
         }
 
         private sealed class MyEventsDependency
