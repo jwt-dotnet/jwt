@@ -24,7 +24,7 @@ namespace JWT.Builder
         }
 
         /// <summary>
-        /// Gets the value of the <see cref="DescriptionAttribute" /> from the enum field.
+        /// Gets the value of the DescriptionAttribute from the enum field.
         /// </summary>
         private static string GetDescription(FieldInfo field, string valueString) =>
             field.GetCustomAttribute<DescriptionAttribute>()

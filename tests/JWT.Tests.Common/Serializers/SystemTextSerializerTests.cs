@@ -34,19 +34,19 @@ namespace JWT.Tests.Serializers
         [TestMethod]
         public void Ctor_Should_Not_Modify_Supplied_Options()
         {
-            var options = new JsonSerializerOptions { TypeInfoResolver = TestJsonSerializerContext.Default };
+            var options = new JsonSerializerOptions { TypeInfoResolver = CustomerJsonSerializerContext.Default };
 
             _ = new SystemTextSerializer(options);
 
             options.IsReadOnly.Should().BeFalse();
             options.Converters.Should().BeEmpty();
-            options.TypeInfoResolver.Should().BeSameAs(TestJsonSerializerContext.Default);
+            options.TypeInfoResolver.Should().BeSameAs(CustomerJsonSerializerContext.Default);
         }
 
         [TestMethod]
         public void Encode_And_Decode_Should_Use_Supplied_Context_For_Custom_Type()
         {
-            var serializer = new SystemTextSerializer(TestJsonSerializerContext.Default.Options);
+            var serializer = new SystemTextSerializer(CustomerJsonSerializerContext.Default.Options);
             var urlEncoder = new JwtBase64UrlEncoder();
             var encoder = new JwtEncoder(new HMACSHA256Algorithm(), serializer, urlEncoder);
             var validator = new JwtValidator(serializer, new UtcDateTimeProvider());
@@ -62,13 +62,24 @@ namespace JWT.Tests.Serializers
         [TestMethod]
         public void Deserialize_Should_Throw_When_Metadata_For_Type_Is_Missing()
         {
-            var serializer = new SystemTextSerializer(TestJsonSerializerContext.Default.Options);
+            var serializer = new SystemTextSerializer(CustomerJsonSerializerContext.Default.Options);
 
             Action action = () => serializer.Deserialize(typeof(TypeWithoutMetadata), "{}");
 
             action.Should()
                   .Throw<NotSupportedException>()
                   .WithMessage("*TypeWithoutMetadata*");
+        }
+
+        [TestMethod]
+        public void Serialize_Should_Apply_Root_Object_Converter_From_Supplied_Options()
+        {
+            var serializer = new SystemTextSerializer(new JsonSerializerOptions { Converters = { new FixedOutputObjectConverter() } });
+
+            var json = serializer.Serialize(new Dictionary<string, object> { { "claim", "value" } });
+
+            json.Should()
+                .Be("\"fixed\"");
         }
 
         [TestMethod]
@@ -168,10 +179,19 @@ namespace JWT.Tests.Serializers
         public sealed class TypeWithoutMetadata
         {
         }
+
+        private sealed class FixedOutputObjectConverter : JsonConverter<object>
+        {
+            public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+                throw new NotSupportedException();
+
+            public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options) =>
+                writer.WriteStringValue("fixed");
+        }
     }
 
     [JsonSerializable(typeof(Customer))]
-    internal sealed partial class TestJsonSerializerContext : JsonSerializerContext
+    internal sealed partial class CustomerJsonSerializerContext : JsonSerializerContext
     {
     }
 }

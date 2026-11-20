@@ -4,7 +4,6 @@ using System.Text.Json;
 using JWT.Serializers.Converters;
 #if NET8_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 #endif
 
@@ -27,11 +26,11 @@ namespace JWT.Serializers
         private readonly JsonSerializerOptions _optionsForDeserialize;
 
         /// <summary>
-        /// Creates a new instance of <see cref="SystemTextSerializer" /> with the default options.
+        /// Creates a new instance with the default options.
         /// </summary>
         /// <remarks>
         /// When reflection-based serialization is disabled (trimmed and Native AOT apps), only the library's own types
-        /// and common claim value types are supported. Use <see cref="SystemTextSerializer(JsonSerializerOptions)" />
+        /// and common claim value types are supported. Use the constructor that takes JsonSerializerOptions
         /// to supply metadata for custom types.
         /// </remarks>
         public SystemTextSerializer()
@@ -41,15 +40,15 @@ namespace JWT.Serializers
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="SystemTextSerializer" /> with the supplied options.
+        /// Creates a new instance with the supplied options.
         /// </summary>
         /// <param name="options">
-        /// The options to use, e.g. <c>MyJsonSerializerContext.Default.Options</c> of a source-generated
-        /// <see cref="JsonSerializerContext" /> for custom payload types. The options are copied, not modified.
+        /// The options to use, e.g. MyJsonSerializerContext.Default.Options of a source-generated
+        /// JsonSerializerContext for custom payload types. The options are copied, not modified.
         /// </param>
         /// <remarks>
-        /// Metadata for the library's own types is appended to <see cref="JsonSerializerOptions.TypeInfoResolver" />.
-        /// If no resolver is set, the same resolver as <see cref="SystemTextSerializer()" /> is used.
+        /// Metadata for the library's own types is appended to the TypeInfoResolver of the options.
+        /// If no resolver is set, the same resolver as the parameterless constructor is used.
         /// </remarks>
         /// <exception cref="ArgumentNullException" />
         public SystemTextSerializer(JsonSerializerOptions options)
@@ -80,7 +79,7 @@ namespace JWT.Serializers
                 throw new ArgumentNullException(nameof(obj));
 
 #if NET8_0_OR_GREATER
-            return JsonSerializer.Serialize(obj, _optionsForSerialize.GetTypeInfo(obj.GetType()));
+            return JsonSerializer.Serialize(obj, _optionsForSerialize.GetTypeInfo(typeof(object)));
 #else
             return JsonSerializer.Serialize(obj, _optionsForSerialize);
 #endif
