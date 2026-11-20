@@ -72,5 +72,10 @@ namespace JWT.Algorithms
         protected abstract byte[] SignData(byte[] bytesToSign);
 
         protected abstract bool VerifyData(byte[] bytesToSign, byte[] signature);
+
+#if NET8_0_OR_GREATER
+        private protected T GetPrivateKeyForSigning() =>
+            _privateKey ?? throw new InvalidOperationException("Can't sign data without private key");
+#endif
     }
 }
