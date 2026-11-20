@@ -1,11 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-    - main
-    paths-ignore:
-    - '**/*.md'
   pull_request:
     paths-ignore:
     - '**/*.md'
@@ -15,7 +10,7 @@ on:
 permissions:
   contents: read
 
-# A new push to a PR cancels its previous run. Every other run (main, manual, a calling workflow) gets its own group, so it is never cancelled.
+# A new push to a PR cancels its previous run. Every other run (manual, or called by Main build or Release) gets its own group, so it is never cancelled.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
