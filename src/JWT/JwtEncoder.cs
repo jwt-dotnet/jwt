@@ -4,6 +4,10 @@ using JWT.Algorithms;
 
 using static JWT.Internal.EncodingHelper;
 
+#if NET8_0_OR_GREATER
+using System.Buffers;
+#endif
+
 namespace JWT
 {
     /// <summary>
@@ -62,9 +66,25 @@ namespace JWT
             }
             header.Add("alg", algorithm.Name);
 
-            var headerBytes = GetBytes(_jsonSerializer.Serialize(header));
-            var payloadBytes = GetBytes(_jsonSerializer.Serialize(payload));
+            var headerJson = _jsonSerializer.Serialize(header);
+#if NET8_0_OR_GREATER
+            if (_urlEncoder is JwtBase64UrlEncoder && !String.IsNullOrEmpty(headerJson) &&
+                (algorithm is NoneAlgorithm || algorithm.AsSpanAlgorithm() is not null))
+            {
+                var payloadJson = _jsonSerializer.Serialize(payload);
+                if (!String.IsNullOrEmpty(payloadJson))
+                    return EncodeWithSpans(algorithm, key, headerJson, payloadJson);
 
+                return Encode(algorithm, key, GetBytes(headerJson), GetBytes(payloadJson));
+            }
+#endif
+            var headerBytes = GetBytes(headerJson);
+            var payloadBytes = GetBytes(_jsonSerializer.Serialize(payload));
+            return Encode(algorithm, key, headerBytes, payloadBytes);
+        }
+
+        private string Encode(IJwtAlgorithm algorithm, byte[] key, byte[] headerBytes, byte[] payloadBytes)
+        {
             var headerSegment = _urlEncoder.Encode(headerBytes);
             var payloadSegment = _urlEncoder.Encode(payloadBytes);
 
@@ -74,6 +94,48 @@ namespace JWT
             var signatureSegment = GetSignatureSegment(algorithm, key, bytesToSign);
             return stringToSign + "." + signatureSegment;
         }
+
+#if NET8_0_OR_GREATER
+        private static string EncodeWithSpans(IJwtAlgorithm algorithm, byte[] key, string headerJson, string payloadJson)
+        {
+            var headerByteCount = GetByteCount(headerJson);
+            var payloadByteCount = GetByteCount(payloadJson);
+            var stringToSignLength = JwtBase64UrlEncoder.GetEncodedLength(headerByteCount) + 1 + JwtBase64UrlEncoder.GetEncodedLength(payloadByteCount);
+
+            var json = ArrayPool<byte>.Shared.Rent(Math.Max(headerByteCount, payloadByteCount));
+            var token = ArrayPool<byte>.Shared.Rent(stringToSignLength + 1 + JwtBase64UrlEncoder.GetEncodedLength(SpanAlgorithmExtensions.MaxStackSignatureSize));
+            try
+            {
+                var length = JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(headerJson, json)), token);
+                token[length++] = (byte)'.';
+                length += JwtBase64UrlEncoder.Encode(json.AsSpan(0, GetBytes(payloadJson, json)), token.AsSpan(length));
+
+                var bytesToSign = token.AsSpan(0, length);
+                Span<byte> signatureBuffer = stackalloc byte[SpanAlgorithmExtensions.MaxStackSignatureSize];
+                var signature = algorithm is NoneAlgorithm ?
+                    ReadOnlySpan<byte>.Empty :
+                    ((ISpanAlgorithm)algorithm).Sign(key, bytesToSign, signatureBuffer);
+
+                var tokenLength = length + 1 + JwtBase64UrlEncoder.GetEncodedLength(signature.Length);
+                if (tokenLength > token.Length)
+                {
+                    var larger = ArrayPool<byte>.Shared.Rent(tokenLength);
+                    bytesToSign.CopyTo(larger);
+                    ArrayPool<byte>.Shared.Return(token);
+                    token = larger;
+                }
+
+                token[length++] = (byte)'.';
+                length += JwtBase64UrlEncoder.Encode(signature, token.AsSpan(length));
+                return GetString(token.AsSpan(0, length));
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(json);
+                ArrayPool<byte>.Shared.Return(token);
+            }
+        }
+#endif
 
         private string GetSignatureSegment(IJwtAlgorithm algorithm, byte[] key, byte[] bytesToSign)
         {

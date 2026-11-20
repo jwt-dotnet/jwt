@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace JWT.Internal
@@ -36,5 +37,23 @@ namespace JWT.Internal
 
         public static string GetString(byte[] bytes) =>
             _utf8Encoding.GetString(bytes);
+
+#if NET8_0_OR_GREATER
+        public static int GetByteCount(string input) =>
+            _utf8Encoding.GetByteCount(input);
+
+        public static int GetBytes(string input, Span<byte> output) =>
+            _utf8Encoding.GetBytes(input, output);
+
+        public static int GetBytes(string input1, char separator, string input2, Span<byte> output)
+        {
+            int bytesWritten = _utf8Encoding.GetBytes(input1, output);
+            output[bytesWritten++] = (byte)separator;
+            return bytesWritten + _utf8Encoding.GetBytes(input2, output.Slice(bytesWritten));
+        }
+
+        public static string GetString(ReadOnlySpan<byte> bytes) =>
+            _utf8Encoding.GetString(bytes);
+#endif
     }
 }

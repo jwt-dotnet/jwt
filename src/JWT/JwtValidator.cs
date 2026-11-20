@@ -17,6 +17,10 @@ using static JWT.Compatibility.String;
 using static System.String;
 #endif
 
+#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+#endif
+
 namespace JWT
 {
     /// <summary>
@@ -125,6 +129,51 @@ namespace JWT
             var decodedPayload = GetString(bytes);
             return GetValidationException(decodedPayload);
         }
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// Same as <see cref="Validate(string, IAsymmetricAlgorithm, byte[], byte[])" /> without arrays.
+        /// </summary>
+        internal void Validate(string decodedPayload, ISpanAsymmetricAlgorithm alg, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        {
+            if (_valParams.ValidateSignature && !alg.Verify(bytesToSign, decodedSignature))
+                throw new SignatureVerificationException("The signature is invalid according to the validation procedure.");
+
+            var ex = GetValidationException(decodedPayload);
+            if (ex is not null)
+                throw ex;
+        }
+
+        /// <summary>
+        /// Same as <see cref="Validate(string, string, string[])" /> with the signatures computed from the keys, without arrays.
+        /// </summary>
+        internal void Validate(string decodedPayload, ISpanAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        {
+            if (_valParams.ValidateSignature && !IsAnySignatureValid(alg, keys, bytesToSign, decodedSignature))
+                throw CreateSignatureVerificationException(alg, keys, bytesToSign.ToArray(), decodedSignature);
+
+            var ex = GetValidationException(decodedPayload);
+            if (ex is not null)
+                throw ex;
+        }
+
+        private static SignatureVerificationException CreateSignatureVerificationException(IJwtAlgorithm alg, byte[][] keys, byte[] bytesToSign, ReadOnlySpan<byte> decodedSignature) =>
+            new SignatureVerificationException(
+                Convert.ToBase64String(decodedSignature),
+                Array.ConvertAll(keys, key => Convert.ToBase64String(alg.Sign(key, bytesToSign))));
+
+        private static bool IsAnySignatureValid(ISpanAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        {
+            Span<byte> buffer = stackalloc byte[SpanAlgorithmExtensions.MaxStackSignatureSize];
+            foreach (var key in keys)
+            {
+                var signature = alg.Sign(key, bytesToSign, buffer);
+                if (CryptographicOperations.FixedTimeEquals(signature, decodedSignature))
+                    return true;
+            }
+            return false;
+        }
+#endif
 
         private Exception GetValidationException(string payloadJson, string decodedCrypto, params string[] decodedSignatures)
         {
