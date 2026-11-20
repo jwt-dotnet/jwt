@@ -1,0 +1,52 @@
+name: Bug report
+description: Report a problem with the library
+labels: [bug]
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      options:
+        - JWT
+        - JWT.Extensions.AspNetCore
+        - JWT.Extensions.DependencyInjection
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: e.g. 11.2.0
+    validations:
+      required: true
+  - type: input
+    id: target-framework
+    attributes:
+      label: Target framework
+      placeholder: e.g. net8.0 or net48
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: e.g. Windows 11, Ubuntu 24.04, macOS 15
+  - type: textarea
+    id: exception
+    attributes:
+      label: Exception message and stack trace
+      render: text
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Minimal code or steps that reproduce the issue.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest an idea for the library
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What are you trying to do, and why is it hard today?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+  - type: textarea
+    id: workarounds
+    attributes:
+      label: Available workarounds
+      description: Is there another way to do this today?
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
