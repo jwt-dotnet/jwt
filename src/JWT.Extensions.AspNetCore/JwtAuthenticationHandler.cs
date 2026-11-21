@@ -53,7 +53,7 @@ namespace JWT.Extensions.AspNetCore
             try
             {
                 object payload = _jwtDecoder.DecodeToObject(this.Options.PayloadType, token, this.Options.Keys, this.Options.VerifySignature);
-                var identity = _identityFactory.CreateIdentity(this.Options.PayloadType, payload);
+                var identity = _identityFactory.CreateIdentity(this.Options.PayloadType, payload, this.Scheme);
                 var ticket = _ticketFactory.CreateTicket(identity, this.Scheme);
 
                 var successContext = new SuccessfulTicketContext(this.Logger, ticket, this.Context, this.Options);

@@ -1,5 +1,10 @@
 # Unreleased
 
+# JWT.Extensions.AspNetCore 11.3.0
+
+- Fixed `ClaimsIdentityFactory` failing on `null` claims, which now map to an empty claim of type `JSON_NULL`
+- Fixed `ClaimsIdentityFactory` ignoring the options and name of the authenticated scheme, via new `IIdentityFactory.CreateIdentity(Type, object, AuthenticationScheme)`
+
 # JWT 11.2.0, JWT.Extensions.AspNetCore 11.2.0, JWT.Extensions.DependencyInjection 3.2.0
 
 - Added .NET 10 target
