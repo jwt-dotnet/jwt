@@ -95,6 +95,28 @@ namespace JWT.Tests
                   .Throw<SignatureVerificationException>("because signature is invalid");
         }
 
+#if NET8_0_OR_GREATER
+        [TestMethod]
+        public void Validate_Should_Sign_With_Each_Key_Once_When_Signature_Is_Invalid()
+        {
+            var alg = new CountingHMACSHA256Algorithm();
+            var keys = new[] { GetBytes(TestData.Secret), GetBytes(TestData.Secret2) };
+            var bytesToSign = GetBytes("header.payload");
+            var signature = new byte[32];
+            var expectedSignatures = Array.ConvertAll(keys, key => Convert.ToBase64String(new HMACSHA256Algorithm().Sign(key, bytesToSign)));
+            var jwtValidator = new JwtValidator(CreateSerializer(), new UtcDateTimeProvider());
+
+            Action action = () => jwtValidator.Validate("{}", alg, keys, bytesToSign, signature);
+
+            action.Should()
+                  .Throw<SignatureVerificationException>("because signature is invalid")
+                  .Which.Received.Should()
+                  .Be(String.Join(",", expectedSignatures), "because the exception must list the signature of every key");
+            alg.SignCount.Should()
+               .Be(keys.Length, "because each key must be signed only once");
+        }
+#endif
+
         [TestMethod]
         public void Validate_Should_Not_Throw_Exception_When_Crypto_Matches_Signature()
         {
@@ -447,5 +469,31 @@ namespace JWT.Tests
 
         private static IJsonSerializer CreateSerializer() =>
             new DefaultJsonSerializerFactory().Create();
+
+#if NET8_0_OR_GREATER
+        // Counts signing through both the span and the array overloads
+        private sealed class CountingHMACSHA256Algorithm : HMACSHAAlgorithm
+        {
+            private readonly HMACSHA256Algorithm _algorithm = new HMACSHA256Algorithm();
+
+            public int SignCount { get; private set; }
+
+            public override string Name => _algorithm.Name;
+
+            public override System.Security.Cryptography.HashAlgorithmName HashAlgorithmName => _algorithm.HashAlgorithmName;
+
+            internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten)
+            {
+                this.SignCount++;
+                return _algorithm.TrySign(key, bytesToSign, destination, out bytesWritten);
+            }
+
+            protected override System.Security.Cryptography.HMAC CreateAlgorithm(byte[] key)
+            {
+                this.SignCount++;
+                return new System.Security.Cryptography.HMACSHA256(key);
+            }
+        }
+#endif
     }
 }

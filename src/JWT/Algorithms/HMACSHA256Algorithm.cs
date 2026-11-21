@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 
 namespace JWT.Algorithms
 {
@@ -14,5 +15,12 @@ namespace JWT.Algorithms
         public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA256;
 
         protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA256(key);
+
+#if NET8_0_OR_GREATER
+        private protected override bool SupportsSpans => true;
+
+        internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+            HMACSHA256.TryHashData(key, bytesToSign, destination, out bytesWritten);
+#endif
     }
 }

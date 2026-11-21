@@ -66,6 +66,16 @@ namespace JWT.Algorithms
         protected override bool VerifyData(byte[] bytesToSign, byte[] signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
 
+#if NET8_0_OR_GREATER
+        private protected override bool SupportsSpans => this.HasBuiltInKeys;
+
+        internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+            GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, out bytesWritten);
+
+        internal override bool Verify(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
+            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
+#endif
+
         private void EnsureKeySize(ECDsa key, string paramName)
         {
             if (key.KeySize != this.RequiredKeySize)

@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 namespace JWT.Algorithms
@@ -64,6 +65,16 @@ namespace JWT.Algorithms
 #if NET35 || NET40
             ((RSACryptoServiceProvider)_publicKey).VerifyData(bytesToSign, this.HashAlgorithmName.Name, signature);
 #else
+            _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
+#endif
+
+#if NET8_0_OR_GREATER
+        private protected override bool SupportsSpans => this.HasBuiltInKeys;
+
+        internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
+            GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, RSASignaturePadding.Pkcs1, out bytesWritten);
+
+        internal override bool Verify(ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> signature) =>
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName, RSASignaturePadding.Pkcs1);
 #endif
     }
