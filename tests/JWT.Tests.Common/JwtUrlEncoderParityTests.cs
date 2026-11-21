@@ -289,6 +289,36 @@ namespace JWT.Tests
             algorithm.VerifyCount.Should()
                      .Be(1, "because the derived algorithm must verify the token");
         }
+
+        [TestMethod]
+        public void Encode_And_Decode_Should_Use_Custom_RSA_Key()
+        {
+            var key = new RecordingRSA(GetRsa(2048));
+            var algorithm = new RS256Algorithm(key, key);
+
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key);
+
+            key.SignCount.Should()
+               .Be(1, "because the custom key must sign the token");
+            key.VerifyCount.Should()
+               .Be(1, "because the custom key must verify the token");
+        }
+
+        [TestMethod]
+        public void Encode_And_Decode_Should_Use_Custom_ECDsa_Key()
+        {
+            var key = new RecordingECDsa(ECDsa.Create(ECCurve.NamedCurves.nistP256));
+            var algorithm = new ES256Algorithm(key, key);
+
+            var token = CreateEncoder(algorithm, new JwtBase64UrlEncoder()).Encode(TestData.DictionaryPayload, Key);
+            CreateDecoder(algorithm, new JwtBase64UrlEncoder()).Decode(token, Key);
+
+            key.SignCount.Should()
+               .Be(1, "because the custom key must sign the token");
+            key.VerifyCount.Should()
+               .Be(1, "because the custom key must verify the token");
+        }
 #endif
 
         // The key size is the RSA modulus or the ECDSA curve in bits. HMAC uses Key and none has no key, so theirs is null.
@@ -536,6 +566,73 @@ namespace JWT.Tests
             public override HashAlgorithmName HashAlgorithmName => HashAlgorithmName.SHA256;
 
             protected override HMAC CreateAlgorithm(byte[] key) => new HMACSHA512(key);
+        }
+
+        // Overrides only the array overloads, so the span overloads of RSA would throw
+        private sealed class RecordingRSA : RSA
+        {
+            private readonly RSA _key;
+
+            public RecordingRSA(RSA key)
+            {
+                _key = key;
+                this.KeySizeValue = key.KeySize;
+            }
+
+            public int SignCount { get; private set; }
+
+            public int VerifyCount { get; private set; }
+
+            public override RSAParameters ExportParameters(bool includePrivateParameters) =>
+                _key.ExportParameters(includePrivateParameters);
+
+            public override void ImportParameters(RSAParameters parameters) =>
+                throw new NotSupportedException();
+
+            public override byte[] SignData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding)
+            {
+                this.SignCount++;
+                return _key.SignData(data, offset, count, hashAlgorithm, padding);
+            }
+
+            public override bool VerifyData(byte[] data, int offset, int count, byte[] signature, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding)
+            {
+                this.VerifyCount++;
+                return _key.VerifyData(data, offset, count, signature, hashAlgorithm, padding);
+            }
+        }
+
+        private sealed class RecordingECDsa : ECDsa
+        {
+            private readonly ECDsa _key;
+
+            public RecordingECDsa(ECDsa key)
+            {
+                _key = key;
+                this.KeySizeValue = key.KeySize;
+            }
+
+            public int SignCount { get; private set; }
+
+            public int VerifyCount { get; private set; }
+
+            public override byte[] SignHash(byte[] hash) =>
+                _key.SignHash(hash);
+
+            public override bool VerifyHash(byte[] hash, byte[] signature) =>
+                _key.VerifyHash(hash, signature);
+
+            public override byte[] SignData(byte[] data, int offset, int count, HashAlgorithmName hashAlgorithm)
+            {
+                this.SignCount++;
+                return _key.SignData(data, offset, count, hashAlgorithm);
+            }
+
+            public override bool VerifyData(byte[] data, int offset, int count, byte[] signature, HashAlgorithmName hashAlgorithm)
+            {
+                this.VerifyCount++;
+                return _key.VerifyData(data, offset, count, signature, hashAlgorithm);
+            }
         }
 #endif
     }
