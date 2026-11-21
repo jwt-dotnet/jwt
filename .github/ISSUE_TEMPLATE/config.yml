@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question
+    url: https://github.com/jwt-dotnet/jwt/discussions/categories/q-a
+    about: Ask how to use the library in Discussions Q&A.
