@@ -149,28 +149,33 @@ namespace JWT
         /// </summary>
         internal void Validate(string decodedPayload, IJwtAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
         {
-            if (_valParams.ValidateSignature && !IsAnySignatureValid(alg, keys, bytesToSign, decodedSignature))
-                throw CreateSignatureVerificationException(alg, keys, bytesToSign.ToArray(), decodedSignature);
+            if (_valParams.ValidateSignature && !IsAnySignatureValid(alg, keys, bytesToSign, decodedSignature, out var signatures))
+                throw new SignatureVerificationException(Convert.ToBase64String(decodedSignature), signatures);
 
             var ex = GetValidationException(decodedPayload);
             if (ex is not null)
                 throw ex;
         }
 
-        private static SignatureVerificationException CreateSignatureVerificationException(IJwtAlgorithm alg, byte[][] keys, byte[] bytesToSign, ReadOnlySpan<byte> decodedSignature) =>
-            new SignatureVerificationException(
-                Convert.ToBase64String(decodedSignature),
-                Array.ConvertAll(keys, key => Convert.ToBase64String(alg.Sign(key, bytesToSign))));
-
-        private static bool IsAnySignatureValid(IJwtAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature)
+        /// <summary>
+        /// Signs the bytes with each key once and compares each result in constant time.
+        /// </summary>
+        /// <param name="signatures">When no signature matches, the Base64 signature of every key, for the exception.</param>
+        private static bool IsAnySignatureValid(IJwtAlgorithm alg, byte[][] keys, ReadOnlySpan<byte> bytesToSign, ReadOnlySpan<byte> decodedSignature, out string[] signatures)
         {
+            signatures = null;
             Span<byte> buffer = stackalloc byte[SpanAlgorithmExtensions.MaxStackSignatureSize];
-            foreach (var key in keys)
+            for (var i = 0; i < keys.Length; i++)
             {
-                var signature = alg.Sign(key, bytesToSign, buffer);
+                var signature = alg.Sign(keys[i], bytesToSign, buffer);
                 if (CryptographicOperations.FixedTimeEquals(signature, decodedSignature))
                     return true;
+
+                signatures ??= new string[keys.Length];
+                signatures[i] = Convert.ToBase64String(signature);
             }
+
+            signatures ??= Array.Empty<string>();
             return false;
         }
 #endif
