@@ -74,6 +74,17 @@ namespace JWT.Algorithms
         protected abstract bool VerifyData(byte[] bytesToSign, byte[] signature);
 
 #if NET8_0_OR_GREATER
+        /// <summary>
+        /// Gets whether both keys are built-in .NET types.
+        /// </summary>
+        /// <remarks>
+        /// Keys deriving from <typeparamref name="T" /> in other assemblies can override only the array overloads that sign or verify data,
+        /// so algorithms using them keep using arrays.
+        /// </remarks>
+        private protected bool HasBuiltInKeys =>
+            _publicKey.GetType().Assembly == typeof(T).Assembly &&
+            (_privateKey is null || _privateKey.GetType().Assembly == typeof(T).Assembly);
+
         private protected T GetPrivateKeyForSigning() =>
             _privateKey ?? throw new InvalidOperationException("Can't sign data without private key");
 #endif

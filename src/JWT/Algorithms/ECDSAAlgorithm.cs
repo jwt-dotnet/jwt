@@ -67,7 +67,7 @@ namespace JWT.Algorithms
             _publicKey.VerifyData(bytesToSign, signature, this.HashAlgorithmName);
 
 #if NET8_0_OR_GREATER
-        private protected override bool SupportsSpans => true;
+        private protected override bool SupportsSpans => this.HasBuiltInKeys;
 
         internal override bool TrySign(ReadOnlySpan<byte> key, ReadOnlySpan<byte> bytesToSign, Span<byte> destination, out int bytesWritten) =>
             GetPrivateKeyForSigning().TrySignData(bytesToSign, destination, this.HashAlgorithmName, out bytesWritten);
