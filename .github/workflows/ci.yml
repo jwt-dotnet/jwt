@@ -74,6 +74,7 @@ jobs:
 
     # Windows runs every test project; Linux and macOS have no .NET Framework, so each TFM is run explicitly.
     # Projects are listed per TFM because SDK 8 VSTest fails on `dotnet test JWT.sln -f <tfm>`.
+    # JWT.Tests.ReflectionDisabled targets only .NET 8+, so it runs once for all of its TFMs.
     - name: Run tests
       env:
         TEST_FRAMEWORKS: net6.0 net8.0 net10.0
@@ -94,6 +95,7 @@ jobs:
               run_test "$project" -f "$tfm"
             done
           done
+          run_test tests/JWT.Tests.ReflectionDisabled/JWT.Tests.ReflectionDisabled.csproj
         fi
         exit $failed
 

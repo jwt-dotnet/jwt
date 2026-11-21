@@ -73,6 +73,25 @@ namespace JWT.Tests.Models
             { nameof(Customer.Age), Customer.Age },
         };
 
+        public static readonly IDictionary<string, object> PayloadWithCommonClaimTypes = new Dictionary<string, object>
+        {
+            { "string", "value" },
+            { "long", 42L },
+            { "double", 1.5 },
+            { "bool", true },
+            { "date", new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc) },
+            { "guid", new Guid("1f0a3f9e-4b8c-4a63-9b8e-7d4c2b1a0f11") },
+            { "array", new[] { "a", "b" } },
+            { "intList", new List<int> { 1, 2 } },
+            { "longList", new List<long> { 3 } },
+            { "doubleList", new List<double> { 0.5 } },
+            { "boolList", new List<bool> { true } },
+            { "boolArray", new[] { false } },
+            { "nested", new Dictionary<string, object> { { "inner", 1 } } }
+        };
+
+        public const string PayloadWithCommonClaimTypesJson = "{\"string\":\"value\",\"long\":42,\"double\":1.5,\"bool\":true,\"date\":\"2020-01-02T03:04:05Z\",\"guid\":\"1f0a3f9e-4b8c-4a63-9b8e-7d4c2b1a0f11\",\"array\":[\"a\",\"b\"],\"intList\":[1,2],\"longList\":[3],\"doubleList\":[0.5],\"boolList\":[true],\"boolArray\":[false],\"nested\":{\"inner\":1}}";
+
         public const string ServerRsaPublicKey1 = "MIICPDCCAaWgAwIBAgIBADANBgkqhkiG9w0BAQ0FADA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwHhcNMTcwNjI3MTgzNjM3WhcNMjAwMzIzMTgzNjM3WjA7MQswCQYDVQQGEwJ1czELMAkGA1UECAwCVVMxETAPBgNVBAoMCENlcnR0ZXN0MQwwCgYDVQQDDANqd3QwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALsspKjcF/mB0nheaT+9KizOeBM6Qpi69LzOLBw8rxohSFJw/BFB/ch+8jXbtq23IwtavJTwSeY6a7pbZgrwCwUK/27gy04m/tum5FJBfCVGTTI4vqUYeTKimQzxj2pupQ+wx//1tKrXMIDGdllmQ/tffQHXxYGBR5Ol543YRN+dAgMBAAGjUDBOMB0GA1UdDgQWBBQMfi0akrZdtPpiYSbE4h2/9vlaozAfBgNVHSMEGDAWgBQMfi0akrZdtPpiYSbE4h2/9vlaozAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBDQUAA4GBAF9pg6H7C7O5/oHeRtKSOPb9WnrHZ/mxAl30wCh2pCtJLkgMKKhquYmKqTA+QWpSF/Qeaq17DAf7Wq8VQ2QES9WCQm+PlBlTeZAf3UTLkxIUDchuS8mR7QAgG67QNLl2OKMC4NWzq0d6ZYNzVqHHPe2AKgsRro6SEAv0Sf2QhE3j";
         public const string ServerRsaPublicThumbprint1 = "CFAEAE2D650A6CA9862575DE54371EA980643849";
 
