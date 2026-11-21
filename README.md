@@ -21,6 +21,7 @@
 - [Jwt.Net ASP.NET Core](#jwtnet-aspnet-core)
   - [Register authentication handler to validate JWT](#register-authentication-handler-to-validate-jwt)
   - [Custom factories to produce Identity or AuthenticationTicket](#custom-factories-to-produce-identity-or-authenticationticket)
+- [Releasing](#releasing)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -334,6 +335,12 @@ public void Configure(IApplicationBuilder app)
 services.AddSingleton<IIdentityFactory, CustomIdentityFctory>();
 services.AddSingleton<ITicketFactory, CustomTicketFactory>();
 ```
+
+## Releasing
+
+- Bump `<Version>` in the package's csproj in a PR.
+- After it merges, the Release workflow waits for approval. Approve the run you want to ship in Actions to push the new versions to nuget.org.
+- The tag, GitHub release and release notes are created automatically.
 
 ## License
 

@@ -1,27 +1,30 @@
 name: Release
 
-# Publishing a GitHub release builds its tag, attaches the packages and pushes them to nuget.org.
-# Packages whose version is already on nuget.org are skipped.
+# After each successful Main build on main, if a package's version isn't on nuget.org yet, waits for approval in the nuget environment.
+# Approving the run pushes the new packages, tags the commit yyyyMMdd.N and creates a GitHub release with generated notes.
+# Approve the run you want to ship; runs left waiting fail after 30 days.
+
+# Named after the Main build it releases, so each run waiting for approval shows which merge it would ship
+run-name: ${{ github.event.workflow_run.display_title }}
+
 on:
-  release:
+  workflow_run:
+    workflows:
+    - Main build
     types:
-    - published
+    - completed
 
 permissions: {}
 
 jobs:
-  build:
-    if: github.repository == 'jwt-dotnet/jwt'
-    uses: ./.github/workflows/ci.yml
-    permissions:
-      contents: read
-
-  attach:
-    name: Attach packages to release
-    needs: build
+  check:
+    name: Check versions
+    if: github.repository == 'jwt-dotnet/jwt' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      actions: read
+    outputs:
+      packages: ${{ steps.check.outputs.packages }}
 
     steps:
     - name: Download build artifacts
@@ -29,20 +32,54 @@ jobs:
       with:
         name: drop
         path: drop
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ github.token }}
 
-    - name: Upload release assets
-      env:
-        GH_TOKEN: ${{ github.token }}
-        GH_REPO: ${{ github.repository }}
-        TAG: ${{ github.event.release.tag_name }}
-      run: gh release upload "$TAG" drop/* --clobber
+    - name: Check versions
+      id: check
+      run: |
+        on_nuget() {
+          local code
+          code=$(curl -sS --retry 3 -o index.json -w '%{http_code}' "https://api.nuget.org/v3-flatcontainer/${1,,}/index.json")
+          case $code in
+            200) jq -e --arg v "${2,,}" 'any(.versions[]; . == $v)' index.json > /dev/null ;;
+            404) return 1 ;;
+            *) echo "::error::nuget.org returned HTTP $code for $1"; exit 1 ;;
+          esac
+        }
 
-  publish:
-    name: Push packages to nuget.org
-    needs: build
+        ids=$(for file in drop/*.nupkg; do unzip -p "$file" '*.nuspec' | sed -n 's:.*<id>\(.*\)</id>.*:\1:p' | head -n 1; done)
+        packages='[]'
+        { echo "| Package | Version | nuget.org |"; echo "|---|---|---|"; } >> "$GITHUB_STEP_SUMMARY"
+
+        for file in drop/*.nupkg; do
+          nuspec=$(unzip -p "$file" '*.nuspec')
+          id=$(sed -n 's:.*<id>\(.*\)</id>.*:\1:p' <<< "$nuspec" | head -n 1)
+          version=$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' <<< "$nuspec" | head -n 1)
+          # How many packages from this repo it depends on, to push dependencies first
+          depends=$(grep -o '<dependency id="[^"]*"' <<< "$nuspec" | cut -d '"' -f 2 | sort -u | grep -cxF -f <(echo "$ids") || true)
+
+          if on_nuget "$id" "$version"; then
+            status="already published"
+          else
+            status="new"
+            packages=$(jq -c --arg id "$id" --arg version "$version" --arg file "${file#drop/}" --argjson depends "$depends" '. + [{$id, $version, $file, $depends}]' <<< "$packages")
+          fi
+          echo "$id $version: $status"
+          echo "| $id | $version | $status |" >> "$GITHUB_STEP_SUMMARY"
+        done
+
+        echo "packages=$(jq -c 'sort_by(.depends) | map(del(.depends))' <<< "$packages")" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Release
+    needs: check
+    if: needs.check.outputs.packages != '[]'
     runs-on: ubuntu-latest
     environment: nuget
     permissions:
+      actions: read
+      contents: write
       id-token: write
 
     steps:
@@ -51,14 +88,107 @@ jobs:
       with:
         name: drop
         path: drop
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ github.token }}
+
+    # A newer run may have released these versions while this one waited for approval.
+    # Checking releases rather than nuget.org lets a re-run finish a release that failed after pushing some packages.
+    - name: Check releases
+      id: recheck
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        PACKAGES: ${{ needs.check.outputs.packages }}
+      run: |
+        assets=$(gh api --paginate "repos/$GH_REPO/releases" --jq '.[].assets[].name')
+        packages=$(jq -c --arg assets "$assets" '($assets | split("\n")) as $released | map(select(.file as $file | any($released[]; . == $file) | not))' <<< "$PACKAGES")
+
+        if [ "$packages" = '[]' ]; then
+          echo "Nothing new to release: these packages are already on a GitHub release." | tee -a "$GITHUB_STEP_SUMMARY"
+        fi
+        echo "packages=$packages" >> "$GITHUB_OUTPUT"
+
+    # Tags before pushing, since GitHub refuses to let this workflow tag a commit whose workflow files differ from main's.
+    # If a later step fails, the cleanup step below removes the tag.
+    - name: Tag
+      id: tag
+      if: steps.recheck.outputs.packages != '[]'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        SHA: ${{ github.event.workflow_run.head_sha }}
+      run: |
+        # yyyyMMdd.N, where N follows the highest tag of the day. Another release may take a number at the same time, so retry.
+        date=$(date -u +%Y%m%d)
+        for attempt in 1 2 3 4 5; do
+          n=$(gh api "repos/$GH_REPO/git/matching-refs/tags/$date." --jq "[.[].ref | ltrimstr(\"refs/tags/$date.\") | select(test(\"^[0-9]+$\")) | tonumber] | max // 0")
+          tag="$date.$((n + 1))"
+          if out=$(gh api -X POST "repos/$GH_REPO/git/refs" -f ref="refs/tags/$tag" -f sha="$SHA" 2>&1); then
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ $out == *"Resource not accessible by integration"* ]]; then
+            echo "::error::Workflow files on main have changed since this build, and GitHub doesn't let workflows tag such a commit. Nothing was published; approve a newer run instead."
+            echo "Nothing was published: workflow files on main have changed since this build. Approve a newer run instead." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          if [[ $out != *"Reference already exists"* ]] || [ "$attempt" = 5 ]; then
+            echo "$out" >&2
+            exit 1
+          fi
+        done
 
     - name: NuGet login
       id: login
+      if: steps.recheck.outputs.packages != '[]'
       uses: NuGet/login@v1
       with:
         user: ${{ secrets.NUGET_USER }}
 
     - name: Push packages
+      if: steps.recheck.outputs.packages != '[]'
       env:
         NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
-      run: dotnet nuget push "drop/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        PACKAGES: ${{ steps.recheck.outputs.packages }}
+      run: |
+        jq -r '.[].file' <<< "$PACKAGES" | while read -r file; do
+          dotnet nuget push "drop/$file" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        done
+
+    - name: Create release
+      id: release
+      if: steps.recheck.outputs.packages != '[]'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        TAG: ${{ steps.tag.outputs.tag }}
+        PACKAGES: ${{ steps.recheck.outputs.packages }}
+      run: |
+        args=(-f tag_name="$TAG")
+        previous=$(gh api "repos/$GH_REPO/releases" --jq '[.[] | select(.draft | not)] | sort_by(.published_at) | last | .tag_name // empty')
+        if [ -n "$previous" ]; then
+          args+=(-f previous_tag_name="$previous")
+        fi
+        gh api -X POST "repos/$GH_REPO/releases/generate-notes" "${args[@]}" --jq .body > notes.md
+
+        mapfile -t files < <(jq -r '.[] | "drop/\(.file)"' <<< "$PACKAGES")
+        args=(--verify-tag --title "$(jq -r 'map("\(.id) \(.version)") | join(", ")' <<< "$PACKAGES")" --notes-file notes.md)
+        if jq -e 'any(.[]; .version | contains("-"))' <<< "$PACKAGES" > /dev/null; then
+          args+=(--prerelease)
+        fi
+        url=$(gh release create "$TAG" "${files[@]}" "${args[@]}")
+
+        {
+          echo "Released ${#files[@]} package(s) as [$TAG]($url):"
+          jq -r '.[] | "- \(.id) \(.version)"' <<< "$PACKAGES"
+        } | tee -a "$GITHUB_STEP_SUMMARY"
+
+    - name: Remove tag after a failure
+      if: failure() && steps.tag.outputs.tag != '' && steps.release.outcome != 'success'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        TAG: ${{ steps.tag.outputs.tag }}
+      run: |
+        gh api -X DELETE "repos/$GH_REPO/git/refs/tags/$TAG"
+        echo "The release wasn't created, so tag $TAG was removed. Re-run the failed job to finish it; packages already on nuget.org are skipped." >> "$GITHUB_STEP_SUMMARY"
