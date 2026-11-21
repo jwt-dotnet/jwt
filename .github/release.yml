@@ -1,0 +1,14 @@
+# Categories for auto-generated release notes. There is deliberately no "*" catch-all, so PRs
+# without one of these labels (CI, templates, repo housekeeping) are left out.
+changelog:
+  categories:
+  - title: Breaking changes
+    labels: ["breaking change"]
+  - title: Security
+    labels: [security]
+  - title: New features
+    labels: [enchantment]
+  - title: Bug fixes
+    labels: [bug]
+  - title: Dependency updates
+    labels: [".NET"]

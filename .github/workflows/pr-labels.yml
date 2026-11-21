@@ -1,7 +1,8 @@
 name: PR labels
 
 # Labels PRs by the files they change and the issues they close. If that leaves a newly opened PR
-# with no type label (bug, enchantment, security), Copilot picks one. Labels are only ever added.
+# with no type label (bug, enchantment, security), Copilot picks one. Labels are only ever added,
+# except "breaking change", which follows the Breaking change checkbox in the PR description.
 # pull_request_target gives fork PRs a token that can label; never check out or run PR code here.
 #
 # The Copilot step is skipped unless the COPILOT_PAT secret is set: a fine-grained PAT with
@@ -87,6 +88,45 @@ jobs:
             variables: { id: $id, labels: $labels }
           }' \
           | gh api graphql --input - > /dev/null
+
+    # The checkbox is the source of truth: checked adds the label, unchecked removes it. PRs without
+    # the checkbox (older PRs, templates deleted by the author) keep their labels as they are.
+    - name: Sync breaking change label
+      if: ${{ !cancelled() && github.event.action != 'synchronize' }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        REPO: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        # PR text is untrusted; it is only matched against fixed patterns, never run.
+        body=$(gh api "repos/$REPO/pulls/$PR_NUMBER" --jq '.body // ""' | tr -d '\r')
+        box_start='^[[:space:]]*[-*+][[:space:]]+\['
+        box_end='\][[:space:]]+breaking change([^[:alnum:]].*)?$'
+
+        if grep -qiE "${box_start}x${box_end}" <<< "$body"; then
+          checked=true
+        elif grep -qiE "${box_start} ${box_end}" <<< "$body"; then
+          checked=false
+        else
+          echo "No Breaking change checkbox; leaving the label alone."
+          exit 0
+        fi
+
+        labeled=false
+        if gh api --paginate "repos/$REPO/issues/$PR_NUMBER/labels?per_page=100" --jq '.[].name' \
+          | grep -qxF 'breaking change'; then
+          labeled=true
+        fi
+
+        if [ "$checked" = "true" ] && [ "$labeled" = "false" ]; then
+          echo "Breaking change is checked; adding label."
+          gh api "repos/$REPO/issues/$PR_NUMBER/labels" -f "labels[]=breaking change" > /dev/null
+        elif [ "$checked" = "false" ] && [ "$labeled" = "true" ]; then
+          echo "Breaking change is unchecked; removing label."
+          gh api -X DELETE "repos/$REPO/issues/$PR_NUMBER/labels/breaking%20change" > /dev/null
+        else
+          echo "Label already matches the checkbox."
+        fi
 
     - name: Prepare type label prompt
       id: prompt
