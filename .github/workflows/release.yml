@@ -2,7 +2,7 @@ name: Release
 
 # After each successful Main build on main, if a package's version isn't on nuget.org yet, waits for approval in the nuget environment.
 # Approving the run pushes the new packages, tags the commit yyyyMMdd.N and creates a GitHub release with generated notes.
-# Approve the run you want to ship; runs left waiting fail after 30 days.
+# Only the newest build waits: each run with new versions cancels older runs still waiting for approval.
 
 # Named after the Main build it releases, so each run waiting for approval shows which merge it would ship
 run-name: ${{ github.event.workflow_run.display_title }}
@@ -22,7 +22,7 @@ jobs:
     if: github.repository == 'jwt-dotnet/jwt' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
+      actions: write
     outputs:
       packages: ${{ steps.check.outputs.packages }}
 
@@ -70,6 +70,39 @@ jobs:
         done
 
         echo "packages=$(jq -c 'sort_by(.depends) | map(del(.depends))' <<< "$packages")" >> "$GITHUB_OUTPUT"
+
+    # Approved runs aren't waiting, so a release that's already publishing is never cancelled.
+    - name: Cancel older pending releases
+      if: steps.check.outputs.packages != '[]'
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+        BUILD_ID: ${{ github.event.workflow_run.id }}
+      run: |
+        # A slower build of an older commit mustn't cancel the release of a newer one.
+        if ! latest=$(gh api "repos/$GH_REPO/actions/workflows/main.yml/runs?branch=main&per_page=1" --jq '.workflow_runs[0].id'); then
+          echo "::warning::Couldn't check for newer Main builds, so no pending releases were cancelled."
+          exit 0
+        fi
+        if [ "$latest" != "$BUILD_ID" ]; then
+          echo "A newer Main build exists, so its Release run cancels older pending releases instead."
+          exit 0
+        fi
+
+        if ! runs=$(gh api --paginate "repos/$GH_REPO/actions/workflows/release.yml/runs?status=waiting" --jq ".workflow_runs[] | select(.run_number < $GITHUB_RUN_NUMBER) | \"\(.id) \(.display_title)\""); then
+          echo "::warning::Couldn't list pending releases, so none were cancelled."
+          exit 0
+        fi
+        while read -r id title; do
+          if [ -z "$id" ]; then
+            continue
+          fi
+          if gh api -X POST "repos/$GH_REPO/actions/runs/$id/cancel" > /dev/null; then
+            echo "Cancelled pending release $id: $title" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Couldn't cancel pending release $id: $title"
+          fi
+        done <<< "$runs"
 
   release:
     name: Release

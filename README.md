@@ -339,7 +339,7 @@ services.AddSingleton<ITicketFactory, CustomTicketFactory>();
 ## Releasing
 
 - Bump `<Version>` in the package's csproj in a PR.
-- After it merges, the Release workflow waits for approval. Approve the run you want to ship in Actions to push the new versions to nuget.org.
+- After it merges, the Release workflow waits for approval, and a newer merge cancels the older waiting run. Approve it in Actions to push the new versions to nuget.org.
 - The tag, GitHub release and release notes are created automatically.
 
 ## License
