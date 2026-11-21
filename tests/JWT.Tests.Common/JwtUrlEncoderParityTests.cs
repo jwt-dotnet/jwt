@@ -317,7 +317,8 @@ namespace JWT.Tests
         {
             foreach (var algorithm in GetAlgorithms())
             {
-                if ((JwtAlgorithmName)algorithm[0] is not (JwtAlgorithmName.ES256 or JwtAlgorithmName.ES384 or JwtAlgorithmName.ES512))
+                var name = (JwtAlgorithmName)algorithm[0];
+                if (name != JwtAlgorithmName.ES256 && name != JwtAlgorithmName.ES384 && name != JwtAlgorithmName.ES512)
                     yield return algorithm;
             }
             yield return [JwtAlgorithmName.None, null];
@@ -333,34 +334,60 @@ namespace JWT.Tests
 
         private static IJwtAlgorithm CreateAlgorithm(JwtAlgorithmName algorithm, int? keySize = null)
         {
-            IAlgorithmFactory factory = algorithm switch
+            IAlgorithmFactory factory;
+            switch (algorithm)
             {
-                JwtAlgorithmName.HS256 or JwtAlgorithmName.HS384 or JwtAlgorithmName.HS512 =>
-                    new HMACSHAAlgorithmFactory(),
-                JwtAlgorithmName.RS256 or JwtAlgorithmName.RS384 or JwtAlgorithmName.RS512 or
-                JwtAlgorithmName.RS1024 or JwtAlgorithmName.RS2048 or JwtAlgorithmName.RS4096 =>
-                    new RSAlgorithmFactory(GetRsa(keySize ?? 2048), GetRsa(keySize ?? 2048)),
+                case JwtAlgorithmName.HS256:
+                case JwtAlgorithmName.HS384:
+                case JwtAlgorithmName.HS512:
+                    factory = new HMACSHAAlgorithmFactory();
+                    break;
+                case JwtAlgorithmName.RS256:
+                case JwtAlgorithmName.RS384:
+                case JwtAlgorithmName.RS512:
+                case JwtAlgorithmName.RS1024:
+                case JwtAlgorithmName.RS2048:
+                case JwtAlgorithmName.RS4096:
+                    var rsa = GetRsa(keySize ?? 2048);
+                    factory = new RSAlgorithmFactory(rsa, rsa);
+                    break;
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
-                JwtAlgorithmName.ES256 or JwtAlgorithmName.ES384 or JwtAlgorithmName.ES512 =>
-                    CreateEcdsaAlgorithmFactory(keySize ?? throw new ArgumentNullException(nameof(keySize))),
+                case JwtAlgorithmName.ES256:
+                case JwtAlgorithmName.ES384:
+                case JwtAlgorithmName.ES512:
+                    if (keySize == null)
+                        throw new ArgumentNullException(nameof(keySize));
+                    factory = CreateEcdsaAlgorithmFactory(keySize.Value);
+                    break;
 #endif
-                JwtAlgorithmName.None =>
-                    new GenericAlgorithmFactory<NoneAlgorithm>(),
-                _ => throw new ArgumentOutOfRangeException(nameof(algorithm))
-            };
+                case JwtAlgorithmName.None:
+                    factory = new GenericAlgorithmFactory<NoneAlgorithm>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(algorithm));
+            }
             return factory.Create(new JwtDecoderContext { Header = new JwtHeader { Algorithm = algorithm.ToString() } });
         }
 
 #if NETSTANDARD2_0 || NET6_0_OR_GREATER
         private static ECDSAAlgorithmFactory CreateEcdsaAlgorithmFactory(int keySize)
         {
-            var key = ECDsa.Create(keySize switch
+            ECCurve curve;
+            switch (keySize)
             {
-                256 => ECCurve.NamedCurves.nistP256,
-                384 => ECCurve.NamedCurves.nistP384,
-                521 => ECCurve.NamedCurves.nistP521,
-                _ => throw new ArgumentOutOfRangeException(nameof(keySize))
-            });
+                case 256:
+                    curve = ECCurve.NamedCurves.nistP256;
+                    break;
+                case 384:
+                    curve = ECCurve.NamedCurves.nistP384;
+                    break;
+                case 521:
+                    curve = ECCurve.NamedCurves.nistP521;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(keySize));
+            }
+            var key = ECDsa.Create(curve);
             return new ECDSAAlgorithmFactory(key, key);
         }
 #endif

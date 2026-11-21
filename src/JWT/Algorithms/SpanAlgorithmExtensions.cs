@@ -14,7 +14,7 @@ namespace JWT.Algorithms
         public const int MaxStackSignatureSize = 512;
 
         public static bool CanUseSpans(this IJwtAlgorithm algorithm) =>
-            algorithm is JwtAlgorithm { CanUseSpans: true };
+            algorithm is JwtAlgorithm jwtAlgorithm && jwtAlgorithm.CanUseSpans;
 
         /// <summary>
         /// Signs the data into <paramref name="buffer" />, or into a new array if the buffer is too small.
