@@ -1,5 +1,10 @@
 # Unreleased
 
+# JWT 11.3.0
+
+- Reduced allocations when encoding and decoding tokens on .NET 8+
+- Added `JwtAlgorithm` as the common base class of the built-in algorithms
+
 # JWT.Extensions.AspNetCore 11.3.0
 
 - Fixed `ClaimsIdentityFactory` failing on `null` claims, which now map to an empty claim of type `JSON_NULL`
