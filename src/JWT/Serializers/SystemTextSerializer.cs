@@ -15,8 +15,9 @@ namespace JWT.Serializers
     public class SystemTextSerializer : IJsonSerializer
     {
 #if NET8_0_OR_GREATER
-        // Same guard as JsonSerializerOptions.Default: the System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault
-        // feature switch is false by default in trimmed and Native AOT apps, so the reflection branch is removed there.
+        // Same guard as JsonSerializerOptions.Default:
+        // Feature switch <see cref="System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault" /> is <c>false</c> by default in trimmed and Native AOT apps,
+        // so the reflection branch is removed there.
         private const string ReflectionJustification = "Reflection is used only when JsonSerializer.IsReflectionEnabledByDefault is true, as with JsonSerializerOptions.Default.";
 
         private static readonly JsonSerializerOptions _defaultOptionsForSerialize = CreateOptions(null, forDeserialize: false);
@@ -29,9 +30,8 @@ namespace JWT.Serializers
         /// Creates a new instance with the default options.
         /// </summary>
         /// <remarks>
-        /// When reflection-based serialization is disabled (trimmed and Native AOT apps), only the library's own types
-        /// and common claim value types are supported. Use the constructor that takes JsonSerializerOptions
-        /// to supply metadata for custom types.
+        /// When reflection-based serialization is disabled (trimmed and Native AOT apps),
+        /// only the library's own types and common claim value types are supported. Use the constructor that takes <see cref="JsonSerializerOptions" /> to supply metadata for custom types.
         /// </remarks>
         public SystemTextSerializer()
         {
@@ -43,8 +43,8 @@ namespace JWT.Serializers
         /// Creates a new instance with the supplied options.
         /// </summary>
         /// <param name="options">
-        /// The options to use, e.g. MyJsonSerializerContext.Default.Options of a source-generated
-        /// JsonSerializerContext for custom payload types. The options are copied, not modified.
+        /// The options to use, e.g. MyJsonSerializerContext.Default.Options of a source-generated <see cref="JsonSerializerContext" /> for custom payload types.
+        // The options are copied, not modified.
         /// </param>
         /// <remarks>
         /// Metadata for the library's own types is appended to the TypeInfoResolver of the options.
@@ -106,8 +106,10 @@ namespace JWT.Serializers
 #if NET8_0_OR_GREATER
         private static JsonSerializerOptions CreateOptions(JsonSerializerOptions source, bool forDeserialize)
         {
-            var options = source is null ? new JsonSerializerOptions() : new JsonSerializerOptions(source);
-            options.TypeInfoResolver = source?.TypeInfoResolver is { } resolver ?
+            var options = source is not null ? new JsonSerializerOptions(source) : new JsonSerializerOptions();
+
+            var resolver = source?.TypeInfoResolver;
+            options.TypeInfoResolver = resolver is not null ?
                 JsonTypeInfoResolver.Combine(resolver, JwtNetJsonSerializerContext.Default) :
                 CreateDefaultTypeInfoResolver();
 
@@ -120,13 +122,10 @@ namespace JWT.Serializers
 
         [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = ReflectionJustification)]
         [UnconditionalSuppressMessage("AOT", "IL3050", Justification = ReflectionJustification)]
-        private static IJsonTypeInfoResolver CreateDefaultTypeInfoResolver()
-        {
-            if (JsonSerializer.IsReflectionEnabledByDefault)
-                return new DefaultJsonTypeInfoResolver();
-
-            return JwtNetJsonSerializerContext.Default;
-        }
+        private static IJsonTypeInfoResolver CreateDefaultTypeInfoResolver() =>
+        JsonSerializer.IsReflectionEnabledByDefault ?
+            new DefaultJsonTypeInfoResolver() :
+            JwtNetJsonSerializerContext.Default;
 #endif
     }
 }
