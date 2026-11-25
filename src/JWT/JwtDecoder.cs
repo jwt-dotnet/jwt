@@ -7,6 +7,9 @@ using static JWT.Internal.EncodingHelper;
 #if NET35
 using static JWT.Compatibility.String;
 #endif
+#if NET8_0_OR_GREATER
+using System.Buffers;
+#endif
 
 namespace JWT
 {
@@ -15,6 +18,10 @@ namespace JWT
     /// </summary>
     public sealed class JwtDecoder : IJwtDecoder
     {
+#if NET8_0_OR_GREATER
+        private const int StackallocThreshold = 256;
+#endif
+
         private readonly IJsonSerializer _jsonSerializer;
         private readonly IJwtValidator _jwtValidator;
         private readonly IBase64UrlEncoder _urlEncoder;
@@ -73,8 +80,7 @@ namespace JWT
                 throw new ArgumentException(nameof(token));
 
             var header = new JwtParts(token).Header;
-            var decoded = _urlEncoder.Decode(header);
-            return GetString(decoded);
+            return DecodeToString(header);
         }
 
         /// <inheritdoc />
@@ -86,8 +92,7 @@ namespace JWT
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
 
-            var decodedHeader = _urlEncoder.Decode(jwt.Header);
-            var stringHeader = GetString(decodedHeader);
+            var stringHeader = DecodeToString(jwt.Header);
             return _jsonSerializer.Deserialize<T>(stringHeader);
         }
 
@@ -135,6 +140,10 @@ namespace JWT
                 if (_algFactory is null)
                     throw new InvalidOperationException("This instance was constructed without algorithm factory so cannot be used for signature validation");
 
+#if NET8_0_OR_GREATER
+                if (_urlEncoder is JwtBase64UrlEncoder)
+                    return ValidateAndDecode(jwt, keys);
+#endif
                 Validate(jwt, keys);
             }
             else
@@ -226,7 +235,11 @@ namespace JWT
         /// <exception cref="SignatureVerificationException" />
         /// <exception cref="TokenNotYetValidException" />
         /// <exception cref="TokenExpiredException" />
-        public void Validate(JwtParts jwt, params byte[][] keys)
+        public void Validate(JwtParts jwt, params byte[][] keys) =>
+            ValidateAndDecode(jwt, keys);
+
+        /// <returns>The decoded payload</returns>
+        private string ValidateAndDecode(JwtParts jwt, byte[][] keys)
         {
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
@@ -235,16 +248,81 @@ namespace JWT
             if (jwt.Signature is null)
                 throw new ArgumentNullException(nameof(JwtParts.Signature));
 
-            var decodedPayload = GetString(_urlEncoder.Decode(jwt.Payload));
+            var decodedPayload = DecodeToString(jwt.Payload);
+#if NET8_0_OR_GREATER
+            if (_urlEncoder is JwtBase64UrlEncoder && _jwtValidator is JwtValidator jwtValidator)
+            {
+                ValidateWithSpans(jwt, keys, decodedPayload, jwtValidator);
+                return decodedPayload;
+            }
+#endif
             var decodedSignature = _urlEncoder.Decode(jwt.Signature);
 
             var header = DecodeHeader<JwtHeader>(jwt);
-            var algorithm = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
-            if (algorithm is null)
-                throw new ArgumentNullException(nameof(algorithm));
+            var algorithm = CreateAlgorithm(header, decodedPayload, jwt);
 
             var bytesToSign = GetBytes(jwt.Header, '.', jwt.Payload);
 
+            ValidateSignature(keys, decodedPayload, algorithm, bytesToSign, decodedSignature);
+            return decodedPayload;
+        }
+
+#if NET8_0_OR_GREATER
+        private void ValidateWithSpans(JwtParts jwt, byte[][] keys, string decodedPayload, JwtValidator jwtValidator)
+        {
+            var signatureLength = JwtBase64UrlEncoder.GetMaxDecodedLength(jwt.Signature);
+            byte[] rentedSignature = null;
+            Span<byte> signatureBuffer = signatureLength <= StackallocThreshold ?
+                stackalloc byte[StackallocThreshold] :
+                (rentedSignature = ArrayPool<byte>.Shared.Rent(signatureLength));
+            byte[] rentedBytesToSign = null;
+            try
+            {
+                var decodedSignature = signatureBuffer.Slice(0, JwtBase64UrlEncoder.Decode(jwt.Signature, signatureBuffer));
+
+                var header = DecodeHeader<JwtHeader>(jwt);
+                var algorithm = CreateAlgorithm(header, decodedPayload, jwt);
+
+                if (!algorithm.CanUseSpans())
+                {
+                    ValidateSignature(keys, decodedPayload, algorithm, GetBytes(jwt.Header, '.', jwt.Payload), decodedSignature.ToArray());
+                    return;
+                }
+
+                var bytesToSignLength = GetByteCount(jwt.Header) + 1 + GetByteCount(jwt.Payload);
+                rentedBytesToSign = ArrayPool<byte>.Shared.Rent(bytesToSignLength);
+                var bytesToSign = rentedBytesToSign.AsSpan(0, GetBytes(jwt.Header, '.', jwt.Payload, rentedBytesToSign));
+
+                if (algorithm is IAsymmetricAlgorithm asymmAlg)
+                {
+                    jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
+                }
+                else
+                {
+                    EnsureKeys(keys);
+                    jwtValidator.Validate(decodedPayload, algorithm, keys, bytesToSign, decodedSignature);
+                }
+            }
+            finally
+            {
+                if (rentedSignature is not null)
+                    ArrayPool<byte>.Shared.Return(rentedSignature, clearArray: true);
+                if (rentedBytesToSign is not null)
+                    ArrayPool<byte>.Shared.Return(rentedBytesToSign, clearArray: true);
+            }
+        }
+#endif
+
+        private IJwtAlgorithm CreateAlgorithm(JwtHeader header, string decodedPayload, JwtParts jwt)
+        {
+            var algorithm = _algFactory.Create(JwtDecoderContext.Create(header, decodedPayload, jwt));
+            if (algorithm is null)
+                throw new ArgumentNullException(nameof(algorithm));
+            return algorithm;
+        }
+
+        private void ValidateSignature(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
+        {
             if (algorithm is IAsymmetricAlgorithm asymmAlg)
             {
                 _jwtValidator.Validate(decodedPayload, asymmAlg, bytesToSign, decodedSignature);
@@ -260,16 +338,36 @@ namespace JWT
             if (jwt is null)
                 throw new ArgumentNullException(nameof(jwt));
 
-            var decoded = _urlEncoder.Decode(jwt.Payload);
-            return GetString(decoded);
+            return DecodeToString(jwt.Payload);
+        }
+
+        private string DecodeToString(string segment)
+        {
+#if NET8_0_OR_GREATER
+            if (_urlEncoder is JwtBase64UrlEncoder)
+            {
+                var length = JwtBase64UrlEncoder.GetMaxDecodedLength(segment);
+                byte[] rented = null;
+                Span<byte> buffer = length <= StackallocThreshold ?
+                    stackalloc byte[StackallocThreshold] :
+                    (rented = ArrayPool<byte>.Shared.Rent(length));
+                try
+                {
+                    return GetString(buffer.Slice(0, JwtBase64UrlEncoder.Decode(segment, buffer)));
+                }
+                finally
+                {
+                    if (rented is not null)
+                        ArrayPool<byte>.Shared.Return(rented, clearArray: true);
+                }
+            }
+#endif
+            return GetString(_urlEncoder.Decode(segment));
         }
 
         private void ValidSymmetricAlgorithm(byte[][] keys, string decodedPayload, IJwtAlgorithm algorithm, byte[] bytesToSign, byte[] decodedSignature)
         {
-            if (keys is null)
-                throw new ArgumentNullException(nameof(keys));
-            if (!AllKeysHaveValues(keys))
-                throw new ArgumentOutOfRangeException(nameof(keys));
+            EnsureKeys(keys);
 
             // the signature on the token, with the leading =
             var rawSignature = Convert.ToBase64String(decodedSignature);
@@ -278,6 +376,14 @@ namespace JWT
             var recreatedSignatures = keys.Select(key => Convert.ToBase64String(algorithm.Sign(key, bytesToSign))).ToArray();
 
             _jwtValidator.Validate(decodedPayload, rawSignature, recreatedSignatures);
+        }
+
+        private static void EnsureKeys(byte[][] keys)
+        {
+            if (keys is null)
+                throw new ArgumentNullException(nameof(keys));
+            if (!AllKeysHaveValues(keys))
+                throw new ArgumentOutOfRangeException(nameof(keys));
         }
 
         private static bool AllKeysHaveValues(byte[][] keys)

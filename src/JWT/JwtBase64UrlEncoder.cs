@@ -44,16 +44,13 @@ namespace JWT
         /// <exception cref="FormatException" />
         public byte[] Decode(string input)
         {
+#if NET8_0_OR_GREATER
+            EnsureCanDecode(input);
+            return Base64Url.DecodeFromChars(input);
+#else
             if (IsNullOrWhiteSpace(input))
                 throw new ArgumentException(nameof(input));
 
-#if NET8_0_OR_GREATER
-            // Base64Url skips whitespace, which is not valid in base64url-encoded JWT segments
-            if (input.AsSpan().IndexOfAny(" \t\r\n") >= 0)
-                throw new FormatException("Illegal base64url string.");
-
-            return Base64Url.DecodeFromChars(input);
-#else
             var output = input;
             output = output.Replace('-', '+'); // 62nd char of encoding
             output = output.Replace('_', '/'); // 63rd char of encoding
@@ -74,5 +71,44 @@ namespace JWT
             return converted;
 #endif
         }
+
+#if NET8_0_OR_GREATER
+        /// <summary>
+        /// Checks the input like <see cref="Decode(string)" /> does and gets the size of the buffer to decode it into.
+        /// </summary>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="FormatException" />
+        internal static int GetMaxDecodedLength(string input)
+        {
+            EnsureCanDecode(input);
+            return Base64Url.GetMaxDecodedLength(input.Length);
+        }
+
+        /// <summary>
+        /// Decodes input checked by <see cref="GetMaxDecodedLength" /> into a buffer of at least that size.
+        /// </summary>
+        /// <exception cref="FormatException" />
+        internal static int Decode(string input, Span<byte> output) =>
+            Base64Url.DecodeFromChars(input, output);
+
+        internal static int GetEncodedLength(int length) =>
+            Base64Url.GetEncodedLength(length);
+
+        /// <summary>
+        /// Encodes into <paramref name="output" /> as UTF-8, which must be at least <see cref="GetEncodedLength" /> long.
+        /// </summary>
+        internal static int Encode(ReadOnlySpan<byte> input, Span<byte> output) =>
+            Base64Url.EncodeToUtf8(input, output);
+
+        private static void EnsureCanDecode(string input)
+        {
+            if (IsNullOrWhiteSpace(input))
+                throw new ArgumentException(nameof(input));
+
+            // Base64Url skips whitespace, which is not valid in base64url-encoded JWT segments
+            if (input.AsSpan().IndexOfAny(" \t\r\n") >= 0)
+                throw new FormatException("Illegal base64url string.");
+        }
+#endif
     }
 }
