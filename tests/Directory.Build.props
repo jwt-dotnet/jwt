@@ -23,6 +23,10 @@
     <Compile Include="..\JWT.Tests.Common\**\*Tests.cs">
       <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
+    <!-- Compiled by each .NET 8+ test project's own System.Text.Json source generator -->
+    <Compile Include="..\JWT.Tests.Common\Models\*JsonSerializerContext.cs">
+      <Link>Models\%(Filename)%(Extension)</Link>
+    </Compile>
   </ItemGroup>
 
   <PropertyGroup Condition="!$(IsExtensionsProject)">

@@ -1,4 +1,7 @@
 ﻿using System;
+#if NET8_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using JWT.Algorithms;
 using JWT.Internal;
 using JWT.Serializers;
@@ -49,8 +52,11 @@ namespace JWT
             return services;
         }
 
-        public static IServiceCollection AddJwtDecoder<TFactory>(this IServiceCollection services)
-            where TFactory : class, IAlgorithmFactory
+        public static IServiceCollection AddJwtDecoder<
+#if NET8_0_OR_GREATER
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+            TFactory>(this IServiceCollection services) where TFactory : class, IAlgorithmFactory
         {
             services.TryAddSingleton<IAlgorithmFactory, TFactory>();
 

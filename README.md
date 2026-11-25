@@ -18,6 +18,7 @@
     - [Or using the fluent builder API](#or-using-the-fluent-builder-api-4)
   - [Custom JSON serializer](#custom-json-serializer)
   - [Custom JSON serialization settings with the default JsonNetSerializer](#custom-json-serialization-settings-with-the-default-jsonnetserializer)
+  - [Native AOT support](#native-aot-support)
 - [Jwt.Net ASP.NET Core](#jwtnet-aspnet-core)
   - [Register authentication handler to validate JWT](#register-authentication-handler-to-validate-jwt)
   - [Custom factories to produce Identity or AuthenticationTicket](#custom-factories-to-produce-identity-or-authenticationticket)
@@ -243,7 +244,7 @@ var json = JwtBuilder.Create()
 
 ### Custom JSON serializer
 
-By default JSON serialization is performed by JsonNetSerializer implemented using [Json.Net](https://www.json.net). To use a different one, implement the `IJsonSerializer` interface:
+By default JSON serialization is performed by `SystemTextSerializer` implemented using System.Text.Json on .NET Framework 4.6.2+, .NET Standard 2.0+ and .NET 6+, and by `JsonNetSerializer` implemented using [Json.Net](https://www.json.net) on older targets. To use a different one, implement the `IJsonSerializer` interface:
 
 ```c#
 public sealed class CustomJsonSerializer : IJsonSerializer
@@ -271,7 +272,7 @@ IJwtEncoder encoder = new JwtEncoder(algorithm, serializer, urlEncoder);
 
 ### Custom JSON serialization settings with the default JsonNetSerializer
 
-As mentioned above, the default JSON serialization is done by `JsonNetSerializer`. You can define your own custom serialization settings as follows:
+You can define your own custom serialization settings for `JsonNetSerializer` as follows:
 
 ```c#
 JsonSerializer customJsonSerializer = new JsonSerializer
@@ -293,6 +294,44 @@ JsonSerializer customJsonSerializer = new JsonSerializer
 };
 IJsonSerializer serializer = new JsonNetSerializer(customJsonSerializer);
 ```
+
+### Native AOT support
+
+On .NET 8 and later, JWT, JWT.Extensions.DependencyInjection and JWT.Extensions.AspNetCore are Native AOT-compatible.
+
+When reflection-based System.Text.Json serialization is disabled, as it is by default in Native AOT apps, the default `SystemTextSerializer` uses built-in source-generated metadata, with no configuration needed, for the header and for dictionary claims (`Dictionary<string, object>`) whose values are strings, numbers, booleans, `DateTime`, `DateTimeOffset`, `Guid`, `object[]`, `List<object>`, nested dictionaries, or arrays and lists of `string`, `int`, `long`, `double` or `bool`. Other claim value types, e.g. `HashSet<string>` or `List<Guid>`, need your own metadata as shown below.
+
+To use your own payload types, opt in explicitly: create a `SystemTextSerializer` from your source-generated `JsonSerializerContext` and pass it to the builder, encoder, decoder and validator:
+
+```c#
+[JsonSerializable(typeof(MyPayload))]
+internal partial class MyJsonSerializerContext : JsonSerializerContext
+{
+}
+
+IJsonSerializer serializer = new SystemTextSerializer(MyJsonSerializerContext.Default.Options);
+
+var token = JwtBuilder.Create()
+                      .WithAlgorithm(new HMACSHA256Algorithm())
+                      .WithSecret(secret)
+                      .WithJsonSerializer(serializer)
+                      .Encode(payload);
+
+var decoded = JwtBuilder.Create()
+                        .WithAlgorithm(new HMACSHA256Algorithm())
+                        .WithSecret(secret)
+                        .WithJsonSerializer(serializer)
+                        .MustVerifySignature()
+                        .Decode<MyPayload>(token);
+```
+
+With dependency injection, register it before calling `AddJwtEncoder`, `AddJwtDecoder` or `AddJwt`: `services.AddSingleton<IJsonSerializer>(serializer);`.
+
+Notes:
+- A type without metadata fails at runtime with `NotSupportedException`.
+- A serializer created with a `TypeInfoResolver` uses only that resolver plus the built-in metadata, even when reflection-based serialization is enabled.
+- Apps with reflection-based serialization enabled keep using it with the default `SystemTextSerializer`, as before.
+- `JsonNetSerializer` isn't Native AOT-compatible; its constructors produce warnings when publishing with Native AOT.
 
 ## Jwt.Net ASP.NET Core
 
